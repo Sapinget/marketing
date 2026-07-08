@@ -1,0 +1,23 @@
+{
+    "$schema": "https://www.schemastore.org/package.json",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dashboard:vendor": "node scripts/sync-dashboard-vendor-assets.mjs",
+        "build": "npm run dashboard:vendor && vite build",
+        "dev": "npm run dashboard:vendor && vite"
+    },
+    "devDependencies": {
+        "@tailwindcss/vite": "^4.0.0",
+        "concurrently": "^9.0.1",
+        "laravel-vite-plugin": "^3.1",
+        "tailwindcss": "^4.0.0",
+        "vite": "^8.0.0"
+    },
+    "dependencies": {
+        "@fortawesome/fontawesome-free": "^7.3.0",
+        "apexcharts": "^5.16.0",
+        "papaparse": "^5.5.4",
+        "vue": "^3.5.39"
+    }
+}

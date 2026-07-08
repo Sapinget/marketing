@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Design System - Pura Pura Ponsel</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <style>
+    /* Design Tokens */
+    :root {
+      --ppp-accent:      #4f63ff;
+      --ppp-accent-dark: #3d4fdb;
+      --ppp-bg:          #f8fafc;
+      --ppp-sidebar:     #f8fafc;
+      --ppp-card:        #ffffff;
+      --ppp-text:        #0f172a;
+      --ppp-muted:       #94a3b8;
+      --ppp-line:        #e2e8f0;
+      --ppp-danger:      #dc2626;
+      --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+    }
+
+    /* Reset */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--ppp-bg); color: var(--ppp-text); font-family: var(--font-sans); font-size: 14px; line-height: 1.6; }
+    button { cursor: pointer; font: inherit; }
+
+    /* Page Shell */
+    .ds-header {
+      background: #fff;
+      border-bottom: 1px solid var(--ppp-line);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 32px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .ds-header-brand { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #475569; }
+    .ds-header h1 { font-size: 18px; font-weight: 700; }
+    .ds-version { font-size: 10px; background: #eff6ff; color: #2563eb; border-radius: 999px; padding: 3px 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; margin-left: auto; }
+
+    .ds-nav {
+      background: var(--ppp-sidebar);
+      border-right: 1px solid var(--ppp-line);
+      width: 210px;
+      position: fixed;
+      top: 65px;
+      bottom: 0;
+      overflow-y: auto;
+      padding: 12px 0;
+    }
+    .ds-nav a { display: block; padding: 7px 20px; font-size: 11px; font-weight: 600; color: #64748b; text-decoration: none; transition: color 0.14s, background 0.14s; }
+    .ds-nav a:hover { background: #f1f5f9; color: #475569; }
+    .ds-nav .ds-nav-head { font-size: 9px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: #94a3b8; padding: 14px 20px 5px; }
+
+    .ds-content { margin-left: 210px; padding: 36px 44px; max-width: 1060px; }
+
+    /* Section */
+    .ds-section { margin-bottom: 60px; scroll-margin-top: 80px; }
+    .ds-section-title { font-size: 20px; font-weight: 700; padding-bottom: 14px; border-bottom: 1px solid var(--ppp-line); margin-bottom: 24px; }
+    .ds-section-title small { font-size: 11px; font-weight: 500; color: #94a3b8; margin-left: 10px; }
+    .ds-block { margin-bottom: 28px; }
+    .ds-block-title { font-size: 12px; font-weight: 700; color: #334155; margin-bottom: 10px; letter-spacing: 0.04em; text-transform: uppercase; }
+    .ds-preview { background: #fff; border: 1px solid var(--ppp-line); border-radius: 12px; padding: 22px; }
+    .ds-meta { font-size: 10px; color: #94a3b8; margin-top: 10px; }
+    .ds-meta code { background: #f1f5f9; border-radius: 4px; padding: 1px 6px; }
+    .ds-row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+
+    /* Color Swatches */
+    .swatch-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(95px, 1fr)); gap: 10px; }
+    .swatch { border-radius: 8px; overflow: hidden; border: 1px solid rgba(0,0,0,0.06); }
+    .swatch-color { height: 48px; }
+    .swatch-info { padding: 7px 9px; background: #fff; }
+    .swatch-name { font-size: 10px; font-weight: 700; color: #334155; }
+    .swatch-hex  { font-size: 9px; color: #94a3b8; font-family: monospace; }
+
+    /* Typography Demo */
+    .type-row { display: flex; align-items: baseline; gap: 14px; padding: 9px 0; border-bottom: 1px solid #f1f5f9; }
+    .type-row:last-child { border-bottom: 0; }
+    .type-label { width: 70px; font-size: 10px; color: #94a3b8; font-weight: 700; flex-shrink: 0; }
+    .type-size  { width: 70px; font-size: 10px; color: #cbd5e1; flex-shrink: 0; }
+    .type-sample { flex: 1; }
+
+    /* Radius Demo */
+    .radius-grid { display: flex; flex-wrap: wrap; gap: 14px; }
+    .radius-box { background: #eff6ff; border: 2px solid #bfdbfe; width: 76px; height: 76px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: #2563eb; gap: 3px; }
+    .radius-box span { font-size: 9px; color: #93c5fd; }
+
+    /* Typography helpers */
+    .eyebrow { color: #475569; display: block; font-size: 10px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; }
+    .type-micro { font-size: 9px;  font-weight: 600; }
+    .type-meta  { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+    .type-body  { font-size: 11px; }
+    .type-title { font-size: 13px; font-weight: 700; color: var(--ppp-text); }
+
+    /* Buttons */
+    .dark-button, .primary-cta-button {
+      background: #0f172a; border: 0; color: #fff;
+      transition: background 0.18s;
+    }
+    .dark-button:hover, .primary-cta-button:hover { background: #020617; }
+    .ghost-button, .small-button {
+      background: #fff; border: 1px solid var(--ppp-line); color: #475569;
+    }
+    .dark-button, .ghost-button, .small-button, .icon-button {
+      border-radius: 12px; font-size: 11px; font-weight: 700; min-height: 34px; padding: 0 12px;
+    }
+    .icon-button { background: #fff; border: 1px solid var(--ppp-line); display: inline-flex; align-items: center; justify-content: center; width: 36px; padding: 0; }
+    .primary-cta-button { border-radius: 16px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; min-height: 36px; padding: 0 16px; }
+    .login-button { background: #0f172a; border: 0; color: #fff; border-radius: 16px; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; padding: 15px 18px; text-transform: uppercase; width: 100%; transition: background 0.18s; }
+    .login-button:hover { background: #020617; }
+    .secondary-cta-button { background: #fff; border: 1px solid var(--ppp-line); border-radius: 12px; color: #475569; font-size: 11px; font-weight: 700; min-height: 32px; padding: 0 12px; display: inline-flex; align-items: center; gap: 6px; }
+    .secondary-cta-link { color: var(--ppp-accent); border-color: #c7d2fe; background: #eff6ff; }
+    .modal-primary-button { background: #0f172a; border: 0; border-radius: 16px; color: #fff; font-size: 11px; font-weight: 700; min-height: 38px; padding: 0 20px; }
+    .modal-secondary-button { background: #fff; border: 1px solid var(--ppp-line); border-radius: 16px; color: #475569; font-size: 11px; font-weight: 700; min-height: 38px; padding: 0 20px; }
+    .modal-danger-button { background: #fef2f2; border: 1px solid #fecaca; border-radius: 16px; color: #dc2626; font-size: 11px; font-weight: 700; min-height: 38px; padding: 0 20px; }
+    .filter-trigger-button { background: #fff; border: 1px solid var(--ppp-line); border-radius: 12px; color: #475569; font-size: 11px; font-weight: 700; min-height: 34px; padding: 0 14px; display: inline-flex; align-items: center; gap: 8px; }
+    .select-trigger-button { background: #fff; border: 1px solid var(--ppp-line); border-radius: 12px; color: #0f172a; font-size: 11px; font-weight: 600; min-height: 34px; padding: 0 14px; display: inline-flex; align-items: center; gap: 8px; width: 180px; justify-content: space-between; }
+    .table-action-edit, .table-action-delete { border-radius: 8px; font-size: 10px; height: 28px; padding: 0 8px; display: inline-flex; align-items: center; gap: 4px; font-weight: 700; }
+    .table-action-edit   { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+    .table-action-delete { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+    .icon-utility-button { background: #fff; border: 1px solid var(--ppp-line); border-radius: 10px; color: #64748b; font-size: 11px; height: 32px; width: 32px; display: inline-flex; align-items: center; justify-content: center; }
+
+    /* Filter pills and Segmented */
+    .filter-pills { display: flex; flex-wrap: wrap; gap: 8px; }
+    .filter-pills button { background: #fff; border: 1px solid var(--ppp-line); border-radius: 12px; color: #64748b; font-size: 11px; font-weight: 700; min-height: 34px; padding: 0 12px; }
+    .filter-pills button.is-active { background: #0f172a; border-color: #0f172a; color: #fff; }
+    .segmented-control { background: #f1f5f9; border-radius: 12px; display: inline-flex; padding: 3px; gap: 2px; }
+    .segmented-control__item { background: transparent; border: 0; border-radius: 10px; color: #64748b; font-size: 11px; font-weight: 700; padding: 7px 14px; transition: background 0.15s, color 0.15s; }
+    .segmented-control__item.is-active { background: #fff; color: #0f172a; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+    /* Badge */
+    .badge { border-radius: 999px; display: inline-flex; font-size: 10px; font-weight: 800; letter-spacing: 0.08em; padding: 5px 9px; text-transform: uppercase; }
+    .badge.progress { background: #eff6ff; color: #2563eb; }
+    .badge.done     { background: #ecfdf5; color: #059669; }
+    .badge.draft    { background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0; }
+    .badge.danger   { background: #fef2f2; color: #dc2626; }
+
+    /* KPI Card */
+    .kpi-card { background: #fff; border: 1px solid var(--ppp-line); border-radius: 8px; padding: 16px; }
+    .kpi-card > span, .kpi-card small { color: #64748b; display: block; font-size: 10px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
+    .kpi-card strong { color: #0f172a; display: block; font-size: 26px; font-weight: 700; margin: 8px 0 4px; }
+
+    /* Panel */
+    .panel { background: #fff; border: 1px solid var(--ppp-line); border-radius: 8px; overflow: hidden; }
+    .panel-header { align-items: center; border-bottom: 1px solid var(--ppp-line); display: flex; justify-content: space-between; padding: 14px 16px; }
+    .panel-header h3 { font-size: 16px; font-weight: 700; margin: 4px 0 0; }
+    .status-list div { align-items: center; border-top: 1px solid #f1f5f9; display: flex; justify-content: space-between; padding: 12px 16px; }
+    .status-list div:first-child { border-top: 0; }
+    .status-list span { color: #64748b; font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+    .status-list strong { color: #0f172a; font-size: 13px; }
+
+    /* Data Table */
+    .data-table-wrap { overflow-x: auto; }
+    .data-table { border-collapse: collapse; min-width: 500px; width: 100%; }
+    .data-table th { background: #f8fafc; color: #64748b; font-size: 10px; font-weight: 800; letter-spacing: 0.12em; padding: 11px 14px; text-align: left; text-transform: uppercase; }
+    .data-table td { border-top: 1px solid #f1f5f9; color: #334155; font-size: 12px; padding: 12px 14px; }
+
+    /* Hero */
+    .dashboard-hero { align-items: center; background: #fff; border: 1px solid var(--ppp-line); border-radius: 8px; display: flex; gap: 24px; justify-content: space-between; padding: 20px; }
+    .dashboard-hero h1 { font-size: 26px; font-weight: 700; margin: 6px 0 0; }
+    .dashboard-hero p  { color: #64748b; font-size: 12px; line-height: 1.7; margin: 8px 0 0; }
+    .hero-badge { background: #eff6ff; border: 1px solid #dbeafe; border-radius: 8px; padding: 12px 16px; text-align: right; flex-shrink: 0; }
+    .hero-badge span   { color: #64748b; display: block; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; }
+    .hero-badge strong { color: #1d4ed8; display: block; font-size: 16px; font-weight: 700; margin-top: 4px; }
+
+    /* Input */
+    .input-shell { position: relative; display: block; }
+    .input-shell input { background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 16px; color: #0f172a; font-size: 12px; outline: none; padding: 13px 16px 13px 40px; transition: border-color 0.18s, box-shadow 0.18s; width: 100%; }
+    .input-shell input:focus { border-color: var(--ppp-accent); box-shadow: 0 0 0 3px rgba(79,99,255,0.08); }
+    .input-icon { align-items: center; color: #cbd5e1; display: flex; font-size: 10px; height: 100%; left: 16px; position: absolute; top: 0; }
+    .search-shell { display: grid; gap: 5px; max-width: 240px; }
+    .search-shell > span { color: #64748b; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+    .search-shell input { background: #f8fafc; border: 1px solid #f1f5f9; border-radius: 16px; font-size: 12px; outline: none; padding: 9px 12px; width: 100%; }
+    .search-shell input:focus { border-color: var(--ppp-accent); box-shadow: 0 0 0 3px rgba(79,99,255,0.08); }
+
+    /* Feedback */
+    .toast-demo { background: #0f172a; border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; color: #fff; font-size: 11px; display: inline-block; padding: 12px 20px; }
+    .alert-demo { align-items: flex-start; background: #fef2f2; border: 1px solid #fecaca; border-radius: 16px; color: #b91c1c; display: flex; gap: 12px; padding: 12px 14px; }
+    .alert-icon { align-items: center; background: #fee2e2; border-radius: 999px; display: flex; font-size: 11px; font-weight: 700; height: 22px; justify-content: center; width: 22px; flex-shrink: 0; }
+    .alert-title { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; }
+    .alert-message { font-size: 11px; line-height: 1.5; margin-top: 2px; }
+
+    /* Avatar and Brand */
+    .avatar { align-items: center; background: #0f172a; border-radius: 12px; color: #fff; display: inline-flex; font-size: 12px; font-weight: 700; height: 36px; justify-content: center; text-transform: uppercase; width: 36px; }
+    .brand-mark { align-items: center; background: #fff; border: 1px solid #dbeafe; border-radius: 12px; display: inline-flex; height: 36px; justify-content: center; padding: 6px; width: 36px; }
+    .brand-mark img { width: 100%; height: 100%; object-fit: contain; }
+
+    /* Sidebar Demo */
+    .sidebar-demo { background: var(--ppp-sidebar); border: 1px solid var(--ppp-line); border-radius: 12px; width: 230px; overflow: hidden; flex-shrink: 0; }
+    .brand-row-demo { align-items: center; border-bottom: 1px solid var(--ppp-line); display: flex; gap: 10px; height: 54px; padding: 0 14px; }
+    .brand-name-demo { font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #475569; }
+    .brand-sub-demo  { font-size: 9px; color: #94a3b8; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 2px; }
+    .nav-item-demo { align-items: center; background: transparent; border: 0; color: #64748b; display: flex; font-size: 11px; font-weight: 600; gap: 10px; min-height: 40px; padding: 0 16px; transition: background 0.14s, color 0.14s; width: 100%; text-align: left; }
+    .nav-item-demo:hover { background: #f1f5f9; color: #475569; }
+    .nav-item-demo.active { background: linear-gradient(90deg, var(--ppp-accent), var(--ppp-accent-dark)); color: #fff; }
+    .nav-sub-demo { align-items: center; background: transparent; border: 0; color: #94a3b8; display: flex; font-size: 10.5px; font-weight: 600; gap: 10px; min-height: 34px; padding: 0 16px 0 34px; transition: background 0.14s, color 0.14s; width: 100%; text-align: left; }
+    .nav-sub-demo:hover { background: #f1f5f9; color: #475569; }
+    .user-card-demo { align-items: center; border-top: 1px solid var(--ppp-line); display: flex; gap: 10px; padding: 12px 14px; }
+    .user-card-demo .meta div  { color: #0f172a; font-size: 11px; font-weight: 700; }
+    .user-card-demo .meta span { color: #94a3b8; font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; }
+
+    /* Login Demo */
+    .login-demo { background: #fff; border: 1px solid var(--ppp-line); border-radius: 16px; max-width: 300px; padding: 28px; text-align: center; }
+    .login-demo h1 { font-size: 22px; font-weight: 600; margin-bottom: 6px; }
+    .login-demo p  { color: #94a3b8; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 22px; }
+    .login-form-demo { display: grid; gap: 12px; }
+
+    /* Modal footer */
+    .modal-footer-demo { background: #fff; border: 1px solid var(--ppp-line); border-radius: 12px; padding: 14px 18px; display: flex; justify-content: flex-end; gap: 10px; align-items: center; }
+
+    /* Table toolbar */
+    .table-toolbar { align-items: center; border-bottom: 1px solid var(--ppp-line); display: flex; gap: 14px; justify-content: space-between; padding: 13px 16px; flex-wrap: wrap; }
+
+    /* Loading animation */
+    @keyframes logoPulse { 0%,100%{ transform: scale(1); } 50%{ transform: scale(1.04); } }
+
+    @media (max-width: 860px) {
+      .ds-nav { display: none; }
+      .ds-content { margin-left: 0; padding: 22px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="ds-header">
+  <div>
+    <div class="ds-header-brand">Pura Pura Ponsel</div>
+    <h1>Design System</h1>
+  </div>
+  <span class="ds-version">2026-06-28</span>
+</header>
+
+<!-- Sidebar -->
+<nav class="ds-nav">
+  <div class="ds-nav-head">Foundations</div>
+  <a href="#tokens">Design Tokens</a>
+  <a href="#colors">Color Palette</a>
+  <a href="#typography">Typography</a>
+  <a href="#radius">Radius System</a>
+  <div class="ds-nav-head">Components</div>
+  <a href="#navigation">Navigation</a>
+  <a href="#buttons">Buttons & Actions</a>
+  <a href="#forms">Form & Input</a>
+  <a href="#data">Data Display</a>
+  <a href="#feedback">Feedback & Overlay</a>
+  <div class="ds-nav-head">Patterns</div>
+  <a href="#layout">Layout</a>
+  <a href="#states">States & Utilities</a>
+</nav>
+
+<!-- Content -->
+<main class="ds-content">
+
+  <!-- Design Tokens -->
+  <section class="ds-section" id="tokens">
+    <h2 class="ds-section-title">Design Tokens <small>CSS Custom Properties</small></h2>
+
+    <div class="ds-block">
+      <div class="ds-block-title">CSS Variables</div>
+      <div class="ds-preview">
+        <div style="display:grid;gap:7px;font-size:11px;font-family:monospace">
+          <div><span style="color:#94a3b8">--ppp-accent</span>      <span style="color:#4f63ff;font-weight:700"> </span>#4f63ff - CTA aktif, link, focus</div>
+          <div><span style="color:#94a3b8">--ppp-accent-dark</span> <span style="color:#3d4fdb;font-weight:700"> </span>#3d4fdb - hover state aksen</div>
+          <div><span style="color:#94a3b8">--ppp-text</span>        <span style="color:#0f172a;font-weight:700"> </span>#0f172a - teks utama</div>
+          <div><span style="color:#94a3b8">--ppp-muted</span>       <span style="color:#94a3b8;font-weight:700"> </span>#94a3b8 - teks sekunder</div>
+          <div><span style="color:#94a3b8">--ppp-line</span>        <span style="color:#e2e8f0;font-weight:700"> </span>#e2e8f0 - border/garis</div>
+          <div><span style="color:#94a3b8">--ppp-bg</span>          <span style="background:#f8fafc;border:1px solid #e2e8f0;display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:middle"></span> #f8fafc - background halaman</div>
+          <div><span style="color:#94a3b8">--ppp-card</span>        <span style="background:#fff;border:1px solid #e2e8f0;display:inline-block;width:11px;height:11px;border-radius:2px;vertical-align:middle"></span> #ffffff - card/panel</div>
+          <div><span style="color:#94a3b8">--ppp-danger</span>      <span style="color:#dc2626;font-weight:700"> </span>#dc2626 - error/hapus</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Color Palette -->
+  <section class="ds-section" id="colors">
+    <h2 class="ds-section-title">Color Palette</h2>
+
+    <div class="ds-block">
+      <div class="ds-block-title">Brand & Semantic</div>
+      <div class="ds-preview">
+        <div class="swatch-grid">
+          <div class="swatch"><div class="swatch-color" style="background:#4f63ff"></div><div class="swatch-info"><div class="swatch-name">Accent</div><div class="swatch-hex">#4f63ff</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#3d4fdb"></div><div class="swatch-info"><div class="swatch-name">Accent Dark</div><div class="swatch-hex">#3d4fdb</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#2563eb"></div><div class="swatch-info"><div class="swatch-name">Blue 600</div><div class="swatch-hex">#2563eb</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#059669"></div><div class="swatch-info"><div class="swatch-name">Green 600</div><div class="swatch-hex">#059669</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#dc2626"></div><div class="swatch-info"><div class="swatch-name">Danger</div><div class="swatch-hex">#dc2626</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-title">Slate Scale (Teks & Surface)</div>
+      <div class="ds-preview">
+        <div class="swatch-grid">
+          <div class="swatch"><div class="swatch-color" style="background:#0f172a"></div><div class="swatch-info"><div class="swatch-name">950</div><div class="swatch-hex">#0f172a</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#334155"></div><div class="swatch-info"><div class="swatch-name">700</div><div class="swatch-hex">#334155</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#475569"></div><div class="swatch-info"><div class="swatch-name">600</div><div class="swatch-hex">#475569</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#64748b"></div><div class="swatch-info"><div class="swatch-name">500</div><div class="swatch-hex">#64748b</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#94a3b8"></div><div class="swatch-info"><div class="swatch-name">400</div><div class="swatch-hex">#94a3b8</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#cbd5e1"></div><div class="swatch-info"><div class="swatch-name">300</div><div class="swatch-hex">#cbd5e1</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#e2e8f0"></div><div class="swatch-info"><div class="swatch-name">200</div><div class="swatch-hex">#e2e8f0</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#f1f5f9"></div><div class="swatch-info"><div class="swatch-name">100</div><div class="swatch-hex">#f1f5f9</div></div></div>
+          <div class="swatch"><div class="swatch-color" style="background:#f8fafc;border-bottom:1px solid #e2e8f0"></div><div class="swatch-info"><div class="swatch-name">50</div><div class="swatch-hex">#f8fafc</div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Typography -->
+  <section class="ds-section" id="typography">
+    <h2 class="ds-section-title">Typography <small>Instrument Sans</small></h2>
+
+    <div class="ds-block">
+      <div class="ds-block-title">Tier Tipografi (4 Tier)</div>
+      <div class="ds-preview">
+        <div class="type-row" style="border-bottom:1px solid #f1f5f9;padding-bottom:8px;margin-bottom:4px">
+          <div class="type-label" style="font-size:10px;color:#94a3b8;font-weight:700">Tier</div>
+          <div class="type-size" style="font-size:10px;color:#94a3b8">Size / Weight</div>
+          <div style="flex:1;font-size:10px;color:#94a3b8">Contoh</div>
+        </div>
+        <div class="type-row">
+          <div class="type-label">micro</div>
+          <div class="type-size">9px / 600</div>
+          <div class="type-sample type-micro">Timestamp | Sub-info | Label kecil</div>
+        </div>
+        <div class="type-row">
+          <div class="type-label">meta</div>
+          <div class="type-size">10px / 700</div>
+          <div class="type-sample type-meta">Table Header | Eyebrow | Nav Sub</div>
+        </div>
+        <div class="type-row">
+          <div class="type-label">body</div>
+          <div class="type-size">11px / 400</div>
+          <div class="type-sample type-body">Konten utama, form label, deskripsi, sidebar nav</div>
+        </div>
+        <div class="type-row">
+          <div class="type-label">title</div>
+          <div class="type-size">13px / 700</div>
+          <div class="type-sample type-title">Judul Row | Nilai Tabel | Card Title</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-title">Heading Scale</div>
+      <div class="ds-preview">
+        <div style="display:grid;gap:12px">
+          <div style="font-size:26px;font-weight:700">h1 - 26px | Hero &amp; Module Header</div>
+          <div style="font-size:18px;font-weight:700">h2 - 18px | Topbar</div>
+          <div style="font-size:16px;font-weight:700">h3 - 16px | Panel Title</div>
+          <div style="border-top:1px solid #f1f5f9;padding-top:12px">
+            <span class="eyebrow">Eyebrow - 10px uppercase letter-spacing-wide</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Radius -->
+  <section class="ds-section" id="radius">
+    <h2 class="ds-section-title">Radius System</h2>
+    <div class="ds-block">
+      <div class="ds-preview">
+        <div class="radius-grid">
+          <div class="radius-box" style="border-radius:12px"><strong>r-sm</strong><span>12px</span></div>
+          <div class="radius-box" style="border-radius:16px"><strong>r-md</strong><span>16px</span></div>
+          <div class="radius-box" style="border-radius:24px"><strong>r-lg</strong><span>24px</span></div>
+          <div class="radius-box" style="border-radius:28px"><strong>r-xl</strong><span>28px</span></div>
+          <div class="radius-box" style="border-radius:32px"><strong>r-modal</strong><span>32px</span></div>
+        </div>
+        <div style="margin-top:16px;font-size:11px;color:#64748b;display:grid;gap:4px">
+          <div><strong>r-sm 12px</strong> - tombol kecil, badge, icon button</div>
+          <div><strong>r-md 16px</strong> - CTA utama, login input, modal tombol</div>
+          <div><strong>r-lg 24px</strong> - card mobile, section card</div>
+          <div><strong>r-xl 28px</strong> - panel besar, loading logo</div>
+          <div><strong>r-modal 32px</strong> - modal shell</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Navigation -->
+  <section class="ds-section" id="navigation">
+    <h2 class="ds-section-title">Navigation</h2>
+
+    <div class="ds-block">
+      <div class="ds-block-title">Sidebar</div>
+      <div class="ds-preview" style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+        <div class="sidebar-demo">
+          <div class="brand-row-demo">
+            <div class="brand-mark">
+              <img src="/asset/images/logo.png" alt="Logo"
+                onerror="this.style.display='none';this.parentNode.innerHTML='<span style=\'font-weight:800;color:#2563eb;font-size:12px\'>PP</span>'">
+            </div>
+            <div>
+              <div class="brand-name-demo">Pura Pura Ponsel</div>
+              <div class="brand-sub-demo">Marketing Dashboard</div>
+            </div>
+          </div>
+          <button class="nav-item-demo active"><i class="fa-solid fa-gauge" style="width:14px;font-size:10px;text-align:center"></i> Dashboard</button>
+          <button class="nav-item-demo"><i class="fa-solid fa-folder-open" style="width:14px;font-size:10px;text-align:center"></i> Konten</button>
+          <button class="nav-sub-demo"><i class="fa-solid fa-layer-group" style="width:12px;font-size:9px;text-align:center"></i> Master Plan</button>
+          <button class="nav-sub-demo"><i class="fa-solid fa-box-open" style="width:12px;font-size:9px;text-align:center"></i> Unboxing</button>
+          <button class="nav-item-demo"><i class="fa-solid fa-bullseye" style="width:14px;font-size:10px;text-align:center"></i> Marketing</button>
+          <button class="nav-sub-demo"><i class="fa-solid fa-bullhorn" style="width:12px;font-size:9px;text-align:center"></i> Program Promo</button>
+          <button class="nav-item-demo"><i class="fa-solid fa-cash-register" style="width:14px;font-size:10px;text-align:center"></i> Penjualan (POS)</button>
+          <div class="user-card-demo">
+            <div class="avatar">A</div>
+            <div class="meta">
+              <div>admin</div>
+              <span>Super Admin</span>
+            </div>
+          </div>
+        </div>
+        <div style="font-size:11px;color:#64748b;display:grid;gap:8px;align-content:start;min-width:180px">
+          <div><strong style="color:#0f172a">nav-item</strong> - menu utama, 40px</div>
+          <div><strong style="color:#0f172a">nav-sub-demo</strong> - indent 34px, 34px</div>
+          <div style="display:flex;align-items:center;gap:6px"><span style="background:linear-gradient(90deg,#4f63ff,#3d4fdb);color:#fff;font-size:9px;padding:3px 8px;border-radius:4px">is-active</span> gradient accent</div>
+          <div>Hover: <code style="background:#f1f5f9;padding:1px 5px;border-radius:4px">#f1f5f9</code></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-title">Avatar & Brand Mark</div>
+      <div class="ds-preview">
+        <div class="ds-row">
+          <div class="avatar">A</div>
+          <div class="avatar" style="background:#4f63ff">B</div>
+          <div class="avatar" style="background:#059669">C</div>
+          <div class="brand-mark">
+            <img src="/asset/images/logo.png" alt="Logo"
+              onerror="this.style.display='none';this.parentNode.innerHTML='<span style=\'font-weight:800;color:#2563eb\'>PP</span>'">
+          </div>
+        </div>
+        <p class="ds-meta">Avatar: 36x36px <code>.avatar</code> | Brand mark: 36x36px <code>.brand-mark</code></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Buttons -->
+  <section class="ds-section" id="buttons">
+    <h2 class="ds-section-title">Buttons & Actions</h2>
+
+    <div class="ds-block">
+      <div class="ds-block-title">CTA Primer</div>
+      <div class="ds-preview">
+        <div class="ds-row">
+          <button class="dark-button">Tambah Data</button>
+          <button class="primary-cta-button">Tambah Plan</button>
+        </div>
+        <p class="ds-meta"><code>.dark-button</code> | <code>.primary-cta-button</code></p>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-title">CTA Sekunder</div>
+      <div class="ds-preview">
+        <div class="ds-row">
+          <button class="ghost-button">Export Excel</button>
+          <button class="small-button">Lihat</button>
+          <button class="icon-button" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+          <button class="icon-button" aria-label="Buka sidebar"><i class="fa-solid fa-grip-lines"></i></button>
+        </div>
+        <p class="ds-meta"><code>.ghost-button</code> | <code>.small-button</code> | <code>.icon-button</code></p>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-title">Secondary CTA Family</div>
+      <div class="ds-preview">
+        <div class="ds-row">
+          <button class="secondary-cta-button"><i class="fa-solid fa-file-excel"></i> Export Excel</button>
+          <button class="secondary-cta-button"><i class="fa-solid fa-print"></i> Print</button>
+          <button class="secondary-cta-button secondary-cta-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> Buka Link</button>
+          <button class="secondary-cta-button"><i class="fa-solid fa-file-csv"></i> CSV</button>
+        </div>
+        <p class="ds-meta"><code>.secondary-cta-button</code> + modifier <code>.secondary-cta-link</code></p>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-title">Modal Button Family</div>
+      <div class="ds-preview">
+        <div class="modal-footer-demo">
+          <button class="modal-danger-button">Hapus Permanen</button>
+          <button class="modal-secondary-button">Batal</button>
+          <button class="modal-primary-button">Simpan</button>
+        </div>
+        <p class="ds-meta"><code>.modal-danger-button</code> | <code>.modal-secondary-button</code> | <code>.modal-primary-button</code></p>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-title">Table Action & Icon Utility</div>
+      <div class="ds-preview">
+        <div class="ds-row">
+          <button class="table-action-edit" aria-label="Edit"><i class="fa-solid fa-pen"></i> Edit</button>
+          <button class="table-action-delete" aria-label="Hapus"><i class="fa-solid fa-trash"></i> Hapus</button>
+          <button class="icon-utility-button" aria-label="Filter"><i class="fa-solid fa-filter"></i></button>
+          <button class="icon-utility-button" aria-label="Refresh"><i class="fa-solid fa-rotate-right"></i></button>
+          <button class="icon-utility-button" aria-label="More"><i class="fa-solid fa-ellipsis"></i></button>
+        </div>
+        <p class="ds-meta"><code>.table-action-edit</code> | <code>.table-action-delete</code> | <code>.icon-utility-button</code></p>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-title">Filter Pills & Segmented Control</div>
+      <div class="ds-preview">
+        <div class="ds-row" style="margin-bottom:14px">
+          <div class="filter-pills" id="pills1">
+            <button class="is-active">Semua</button>
+            <button>Bulan Ini</button>
+            <button>Aktif</button>
+          </div>
+        </div>
+        <div class="ds-row">
+          <div class="segmented-control" role="group" id="seg1">
+            <button class="segmented-control__item is-active">Board</button>
+            <button class="segmented-control__item">List</button>
+          </div>
+          <div class="segmented-control" role="group" id="seg2">
+            <button class="segmented-control__item is-active">Ganjil</button>
+            <button class="segmented-control__item">Genap</button>
+            <button class="segmented-control__item">Semua</button>
+          </div>
+        </div>
+        <p class="ds-meta"><code>.filter-pills</code> | <code>.segmented-control</code> + <code>.segmented-control__item</code></p>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-title">Filter Trigger & Select Trigger</div>
+      <div class="ds-preview">
+        <div class="ds-row">
+          <button class="filter-trigger-button">Juni 2026 <i class="fa-solid fa-chevron-down" style="font-size:9px"></i></button>
+          <button class="select-trigger-button">Pilih Brand <i class="fa-solid fa-chevron-down" style="font-size:9px"></i></button>
+        </div>
+        <p class="ds-meta"><code>.filter-trigger-button</code> | <code>.select-trigger-button</code></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Forms -->
+  <section class="ds-section" id="forms">
+    <h2 class="ds-section-title">Form & Input</h2>
+
+    <div class="ds-block">
+      <div class="ds-block-title">Input Shell (dengan ikon)</div>
+      <div class="ds-preview">
+        <div style="max-width:280px;display:grid;gap:12px">
+          <label class="input-shell">
+            <span class="input-icon"><i class="fa-solid fa-user"></i></span>
+            <input type="text" placeholder="Username">
+          </label>
+          <label class="input-shell">
+            <span class="input-icon"><i class="fa-solid fa-lock"></i></span>
+            <input type="password" placeholder="PIN Akses">
+          </label>
+        </div>
+        <p class="ds-meta"><code>.input-shell</code> + <code>.input-icon</code> | Focus: accent border + 3px ring</p>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-title">Search Shell</div>
+      <div class="ds-preview">
+        <label class="search-shell">
+          <span>Cari</span>
+          <input type="search" placeholder="Search data...">
+        </label>
+        <p class="ds-meta"><code>.search-shell</code> | max-width 320px</p>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-title">Login Form</div>
+      <div class="ds-preview">
+        <div class="login-demo">
+          <h1>Selamat Datang</h1>
+          <p>Login untuk membuka dashboard</p>
+          <div class="login-form-demo">
+            <label class="input-shell">
+              <span class="input-icon"><i class="fa-solid fa-user"></i></span>
+              <input type="text" placeholder="Username">
+            </label>
+            <label class="input-shell">
+              <span class="input-icon"><i class="fa-solid fa-lock"></i></span>
+              <input type="password" placeholder="PIN Akses">
+            </label>
+            <button class="login-button">Masuk Ke Sistem</button>
+          </div>
+        </div>
+        <p class="ds-meta"><code>.login-panel</code> + <code>.login-button</code></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Data Display -->
+  <section class="ds-section" id="data">
+    <h2 class="ds-section-title">Data Display</h2>
+
+    <div class="ds-block">
+      <div class="ds-block-title">Badge</div>
+      <div class="ds-preview">
+        <div class="ds-row">
+          <span class="badge progress">Progres</span>
+          <span class="badge done">Done</span>
+          <span class="badge draft">Draft</span>
+          <span class="badge danger">Error</span>
+        </div>
+        <p class="ds-meta"><code>.badge.progress</code> | <code>.badge.done</code> | <code>.badge.draft</code> | <code>.badge.danger</code></p>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-title">KPI Cards</div>
+      <div class="ds-preview">
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px">
+          <div class="kpi-card"><span>Konten Bulan Ini</span><strong>128</strong><small>Master Plan</small></div>
+          <div class="kpi-card"><span>Publish</span><strong>74</strong><small>Distribution</small></div>
+          <div class="kpi-card"><span>Views</span><strong>1.8M</strong><small>Analytics</small></div>
+          <div class="kpi-card"><span>POS Revenue</span><strong>Rp 2.4B</strong><small>Forecast</small></div>
+        </div>
+        <p class="ds-meta"><code>.kpi-card</code> | Grid: 4 kolom desktop, 2 tablet, 1 mobile</p>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-title">Dashboard Hero / Module Header</div>
+      <div class="ds-preview">
+        <div class="dashboard-hero">
+          <div>
+            <span class="eyebrow">Marketing Dashboard</span>
+            <h1>Ringkasan Operasional</h1>
+            <p>Fondasi Laravel untuk menggantikan Apps Script dan spreadsheet sebagai database utama.</p>
+          </div>
+          <div class="hero-badge">
+            <span>Mode</span>
+            <strong>Laravel 13</strong>
+          </div>
+        </div>
+        <p class="ds-meta"><code>.dashboard-hero</code> + <code>.hero-badge</code></p>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-title">Panel dengan Status List</div>
+      <div class="ds-preview">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+          <div class="panel">
+            <div class="panel-header">
+              <div><span class="eyebrow">Status</span><h3>Pipeline Konten</h3></div>
+              <button class="small-button">Lihat</button>
+            </div>
+            <div class="status-list">
+              <div><span>Not Started</span><strong>18</strong></div>
+              <div><span>Progres</span><strong>27</strong></div>
+              <div><span>Done</span><strong>34</strong></div>
+              <div><span>Published</span><strong>49</strong></div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">
+              <div><span class="eyebrow">Prioritas</span><h3>Module Readiness</h3></div>
+            </div>
+            <div class="status-list">
+              <div><span>Import Excel</span><strong>Next</strong></div>
+              <div><span>CRUD Master Plan</span><strong>Phase 4</strong></div>
+              <div><span>Export PDF</span><strong>Phase 5</strong></div>
+            </div>
+          </div>
+        </div>
+        <p class="ds-meta"><code>.panel</code> -> <code>.panel-header</code> -> <code>.status-list</code></p>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-title">Data Table</div>
+      <div class="ds-preview" style="padding:0;overflow:hidden">
+        <div class="table-toolbar">
+          <label class="search-shell" style="max-width:200px">
+            <span>Cari</span>
+            <input type="search" placeholder="Search...">
+          </label>
+          <div class="ds-row" style="gap:8px">
+            <button class="icon-utility-button" aria-label="Filter"><i class="fa-solid fa-filter"></i></button>
+            <div class="filter-pills" id="pills2">
+              <button class="is-active">Semua</button>
+              <button>Bulan Ini</button>
+            </div>
+          </div>
+        </div>
+        <div class="data-table-wrap">
+          <table class="data-table">
+            <thead>
+              <tr><th>ID</th><th>Nama / Judul</th><th>Status</th><th>Tanggal</th><th>Owner</th><th>Aksi</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>001</td>
+                <td>Review Samsung Galaxy S25 Ultra</td>
+                <td><span class="badge done">Done</span></td>
+                <td>28 Jun 2026</td>
+                <td>Editor A</td>
+                <td><div style="display:flex;gap:6px"><button class="table-action-edit"><i class="fa-solid fa-pen"></i> Edit</button><button class="table-action-delete"><i class="fa-solid fa-trash"></i></button></div></td>
+              </tr>
+              <tr>
+                <td>002</td>
+                <td>Unboxing iPhone 16 Pro Max</td>
+                <td><span class="badge progress">Progres</span></td>
+                <td>25 Jun 2026</td>
+                <td>Editor B</td>
+                <td><div style="display:flex;gap:6px"><button class="table-action-edit"><i class="fa-solid fa-pen"></i> Edit</button><button class="table-action-delete"><i class="fa-solid fa-trash"></i></button></div></td>
+              </tr>
+              <tr>
+                <td>003</td>
+                <td>Komparasi Xiaomi 15 vs OPPO Reno 13</td>
+                <td><span class="badge draft">Draft</span></td>
+                <td>20 Jun 2026</td>
+                <td>Editor C</td>
+                <td><div style="display:flex;gap:6px"><button class="table-action-edit"><i class="fa-solid fa-pen"></i> Edit</button><button class="table-action-delete"><i class="fa-solid fa-trash"></i></button></div></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="ds-meta"><code>.data-table-wrap</code> -> <code>.data-table</code> | min-width 760px, overflow-x auto</p>
+    </div>
+  </section>
+
+  <!-- Feedback -->
+  <section class="ds-section" id="feedback">
+    <h2 class="ds-section-title">Feedback & Overlay</h2>
+
+    <div class="ds-block">
+      <div class="ds-block-title">Toast</div>
+      <div class="ds-preview">
+        <div class="toast-demo">Data berhasil disimpan</div>
+        <p class="ds-meta"><code>.toast</code> - fixed bottom, dark bg, auto-dismiss 2.2s</p>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-title">System Alert</div>
+      <div class="ds-preview">
+        <div class="alert-demo">
+          <div class="alert-icon">!</div>
+          <div>
+            <div class="alert-title">Sistem Error</div>
+            <div class="alert-message">Gagal mengambil data dari server. Periksa koneksi internet Anda.</div>
+          </div>
+          <button type="button" style="background:none;border:0;color:#ef4444;margin-left:auto;font-size:16px;cursor:pointer">x</button>
+        </div>
+        <p class="ds-meta"><code>.system-alert</code> - fixed top center, max-width 720px, dismiss manual</p>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-title">Loading Screen</div>
+      <div class="ds-preview">
+        <div style="display:flex;flex-direction:column;align-items:center;gap:18px;padding:12px">
+          <div style="background:#fff;border:1px solid #dbeafe;border-radius:28px;width:80px;height:80px;display:flex;align-items:center;justify-content:center;animation:logoPulse 1.6s ease-in-out infinite">
+            <div style="font-weight:800;font-size:18px;color:#2563eb">PP</div>
+          </div>
+          <div style="text-align:center">
+            <strong style="color:#475569;font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;display:block">Pura Pura Ponsel</strong>
+            <span style="color:#94a3b8;font-size:9px;letter-spacing:0.12em;text-transform:uppercase;margin-top:6px;display:block">Menyiapkan Dashboard...</span>
+          </div>
+        </div>
+        <p class="ds-meta">Animasi <code>logoPulse</code> - scale 1->1.04, 1.6s infinite</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Layout -->
+  <section class="ds-section" id="layout">
+    <h2 class="ds-section-title">Layout</h2>
+
+    <div class="ds-block">
+      <div class="ds-block-title">App Shell</div>
+      <div class="ds-preview">
+        <div style="border:1px solid var(--ppp-line);border-radius:8px;overflow:hidden;font-size:10px;font-weight:700">
+          <div style="background:#0f172a;color:#fff;padding:8px 14px;display:flex;gap:12px;align-items:center">
+            <span>Topbar</span>
+            <span style="opacity:0.4;font-weight:400;margin-left:auto">height: 64px | sticky top | rgba(255,255,255,0.9)</span>
+          </div>
+          <div style="display:flex;min-height:150px">
+            <div style="width:100px;background:#f8fafc;border-right:1px solid #e2e8f0;padding:10px 12px;color:#64748b;flex-shrink:0;display:flex;flex-direction:column;gap:4px">
+              <span>Sidebar</span>
+              <span style="font-weight:400;font-size:9px;opacity:0.7">240px<br>fixed left</span>
+            </div>
+            <div style="flex:1;padding:10px 14px;color:#94a3b8;display:flex;flex-direction:column;gap:4px">
+              <span>Main Panel</span>
+              <span style="font-size:9px;font-weight:400">margin-left: 240px | padding: 24px</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-title">Responsive Breakpoints</div>
+      <div class="ds-preview">
+        <table style="width:100%;font-size:11px;border-collapse:collapse">
+          <tr style="background:#f8fafc">
+            <th style="text-align:left;padding:9px 14px;font-size:10px;color:#64748b;letter-spacing:0.1em;text-transform:uppercase">Breakpoint</th>
+            <th style="text-align:left;padding:9px 14px;font-size:10px;color:#64748b;letter-spacing:0.1em;text-transform:uppercase">Kondisi</th>
+            <th style="text-align:left;padding:9px 14px;font-size:10px;color:#64748b;letter-spacing:0.1em;text-transform:uppercase">Perubahan</th>
+          </tr>
+          <tr style="border-top:1px solid #f1f5f9">
+            <td style="padding:10px 14px;font-weight:700">Desktop</td>
+            <td style="padding:10px 14px;color:#64748b">&gt; 1080px</td>
+            <td style="padding:10px 14px;color:#64748b">KPI 4 kolom | sidebar fixed 240px</td>
+          </tr>
+          <tr style="border-top:1px solid #f1f5f9">
+            <td style="padding:10px 14px;font-weight:700">Tablet</td>
+            <td style="padding:10px 14px;color:#64748b">769-1080px</td>
+            <td style="padding:10px 14px;color:#64748b">KPI 2 kolom | content-grid 1 kolom</td>
+          </tr>
+          <tr style="border-top:1px solid #f1f5f9">
+            <td style="padding:10px 14px;font-weight:700">Mobile</td>
+            <td style="padding:10px 14px;color:#64748b">≤ 768px</td>
+            <td style="padding:10px 14px;color:#64748b">Sidebar overlay | KPI 1 kolom | topbar compact | h1: 22px</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- States & Utilities -->
+  <section class="ds-section" id="states">
+    <h2 class="ds-section-title">States & Utilities</h2>
+
+    <div class="ds-block">
+      <div class="ds-block-title">Utility Classes</div>
+      <div class="ds-preview">
+        <table style="width:100%;font-size:11px;border-collapse:collapse">
+          <tr style="background:#f8fafc">
+            <th style="text-align:left;padding:9px 14px;font-size:10px;color:#64748b;letter-spacing:0.1em;text-transform:uppercase">Class</th>
+            <th style="text-align:left;padding:9px 14px;font-size:10px;color:#64748b;letter-spacing:0.1em;text-transform:uppercase">Fungsi</th>
+            <th style="text-align:left;padding:9px 14px;font-size:10px;color:#64748b;letter-spacing:0.1em;text-transform:uppercase">Contoh Penggunaan</th>
+          </tr>
+          <tr style="border-top:1px solid #f1f5f9">
+            <td style="padding:10px 14px;font-family:monospace;color:#4f63ff">.is-hidden</td>
+            <td style="padding:10px 14px;color:#64748b">display: none !important</td>
+            <td style="padding:10px 14px;color:#64748b">Toast, alert, loading, halaman</td>
+          </tr>
+          <tr style="border-top:1px solid #f1f5f9">
+            <td style="padding:10px 14px;font-family:monospace;color:#4f63ff">.is-active</td>
+            <td style="padding:10px 14px;color:#64748b">State aktif/terpilih</td>
+            <td style="padding:10px 14px;color:#64748b">Nav item, filter pills, segmented</td>
+          </tr>
+          <tr style="border-top:1px solid #f1f5f9">
+            <td style="padding:10px 14px;font-family:monospace;color:#4f63ff">.is-open</td>
+            <td style="padding:10px 14px;color:#64748b">State terbuka</td>
+            <td style="padding:10px 14px;color:#64748b">Sidebar mobile, nav group</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="ds-block">
+      <div class="ds-block-title">Focus Ring</div>
+      <div class="ds-preview">
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+          <label class="input-shell" style="max-width:220px">
+            <span class="input-icon"><i class="fa-solid fa-search"></i></span>
+            <input type="text" placeholder="Klik untuk lihat focus" autofocus>
+          </label>
+          <div style="font-size:11px;color:#64748b">
+            Border: <code style="background:#f1f5f9;padding:1px 5px;border-radius:4px;color:#4f63ff">#4f63ff</code><br>
+            Ring: <code style="background:#f1f5f9;padding:1px 5px;border-radius:4px">rgba(79,99,255,0.08) 3px</code>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  // Segmented controls interaktif
+  document.querySelectorAll('.segmented-control').forEach(g => {
+    g.querySelectorAll('.segmented-control__item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        g.querySelectorAll('.segmented-control__item').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+      });
+    });
+  });
+
+  // Filter pills interaktif
+  document.querySelectorAll('.filter-pills').forEach(g => {
+    g.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        g.querySelectorAll('button').forEach(b => b.classList.remove('is-active'));
+        btn.classList.add('is-active');
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
