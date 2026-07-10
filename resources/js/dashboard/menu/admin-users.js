@@ -16,6 +16,7 @@ export function createAdminUserSettingsState(ref) {
             record_key: '',
         }),
         submittingAuthUser: ref(false),
+        showAuthUserModal: ref(false),
         authUserForm: ref({
             username: '',
             nama: '',
@@ -36,6 +37,7 @@ export function createAdminUserSettingsActions(deps) {
         submittingPin,
         profileForm,
         submittingAuthUser,
+        showAuthUserModal,
         authUsers,
         authUsersLoaded,
         activityLogs,
@@ -160,6 +162,7 @@ export function createAdminUserSettingsActions(deps) {
                     pin: '',
                     confirmPin: '',
                 };
+                showAuthUserModal.value = false;
                 loadAuthUsers();
                 showNotification('User baru berhasil dibuat!');
             })

@@ -106,6 +106,7 @@
                             activityLogsLoaded: makeRef(false),
                             activityLogFilters: makeRef({ table_name: "", action: "", record_key: "" }),
                             submittingAuthUser: makeRef(false),
+                            showAuthUserModal: makeRef(false),
                             authUserForm: makeRef({ username: "", nama: "", email: "", pin: "", confirmPin: "" }),
                         }),
                     };
@@ -119,6 +120,7 @@
                     activityLogsLoaded,
                     activityLogFilters,
                     submittingAuthUser,
+                    showAuthUserModal,
                     authUserForm,
                 } = window.MarketingDashboardRuntimeHelpers.createAdminUserSettingsState(ref);
 
