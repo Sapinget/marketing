@@ -27,3 +27,18 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Debug artifacts
+bonus_*.html
+bonus_*.txt
+storage/app-frame-expanded.html
+*.png
+
+# Dev tooling
+/.opencode/
+/prompts.chat/
+/bootstrap/dev/
+
+# Vendor xlsx (pre-commit hook false positive on SheetJS internal error strings)
+/public/vendor/dashboard/xlsx/
+/resources/vendor/dashboard/xlsx/
