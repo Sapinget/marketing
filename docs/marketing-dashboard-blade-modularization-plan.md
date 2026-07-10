@@ -400,24 +400,24 @@ Urutan implementasi yang direkomendasikan:
 
 Checklist operasional:
 
-- `shared`:
-  - [ ] pindahkan formatter umum ke `resources/js/dashboard/shared/formatters.js`
+- `shared`: ✅ SELESAI
+  - [x] pindahkan formatter umum ke `resources/js/dashboard/shared/formatters.js`
   - [x] mulai pusatkan helper notifikasi/error ke runtime shared
-  - [ ] pindahkan helper notifikasi/error final ke `resources/js/dashboard/shared/notifications.js`
-  - [ ] pindahkan helper URL/origin/backend resolver ke `resources/js/dashboard/shared/url.js`
-  - [ ] pindahkan helper runner umum yang tidak bergantung pada Vue state ke `resources/js/dashboard/shared/run-api.js`
-- `admin/settings`:
+  - [x] pindahkan helper notifikasi/error final ke `resources/js/dashboard/shared/notifications.js`
+  - [x] pindahkan helper URL/origin/backend resolver ke `resources/js/dashboard/shared/url.js`
+  - [x] pindahkan helper runner umum yang tidak bergantung pada Vue state ke `resources/js/dashboard/shared/run-api.js`
+- `admin/settings`: ✅ SELESAI
   - [x] pecah state dan aksi awal dari `app-script-protected-user-settings.blade.php`
   - [x] pecah mutasi profil/user awal dari `app-script-profile-user-mutations.blade.php`
-  - [ ] pindahkan domain admin/settings penuh ke modul JS terpisah
+  - [x] pindahkan domain admin/settings penuh ke modul JS terpisah
   - target modul awal:
     - `resources/js/dashboard/menu/admin-users.js`
     - `resources/js/dashboard/menu/activity-logs.js`
     - `resources/js/dashboard/menu/profile.js`
     - `resources/js/dashboard/menu/settings.js`
-- `nama stock`:
+- `nama stock`: ✅ SELESAI
   - [x] ekstrak helper dan action awal dari `app-script-nama-stock-actions.blade.php`
-  - [ ] pindahkan loader, form state, submit, delete, dan opsi dropdown penuh ke modul JS terpisah
+  - [x] pindahkan loader, form state, submit, delete, dan opsi dropdown penuh ke modul JS terpisah
   - target modul awal:
     - `resources/js/dashboard/menu/nama-stock.js`
 - `customer service`: ✅ SELESAI
@@ -445,10 +445,10 @@ Definition of done fase 3:
 - [x] minimal satu domain utama tidak lagi mendefinisikan state dan action secara inline penuh di Blade
 - [x] helper shared yang dipindahkan mulai berhenti diduplikasi antar cluster script
 - [x] feature test shell tetap hijau
-- [ ] perubahan domain tidak menambah dependency global baru di closure root
-- [~] file Blade cluster yang disentuh menyusut jelas dan tanggung jawabnya lebih sempit
+- [x] perubahan domain tidak menambah dependency global baru di closure root
+- [x] file Blade cluster yang disentuh menyusut jelas dan tanggung jawabnya lebih sempit
 
-Status fase 3 saat ini: `in progress`
+Status fase 3 saat ini: `selesai` ✅
 
 ### Fase 4: Sederhanakan compatibility layer print
 
@@ -586,9 +586,9 @@ Urutan kerja yang paling aman dari kondisi repo saat ini:
 
 Status backlog saat ini:
 
-- [x] langkah 1 sudah mulai berjalan, tetapi belum selesai penuh
-- [x] langkah 2 sudah mulai berjalan, tetapi belum selesai penuh
-- [x] langkah 3 sudah mulai berjalan, tetapi belum selesai penuh
+- [x] langkah 1 selesai: semua helper shared (`formatters.js`, `notifications.js`, `url.js`, `run-api.js`, `date-utils.js`) diekstrak dan dipusatkan di `runtime-helpers.js`
+- [x] langkah 2 selesai: domain admin/settings diekstrak ke `menu/admin-users.js` dan `menu/settings.js`; state/mutasi profil dan user sudah dipisah dari Blade closure
+- [x] langkah 3 selesai: domain nama stock diekstrak ke `menu/nama-stock.js` dengan `createNamaStockState` + `createNamaStockActions`
 - [x] langkah 4 selesai: customer service domain diekstrak ke `menu/customer-service.js`; inline polyfill di `app-script-customer-service-crud.blade.php` dan `app-script-domain-state-core.blade.php` dihapus (-143 dan -53 lines); optional chaining ditambah agar call aman di urutan setup()
 - [x] langkah 5 selesai: LPJK domain diekstrak ke `menu/lpjk.js` dengan `createLpjkOperations(deps)` (5 computed, 1 watch, 8 action); `app-script-lpjk-operations.blade.php` menyusut 112 → 34 lines; `runtime-helpers.js` sudah wire ke modul baru
 - [x] langkah 6 selesai: print business logic sudah 100% di `print-core.js` + `print-browser.js`; `print-helpers.blade.php` dipindah ke `resources/legacy/`; export scripts hanya berisi thin bridge callers ke `window.MarketingDashboard*Exports`; tidak ada business logic print di Blade
@@ -611,10 +611,10 @@ Definition of done fase ini:
 
 ## Known Issues Aktual
 
-- [ ] bersihkan duplicate declaration pada helper runtime yang dipromosikan dari partial ke shared bundle
-- [ ] rapikan boundary helper nama stock agar tidak ada redeklarasi variabel lokal saat fallback aktif
-- [ ] tambahkan field username yang sesuai pada form ganti PIN untuk menutup warning accessibility browser
-- [ ] audit lagi urutan include partial helper/runtime setelah ekstraksi batch admin/settings dan nama stock
+- [x] ~~bersihkan duplicate declaration pada helper runtime yang dipromosikan dari partial ke shared bundle~~ — RESOLVED: semua helper sudah dipusatkan di `runtime-helpers.js`; inline polyfill di `app-script-customer-service-crud.blade.php`, `app-script-domain-state-core.blade.php`, `app-script-lpjk-operations.blade.php`, dan `app-script-reporting-and-budgeting.blade.php` sudah dihapus — tidak ada lagi deklarasi duplikat
+- [x] ~~rapikan boundary helper nama stock agar tidak ada redeklarasi variabel lokal saat fallback aktif~~ — RESOLVED: `menu/nama-stock.js` menjadi satu-satunya source; fallback inline tidak lagi ada di Blade
+- [x] ~~tambahkan field username yang sesuai pada form ganti PIN untuk menutup warning accessibility browser~~ — RESOLVED: `profile.blade.php` sudah punya hidden `sr-only aria-hidden` field `type="text" name="username" autocomplete="username" readonly` sebelum password fields; `auth-users.blade.php` sudah punya visible username field dengan `autocomplete="username"` di atas PIN fields
+- [x] ~~audit lagi urutan include partial helper/runtime setelah ekstraksi batch admin/settings dan nama stock~~ — RESOLVED: semua 7 domain diekstrak; urutan inisialisasi sudah stabil via `window.MarketingDashboardRuntimeHelpers`
 - [x] ~~`entity-badge--info` di `dashboard-shell.css` masih WCAG fail: `rgb(2 132 199)` (sky-600) pada `rgb(240 249 255)` = 3.70:1~~ — RESOLVED: diubah ke `rgb(37 99 235)` pada `rgb(239 246 255)` (blue-600/blue-50, 4.75:1 ✓), konsisten dengan baris Info di Semantic Palette
 - [x] ~~`rgb(... / alpha)` expressions di `dashboard-shell.css` tidak bisa ditokenisasi dengan `var()` langsung~~ — RESOLVED: tambah 4 token RGB komponen (`--ppp-text-rgb`, `--ppp-card-rgb`, `--ppp-nav-rgb`, `--ppp-bg-rgb`) ke `:root` di `app.css`; semua 37 alpha expressions sudah pakai `rgb(var(--ppp-*-rgb) / alpha)`
 - [x] ~~`#dc2626` dipakai sebagai warna background filled danger button default~~ — RESOLVED: token `--ppp-danger-fill: #dc2626` ditambah ke `app.css` (@theme + :root) dan `dashboard-shell.css` diupdate pakai `var(--ppp-danger-fill)`
