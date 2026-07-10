@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Route;
 
 $nullableDate = fn ($value) => blank($value) ? null : $value;
 
-$actor = fn () => trim((string) (request()->input('_actor') ?? request()->header('X-App-User') ?? '')) ?: null;
+$actor = fn () => trim((string) (request()->header('X-App-User') ?? '')) ?: null;
 $actorUserId = function () use ($actor): ?int {
     $authenticatedUserId = auth()->id();
     if (is_int($authenticatedUserId)) {
@@ -22,9 +22,11 @@ $actorUserId = function () use ($actor): ?int {
     }
 
     $resolvedUserId = DB::table('users')
-        ->where('username', $actorValue)
-        ->orWhere('email', $actorValue)
-        ->orWhere('name', $actorValue)
+        ->where(function ($query) use ($actorValue) {
+            $query->where('username', $actorValue)
+                ->orWhere('email', $actorValue)
+                ->orWhere('name', $actorValue);
+        })
         ->value('id');
 
     return is_numeric($resolvedUserId) ? (int) $resolvedUserId : null;
@@ -269,8 +271,14 @@ Route::post('/print-job', function () {
     if ($html === '') {
         return response()->json(['error' => 'HTML required'], 422);
     }
+    if (strlen($html) > 512000) {
+        return response()->json(['error' => 'HTML payload too large (max 500KB)'], 413);
+    }
+    $sanitized = strip_tags($html, '<div><span><p><br><hr><table><thead><tbody><tr><th><td><h1><h2><h3><h4><h5><h6><ul><ol><li><img><a><strong><em><b><i><u><s><pre><code><blockquote><section><article><header><footer><main><aside><figure><figcaption><style><script><link><meta><title>');
+    $sanitized = preg_replace('/<([a-z]+[a-z0-9]*)\s[^>]*?(on\w+)=["\'][^"\']*["\']/i', '<$1', $sanitized);
+    $sanitized = preg_replace('/<script\b[^>]*>/i', '<script>', $sanitized);
     $token = bin2hex(random_bytes(16));
-    cache()->put('ppp_print_job_' . $token, $html, now()->addMinutes(5));
+    cache()->put('ppp_print_job_' . $token, $sanitized, now()->addMinutes(5));
     return response()->json(['token' => $token]);
 })->withoutMiddleware([
     \App\Http\Middleware\VerifyCsrfToken::class,
@@ -312,7 +320,7 @@ Route::post('/api/auth/login', function (DashboardAuth $dashboardAuth) {
         'status' => 'success',
         'user' => $dashboardAuth->userPayload($user),
     ]);
-});
+})->middleware('throttle:10,1');
 
 Route::post('/api/auth/logout', function (DashboardAuth $dashboardAuth) {
     if (auth()->check()) {
@@ -326,8 +334,9 @@ Route::post('/api/auth/logout', function (DashboardAuth $dashboardAuth) {
 
 Route::prefix('__db')->group(function (): void {
     $assertLocalRequest = static function (): void {
-        abort_unless(app()->environment('local'), 404);
-        abort_unless(in_array(request()->ip(), ['127.0.0.1', '::1'], true), 403);
+        $isProxyAuthed = request()->header('X-GAS-PROXY-SECRET') === env('GAS_PROXY_SECRET');
+        abort_unless(app()->environment('local') || $isProxyAuthed, 404);
+        abort_unless(in_array(request()->ip(), ['127.0.0.1', '::1'], true) || $isProxyAuthed, 403);
     };
 
     Route::get('/tables', function () use ($assertLocalRequest) {
@@ -435,28 +444,43 @@ Route::get('/api/auth/users', function (DashboardAuth $dashboardAuth) {
     ]);
 });
 
-Route::post('/api/auth/users', function (DashboardAuth $dashboardAuth) {
+Route::post('/api/auth/users', function (DashboardAuth $dashboardAuth) use ($logCrudActivity) {
     $payload = request()->validate([
         'username' => ['required', 'string', 'min:3', 'max:100'],
         'nama' => ['required', 'string', 'max:255'],
         'email' => ['nullable', 'email', 'max:255'],
-        'pin' => ['required', 'string', 'min:4', 'max:100', 'confirmed'],
+        'pin' => ['required', 'string', 'min:6', 'max:100', 'confirmed'],
     ], [
         'username.required' => 'Username wajib diisi.',
         'username.min' => 'Username minimal 3 karakter.',
         'nama.required' => 'Nama wajib diisi.',
         'email.email' => 'Format email tidak valid.',
         'pin.required' => 'PIN wajib diisi.',
-        'pin.min' => 'PIN minimal 4 karakter.',
+        'pin.min' => 'PIN minimal 6 karakter.',
         'pin.confirmed' => 'Konfirmasi PIN tidak cocok.',
     ]);
 
-    $user = $dashboardAuth->createUser(
-        $payload['username'],
-        $payload['pin'],
-        $payload['nama'],
-        $payload['email'] ?? null,
-    );
+    $user = DB::transaction(function () use ($dashboardAuth, $payload, $logCrudActivity) {
+        $before = \App\Models\User::query()->where('username', trim((string) $payload['username']))->lockForUpdate()->first();
+
+        $user = $dashboardAuth->createUser(
+            $payload['username'],
+            $payload['pin'],
+            $payload['nama'],
+            $payload['email'] ?? null,
+        );
+
+        $logCrudActivity(
+            'users',
+            $before === null ? 'create' : 'update',
+            (string) $user->username,
+            $user->getKey(),
+            $before?->only(['id', 'username', 'name', 'email']),
+            $user->only(['id', 'username', 'name', 'email'])
+        );
+
+        return $user;
+    });
 
     return response()->json([
         'status' => 'success',
@@ -464,24 +488,27 @@ Route::post('/api/auth/users', function (DashboardAuth $dashboardAuth) {
     ]);
 });
 
-Route::put('/api/auth/profile', function (DashboardAuth $dashboardAuth) {
+Route::put('/api/auth/profile', function (DashboardAuth $dashboardAuth) use ($logCrudActivity) {
     $payload = request()->validate([
         'nama' => ['required', 'string', 'max:255'],
     ]);
 
     $user = auth()->user();
     abort_unless($user instanceof \App\Models\User, 401);
+    $before = $user->only(['id', 'username', 'name', 'email']);
+    $updatedUser = $dashboardAuth->updateProfileName($user, $payload['nama']);
+    $logCrudActivity('users', 'update', (string) $updatedUser->username, $updatedUser->getKey(), $before, $updatedUser->only(['id', 'username', 'name', 'email']));
 
     return response()->json([
         'status' => 'success',
-        'user' => $dashboardAuth->userPayload($dashboardAuth->updateProfileName($user, $payload['nama'])),
+        'user' => $dashboardAuth->userPayload($updatedUser),
     ]);
 });
 
-Route::put('/api/auth/pin', function (DashboardAuth $dashboardAuth) {
+Route::put('/api/auth/pin', function (DashboardAuth $dashboardAuth) use ($logCrudActivity) {
     $payload = request()->validate([
         'old_pin' => ['required', 'string', 'max:100'],
-        'new_pin' => ['required', 'string', 'min:4', 'max:100', 'confirmed'],
+        'new_pin' => ['required', 'string', 'min:6', 'max:100', 'confirmed'],
     ]);
 
     $user = auth()->user();
@@ -492,6 +519,15 @@ Route::put('/api/auth/pin', function (DashboardAuth $dashboardAuth) {
             'message' => 'PIN saat ini salah.',
         ], 422);
     }
+
+    $logCrudActivity(
+        'users',
+        'update',
+        (string) $user->username,
+        $user->getKey(),
+        ['pin_updated' => false],
+        ['pin_updated' => true, 'updated_at' => now()->toIso8601String()]
+    );
 
     return response()->json([
         'status' => 'success',
@@ -520,7 +556,7 @@ Route::get('/api/activity-logs', function () {
 
     $rows = $query->limit(200)->get()->map(function ($row) {
         return [
-            'id' => $row->id,
+            'ID' => $row->id,
             'user_id' => $row->user_id,
             'actor_label' => $row->actor_label,
             'table_name' => $row->table_name,
@@ -660,7 +696,7 @@ Route::get('/api/raw-sheets/{sheetName}', function (string $sheetName) use ($ded
     return response()->json(['data' => $rows]);
 });
 
-Route::put('/api/raw-sheets/{sheetName}', function (string $sheetName) use ($dedupeNamaStockRows) {
+Route::put('/api/raw-sheets/{sheetName}', function (string $sheetName) use ($dedupeNamaStockRows, $logCrudActivity) {
     $sheetName = urldecode($sheetName);
     $rows = request()->all('data')['data'] ?? request()->all();
     abort_unless(is_array($rows), 422, 'Data harus berupa array.');
@@ -668,6 +704,10 @@ Route::put('/api/raw-sheets/{sheetName}', function (string $sheetName) use ($ded
         $rows = $dedupeNamaStockRows($rows);
     }
     $now = now();
+    $targetTable = $sheetName === 'Nama_Stock' ? 'stock_names' : 'marketing_excel_rows';
+    $beforeCount = $sheetName === 'Nama_Stock'
+        ? DB::table('stock_names')->count()
+        : DB::table('marketing_excel_rows')->where('sheet_name', $sheetName)->count();
 
     DB::transaction(function () use ($sheetName, $rows, $now): void {
         if ($sheetName === 'Nama_Stock') {
@@ -703,6 +743,14 @@ Route::put('/api/raw-sheets/{sheetName}', function (string $sheetName) use ($ded
             ]);
         }
     });
+
+    $logCrudActivity($targetTable, 'update', $sheetName, null, [
+        'sheet_name' => $sheetName,
+        'row_count' => $beforeCount,
+    ], [
+        'sheet_name' => $sheetName,
+        'row_count' => count($rows),
+    ]);
 
     return response()->json(['status' => 'success', 'data' => array_values($rows)]);
 });
@@ -794,7 +842,7 @@ Route::get('/api/meta-posts/{dataset}', function (string $dataset) {
     return response()->json(['data' => $rows]);
 });
 
-Route::post('/api/meta-posts/{dataset}/import', function (string $dataset) use ($inspectMetaPostDuplicates, $upsertMetaPosts) {
+Route::post('/api/meta-posts/{dataset}/import', function (string $dataset) use ($inspectMetaPostDuplicates, $logCrudActivity, $upsertMetaPosts) {
     abort_unless(in_array($dataset, ['story', 'feed'], true), 404);
 
     $rawRows = request()->input('rows', request()->input('data', []));
@@ -815,10 +863,19 @@ Route::post('/api/meta-posts/{dataset}/import', function (string $dataset) use (
         ]);
     }
 
-    return response()->json(['status' => 'success', ...$upsertMetaPosts($rows, $dataset)]);
+    $summary = $upsertMetaPosts($rows, $dataset);
+
+    if (($summary['total'] ?? 0) > 0) {
+        $logCrudActivity('meta_ig_posts', 'update', $dataset, null, null, [
+            'dataset' => $dataset,
+            ...$summary,
+        ]);
+    }
+
+    return response()->json(['status' => 'success', ...$summary]);
 });
 
-Route::post('/api/meta-posts/{dataset}/import-folder', function (string $dataset) use ($inspectMetaPostDuplicates, $upsertMetaPosts) {
+Route::post('/api/meta-posts/{dataset}/import-folder', function (string $dataset) use ($inspectMetaPostDuplicates, $logCrudActivity, $upsertMetaPosts) {
     abort_unless(in_array($dataset, ['story', 'feed'], true), 404);
 
     $directory = (string) request()->input('directory', base_path('export-meta'));
@@ -842,6 +899,15 @@ Route::post('/api/meta-posts/{dataset}/import-folder', function (string $dataset
 
     $summary = $upsertMetaPosts($rows, $dataset);
 
+    if (($summary['total'] ?? 0) > 0) {
+        $logCrudActivity('meta_ig_posts', 'update', $dataset, null, null, [
+            'dataset' => $dataset,
+            ...$summary,
+            'files_scanned' => $result['files_scanned'],
+            'files_matched' => $result['files_matched'],
+        ]);
+    }
+
     return response()->json([
         'status' => 'success',
         ...$summary,
@@ -850,20 +916,27 @@ Route::post('/api/meta-posts/{dataset}/import-folder', function (string $dataset
     ]);
 });
 
-Route::delete('/api/meta-posts/{dataset}', function (string $dataset) {
+Route::delete('/api/meta-posts/{dataset}', function (string $dataset) use ($logCrudActivity) {
+    $beforeCount = DB::table('meta_ig_posts')->where('dataset', $dataset)->count();
     DB::table('meta_ig_posts')->where('dataset', $dataset)->delete();
+    $logCrudActivity('meta_ig_posts', 'delete', $dataset, null, [
+        'dataset' => $dataset,
+        'row_count' => $beforeCount,
+    ], null);
 
     return response()->json(['status' => 'success']);
 });
 
-Route::put('/api/settings', function () {
+Route::put('/api/settings', function () use ($logCrudActivity) {
     $payload = request()->all();
     $settings = is_array($payload['data'] ?? null) ? $payload['data'] : $payload;
-    $keys = array_keys($settings);
+    $before = DB::table('marketing_settings')
+        ->orderBy('key')
+        ->get(['key', 'values'])
+        ->mapWithKeys(fn ($row) => [$row->key => json_decode($row->values, true) ?: []])
+        ->all();
 
-    DB::transaction(function () use ($settings, $keys) {
-        DB::table('marketing_settings')->whereNotIn('key', $keys)->delete();
-
+    DB::transaction(function () use ($settings) {
         foreach ($settings as $key => $values) {
             $normalizedValues = is_array($values)
                 ? (array_is_list($values) ? array_values($values) : $values)
@@ -879,6 +952,8 @@ Route::put('/api/settings', function () {
             );
         }
     });
+
+    $logCrudActivity('marketing_settings', 'update', 'settings', null, $before, $settings);
 
     return response()->json(['status' => 'success', 'data' => $settings]);
 });
@@ -1031,27 +1106,34 @@ $genericList = fn (string $table, callable $map, string $orderBy = 'created_at',
     return response()->json(['data' => DB::table($table)->orderBy($orderBy, $dir)->get()->map($map)]);
 };
 
-$genericUpsert = fn (string $table, callable $build) => function () use ($table, $build, $nullableDate) {
+$genericUpsert = fn (string $table, callable $build) => function () use ($build, $logCrudActivity, $table) {
     $payload = request()->all();
     $row = $build($payload);
     $row['created_at'] = now();
     DB::table($table)->insert($row);
     $stored = DB::table($table)->where('source_id', $row['source_id'])->first();
+    $logCrudActivity($table, 'create', (string) $stored->source_id, is_numeric($stored->id ?? null) ? (int) $stored->id : null, null, (array) $stored);
 
     return response()->json(['status' => 'success', 'data' => $stored], 201);
 };
 
-$genericUpdate = fn (string $table, callable $build) => function (string $sourceId) use ($table, $build, $nullableDate) {
+$genericUpdate = fn (string $table, callable $build) => function (string $sourceId) use ($build, $logCrudActivity, $table) {
     abort_unless(DB::table($table)->where('source_id', $sourceId)->exists(), 404);
+    $before = DB::table($table)->where('source_id', $sourceId)->first();
     DB::table($table)->where('source_id', $sourceId)->update($build(request()->all(), $sourceId));
     $stored = DB::table($table)->where('source_id', $sourceId)->first();
+    $logCrudActivity($table, 'update', (string) $stored->source_id, is_numeric($stored->id ?? null) ? (int) $stored->id : null, $before ? (array) $before : null, (array) $stored);
 
     return response()->json(['status' => 'success', 'data' => $stored]);
 };
 
-$genericDelete = fn (string $table) => function (string $sourceId) use ($table) {
+$genericDelete = fn (string $table) => function (string $sourceId) use ($logCrudActivity, $table) {
     abort_unless(DB::table($table)->where('source_id', $sourceId)->exists(), 404);
+    $stored = DB::table($table)->where('source_id', $sourceId)->first();
     DB::table($table)->where('source_id', $sourceId)->delete();
+    if ($stored !== null) {
+        $logCrudActivity($table, 'delete', (string) $stored->source_id, is_numeric($stored->id ?? null) ? (int) $stored->id : null, (array) $stored, null);
+    }
 
     return response()->json(['status' => 'success']);
 };
@@ -1079,23 +1161,13 @@ Route::get('/api/unboxing', function () use ($fromDb) {
         'Link'        => $r->link,
     ]))]);
 });
-Route::post('/api/unboxing', function () use ($makeSourceId, $encodePayload, $nullableDate) {
-    $p = request()->all();
-    $row = ['source_id' => $makeSourceId('UBX', $p['ID'] ?? null), 'nama' => $p['Nama'] ?? null, 'editor' => $p['Editor'] ?? null, 'status' => $p['Status'] ?? null, 'upload_date' => $nullableDate($p['Upload_Date'] ?? null), 'link' => $p['Link'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'created_at' => now(), 'updated_at' => now()];
-    DB::table('unboxing')->insert($row);
-    return response()->json(['status' => 'success', 'data' => DB::table('unboxing')->where('source_id', $row['source_id'])->first()], 201);
-});
-Route::put('/api/unboxing/{sourceId}', function (string $sourceId) use ($encodePayload, $nullableDate) {
-    abort_unless(DB::table('unboxing')->where('source_id', $sourceId)->exists(), 404);
-    $p = request()->all();
-    DB::table('unboxing')->where('source_id', $sourceId)->update(['nama' => $p['Nama'] ?? null, 'editor' => $p['Editor'] ?? null, 'status' => $p['Status'] ?? null, 'upload_date' => $nullableDate($p['Upload_Date'] ?? null), 'link' => $p['Link'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()]);
-    return response()->json(['status' => 'success', 'data' => DB::table('unboxing')->where('source_id', $sourceId)->first()]);
-});
-Route::delete('/api/unboxing/{sourceId}', function (string $sourceId) {
-    abort_unless(DB::table('unboxing')->where('source_id', $sourceId)->exists(), 404);
-    DB::table('unboxing')->where('source_id', $sourceId)->delete();
-    return response()->json(['status' => 'success']);
-});
+Route::post('/api/unboxing', $genericUpsert('unboxing', function (array $p) use ($encodePayload, $makeSourceId, $nullableDate) {
+    return ['source_id' => $makeSourceId('UBX', $p['ID'] ?? null), 'nama' => $p['Nama'] ?? null, 'editor' => $p['Editor'] ?? null, 'status' => $p['Status'] ?? null, 'upload_date' => $nullableDate($p['Upload_Date'] ?? null), 'link' => $p['Link'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'updated_at' => now()];
+}));
+Route::put('/api/unboxing/{sourceId}', $genericUpdate('unboxing', function (array $p) use ($encodePayload, $nullableDate) {
+    return ['nama' => $p['Nama'] ?? null, 'editor' => $p['Editor'] ?? null, 'status' => $p['Status'] ?? null, 'upload_date' => $nullableDate($p['Upload_Date'] ?? null), 'link' => $p['Link'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()];
+}));
+Route::delete('/api/unboxing/{sourceId}', $genericDelete('unboxing'));
 
 Route::get('/api/story-schedules', function () use ($fromDb) {
     return response()->json(['data' => DB::table('story_schedules')->orderBy('tanggal')->get()->map(fn ($r) => $fromDb($r, [
@@ -1108,23 +1180,13 @@ Route::get('/api/story-schedules', function () use ($fromDb) {
         'Status'  => $r->status,
     ]))]);
 });
-Route::post('/api/story-schedules', function () use ($makeSourceId, $encodePayload, $nullableDate) {
-    $p = request()->all();
-    $row = ['source_id' => $makeSourceId('STR', $p['ID'] ?? null), 'tanggal' => $nullableDate($p['Tanggal'] ?? null), 'jam' => $p['Jam'] ?? null, 'story' => $p['Story'] ?? null, 'catatan' => $p['Catatan'] ?? null, 'link' => $p['Link'] ?? null, 'is_genap' => $p['is_genap'] ?? null, 'status' => $p['Status'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'created_at' => now(), 'updated_at' => now()];
-    DB::table('story_schedules')->insert($row);
-    return response()->json(['status' => 'success', 'data' => DB::table('story_schedules')->where('source_id', $row['source_id'])->first()], 201);
-});
-Route::put('/api/story-schedules/{sourceId}', function (string $sourceId) use ($encodePayload, $nullableDate) {
-    abort_unless(DB::table('story_schedules')->where('source_id', $sourceId)->exists(), 404);
-    $p = request()->all();
-    DB::table('story_schedules')->where('source_id', $sourceId)->update(['tanggal' => $nullableDate($p['Tanggal'] ?? null), 'jam' => $p['Jam'] ?? null, 'story' => $p['Story'] ?? null, 'catatan' => $p['Catatan'] ?? null, 'link' => $p['Link'] ?? null, 'is_genap' => $p['is_genap'] ?? null, 'status' => $p['Status'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()]);
-    return response()->json(['status' => 'success', 'data' => DB::table('story_schedules')->where('source_id', $sourceId)->first()]);
-});
-Route::delete('/api/story-schedules/{sourceId}', function (string $sourceId) {
-    abort_unless(DB::table('story_schedules')->where('source_id', $sourceId)->exists(), 404);
-    DB::table('story_schedules')->where('source_id', $sourceId)->delete();
-    return response()->json(['status' => 'success']);
-});
+Route::post('/api/story-schedules', $genericUpsert('story_schedules', function (array $p) use ($encodePayload, $makeSourceId, $nullableDate) {
+    return ['source_id' => $makeSourceId('STR', $p['ID'] ?? null), 'tanggal' => $nullableDate($p['Tanggal'] ?? null), 'jam' => $p['Jam'] ?? null, 'story' => $p['Story'] ?? null, 'catatan' => $p['Catatan'] ?? null, 'link' => $p['Link'] ?? null, 'is_genap' => $p['is_genap'] ?? null, 'status' => $p['Status'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'updated_at' => now()];
+}));
+Route::put('/api/story-schedules/{sourceId}', $genericUpdate('story_schedules', function (array $p) use ($encodePayload, $nullableDate) {
+    return ['tanggal' => $nullableDate($p['Tanggal'] ?? null), 'jam' => $p['Jam'] ?? null, 'story' => $p['Story'] ?? null, 'catatan' => $p['Catatan'] ?? null, 'link' => $p['Link'] ?? null, 'is_genap' => $p['is_genap'] ?? null, 'status' => $p['Status'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()];
+}));
+Route::delete('/api/story-schedules/{sourceId}', $genericDelete('story_schedules'));
 
 Route::get('/api/calendar-events', function () use ($fromDb) {
     return response()->json(['data' => DB::table('calendar_events')->orderBy('tanggal')->get()->map(fn ($r) => $fromDb($r, [
@@ -1133,23 +1195,13 @@ Route::get('/api/calendar-events', function () use ($fromDb) {
         'Warna'      => $r->warna,
     ]))]);
 });
-Route::post('/api/calendar-events', function () use ($makeSourceId, $encodePayload, $nullableDate) {
-    $p = request()->all();
-    $row = ['source_id' => $makeSourceId('CAL', $p['ID'] ?? null), 'nama_event' => $p['Nama_Event'] ?? null, 'tanggal' => $nullableDate($p['Tanggal'] ?? null), 'warna' => $p['Warna'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'created_at' => now(), 'updated_at' => now()];
-    DB::table('calendar_events')->insert($row);
-    return response()->json(['status' => 'success', 'data' => DB::table('calendar_events')->where('source_id', $row['source_id'])->first()], 201);
-});
-Route::put('/api/calendar-events/{sourceId}', function (string $sourceId) use ($encodePayload, $nullableDate) {
-    abort_unless(DB::table('calendar_events')->where('source_id', $sourceId)->exists(), 404);
-    $p = request()->all();
-    DB::table('calendar_events')->where('source_id', $sourceId)->update(['nama_event' => $p['Nama_Event'] ?? null, 'tanggal' => $nullableDate($p['Tanggal'] ?? null), 'warna' => $p['Warna'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()]);
-    return response()->json(['status' => 'success', 'data' => DB::table('calendar_events')->where('source_id', $sourceId)->first()]);
-});
-Route::delete('/api/calendar-events/{sourceId}', function (string $sourceId) {
-    abort_unless(DB::table('calendar_events')->where('source_id', $sourceId)->exists(), 404);
-    DB::table('calendar_events')->where('source_id', $sourceId)->delete();
-    return response()->json(['status' => 'success']);
-});
+Route::post('/api/calendar-events', $genericUpsert('calendar_events', function (array $p) use ($encodePayload, $makeSourceId, $nullableDate) {
+    return ['source_id' => $makeSourceId('CAL', $p['ID'] ?? null), 'nama_event' => $p['Nama_Event'] ?? null, 'tanggal' => $nullableDate($p['Tanggal'] ?? null), 'warna' => $p['Warna'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'updated_at' => now()];
+}));
+Route::put('/api/calendar-events/{sourceId}', $genericUpdate('calendar_events', function (array $p) use ($encodePayload, $nullableDate) {
+    return ['nama_event' => $p['Nama_Event'] ?? null, 'tanggal' => $nullableDate($p['Tanggal'] ?? null), 'warna' => $p['Warna'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()];
+}));
+Route::delete('/api/calendar-events/{sourceId}', $genericDelete('calendar_events'));
 
 Route::get('/api/ideation', function () use ($fromDb) {
     return response()->json(['data' => DB::table('ideation')->orderByDesc('created_at')->get()->map(fn ($r) => $fromDb($r, [
@@ -1160,23 +1212,13 @@ Route::get('/api/ideation', function () use ($fromDb) {
         'Status'    => $r->status,
     ]))]);
 });
-Route::post('/api/ideation', function () use ($makeSourceId, $encodePayload) {
-    $p = request()->all();
-    $row = ['source_id' => $makeSourceId('IDE', $p['ID'] ?? null), 'judul' => $p['Judul'] ?? null, 'kategori' => $p['Kategori'] ?? null, 'platform' => $p['Platform'] ?? null, 'deskripsi' => $p['Deskripsi'] ?? null, 'status' => $p['Status'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'created_at' => now(), 'updated_at' => now()];
-    DB::table('ideation')->insert($row);
-    return response()->json(['status' => 'success', 'data' => DB::table('ideation')->where('source_id', $row['source_id'])->first()], 201);
-});
-Route::put('/api/ideation/{sourceId}', function (string $sourceId) use ($encodePayload) {
-    abort_unless(DB::table('ideation')->where('source_id', $sourceId)->exists(), 404);
-    $p = request()->all();
-    DB::table('ideation')->where('source_id', $sourceId)->update(['judul' => $p['Judul'] ?? null, 'kategori' => $p['Kategori'] ?? null, 'platform' => $p['Platform'] ?? null, 'deskripsi' => $p['Deskripsi'] ?? null, 'status' => $p['Status'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()]);
-    return response()->json(['status' => 'success', 'data' => DB::table('ideation')->where('source_id', $sourceId)->first()]);
-});
-Route::delete('/api/ideation/{sourceId}', function (string $sourceId) {
-    abort_unless(DB::table('ideation')->where('source_id', $sourceId)->exists(), 404);
-    DB::table('ideation')->where('source_id', $sourceId)->delete();
-    return response()->json(['status' => 'success']);
-});
+Route::post('/api/ideation', $genericUpsert('ideation', function (array $p) use ($encodePayload, $makeSourceId) {
+    return ['source_id' => $makeSourceId('IDE', $p['ID'] ?? null), 'judul' => $p['Judul'] ?? null, 'kategori' => $p['Kategori'] ?? null, 'platform' => $p['Platform'] ?? null, 'deskripsi' => $p['Deskripsi'] ?? null, 'status' => $p['Status'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'updated_at' => now()];
+}));
+Route::put('/api/ideation/{sourceId}', $genericUpdate('ideation', function (array $p) use ($encodePayload) {
+    return ['judul' => $p['Judul'] ?? null, 'kategori' => $p['Kategori'] ?? null, 'platform' => $p['Platform'] ?? null, 'deskripsi' => $p['Deskripsi'] ?? null, 'status' => $p['Status'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()];
+}));
+Route::delete('/api/ideation/{sourceId}', $genericDelete('ideation'));
 
 // Marketing tables
 
@@ -1191,23 +1233,13 @@ Route::get('/api/program-promo', function () use ($fromDb) {
         'Benefit'  => $r->benefit,
     ]))]);
 });
-Route::post('/api/program-promo', function () use ($makeSourceId, $encodePayload) {
-    $p = request()->all();
-    $row = ['source_id' => $makeSourceId('PRO', $p['ID'] ?? null), 'kategori' => $p['Kategori'] ?? null, 'program' => $p['Program'] ?? null, 'warna' => $p['Warna'] ?? null, 'harga' => (int) ($p['Harga'] ?? 0), 'periode' => $p['Periode'] ?? null, 'rules' => $p['Rules'] ?? null, 'benefit' => $p['Benefit'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'created_at' => now(), 'updated_at' => now()];
-    DB::table('program_promo')->insert($row);
-    return response()->json(['status' => 'success', 'data' => DB::table('program_promo')->where('source_id', $row['source_id'])->first()], 201);
-});
-Route::put('/api/program-promo/{sourceId}', function (string $sourceId) use ($encodePayload) {
-    abort_unless(DB::table('program_promo')->where('source_id', $sourceId)->exists(), 404);
-    $p = request()->all();
-    DB::table('program_promo')->where('source_id', $sourceId)->update(['kategori' => $p['Kategori'] ?? null, 'program' => $p['Program'] ?? null, 'warna' => $p['Warna'] ?? null, 'harga' => (int) ($p['Harga'] ?? 0), 'periode' => $p['Periode'] ?? null, 'rules' => $p['Rules'] ?? null, 'benefit' => $p['Benefit'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()]);
-    return response()->json(['status' => 'success', 'data' => DB::table('program_promo')->where('source_id', $sourceId)->first()]);
-});
-Route::delete('/api/program-promo/{sourceId}', function (string $sourceId) {
-    abort_unless(DB::table('program_promo')->where('source_id', $sourceId)->exists(), 404);
-    DB::table('program_promo')->where('source_id', $sourceId)->delete();
-    return response()->json(['status' => 'success']);
-});
+Route::post('/api/program-promo', $genericUpsert('program_promo', function (array $p) use ($encodePayload, $makeSourceId) {
+    return ['source_id' => $makeSourceId('PRO', $p['ID'] ?? null), 'kategori' => $p['Kategori'] ?? null, 'program' => $p['Program'] ?? null, 'warna' => $p['Warna'] ?? null, 'harga' => (int) ($p['Harga'] ?? 0), 'periode' => $p['Periode'] ?? null, 'rules' => $p['Rules'] ?? null, 'benefit' => $p['Benefit'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'updated_at' => now()];
+}));
+Route::put('/api/program-promo/{sourceId}', $genericUpdate('program_promo', function (array $p) use ($encodePayload) {
+    return ['kategori' => $p['Kategori'] ?? null, 'program' => $p['Program'] ?? null, 'warna' => $p['Warna'] ?? null, 'harga' => (int) ($p['Harga'] ?? 0), 'periode' => $p['Periode'] ?? null, 'rules' => $p['Rules'] ?? null, 'benefit' => $p['Benefit'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()];
+}));
+Route::delete('/api/program-promo/{sourceId}', $genericDelete('program_promo'));
 
 Route::get('/api/sell-out-targets', function () use ($fromDb) {
     return response()->json(['data' => DB::table('sell_out_targets')->orderByDesc('periode_start')->get()->map(fn ($r) => $fromDb($r, [
@@ -1224,23 +1256,13 @@ Route::get('/api/sell-out-targets', function () use ($fromDb) {
         'Catatan'         => $r->catatan,
     ]))]);
 });
-Route::post('/api/sell-out-targets', function () use ($makeSourceId, $encodePayload, $nullableDate) {
-    $p = request()->all();
-    $row = ['source_id' => $makeSourceId('SOT', $p['ID'] ?? null), 'vendor' => $p['Vendor'] ?? null, 'kategori' => $p['Kategori'] ?? null, 'brand' => $p['Brand'] ?? null, 'seri' => $p['Seri'] ?? null, 'nama_produk' => $p['Nama_Produk'] ?? null, 'target_unit' => (int) ($p['Target_Unit'] ?? 0), 'bonus_nominal' => (int) ($p['Bonus_Nominal'] ?? 0), 'realisasi_unit' => (int) ($p['Realisasi_Unit'] ?? 0), 'periode_start' => $nullableDate($p['Periode_Start'] ?? null), 'periode_end' => $nullableDate($p['Periode_End'] ?? null), 'catatan' => $p['Catatan'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'created_at' => now(), 'updated_at' => now()];
-    DB::table('sell_out_targets')->insert($row);
-    return response()->json(['status' => 'success', 'data' => DB::table('sell_out_targets')->where('source_id', $row['source_id'])->first()], 201);
-});
-Route::put('/api/sell-out-targets/{sourceId}', function (string $sourceId) use ($encodePayload, $nullableDate) {
-    abort_unless(DB::table('sell_out_targets')->where('source_id', $sourceId)->exists(), 404);
-    $p = request()->all();
-    DB::table('sell_out_targets')->where('source_id', $sourceId)->update(['vendor' => $p['Vendor'] ?? null, 'kategori' => $p['Kategori'] ?? null, 'brand' => $p['Brand'] ?? null, 'seri' => $p['Seri'] ?? null, 'nama_produk' => $p['Nama_Produk'] ?? null, 'target_unit' => (int) ($p['Target_Unit'] ?? 0), 'bonus_nominal' => (int) ($p['Bonus_Nominal'] ?? 0), 'realisasi_unit' => (int) ($p['Realisasi_Unit'] ?? 0), 'periode_start' => $nullableDate($p['Periode_Start'] ?? null), 'periode_end' => $nullableDate($p['Periode_End'] ?? null), 'catatan' => $p['Catatan'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()]);
-    return response()->json(['status' => 'success', 'data' => DB::table('sell_out_targets')->where('source_id', $sourceId)->first()]);
-});
-Route::delete('/api/sell-out-targets/{sourceId}', function (string $sourceId) {
-    abort_unless(DB::table('sell_out_targets')->where('source_id', $sourceId)->exists(), 404);
-    DB::table('sell_out_targets')->where('source_id', $sourceId)->delete();
-    return response()->json(['status' => 'success']);
-});
+Route::post('/api/sell-out-targets', $genericUpsert('sell_out_targets', function (array $p) use ($encodePayload, $makeSourceId, $nullableDate) {
+    return ['source_id' => $makeSourceId('SOT', $p['ID'] ?? null), 'vendor' => $p['Vendor'] ?? null, 'kategori' => $p['Kategori'] ?? null, 'brand' => $p['Brand'] ?? null, 'seri' => $p['Seri'] ?? null, 'nama_produk' => $p['Nama_Produk'] ?? null, 'target_unit' => (int) ($p['Target_Unit'] ?? 0), 'bonus_nominal' => (int) ($p['Bonus_Nominal'] ?? 0), 'realisasi_unit' => (int) ($p['Realisasi_Unit'] ?? 0), 'periode_start' => $nullableDate($p['Periode_Start'] ?? null), 'periode_end' => $nullableDate($p['Periode_End'] ?? null), 'catatan' => $p['Catatan'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'updated_at' => now()];
+}));
+Route::put('/api/sell-out-targets/{sourceId}', $genericUpdate('sell_out_targets', function (array $p) use ($encodePayload, $nullableDate) {
+    return ['vendor' => $p['Vendor'] ?? null, 'kategori' => $p['Kategori'] ?? null, 'brand' => $p['Brand'] ?? null, 'seri' => $p['Seri'] ?? null, 'nama_produk' => $p['Nama_Produk'] ?? null, 'target_unit' => (int) ($p['Target_Unit'] ?? 0), 'bonus_nominal' => (int) ($p['Bonus_Nominal'] ?? 0), 'realisasi_unit' => (int) ($p['Realisasi_Unit'] ?? 0), 'periode_start' => $nullableDate($p['Periode_Start'] ?? null), 'periode_end' => $nullableDate($p['Periode_End'] ?? null), 'catatan' => $p['Catatan'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()];
+}));
+Route::delete('/api/sell-out-targets/{sourceId}', $genericDelete('sell_out_targets'));
 
 Route::get('/api/ads-performance', function () use ($fromDb) {
     return response()->json(['data' => DB::table('ads_performance')->orderByDesc('tanggal')->get()->map(fn ($r) => $fromDb($r, [
@@ -1257,23 +1279,13 @@ Route::get('/api/ads-performance', function () use ($fromDb) {
         'Share'     => $r->share,
     ]))]);
 });
-Route::post('/api/ads-performance', function () use ($makeSourceId, $encodePayload, $nullableDate) {
-    $p = request()->all();
-    $row = ['source_id' => $makeSourceId('ADS', $p['ID'] ?? null), 'nama' => $p['Nama'] ?? null, 'id_ads' => $p['ID_Ads'] ?? null, 'tanggal' => $nullableDate($p['Tanggal'] ?? null), 'biaya' => (int) ($p['Biaya'] ?? 0), 'sisa_saldo' => isset($p['Sisa_Saldo']) ? (int) $p['Sisa_Saldo'] : null, 'kategori' => $p['Kategori'] ?? null, 'platform' => $p['Platform'] ?? null, 'jangkauan' => (int) ($p['Jangkauan'] ?? 0), 'suka' => (int) ($p['Suka'] ?? 0), 'komentar' => (int) ($p['Komentar'] ?? 0), 'share' => (int) ($p['Share'] ?? 0), 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'created_at' => now(), 'updated_at' => now()];
-    DB::table('ads_performance')->insert($row);
-    return response()->json(['status' => 'success', 'data' => DB::table('ads_performance')->where('source_id', $row['source_id'])->first()], 201);
-});
-Route::put('/api/ads-performance/{sourceId}', function (string $sourceId) use ($encodePayload, $nullableDate) {
-    abort_unless(DB::table('ads_performance')->where('source_id', $sourceId)->exists(), 404);
-    $p = request()->all();
-    DB::table('ads_performance')->where('source_id', $sourceId)->update(['nama' => $p['Nama'] ?? null, 'id_ads' => $p['ID_Ads'] ?? null, 'tanggal' => $nullableDate($p['Tanggal'] ?? null), 'biaya' => (int) ($p['Biaya'] ?? 0), 'sisa_saldo' => isset($p['Sisa_Saldo']) ? (int) $p['Sisa_Saldo'] : null, 'kategori' => $p['Kategori'] ?? null, 'platform' => $p['Platform'] ?? null, 'jangkauan' => (int) ($p['Jangkauan'] ?? 0), 'suka' => (int) ($p['Suka'] ?? 0), 'komentar' => (int) ($p['Komentar'] ?? 0), 'share' => (int) ($p['Share'] ?? 0), 'raw_payload' => $encodePayload($p), 'updated_at' => now()]);
-    return response()->json(['status' => 'success', 'data' => DB::table('ads_performance')->where('source_id', $sourceId)->first()]);
-});
-Route::delete('/api/ads-performance/{sourceId}', function (string $sourceId) {
-    abort_unless(DB::table('ads_performance')->where('source_id', $sourceId)->exists(), 404);
-    DB::table('ads_performance')->where('source_id', $sourceId)->delete();
-    return response()->json(['status' => 'success']);
-});
+Route::post('/api/ads-performance', $genericUpsert('ads_performance', function (array $p) use ($encodePayload, $makeSourceId, $nullableDate) {
+    return ['source_id' => $makeSourceId('ADS', $p['ID'] ?? null), 'nama' => $p['Nama'] ?? null, 'id_ads' => $p['ID_Ads'] ?? null, 'tanggal' => $nullableDate($p['Tanggal'] ?? null), 'biaya' => (int) ($p['Biaya'] ?? 0), 'sisa_saldo' => isset($p['Sisa_Saldo']) ? (int) $p['Sisa_Saldo'] : null, 'kategori' => $p['Kategori'] ?? null, 'platform' => $p['Platform'] ?? null, 'jangkauan' => (int) ($p['Jangkauan'] ?? 0), 'suka' => (int) ($p['Suka'] ?? 0), 'komentar' => (int) ($p['Komentar'] ?? 0), 'share' => (int) ($p['Share'] ?? 0), 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'updated_at' => now()];
+}));
+Route::put('/api/ads-performance/{sourceId}', $genericUpdate('ads_performance', function (array $p) use ($encodePayload, $nullableDate) {
+    return ['nama' => $p['Nama'] ?? null, 'id_ads' => $p['ID_Ads'] ?? null, 'tanggal' => $nullableDate($p['Tanggal'] ?? null), 'biaya' => (int) ($p['Biaya'] ?? 0), 'sisa_saldo' => isset($p['Sisa_Saldo']) ? (int) $p['Sisa_Saldo'] : null, 'kategori' => $p['Kategori'] ?? null, 'platform' => $p['Platform'] ?? null, 'jangkauan' => (int) ($p['Jangkauan'] ?? 0), 'suka' => (int) ($p['Suka'] ?? 0), 'komentar' => (int) ($p['Komentar'] ?? 0), 'share' => (int) ($p['Share'] ?? 0), 'raw_payload' => $encodePayload($p), 'updated_at' => now()];
+}));
+Route::delete('/api/ads-performance/{sourceId}', $genericDelete('ads_performance'));
 
 Route::get('/api/harga-kompetitor', function () use ($fromDb) {
     return response()->json(['data' => DB::table('harga_kompetitor')->orderByDesc('tanggal_cek')->get()->map(fn ($r) => $fromDb($r, [
@@ -1287,23 +1299,13 @@ Route::get('/api/harga-kompetitor', function () use ($fromDb) {
         'Catatan'            => $r->catatan,
     ]))]);
 });
-Route::post('/api/harga-kompetitor', function () use ($makeSourceId, $encodePayload, $nullableDate) {
-    $p = request()->all();
-    $row = ['source_id' => $makeSourceId('HK', $p['ID'] ?? null), 'nama_produk' => $p['Nama_Produk'] ?? null, 'harga_distributor_1' => (int) ($p['Harga_Distributor_1'] ?? 0), 'harga_distributor_2' => (int) ($p['Harga_Distributor_2'] ?? 0), 'harga_kompetitor' => (int) ($p['Harga_Kompetitor'] ?? 0), 'margin_profit' => (int) ($p['Margin_Profit'] ?? 0), 'harga_rencana_jual' => (int) ($p['Harga_Rencana_Jual'] ?? 0), 'tanggal_cek' => $nullableDate($p['Tanggal_Cek'] ?? null), 'catatan' => $p['Catatan'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'created_at' => now(), 'updated_at' => now()];
-    DB::table('harga_kompetitor')->insert($row);
-    return response()->json(['status' => 'success', 'data' => DB::table('harga_kompetitor')->where('source_id', $row['source_id'])->first()], 201);
-});
-Route::put('/api/harga-kompetitor/{sourceId}', function (string $sourceId) use ($encodePayload, $nullableDate) {
-    abort_unless(DB::table('harga_kompetitor')->where('source_id', $sourceId)->exists(), 404);
-    $p = request()->all();
-    DB::table('harga_kompetitor')->where('source_id', $sourceId)->update(['nama_produk' => $p['Nama_Produk'] ?? null, 'harga_distributor_1' => (int) ($p['Harga_Distributor_1'] ?? 0), 'harga_distributor_2' => (int) ($p['Harga_Distributor_2'] ?? 0), 'harga_kompetitor' => (int) ($p['Harga_Kompetitor'] ?? 0), 'margin_profit' => (int) ($p['Margin_Profit'] ?? 0), 'harga_rencana_jual' => (int) ($p['Harga_Rencana_Jual'] ?? 0), 'tanggal_cek' => $nullableDate($p['Tanggal_Cek'] ?? null), 'catatan' => $p['Catatan'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()]);
-    return response()->json(['status' => 'success', 'data' => DB::table('harga_kompetitor')->where('source_id', $sourceId)->first()]);
-});
-Route::delete('/api/harga-kompetitor/{sourceId}', function (string $sourceId) {
-    abort_unless(DB::table('harga_kompetitor')->where('source_id', $sourceId)->exists(), 404);
-    DB::table('harga_kompetitor')->where('source_id', $sourceId)->delete();
-    return response()->json(['status' => 'success']);
-});
+Route::post('/api/harga-kompetitor', $genericUpsert('harga_kompetitor', function (array $p) use ($encodePayload, $makeSourceId, $nullableDate) {
+    return ['source_id' => $makeSourceId('HK', $p['ID'] ?? null), 'nama_produk' => $p['Nama_Produk'] ?? null, 'harga_distributor_1' => (int) ($p['Harga_Distributor_1'] ?? 0), 'harga_distributor_2' => (int) ($p['Harga_Distributor_2'] ?? 0), 'harga_kompetitor' => (int) ($p['Harga_Kompetitor'] ?? 0), 'margin_profit' => (int) ($p['Margin_Profit'] ?? 0), 'harga_rencana_jual' => (int) ($p['Harga_Rencana_Jual'] ?? 0), 'tanggal_cek' => $nullableDate($p['Tanggal_Cek'] ?? null), 'catatan' => $p['Catatan'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'updated_at' => now()];
+}));
+Route::put('/api/harga-kompetitor/{sourceId}', $genericUpdate('harga_kompetitor', function (array $p) use ($encodePayload, $nullableDate) {
+    return ['nama_produk' => $p['Nama_Produk'] ?? null, 'harga_distributor_1' => (int) ($p['Harga_Distributor_1'] ?? 0), 'harga_distributor_2' => (int) ($p['Harga_Distributor_2'] ?? 0), 'harga_kompetitor' => (int) ($p['Harga_Kompetitor'] ?? 0), 'margin_profit' => (int) ($p['Margin_Profit'] ?? 0), 'harga_rencana_jual' => (int) ($p['Harga_Rencana_Jual'] ?? 0), 'tanggal_cek' => $nullableDate($p['Tanggal_Cek'] ?? null), 'catatan' => $p['Catatan'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()];
+}));
+Route::delete('/api/harga-kompetitor/{sourceId}', $genericDelete('harga_kompetitor'));
 
 // Customer service tables
 
@@ -1329,23 +1331,13 @@ Route::get('/api/orderan-online', function () use ($fromDb) {
         ]);
     })]);
 });
-Route::post('/api/orderan-online', function () use ($makeSourceId, $encodePayload, $nullableDate) {
-    $p = request()->all();
-    $row = ['source_id' => $makeSourceId('OO', $p['ID'] ?? null), 'tanggal' => $nullableDate($p['TANGGAL'] ?? $p['Tanggal'] ?? null), 'ecommerce' => $p['ECOMMERCE'] ?? $p['Ecommerce'] ?? null, 'handle' => $p['HANDLE'] ?? $p['Handle'] ?? null, 'nama' => $p['NAMA'] ?? $p['Nama'] ?? null, 'type_unit' => $p['TYPE UNIT'] ?? $p['Type_Unit'] ?? null, 'harga_online' => (int) ($p['HARGA ONLINE'] ?? $p['Harga_Online'] ?? 0), 'nominal_cair' => isset($p['NOMINAL CAIR']) ? (int) $p['NOMINAL CAIR'] : null, 'status' => $p['STATUS'] ?? $p['Status'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'created_at' => now(), 'updated_at' => now()];
-    DB::table('orderan_online')->insert($row);
-    return response()->json(['status' => 'success', 'data' => DB::table('orderan_online')->where('source_id', $row['source_id'])->first()], 201);
-});
-Route::put('/api/orderan-online/{sourceId}', function (string $sourceId) use ($encodePayload, $nullableDate) {
-    abort_unless(DB::table('orderan_online')->where('source_id', $sourceId)->exists(), 404);
-    $p = request()->all();
-    DB::table('orderan_online')->where('source_id', $sourceId)->update(['tanggal' => $nullableDate($p['TANGGAL'] ?? $p['Tanggal'] ?? null), 'ecommerce' => $p['ECOMMERCE'] ?? $p['Ecommerce'] ?? null, 'handle' => $p['HANDLE'] ?? $p['Handle'] ?? null, 'nama' => $p['NAMA'] ?? $p['Nama'] ?? null, 'type_unit' => $p['TYPE UNIT'] ?? $p['Type_Unit'] ?? null, 'harga_online' => (int) ($p['HARGA ONLINE'] ?? $p['Harga_Online'] ?? 0), 'nominal_cair' => isset($p['NOMINAL CAIR']) ? (int) $p['NOMINAL CAIR'] : null, 'status' => $p['STATUS'] ?? $p['Status'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()]);
-    return response()->json(['status' => 'success', 'data' => DB::table('orderan_online')->where('source_id', $sourceId)->first()]);
-});
-Route::delete('/api/orderan-online/{sourceId}', function (string $sourceId) {
-    abort_unless(DB::table('orderan_online')->where('source_id', $sourceId)->exists(), 404);
-    DB::table('orderan_online')->where('source_id', $sourceId)->delete();
-    return response()->json(['status' => 'success']);
-});
+Route::post('/api/orderan-online', $genericUpsert('orderan_online', function (array $p) use ($encodePayload, $makeSourceId, $nullableDate) {
+    return ['source_id' => $makeSourceId('OO', $p['ID'] ?? null), 'tanggal' => $nullableDate($p['TANGGAL'] ?? $p['Tanggal'] ?? null), 'ecommerce' => $p['ECOMMERCE'] ?? $p['Ecommerce'] ?? null, 'handle' => $p['HANDLE'] ?? $p['Handle'] ?? null, 'nama' => $p['NAMA'] ?? $p['Nama'] ?? null, 'type_unit' => $p['TYPE UNIT'] ?? $p['Type_Unit'] ?? null, 'harga_online' => (int) ($p['HARGA ONLINE'] ?? $p['Harga_Online'] ?? 0), 'nominal_cair' => isset($p['NOMINAL CAIR']) ? (int) $p['NOMINAL CAIR'] : null, 'status' => $p['STATUS'] ?? $p['Status'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'updated_at' => now()];
+}));
+Route::put('/api/orderan-online/{sourceId}', $genericUpdate('orderan_online', function (array $p) use ($encodePayload, $nullableDate) {
+    return ['tanggal' => $nullableDate($p['TANGGAL'] ?? $p['Tanggal'] ?? null), 'ecommerce' => $p['ECOMMERCE'] ?? $p['Ecommerce'] ?? null, 'handle' => $p['HANDLE'] ?? $p['Handle'] ?? null, 'nama' => $p['NAMA'] ?? $p['Nama'] ?? null, 'type_unit' => $p['TYPE UNIT'] ?? $p['Type_Unit'] ?? null, 'harga_online' => (int) ($p['HARGA ONLINE'] ?? $p['Harga_Online'] ?? 0), 'nominal_cair' => isset($p['NOMINAL CAIR']) ? (int) $p['NOMINAL CAIR'] : null, 'status' => $p['STATUS'] ?? $p['Status'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()];
+}));
+Route::delete('/api/orderan-online/{sourceId}', $genericDelete('orderan_online'));
 
 Route::get('/api/unit-ditanya', function () use ($fromDb) {
     return response()->json(['data' => DB::table('unit_ditanya')->orderByDesc('tanggal')->get()->map(fn ($r) => $fromDb($r, [
@@ -1359,23 +1351,13 @@ Route::get('/api/unit-ditanya', function () use ($fromDb) {
         'AVAILABLE'=> $r->available,
     ]))]);
 });
-Route::post('/api/unit-ditanya', function () use ($makeSourceId, $encodePayload, $nullableDate) {
-    $p = request()->all();
-    $row = ['source_id' => $makeSourceId('UD', $p['ID'] ?? null), 'tanggal' => $nullableDate($p['TANGGAL'] ?? $p['Tanggal'] ?? null), 'kategori' => $p['KATEGORI'] ?? $p['Kategori'] ?? null, 'brand' => $p['BRAND'] ?? $p['Brand'] ?? null, 'seri' => (string) ($p['SERI'] ?? $p['Seri'] ?? ''), 'kondisi' => $p['KONDISI'] ?? $p['Kondisi'] ?? null, 'tipe' => $p['TIPE'] ?? $p['Tipe'] ?? null, 'ditanya' => (int) ($p['DITANYA'] ?? $p['Ditanya'] ?? 0), 'available' => $p['AVAILABLE'] ?? $p['Available'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'created_at' => now(), 'updated_at' => now()];
-    DB::table('unit_ditanya')->insert($row);
-    return response()->json(['status' => 'success', 'data' => DB::table('unit_ditanya')->where('source_id', $row['source_id'])->first()], 201);
-});
-Route::put('/api/unit-ditanya/{sourceId}', function (string $sourceId) use ($encodePayload, $nullableDate) {
-    abort_unless(DB::table('unit_ditanya')->where('source_id', $sourceId)->exists(), 404);
-    $p = request()->all();
-    DB::table('unit_ditanya')->where('source_id', $sourceId)->update(['tanggal' => $nullableDate($p['TANGGAL'] ?? $p['Tanggal'] ?? null), 'kategori' => $p['KATEGORI'] ?? $p['Kategori'] ?? null, 'brand' => $p['BRAND'] ?? $p['Brand'] ?? null, 'seri' => (string) ($p['SERI'] ?? $p['Seri'] ?? ''), 'kondisi' => $p['KONDISI'] ?? $p['Kondisi'] ?? null, 'tipe' => $p['TIPE'] ?? $p['Tipe'] ?? null, 'ditanya' => (int) ($p['DITANYA'] ?? $p['Ditanya'] ?? 0), 'available' => $p['AVAILABLE'] ?? $p['Available'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()]);
-    return response()->json(['status' => 'success', 'data' => DB::table('unit_ditanya')->where('source_id', $sourceId)->first()]);
-});
-Route::delete('/api/unit-ditanya/{sourceId}', function (string $sourceId) {
-    abort_unless(DB::table('unit_ditanya')->where('source_id', $sourceId)->exists(), 404);
-    DB::table('unit_ditanya')->where('source_id', $sourceId)->delete();
-    return response()->json(['status' => 'success']);
-});
+Route::post('/api/unit-ditanya', $genericUpsert('unit_ditanya', function (array $p) use ($encodePayload, $makeSourceId, $nullableDate) {
+    return ['source_id' => $makeSourceId('UD', $p['ID'] ?? null), 'tanggal' => $nullableDate($p['TANGGAL'] ?? $p['Tanggal'] ?? null), 'kategori' => $p['KATEGORI'] ?? $p['Kategori'] ?? null, 'brand' => $p['BRAND'] ?? $p['Brand'] ?? null, 'seri' => (string) ($p['SERI'] ?? $p['Seri'] ?? ''), 'kondisi' => $p['KONDISI'] ?? $p['Kondisi'] ?? null, 'tipe' => $p['TIPE'] ?? $p['Tipe'] ?? null, 'ditanya' => (int) ($p['DITANYA'] ?? $p['Ditanya'] ?? 0), 'available' => $p['AVAILABLE'] ?? $p['Available'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'updated_at' => now()];
+}));
+Route::put('/api/unit-ditanya/{sourceId}', $genericUpdate('unit_ditanya', function (array $p) use ($encodePayload, $nullableDate) {
+    return ['tanggal' => $nullableDate($p['TANGGAL'] ?? $p['Tanggal'] ?? null), 'kategori' => $p['KATEGORI'] ?? $p['Kategori'] ?? null, 'brand' => $p['BRAND'] ?? $p['Brand'] ?? null, 'seri' => (string) ($p['SERI'] ?? $p['Seri'] ?? ''), 'kondisi' => $p['KONDISI'] ?? $p['Kondisi'] ?? null, 'tipe' => $p['TIPE'] ?? $p['Tipe'] ?? null, 'ditanya' => (int) ($p['DITANYA'] ?? $p['Ditanya'] ?? 0), 'available' => $p['AVAILABLE'] ?? $p['Available'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()];
+}));
+Route::delete('/api/unit-ditanya/{sourceId}', $genericDelete('unit_ditanya'));
 
 Route::get('/api/claim-garansi', function () use ($fromDb) {
     return response()->json(['data' => DB::table('claim_garansi')->orderByDesc('tanggal_masuk')->get()->map(fn ($r) => $fromDb($r, [
@@ -1396,23 +1378,13 @@ Route::get('/api/claim-garansi', function () use ($fromDb) {
         'KETERANGAN'       => $r->keterangan,
     ]))]);
 });
-Route::post('/api/claim-garansi', function () use ($makeSourceId, $encodePayload, $nullableDate) {
-    $p = request()->all();
-    $row = ['source_id' => $makeSourceId('CG', $p['ID'] ?? null), 'nama_customer' => $p['NAMA_CUSTOMER'] ?? null, 'no_service' => $p['NO_SERVICE'] ?? null, 'no_transaksi' => $p['NO_TRANSAKSI'] ?? null, 'tanggal_masuk' => $nullableDate($p['TANGGAL_MASUK'] ?? null), 'wa_customer' => (string) ($p['WA_CUSTOMER'] ?? ''), 'tipe' => $p['TIPE'] ?? null, 'seri' => $p['SERI'] ?? null, 'model' => $p['MODEL'] ?? null, 'status' => $p['STATUS'] ?? null, 'lokasi_klaim' => $p['LOKASI_KLAIM'] ?? null, 'tanggal_estimasi' => $nullableDate($p['TANGGAL_ESTIMASI'] ?? null), 'tanggal_diambil' => $nullableDate($p['TANGGAL_DIAMBIL'] ?? null), 'garansi' => $p['GARANSI'] ?? null, 'kerusakan' => $p['KERUSAKAN'] ?? null, 'keterangan' => $p['KETERANGAN'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'created_at' => now(), 'updated_at' => now()];
-    DB::table('claim_garansi')->insert($row);
-    return response()->json(['status' => 'success', 'data' => DB::table('claim_garansi')->where('source_id', $row['source_id'])->first()], 201);
-});
-Route::put('/api/claim-garansi/{sourceId}', function (string $sourceId) use ($encodePayload, $nullableDate) {
-    abort_unless(DB::table('claim_garansi')->where('source_id', $sourceId)->exists(), 404);
-    $p = request()->all();
-    DB::table('claim_garansi')->where('source_id', $sourceId)->update(['nama_customer' => $p['NAMA_CUSTOMER'] ?? null, 'no_service' => $p['NO_SERVICE'] ?? null, 'no_transaksi' => $p['NO_TRANSAKSI'] ?? null, 'tanggal_masuk' => $nullableDate($p['TANGGAL_MASUK'] ?? null), 'wa_customer' => (string) ($p['WA_CUSTOMER'] ?? ''), 'tipe' => $p['TIPE'] ?? null, 'seri' => $p['SERI'] ?? null, 'model' => $p['MODEL'] ?? null, 'status' => $p['STATUS'] ?? null, 'lokasi_klaim' => $p['LOKASI_KLAIM'] ?? null, 'tanggal_estimasi' => $nullableDate($p['TANGGAL_ESTIMASI'] ?? null), 'tanggal_diambil' => $nullableDate($p['TANGGAL_DIAMBIL'] ?? null), 'garansi' => $p['GARANSI'] ?? null, 'kerusakan' => $p['KERUSAKAN'] ?? null, 'keterangan' => $p['KETERANGAN'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()]);
-    return response()->json(['status' => 'success', 'data' => DB::table('claim_garansi')->where('source_id', $sourceId)->first()]);
-});
-Route::delete('/api/claim-garansi/{sourceId}', function (string $sourceId) {
-    abort_unless(DB::table('claim_garansi')->where('source_id', $sourceId)->exists(), 404);
-    DB::table('claim_garansi')->where('source_id', $sourceId)->delete();
-    return response()->json(['status' => 'success']);
-});
+Route::post('/api/claim-garansi', $genericUpsert('claim_garansi', function (array $p) use ($encodePayload, $makeSourceId, $nullableDate) {
+    return ['source_id' => $makeSourceId('CG', $p['ID'] ?? null), 'nama_customer' => $p['NAMA_CUSTOMER'] ?? null, 'no_service' => $p['NO_SERVICE'] ?? null, 'no_transaksi' => $p['NO_TRANSAKSI'] ?? null, 'tanggal_masuk' => $nullableDate($p['TANGGAL_MASUK'] ?? null), 'wa_customer' => (string) ($p['WA_CUSTOMER'] ?? ''), 'tipe' => $p['TIPE'] ?? null, 'seri' => $p['SERI'] ?? null, 'model' => $p['MODEL'] ?? null, 'status' => $p['STATUS'] ?? null, 'lokasi_klaim' => $p['LOKASI_KLAIM'] ?? null, 'tanggal_estimasi' => $nullableDate($p['TANGGAL_ESTIMASI'] ?? null), 'tanggal_diambil' => $nullableDate($p['TANGGAL_DIAMBIL'] ?? null), 'garansi' => $p['GARANSI'] ?? null, 'kerusakan' => $p['KERUSAKAN'] ?? null, 'keterangan' => $p['KETERANGAN'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'updated_at' => now()];
+}));
+Route::put('/api/claim-garansi/{sourceId}', $genericUpdate('claim_garansi', function (array $p) use ($encodePayload, $nullableDate) {
+    return ['nama_customer' => $p['NAMA_CUSTOMER'] ?? null, 'no_service' => $p['NO_SERVICE'] ?? null, 'no_transaksi' => $p['NO_TRANSAKSI'] ?? null, 'tanggal_masuk' => $nullableDate($p['TANGGAL_MASUK'] ?? null), 'wa_customer' => (string) ($p['WA_CUSTOMER'] ?? ''), 'tipe' => $p['TIPE'] ?? null, 'seri' => $p['SERI'] ?? null, 'model' => $p['MODEL'] ?? null, 'status' => $p['STATUS'] ?? null, 'lokasi_klaim' => $p['LOKASI_KLAIM'] ?? null, 'tanggal_estimasi' => $nullableDate($p['TANGGAL_ESTIMASI'] ?? null), 'tanggal_diambil' => $nullableDate($p['TANGGAL_DIAMBIL'] ?? null), 'garansi' => $p['GARANSI'] ?? null, 'kerusakan' => $p['KERUSAKAN'] ?? null, 'keterangan' => $p['KETERANGAN'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()];
+}));
+Route::delete('/api/claim-garansi/{sourceId}', $genericDelete('claim_garansi'));
 
 Route::get('/api/keep-barang', function () use ($fromDb) {
     return response()->json(['data' => DB::table('keep_barang')->orderByDesc('tanggal_keep')->get()->map(fn ($r) => $fromDb($r, [
@@ -1428,23 +1400,13 @@ Route::get('/api/keep-barang', function () use ($fromDb) {
         'TANGGAL_EXPIRED'      => $r->tanggal_expired,
     ]))]);
 });
-Route::post('/api/keep-barang', function () use ($makeSourceId, $encodePayload, $nullableDate) {
-    $p = request()->all();
-    $row = ['source_id' => $makeSourceId('KB', $p['ID'] ?? null), 'tanggal_keep' => $nullableDate($p['TANGGAL_KEEP'] ?? null), 'nama' => $p['NAMA'] ?? null, 'nomor_hp' => (string) ($p['NOMOR_HP'] ?? ''), 'type_hp' => $p['TYPE_HP'] ?? null, 'dp_uang_muka' => (int) ($p['DP_UANG_MUKA'] ?? 0), 'harga_jual' => (int) ($p['HARGA_JUAL'] ?? 0), 'rencana_pengambilan' => $nullableDate($p['RENCANA_PENGAMBILAN'] ?? null), 'handle_by' => $p['HANDLE_BY'] ?? null, 'status' => $p['STATUS'] ?? null, 'tanggal_expired' => $nullableDate($p['TANGGAL_EXPIRED'] ?? null), 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'created_at' => now(), 'updated_at' => now()];
-    DB::table('keep_barang')->insert($row);
-    return response()->json(['status' => 'success', 'data' => DB::table('keep_barang')->where('source_id', $row['source_id'])->first()], 201);
-});
-Route::put('/api/keep-barang/{sourceId}', function (string $sourceId) use ($encodePayload, $nullableDate) {
-    abort_unless(DB::table('keep_barang')->where('source_id', $sourceId)->exists(), 404);
-    $p = request()->all();
-    DB::table('keep_barang')->where('source_id', $sourceId)->update(['tanggal_keep' => $nullableDate($p['TANGGAL_KEEP'] ?? null), 'nama' => $p['NAMA'] ?? null, 'nomor_hp' => (string) ($p['NOMOR_HP'] ?? ''), 'type_hp' => $p['TYPE_HP'] ?? null, 'dp_uang_muka' => (int) ($p['DP_UANG_MUKA'] ?? 0), 'harga_jual' => (int) ($p['HARGA_JUAL'] ?? 0), 'rencana_pengambilan' => $nullableDate($p['RENCANA_PENGAMBILAN'] ?? null), 'handle_by' => $p['HANDLE_BY'] ?? null, 'status' => $p['STATUS'] ?? null, 'tanggal_expired' => $nullableDate($p['TANGGAL_EXPIRED'] ?? null), 'raw_payload' => $encodePayload($p), 'updated_at' => now()]);
-    return response()->json(['status' => 'success', 'data' => DB::table('keep_barang')->where('source_id', $sourceId)->first()]);
-});
-Route::delete('/api/keep-barang/{sourceId}', function (string $sourceId) {
-    abort_unless(DB::table('keep_barang')->where('source_id', $sourceId)->exists(), 404);
-    DB::table('keep_barang')->where('source_id', $sourceId)->delete();
-    return response()->json(['status' => 'success']);
-});
+Route::post('/api/keep-barang', $genericUpsert('keep_barang', function (array $p) use ($encodePayload, $makeSourceId, $nullableDate) {
+    return ['source_id' => $makeSourceId('KB', $p['ID'] ?? null), 'tanggal_keep' => $nullableDate($p['TANGGAL_KEEP'] ?? null), 'nama' => $p['NAMA'] ?? null, 'nomor_hp' => (string) ($p['NOMOR_HP'] ?? ''), 'type_hp' => $p['TYPE_HP'] ?? null, 'dp_uang_muka' => (int) ($p['DP_UANG_MUKA'] ?? 0), 'harga_jual' => (int) ($p['HARGA_JUAL'] ?? 0), 'rencana_pengambilan' => $nullableDate($p['RENCANA_PENGAMBILAN'] ?? null), 'handle_by' => $p['HANDLE_BY'] ?? null, 'status' => $p['STATUS'] ?? null, 'tanggal_expired' => $nullableDate($p['TANGGAL_EXPIRED'] ?? null), 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'updated_at' => now()];
+}));
+Route::put('/api/keep-barang/{sourceId}', $genericUpdate('keep_barang', function (array $p) use ($encodePayload, $nullableDate) {
+    return ['tanggal_keep' => $nullableDate($p['TANGGAL_KEEP'] ?? null), 'nama' => $p['NAMA'] ?? null, 'nomor_hp' => (string) ($p['NOMOR_HP'] ?? ''), 'type_hp' => $p['TYPE_HP'] ?? null, 'dp_uang_muka' => (int) ($p['DP_UANG_MUKA'] ?? 0), 'harga_jual' => (int) ($p['HARGA_JUAL'] ?? 0), 'rencana_pengambilan' => $nullableDate($p['RENCANA_PENGAMBILAN'] ?? null), 'handle_by' => $p['HANDLE_BY'] ?? null, 'status' => $p['STATUS'] ?? null, 'tanggal_expired' => $nullableDate($p['TANGGAL_EXPIRED'] ?? null), 'raw_payload' => $encodePayload($p), 'updated_at' => now()];
+}));
+Route::delete('/api/keep-barang/{sourceId}', $genericDelete('keep_barang'));
 
 // Event / LPJK tables
 
@@ -1478,8 +1440,10 @@ Route::put('/api/lpjk/{sourceId}', function (string $sourceId) use ($actorUserId
 Route::delete('/api/lpjk/{sourceId}', function (string $sourceId) use ($logCrudActivity) {
     abort_unless(DB::table('lpjk')->where('source_id', $sourceId)->exists(), 404);
     $stored = DB::table('lpjk')->where('source_id', $sourceId)->first();
-    DB::table('lpjk_detail')->where('master_id', $sourceId)->orWhere('lpjk_id', function ($query) use ($sourceId) {
-        $query->select('id')->from('lpjk')->where('source_id', $sourceId)->limit(1);
+    DB::table('lpjk_detail')->where(function ($query) use ($sourceId) {
+        $query->where('master_id', $sourceId)->orWhere('lpjk_id', function ($query) use ($sourceId) {
+            $query->select('id')->from('lpjk')->where('source_id', $sourceId)->limit(1);
+        });
     })->delete();
     DB::table('lpjk')->where('source_id', $sourceId)->delete();
     if ($stored !== null) {
@@ -1539,16 +1503,64 @@ Route::delete('/api/lpjk-detail/{sourceId}', function (string $sourceId) use ($l
     return response()->json(['status' => 'success']);
 });
 
+// Asset Vendor Inventory
+
+Route::get('/api/asset-vendor-inventory', $genericList('asset_vendor_inventory', function ($r) use ($fromDb) {
+    return $fromDb($r, [
+        'Vendor'        => $r->vendor,
+        'Brand'         => $r->brand,
+        'Seri'          => $r->seri,
+        'IMEI'          => $r->imei,
+        'Quantity'      => $r->quantity,
+        'Condition'     => $r->condition,
+        'Purchase_Date' => $r->purchase_date,
+        'Notes'         => $r->notes,
+    ]);
+}));
+Route::post('/api/asset-vendor-inventory', $genericUpsert('asset_vendor_inventory', function (array $p) use ($encodePayload, $makeSourceId, $nullableDate) {
+    return [
+        'source_id'     => $makeSourceId('AVI', $p['ID'] ?? null),
+        'vendor'        => $p['Vendor'] ?? null,
+        'brand'         => $p['Brand'] ?? null,
+        'seri'          => $p['Seri'] ?? null,
+        'imei'          => $p['IMEI'] ?? null,
+        'quantity'      => (int) ($p['Quantity'] ?? 1),
+        'condition'     => $p['Condition'] ?? null,
+        'purchase_date' => $nullableDate($p['Purchase_Date'] ?? null),
+        'notes'         => $p['Notes'] ?? null,
+        'raw_payload'   => $encodePayload($p),
+        'imported_at'   => now(),
+        'updated_at'    => now(),
+    ];
+}));
+Route::put('/api/asset-vendor-inventory/{sourceId}', $genericUpdate('asset_vendor_inventory', function (array $p) use ($encodePayload, $nullableDate) {
+    return [
+        'vendor'        => $p['Vendor'] ?? null,
+        'brand'         => $p['Brand'] ?? null,
+        'seri'          => $p['Seri'] ?? null,
+        'imei'          => $p['IMEI'] ?? null,
+        'quantity'      => (int) ($p['Quantity'] ?? 1),
+        'condition'     => $p['Condition'] ?? null,
+        'purchase_date' => $nullableDate($p['Purchase_Date'] ?? null),
+        'notes'         => $p['Notes'] ?? null,
+        'raw_payload'   => $encodePayload($p),
+        'updated_at'    => now(),
+    ];
+}));
+Route::delete('/api/asset-vendor-inventory/{sourceId}', $genericDelete('asset_vendor_inventory'));
+
 Route::get('/api/bonus-config', function () {
     $row = DB::table('marketing_settings')->where('key', 'BONUS_CONFIG')->first(['values']);
     $data = $row ? json_decode($row->values, true) : null;
     return response()->json(['data' => (is_array($data) && !array_is_list($data)) ? $data : null]);
 });
 
-Route::put('/api/bonus-config', function () {
+Route::put('/api/bonus-config', function () use ($logCrudActivity) {
     $cfg = request()->all();
+    $before = DB::table('marketing_settings')->where('key', 'BONUS_CONFIG')->first(['values']);
     $val = json_encode($cfg, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     DB::table('marketing_settings')->updateOrInsert(['key' => 'BONUS_CONFIG'], ['values' => $val, 'imported_at' => now(), 'created_at' => now(), 'updated_at' => now()]);
+    $logCrudActivity('marketing_settings', 'update', 'BONUS_CONFIG', null, $before ? json_decode($before->values, true) : null, $cfg);
     return response()->json(['status' => 'success', 'data' => $cfg]);
 });
 
@@ -1558,10 +1570,12 @@ Route::get('/api/budgeting-config', function () {
     return response()->json(['data' => (is_array($data) && !array_is_list($data)) ? $data : null]);
 });
 
-Route::put('/api/budgeting-config', function () {
+Route::put('/api/budgeting-config', function () use ($logCrudActivity) {
     $cfg = request()->all();
+    $before = DB::table('marketing_settings')->where('key', 'BUDGET_CONFIG')->first(['values']);
     $val = json_encode($cfg, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     DB::table('marketing_settings')->updateOrInsert(['key' => 'BUDGET_CONFIG'], ['values' => $val, 'imported_at' => now(), 'created_at' => now(), 'updated_at' => now()]);
+    $logCrudActivity('marketing_settings', 'update', 'BUDGET_CONFIG', null, $before ? json_decode($before->values, true) : null, $cfg);
     return response()->json(['status' => 'success', 'data' => $cfg]);
 });
 
@@ -1646,8 +1660,23 @@ Route::get('/api/all-data', function () use ($fromDb, $rowValue) {
     $calendarEvents = DB::table('calendar_events')->orderBy('tanggal')->get()
         ->map(fn ($r) => $fromDb($r, ['Nama_Event' => $r->nama_event, 'Tanggal' => $r->tanggal, 'Warna' => $r->warna]));
 
+    $assetVendorInventory = DB::table('asset_vendor_inventory')->orderByDesc('created_at')->get()
+        ->map(fn ($r) => $fromDb($r, ['Vendor' => $r->vendor, 'Brand' => $r->brand, 'Seri' => $r->seri, 'IMEI' => $r->imei, 'Quantity' => $r->quantity, 'Condition' => $r->condition, 'Purchase_Date' => $r->purchase_date, 'Notes' => $r->notes]));
+
+    $namaStock = DB::table('stock_names')
+        ->orderBy('kategori')
+        ->orderBy('brand')
+        ->orderBy('seri')
+        ->get(['source_id', 'kategori', 'brand', 'seri'])
+        ->map(fn ($row) => [
+            'ID' => $row->source_id,
+            'KATEGORI' => $row->kategori,
+            'BRAND' => $row->brand,
+            'SERI' => $row->seri,
+        ]);
+
     return response()->json([
-        'settings'        => $settings,
+        'settings'             => $settings,
         'masterPlan'      => $masterPlan,
         'analytics'       => $analytics,
         'distribution'    => $distribution,
@@ -1664,9 +1693,11 @@ Route::get('/api/all-data', function () use ($fromDb, $rowValue) {
         'keepBarang'      => $keepBarang,
         'lpjk'            => $lpjk,
         'lpjkDetail'      => $lpjkDetail,
-        'calendarEvents'  => $calendarEvents,
-        'bonusConfig'     => $bonusConfig,
-        'budgetingConfig' => $budgetingConfig,
+        'calendarEvents'       => $calendarEvents,
+        'assetVendorInventory' => $assetVendorInventory,
+        'namaStock'           => $namaStock,
+        'bonusConfig'          => $bonusConfig,
+        'budgetingConfig'      => $budgetingConfig,
     ]);
 });
 });

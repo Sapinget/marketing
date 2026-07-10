@@ -237,7 +237,7 @@ class CrudApiTest extends TestCase
             'Talent' => ['Talent A', 'Talent B'],
         ])->assertOk()->assertJsonPath('data.Format_Konten.0', 'REELS');
 
-        $this->assertDatabaseMissing('marketing_settings', ['key' => 'Old_Key']);
+        $this->assertDatabaseHas('marketing_settings', ['key' => 'Old_Key']);
         $this->assertDatabaseHas('marketing_settings', ['key' => 'Format_Konten']);
         $this->assertDatabaseHas('marketing_settings', ['key' => 'Talent']);
         $this->getJson('/api/settings')
@@ -247,7 +247,9 @@ class CrudApiTest extends TestCase
             ->assertJsonPath('data.Talent.1', 'Talent B');
 
         $this->putJson('/api/settings', [])->assertOk();
-        $this->assertDatabaseCount('marketing_settings', 0);
+        $this->assertDatabaseHas('marketing_settings', ['key' => 'Old_Key']);
+        $this->assertDatabaseHas('marketing_settings', ['key' => 'Format_Konten']);
+        $this->assertDatabaseHas('marketing_settings', ['key' => 'Talent']);
     }
 
     public function test_distribution_and_analytics_reads_fall_back_to_foreign_key_parent_source_id(): void
@@ -396,6 +398,42 @@ class CrudApiTest extends TestCase
             'table_name' => 'master_plans',
             'action' => 'delete',
             'record_key' => 'LOG-MASTER-001',
+            'user_id' => $userId,
+        ]);
+
+        $this->postJson('/api/unboxing', [
+            'ID' => 'LOG-UNBOX-001',
+            'Nama' => 'Unit Demo',
+            'Editor' => 'Editor Demo',
+            'Status' => 'Draft',
+            'Upload_Date' => '2026-06-26',
+        ])->assertCreated();
+
+        $this->putJson('/api/unboxing/LOG-UNBOX-001', [
+            'Nama' => 'Unit Demo Update',
+            'Editor' => 'Editor Demo',
+            'Status' => 'Publish',
+            'Upload_Date' => '2026-06-27',
+        ])->assertOk();
+
+        $this->deleteJson('/api/unboxing/LOG-UNBOX-001')->assertOk();
+
+        $this->assertDatabaseHas('activity_logs', [
+            'table_name' => 'unboxing',
+            'action' => 'create',
+            'record_key' => 'LOG-UNBOX-001',
+            'user_id' => $userId,
+        ]);
+        $this->assertDatabaseHas('activity_logs', [
+            'table_name' => 'unboxing',
+            'action' => 'update',
+            'record_key' => 'LOG-UNBOX-001',
+            'user_id' => $userId,
+        ]);
+        $this->assertDatabaseHas('activity_logs', [
+            'table_name' => 'unboxing',
+            'action' => 'delete',
+            'record_key' => 'LOG-UNBOX-001',
             'user_id' => $userId,
         ]);
     }

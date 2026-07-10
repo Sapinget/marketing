@@ -23,18 +23,5 @@
                     Shares: 0
                 });
 
-                // Story Form
-                const storyTab = ref("Ganjil");
-                const storyModalOpen = ref(false);
-                const storyModalType = ref("create");
-                const storyForm = ref({
-                    ID: null,
-                    Tanggal: "",
-                    Jam: "09:00",
-                    Story: "",
-                    Catatan: "",
-                    Link: "",
-                    is_genap: "Ganjil",
-                    Status: ""
-                });
+                // Story form state now comes from customer-service runtime helper.
 @endverbatim

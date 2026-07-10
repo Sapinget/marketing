@@ -1,5 +1,8 @@
 @verbatim
                 const appLoading = ref(true);
+                if ('scrollRestoration' in history) {
+                    history.scrollRestoration = 'manual';
+                }
                 const _hashTab = window.location.hash.slice(1);
                 const _savedTab = _hashTab || localStorage.getItem("ppp_active_tab") || "dashboard";
                 if (!_hashTab && _savedTab) history.replaceState(null, '', '#' + _savedTab);
@@ -38,7 +41,9 @@
                     auth_users: { label: 'Manajemen User', category: 'Settings' },
                     activity_logs: { label: 'Activity Logs', category: 'Settings' },
                     harga_kompetitor: { label: 'Harga & Kompetitor', category: null },
-                    laporan_event: { label: 'Laporan Event', category: null }
+                    laporan_event: { label: 'Laporan Event', category: null },
+                    asset_vendor_inventory: { label: 'Asset Inventory', category: 'Inventory' },
+                    profile: { label: 'Profile', category: null }
                 };
 
                 const breadcrumbItems = computed(() => {

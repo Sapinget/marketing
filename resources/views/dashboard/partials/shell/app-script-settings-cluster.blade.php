@@ -1,4 +1,82 @@
 @verbatim
+                if (!window.MarketingDashboardRuntimeHelpers || !window.MarketingDashboardRuntimeHelpers.createSettingsHelpers) {
+                    window.MarketingDashboardRuntimeHelpers = {
+                        ...(window.MarketingDashboardRuntimeHelpers || {}),
+                        createSettingsHelpers: (deps) => {
+                            const { ref: _ref, computed: _computed, nextTick: _nextTick, settings: _settings, settingsLoaded: _settingsLoaded, settingsDraft: _settingsDraft, settingsDirty: _settingsDirty, activeSettingTab: _activeSettingTab, savingSettings: _savingSettings, settingsSearchQuery: _settingsSearchQuery, settingsFilterMode: _settingsFilterMode, activeSettingValueSearch: _activeSettingValueSearch, settingsDetailModalOpen: _settingsDetailModalOpen, showSettingsBulkAdd: _showSettingsBulkAdd, settingsBulkAddText: _settingsBulkAddText, formatNumber: _formatNumber, showNotification: _showNotification, showConfirm: _showConfirm, notifyError: _notifyError, ensureRunApi: _ensureRunApi, isMobileViewport: _isMobileViewport, currentUser: _currentUser, resolveAppUrl: _resolveAppUrl, jsonApi: _jsonApi } = deps;
+                            const _getSettingTabLabel = (key) => String(key || '').replace(/_/g, ' ');
+                            const _isSettingObjectValue = (value) => Boolean(value) && typeof value === 'object' && !Array.isArray(value);
+                            const _normalizeSettingOption = (value) => String(value ?? '').trim();
+                            const _settingsMenuGroups = _computed(() => {
+                                const draft = _settingsDraft.value || {};
+                                const exists = (k) => Object.prototype.hasOwnProperty.call(draft, k);
+                                const groups = [{ label: "Content", keys: ["Format_Konten", "Platforms", "Colab", "Editor", "Talent", "Status", "Tipe_Konten"] }, { label: "Customer Service", keys: ["Orderan_Online_Ecommerce", "Orderan_Online_Handle", "Orderan_Online_Pengiriman", "Orderan_Online_Status", "Kondisi_Produk"] }];
+                                const grouped = groups.map(g => ({ label: g.label, keys: g.keys.filter(k => exists(k)) })).filter(g => g.keys.length > 0);
+                                const known = new Set(groups.flatMap(g => g.keys));
+                                const extras = Object.keys(draft).filter(k => !known.has(k));
+                                if (extras.length > 0) grouped.push({ label: "Lainnya", keys: extras });
+                                return grouped;
+                            });
+                            const _getSettingValues = (key, source = _settingsDraft.value) => Array.isArray(source?.[key]) ? source[key] : [];
+                            const _formatSettingSummaryValue = (value) => {
+                                if (typeof value === 'number' && Number.isFinite(value)) return _formatNumber(value);
+                                const ns = String(value ?? '').trim();
+                                if (/^-?\d+(\.\d+)?$/.test(ns)) return _formatNumber(Number(ns));
+                                return String(value ?? '-');
+                            };
+                            const _summarizeSettingObjectValue = (value) => {
+                                if (Array.isArray(value)) {
+                                    if (!value.length) return '-';
+                                    return value.map((item) => {
+                                        if (_isSettingObjectValue(item)) return Object.entries(item).map(([ik, iv]) => `${_getSettingTabLabel(ik)}: ${_formatSettingSummaryValue(iv)}`).join(' | ');
+                                        return _formatSettingSummaryValue(item);
+                                    }).join('\n');
+                                }
+                                if (_isSettingObjectValue(value)) {
+                                    const parts = Object.entries(value).map(([ik, iv]) => `${_getSettingTabLabel(ik)}: ${_formatSettingSummaryValue(iv)}`);
+                                    return parts.length ? parts.join(' | ') : '-';
+                                }
+                                return _formatSettingSummaryValue(value);
+                            };
+                            const _buildSettingObjectSections = (key, source = _settingsDraft.value) => {
+                                const value = source?.[key];
+                                if (!_isSettingObjectValue(value)) return [];
+                                return Object.entries(value).map(([sk, sv]) => {
+                                    let items = [];
+                                    if (Array.isArray(sv)) items = sv.map((e, i) => ({ label: `Item ${i + 1}`, value: _summarizeSettingObjectValue(e) }));
+                                    else if (_isSettingObjectValue(sv)) items = Object.entries(sv).map(([ik, iv]) => ({ label: _getSettingTabLabel(ik), value: _summarizeSettingObjectValue(iv) }));
+                                    else items = [{ label: _getSettingTabLabel(sk), value: _summarizeSettingObjectValue(sv) }];
+                                    return { title: _getSettingTabLabel(sk), items };
+                                });
+                            };
+                            const _getSettingDiffCount = (key) => {
+                                if (_isSettingObjectValue(_settingsDraft.value?.[key])) return JSON.stringify(_settingsDraft.value?.[key] ?? null) === JSON.stringify(_settings.value?.[key] ?? null) ? 0 : 1;
+                                const current = _getSettingValues(key).map(v => String(v ?? ''));
+                                const saved = _getSettingValues(key, _settings.value).map(v => String(v ?? ''));
+                                if (current.length !== saved.length) return Math.abs(current.length - saved.length) + current.filter((v, idx) => v !== (saved[idx] ?? '')).length;
+                                return current.filter((v, idx) => v !== saved[idx]).length;
+                            };
+                            const _ensureSettingDefaults = (source = {}) => {
+                                const n = { ...(source || {}) };
+                                ['Format_Konten', 'Platforms', 'Colab', 'Editor', 'Talent', 'Status', 'Tipe_Konten'].forEach(k => { if (!Object.prototype.hasOwnProperty.call(n, k) || !Array.isArray(n[k])) n[k] = Array.isArray(n[k]) ? [...n[k]] : []; });
+                                return n;
+                            };
+                            return {
+                                settingsMenuGroups: _settingsMenuGroups,
+                                getSettingTabLabel: _getSettingTabLabel,
+                                isSettingObjectValue: _isSettingObjectValue,
+                                normalizeSettingOption: _normalizeSettingOption,
+                                getSettingValues: _getSettingValues,
+                                formatSettingSummaryValue: _formatSettingSummaryValue,
+                                summarizeSettingObjectValue: _summarizeSettingObjectValue,
+                                buildSettingObjectSections: _buildSettingObjectSections,
+                                getSettingDiffCount: _getSettingDiffCount,
+                                ensureSettingDefaults: _ensureSettingDefaults,
+                            };
+                        },
+                    };
+                }
+
                 const settingsMenuGroups = computed(() => {
                     const draft = settingsDraft.value || {};
                     const exists = (k) => Object.prototype.hasOwnProperty.call(draft, k);
@@ -256,23 +334,19 @@
                     }
                     syncSettingsDirtyState();
                 };
-                const csrfHeader = () => {
-                    const cookie = document.cookie.split('; ').find((row) => row.startsWith('XSRF-TOKEN='));
-                    return cookie ? decodeURIComponent(cookie.split('=')[1]) : '';
-                };
-                const resolveAppUrl = (url) => {
-                    if (!url || /^https?:\/\//i.test(url)) {
-                        return url;
-                    }
-
+                const resolveAppUrl = window.MarketingDashboardRuntimeHelpers?.resolveAppUrl || ((url) => {
+                    if (!url || /^https?:\/\//i.test(url)) return url;
                     if (window.MARKETING_BACKEND_URL) {
                         return `${String(window.MARKETING_BACKEND_URL).replace(/\/+$/, '')}${url}`;
                     }
-
                     return url;
+                });
+                const csrfHeaderFallback = () => {
+                    const cookie = document.cookie.split('; ').find((row) => row.startsWith('XSRF-TOKEN='));
+                    return cookie ? decodeURIComponent(cookie.split('=')[1]) : '';
                 };
-                const jsonApi = async (url, options = {}) => {
-                    const token = csrfHeader();
+                const jsonApi = window.MarketingDashboardRuntimeHelpers?.jsonApi || (async (url, options = {}) => {
+                    const token = csrfHeaderFallback();
                     const response = await fetch(resolveAppUrl(url), {
                         ...options,
                         headers: {
@@ -289,25 +363,18 @@
                             throw unauthorizedError;
                         }
                         let payload = null;
-                        try {
-                            payload = await response.json();
-                        } catch (error) {
-                            payload = null;
-                        }
-
+                        try { payload = await response.json(); } catch (error) { payload = null; }
                         const errorMessages = payload && payload.errors && typeof payload.errors === 'object'
                             ? Object.values(payload.errors).flat().filter(Boolean)
                             : [];
-                        const message = errorMessages[0]
-                            || (payload && payload.message)
-                            || `HTTP ${response.status}`;
+                        const message = errorMessages[0] || (payload && payload.message) || `HTTP ${response.status}`;
                         const requestError = new Error(message);
                         requestError.status = response.status;
                         requestError.payload = payload;
                         throw requestError;
                     }
                     return response.status === 204 ? null : response.json();
-                };
+                });
                 const loadSettings = () => {
                     if (settingsLoadPromise) {
                         return settingsLoadPromise;

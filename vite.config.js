@@ -12,6 +12,7 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
+                'resources/js/dashboard/shared/runtime-helpers.js',
                 'resources/js/dashboard/export/print-core.js',
                 'resources/js/dashboard/export/print-browser.js',
                 'resources/js/dashboard/export/analytics-export-bridge.js',

@@ -126,6 +126,14 @@
                 const promoPeriodePreset = ref('');
                 const promoTempDate = ref({ start: '', end: '' });
 
+                // Asset Vendor Inventory
+                const aviData = ref([]);
+                const aviSearch = ref('');
+                const aviPage = ref(1);
+                const aviModalOpen = ref(false);
+                const aviModalType = ref('create');
+                const aviForm = ref({ ID: null, source_id: '', vendor: '', brand: '', seri: '', imei: '', quantity: 1, condition: 'New', purchase_date: '', notes: '' });
+
                 // Sell Out
                 const sellOutData = ref([]);
                 const sellOutSearch = ref('');

@@ -367,7 +367,6 @@
 
                     // CS calendar
                     calendarFormContext,
-                    calendarFieldName,
                     csModalType,
                     calendarActiveDate,
                     changeCalendarMonth,
@@ -584,6 +583,25 @@
                     saveLpjkDetail,
                     deleteLpjkDetail,
                     exportLpjkDetailToPDF,
+
+                    // Asset Vendor Inventory
+                    aviData,
+                    aviSearch,
+                    aviPage,
+                    aviModalOpen,
+                    aviModalType,
+                    aviForm,
+                    aviConditionOptions,
+                    filteredAviData,
+                    aviTotalPages,
+                    pagedAviData,
+                    aviUniqueVendors,
+                    aviUniqueBrands,
+                    aviTotalQuantity,
+                    aviSummaryChips,
+                    openAviModal,
+                    saveAvi,
+                    deleteAvi,
 
                     // Budgeting
                     budgetConfig,

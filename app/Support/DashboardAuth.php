@@ -160,7 +160,7 @@ class DashboardAuth
         $name = (string) ($user->name ?: $username);
 
         return [
-            'id' => $user->getKey(),
+            'ID' => $user->getKey(),
             'username' => $username,
             'nama' => $name,
             'email' => (string) $user->email,

@@ -19,11 +19,18 @@ const MODULES = {
     claim_garansi_asuransi: ['Customer Service', 'Claim Garansi', 'Claim garansi dan asuransi untuk customer dan teknisi.'],
     keep_barang: ['Customer Service', 'Keep Barang', 'Monitoring barang keep, deadline, follow-up, dan status.'],
     bonus_report: ['Bonus', 'Bonus Report', 'Simulasi bonus berdasarkan konfigurasi dan performa.'],
+    talent_bonus: ['Bonus', 'Talent Bonus', 'Detail bonus talent berdasarkan data performa.'],
     editor_performance: ['Bonus', 'Editor Performance', 'Performa editor berdasarkan konten dan analytics.'],
+    analisa_insight: ['Analisa Konten', 'Insight & Tren', 'Wawasan pola konten, kolaborasi, dan tren bulanan.'],
+    meta_story: ['Analisa Konten', 'Story IG', 'Performa story Instagram per akun.'],
+    meta_feed: ['Analisa Konten', 'Feed Konten', 'Performa feed Instagram per akun.'],
+    auth_users: ['System', 'Manajemen User', 'Kelola user, role, dan akses dashboard.'],
+    activity_logs: ['System', 'Activity Logs', 'Log perubahan data di seluruh modul.'],
     harga_kompetitor: ['Pricing', 'Harga Kompetitor', 'Perbandingan harga distributor, kompetitor, margin, dan rencana jual.'],
     laporan_event: ['LPJK', 'Laporan Event', 'Laporan event dan detail realisasi biaya.'],
     settings: ['System', 'Pengaturan', 'Master dropdown options dan konfigurasi aplikasi.'],
     nama_stock: ['System', 'Nama Stock', 'Master kategori, brand, dan seri stock.'],
+    asset_vendor_inventory: ['Inventory', 'Asset Inventory', 'Data inventory dari vendor & supplier.'],
     profile: ['User', 'Profile', 'Profil user, nama lengkap, role, dan akses.'],
 };
 
