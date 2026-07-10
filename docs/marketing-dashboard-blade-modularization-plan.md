@@ -85,15 +85,17 @@ Status implementasi per 10 Juli 2026:
 - coverage CRUD activity log sudah meluas ke beberapa aksi write backend dan diverifikasi lewat feature test
 
 - `dashboard-shell.css` sekarang sepenuhnya dipisah dari Blade shell dan dimuat via Vite, sehingga blok CSS inline besar tidak lagi ada di head response
-- tokenisasi `dashboard-shell.css` sudah berjalan: 0 → 147 `var(--ppp-*)` usages — semua solid color utama sudah pakai token (`--ppp-bg`, `--ppp-card`, `--ppp-line`, `--ppp-text`, `--ppp-muted`, `--ppp-nav-text`, `--ppp-accent`, `--ppp-accent-dark`, `--ppp-danger`)
-- `@theme` block di `app.css` sudah disinkronkan: 4 token yang hilang (`--color-ppp-line`, `--color-ppp-bg`, `--color-ppp-card`, `--color-ppp-danger`) sudah ditambahkan sehingga Tailwind utility class seperti `border-ppp-line` dan `bg-ppp-card` sekarang valid
+- tokenisasi `dashboard-shell.css` sudah berjalan: 0 → 147+ `var(--ppp-*)` usages — semua solid color utama sudah pakai token (`--ppp-bg`, `--ppp-card`, `--ppp-line`, `--ppp-text`, `--ppp-muted`, `--ppp-nav-text`, `--ppp-accent`, `--ppp-accent-dark`, `--ppp-danger`, `--ppp-danger-fill`)
+- `@theme` block di `app.css` sudah disinkronkan: semua token `:root` sudah ada di `@theme` — Tailwind utility class seperti `border-ppp-line`, `bg-ppp-card`, `bg-ppp-danger-fill` sekarang valid
 - WCAG AA compliance sudah ditegakkan pada komponen utama `dashboard-shell.css`:
   - `--ppp-danger` diubah dari `#dc2626` ke `#b91c1c` (text contrast 5.91:1)
+  - `--ppp-danger-fill: #dc2626` ditambah sebagai token terpisah untuk filled button background (white text 4.62:1 ✓)
+  - `entity-badge--info` diubah ke blue-600/blue-50 `#2563eb`/`#eff6ff` (4.75:1 ✓)
   - `entity-badge--success` diubah ke `#047857` (5.21:1)
   - `modal-primary-button--success` diubah ke `#047857` (5.48:1)
   - `modal-primary-button--info` diubah ke blue-600 `#2563eb` (5.09:1)
-  - `status-pill--warm` diubah ke `#b45309` (4.84:1)
-  - semua danger hover color distandarisasi ke `#b91c1c`
+  - `status-pill--warn` diubah ke `#b45309` (4.84:1)
+  - semua danger hover color distandarisasi ke `--ppp-danger`
 - icon header menu sudah diseragamkan ke satu warna di 26 file menu partial: `bg-indigo-50 text-indigo-600 border border-indigo-100` — tidak ada lagi varian emerald/rose/amber/teal/cyan/yellow/blue/gradient per menu
 - `modal-header-icon` shade sudah distandarisasi: semua varian soft `text-{color}-500` diubah ke `text-{color}-600` untuk konsistensi
 - color palette design system sudah direfactor dan didokumentasikan di `docs/color-palette.md`:
@@ -615,9 +617,9 @@ Definition of done fase ini:
 - [ ] rapikan boundary helper nama stock agar tidak ada redeklarasi variabel lokal saat fallback aktif
 - [ ] tambahkan field username yang sesuai pada form ganti PIN untuk menutup warning accessibility browser
 - [ ] audit lagi urutan include partial helper/runtime setelah ekstraksi batch admin/settings dan nama stock
-- [ ] `entity-badge--info` di `dashboard-shell.css` masih WCAG fail: `rgb(2 132 199)` (sky-600) pada `rgb(240 249 255)` = 3.70:1 — belum difix karena warna sky intentional; perlu keputusan: ganti ke sky-700 (`#0369a1`, 5.60:1) atau ubah ke info standard `#2563eb` pada `#eff6ff`
+- [x] ~~`entity-badge--info` di `dashboard-shell.css` masih WCAG fail: `rgb(2 132 199)` (sky-600) pada `rgb(240 249 255)` = 3.70:1~~ — RESOLVED: diubah ke `rgb(37 99 235)` pada `rgb(239 246 255)` (blue-600/blue-50, 4.75:1 ✓), konsisten dengan baris Info di Semantic Palette
 - [ ] `rgb(... / alpha)` expressions di `dashboard-shell.css` tidak bisa ditokenisasi dengan `var()` langsung (shadow, focus ring, backdrop) — butuh `color-mix(in srgb, var(--ppp-nav-text) X%, transparent)` atau definisi token RGB komponen terpisah; 48 expressions masih hardcoded
-- [ ] `#dc2626` (red-600) dipakai sebagai warna background filled danger button default (`modal-primary-button--danger`, `secondary-cta-danger:hover`) — nilai ini berbeda dari token `--ppp-danger: #b91c1c`; pertimbangkan tambah token `--ppp-danger-fill: #dc2626` agar intent terdokumentasi dan tidak dianggap error saat audit
+- [x] ~~`#dc2626` dipakai sebagai warna background filled danger button default~~ — RESOLVED: token `--ppp-danger-fill: #dc2626` ditambah ke `app.css` (@theme + :root) dan `dashboard-shell.css` diupdate pakai `var(--ppp-danger-fill)`
 
 ## Strategi Testing
 

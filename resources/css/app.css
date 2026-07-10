@@ -18,6 +18,7 @@
     --color-ppp-bg: #f8fafc;
     --color-ppp-card: #ffffff;
     --color-ppp-danger: #b91c1c;
+    --color-ppp-danger-fill: #dc2626;
 }
 
 :root {
@@ -31,6 +32,7 @@
     --ppp-bg: #f8fafc;
     --ppp-card: #ffffff;
     --ppp-danger: #b91c1c;
+    --ppp-danger-fill: #dc2626;
 }
 
 * {

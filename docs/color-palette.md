@@ -25,7 +25,7 @@ Sumber utama token saat ini:
 | `:root {}` | `--ppp-*` | Raw CSS: `var(--ppp-accent)`, dipakai di `dashboard-shell.css` dan inline style |
 
 > **Penting:** Token di `@theme` dan `:root` **tidak otomatis sinkron**. Kalau tambah token baru, tambah di **keduanya**.
-> Token yang ada di `:root` tapi **belum** di `@theme` (tidak bisa jadi Tailwind class): `--ppp-line`, `--ppp-bg`, `--ppp-card`, `--ppp-danger`.
+> Semua token `:root` sudah disinkron ke `@theme` — tidak ada yang tertinggal.
 
 ```css
 /* @theme — untuk Tailwind utility class */
@@ -36,6 +36,11 @@ Sumber utama token saat ini:
   --color-ppp-text: #0f172a;
   --color-ppp-muted: #94a3b8;
   --color-ppp-nav-text: #5066eb;
+  --color-ppp-line: #e2e8f0;
+  --color-ppp-bg: #f8fafc;
+  --color-ppp-card: #ffffff;
+  --color-ppp-danger: #b91c1c;
+  --color-ppp-danger-fill: #dc2626;
 }
 
 /* :root — untuk raw CSS var() */
@@ -50,6 +55,7 @@ Sumber utama token saat ini:
   --ppp-bg: #f8fafc;
   --ppp-card: #ffffff;
   --ppp-danger: #b91c1c;
+  --ppp-danger-fill: #dc2626;
 }
 ```
 
@@ -87,8 +93,7 @@ Sumber utama token saat ini:
 | Danger | `#fef2f2` | `#b91c1c` | 5.91:1 ✓ | delete, error, destructive |
 | Neutral | `#f1f5f9` | `#64748b` | — | status umum, badge counter |
 
-> `#dc2626` (red-600) boleh untuk elemen besar (≥18px bold, ikon standalone) — kontras 4.41:1 cukup untuk UI component threshold (3:1).
-> Untuk badge label, body text, kecil: wajib `#b91c1c` (5.91:1).
+> **Danger dua token:** `--ppp-danger` (`#b91c1c`, 5.91:1) untuk text/badge/ghost — wajib small text. `--ppp-danger-fill` (`#dc2626`, 4.62:1 white text) untuk filled button background default.
 > `#059669` dan `#be185d` **tidak dipakai** — kedua gagal AA untuk small text.
 
 ## Surface Palette

@@ -934,8 +934,8 @@
         }
 
         .entity-badge--info {
-            background: rgb(240 249 255);
-            color: rgb(2 132 199);
+            background: rgb(239 246 255);
+            color: rgb(37 99 235);
         }
 
         .entity-badge--success {
@@ -1367,7 +1367,7 @@
         }
 
         .modal-primary-button.modal-primary-button--danger {
-            background: rgb(220 38 38);
+            background: var(--ppp-danger-fill);
             color: var(--ppp-card);
         }
 
