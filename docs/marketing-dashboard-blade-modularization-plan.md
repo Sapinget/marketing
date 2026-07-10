@@ -533,11 +533,11 @@ Checklist:
 - rawat inventaris vendor lokal di `resources/vendor/dashboard/manifest.json` sebagai source of truth sinkronisasi asset browser non-Vite
 - pastikan test feature membedakan dengan jelas antara runtime production surface dan file arsip/reference
 
-Status aktual yang perlu ditutup berikutnya:
+Status aktual:
 
-- file arsip sudah tidak menjadi source runtime aktif, tetapi masih dipakai sebagai reference/guardrail test
-- sebagian surface demo/static sudah turun menjadi pointer/arsip, tetapi klasifikasinya belum dirapikan penuh di dokumen dan struktur folder
-- vendor asset lokal sudah punya manifest, tetapi belum ada klasifikasi tajam mana yang permanen dan mana yang target migrasi ke bundle
+- [x] file arsip (`resources/legacy/*.html`) terkonfirmasi hanya untuk guardrail test, bukan runtime aktif
+- [x] `public/marketing-dashboard.html` dan `public/design-system.html` sudah jadi pointer dengan meta refresh — bukan runtime surface
+- [x] `resources/vendor/dashboard/manifest.json` sudah punya classification eksplisit per asset (permanent-local/vite-candidate/temporary) lengkap dengan alasan teknis
 
 Checklist operasional:
 
@@ -591,8 +591,8 @@ Status backlog saat ini:
 - [x] langkah 3 sudah mulai berjalan, tetapi belum selesai penuh
 - [x] langkah 4 selesai: customer service domain diekstrak ke `menu/customer-service.js`; inline polyfill di `app-script-customer-service-crud.blade.php` dan `app-script-domain-state-core.blade.php` dihapus (-143 dan -53 lines); optional chaining ditambah agar call aman di urutan setup()
 - [x] langkah 5 selesai: LPJK domain diekstrak ke `menu/lpjk.js` dengan `createLpjkOperations(deps)` (5 computed, 1 watch, 8 action); `app-script-lpjk-operations.blade.php` menyusut 112 → 34 lines; `runtime-helpers.js` sudah wire ke modul baru
-- [ ] langkah 6 masih tersisa
-- [ ] langkah 7 masih tersisa
+- [x] langkah 6 selesai: print business logic sudah 100% di `print-core.js` + `print-browser.js`; `print-helpers.blade.php` dipindah ke `resources/legacy/`; export scripts hanya berisi thin bridge callers ke `window.MarketingDashboard*Exports`; tidak ada business logic print di Blade
+- [x] langkah 7 selesai: `manifest.json` diperbarui dengan classification (permanent-local/vite-candidate/temporary) + reason per asset; `public/marketing-dashboard.html` dan `design-system.html` sudah pointers (meta refresh); `resources/legacy/*.html` hanya untuk guardrail tests (bukan runtime)
 
 Urutan ini dipilih karena:
 

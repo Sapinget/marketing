@@ -1,46 +1,59 @@
 {
+  "_note": "Source of truth untuk vendor asset yang diload di luar Vite bundle. Klasifikasi: permanent-local (sengaja lokal, tidak akan di-bundle), vite-candidate (target migrasi ke Vite build), temporary (compatibility shim, jadwalkan hapus).",
   "assets": [
     {
       "id": "vue",
       "source": "node_modules/vue/dist/vue.global.prod.js",
       "runtimePath": "/vendor/dashboard/vue/vue.global.prod.js",
       "strategy": "npm-sync",
-      "kind": "script"
+      "kind": "script",
+      "classification": "permanent-local",
+      "reason": "Dashboard memakai Vue global build (IIFE) agar bisa diinisialisasi di inline script Blade tanpa import. Vite-bundle tidak cocok untuk pola ini tanpa refactor arsitektur ke SFC."
     },
     {
       "id": "papaparse",
       "source": "node_modules/papaparse/papaparse.min.js",
       "runtimePath": "/vendor/dashboard/papaparse/papaparse.min.js",
       "strategy": "npm-sync",
-      "kind": "script"
+      "kind": "script",
+      "classification": "vite-candidate",
+      "reason": "Tidak ada kebutuhan global IIFE. Bisa diimport sebagai ES module di Vite setelah export pipeline direfactor untuk tidak bergantung pada window.Papa."
     },
     {
       "id": "apexcharts",
       "source": "node_modules/apexcharts/dist/apexcharts.min.js",
       "runtimePath": "/vendor/dashboard/apexcharts/apexcharts.min.js",
       "strategy": "npm-sync",
-      "kind": "script"
+      "kind": "script",
+      "classification": "vite-candidate",
+      "reason": "ApexCharts bisa diimport sebagai ES module. Saat ini diload global karena Vue inline template memakai window.ApexCharts. Kandidat migrasi setelah Vue SFC dipertimbangkan."
     },
     {
       "id": "fontawesome-css",
       "source": "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
       "runtimePath": "/vendor/dashboard/fontawesome/css/all.min.css",
       "strategy": "npm-sync",
-      "kind": "style"
+      "kind": "style",
+      "classification": "permanent-local",
+      "reason": "Diload via <link> di head.blade.php. Lebih efisien sebagai static file karena tidak perlu tree-shaking dan font file harus bisa diakses langsung dari path relatif CSS."
     },
     {
       "id": "fontawesome-webfonts",
       "source": "node_modules/@fortawesome/fontawesome-free/webfonts",
       "runtimePath": "/vendor/dashboard/fontawesome/webfonts",
       "strategy": "npm-sync",
-      "kind": "font-directory"
+      "kind": "font-directory",
+      "classification": "permanent-local",
+      "reason": "Font files (woff2/ttf/eot) harus bisa diakses via URL yang stabil dari CSS FontAwesome. Vite-bundle bisa menangani ini tetapi path resolution lebih sederhana sebagai static public asset."
     },
     {
       "id": "xlsx",
       "source": "resources/vendor/dashboard/xlsx/xlsx.full.min.js",
       "runtimePath": "/vendor/dashboard/xlsx/xlsx.full.min.js",
       "strategy": "repo-local-sync",
-      "kind": "script"
+      "kind": "script",
+      "classification": "temporary",
+      "reason": "xlsx.full.min.js disimpan di resources/vendor (bukan node_modules) karena pre-commit hook memblokir commit file ini akibat false positive deteksi credential pada string error internal library. File ini adalah SheetJS community edition. Target: ganti dengan import npm SheetJS via xlsx-loader.js setelah pipeline export diverifikasi berjalan di semua modul."
     }
   ]
 }
