@@ -1,7 +1,7 @@
 @verbatim
 <div v-if="activeTab === 'ideation'" class="space-y-6 animate-fadeIn pb-10">
     <div class="space-y-3">
-        <div class="dashboard-summary-grid-compact grid grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
+        <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
             <div v-for="c in ideationSummary.cards" :key="c.label" class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
                 <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i :class="['fa-solid', c.icon, 'text-[120px]']"></i></div>
                 <p :class="['text-[9px] font-bold uppercase tracking-widest mb-3', c.color]">{{ c.label }}</p>
@@ -18,7 +18,7 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
             <div class="flex items-center gap-4">
                 <div
-                    class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
+                    class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
                     <i class="fa-solid fa-lightbulb text-lg"></i>
                 </div>
                 <div>
@@ -38,7 +38,8 @@
                 <div class="relative flex-1 sm:w-64">
                     <i
                         class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px]"></i>
-                    <input v-model="masterSearch" type="text" placeholder="Cari ide..."
+                    <input id="ideation-search" name="ideation_search" v-model="masterSearch" type="text" placeholder="Cari ide..."
+                        autocomplete="off" aria-label="Cari ide"
                         class="form-input-search" />
                 </div>
                 <div class="toolbar-actions">
@@ -76,7 +77,7 @@
                 <div class="flex items-center justify-between px-2 mb-5">
                     <div class="flex items-center gap-2">
                         <div
-                            :class="['w-2 h-2 rounded-full shadow-sm', status === ideationDraftLabel ? 'bg-blue-500' : status === 'In Progress' ? 'bg-amber-500' : 'bg-emerald-500']">
+                            :class="['w-2 h-2 rounded-full', status === ideationDraftLabel ? 'bg-blue-500' : status === 'In Progress' ? 'bg-amber-500' : 'bg-emerald-500']">
                         </div>
                         <h3 class="text-[11px] font-bold text-slate-700 uppercase tracking-widest">
                             {{ status }}</h3>
@@ -88,7 +89,7 @@
                 <div class="space-y-3 flex-1">
                     <div v-for="item in pagedKanbanBuckets[status]" :key="item.ID"
                         @click="openEditModal(item)"
-                        class="bg-white p-4 radius-card border border-slate-100 shadow-sm hover:shadow-md hover:border-ppp-accent/20 transition-all cursor-pointer group animate-fadeIn">
+                        class="bg-white p-4 radius-card border border-slate-100 hover:border-ppp-accent/20 transition-all cursor-pointer group animate-fadeIn">
                         <div class="flex items-start justify-between gap-3 mb-3">
                             <span
                                 :class="['px-2 py-0.5 rounded-lg text-[9px] font-bold uppercase', getIdeationTypeTone(item).chip]">

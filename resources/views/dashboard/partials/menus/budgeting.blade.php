@@ -10,9 +10,9 @@
                             <div class="h-3 bg-slate-100 rounded-full w-56"></div>
                         </div>
                     </div>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                         <div v-for="i in 4" :key="'sk-bg-st'+i"
-                            class="bg-slate-50 radius-card p-4 border border-slate-100">
+                            class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
                             <div class="h-3 bg-slate-200 rounded-full w-20 mb-2"></div>
                             <div class="h-6 bg-slate-200 rounded-full w-28"></div>
                         </div>
@@ -31,7 +31,7 @@
                 <section class="section-card section-card-body">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
                         <div class="modal-header-copy">
-                            <div class="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center">
+                            <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
                                 <i class="fa-solid fa-wallet text-[16px]"></i>
                             </div>
                             <div>
@@ -58,25 +58,18 @@
                 <div class="bg-white radius-panel border border-slate-100 p-4">
                     <div class="flex flex-col sm:flex-row sm:items-end gap-3">
                         <div class="flex-1 w-full">
-                            <label class="type-meta font-bold text-slate-400 uppercase mb-1">Tanggal
-                                Awal</label>
+                            <label class="type-meta font-bold text-slate-400 uppercase mb-1">Periode</label>
                             <button type="button" @click="openCalendar($event, 'filter', '', 'budgeting')"
-                                class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[11px] text-left outline-none hover:border-ppp-accent transition-all flex items-center gap-2">
+                                class="date-trigger-button date-trigger-button-compact">
                                 <i class="fa-solid fa-calendar-days text-[10px] text-slate-400"></i>
-                                <span :class="budgetDateFilter.start ? 'text-slate-700 font-medium' : 'text-slate-400'">
-                                    {{ budgetDateFilter.start ? formatShortDate(budgetDateFilter.start) : 'Pilih tanggal awal' }}
-                                </span>
-                            </button>
-                        </div>
-                        <div class="flex-1 w-full">
-                            <label class="type-meta font-bold text-slate-400 uppercase mb-1">Tanggal
-                                Akhir</label>
-                            <button type="button" @click="openCalendar($event, 'filter', '', 'budgeting')"
-                                class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[11px] text-left outline-none hover:border-ppp-accent transition-all flex items-center gap-2">
-                                <i class="fa-solid fa-calendar-days text-[10px] text-slate-400"></i>
-                                <span :class="budgetDateFilter.end ? 'text-slate-700 font-medium' : 'text-slate-400'">
-                                    {{ budgetDateFilter.end ? formatShortDate(budgetDateFilter.end) : 'Pilih tanggal akhir' }}
-                                </span>
+                                <template v-if="budgetDateFilter.start">
+                                    {{ formatShortDate(budgetDateFilter.start) }}
+                                    <span v-if="budgetDateFilter.end"> - {{ formatShortDate(budgetDateFilter.end) }}</span>
+                                </template>
+                                <template v-else>Pilih Periode</template>
+                                <i v-if="budgetDateFilter.start"
+                                    @click.stop="budgetDateFilter = { start: '', end: '' }"
+                                    class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-red-500"></i>
                             </button>
                         </div>
                         <button @click="budgetDateFilter = { start: '', end: '' }"
@@ -98,19 +91,19 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 pb-4 border-b border-slate-100">
                         <div class="col-span-full text-[10px] font-bold text-slate-500 uppercase mb-1">
                             Konfigurasi Meta</div>
-                        <div><label class="block text-[10px] text-slate-400 mb-1">Biaya / Iklan</label><input
-                                type="number" v-model.number="budgetConfig.meta.costPerAd"
+                        <div><label for="budget-meta-cost-per-ad" class="block text-[10px] text-slate-400 mb-1">Biaya / Iklan</label><input
+                                id="budget-meta-cost-per-ad" name="budget_meta_cost_per_ad" type="number" v-model.number="budgetConfig.meta.costPerAd"
                                 class="w-full text-[11px] font-bold p-2 rounded-xl border border-slate-200 bg-slate-50 outline-none focus:border-ppp-accent" />
                         </div>
-                        <div><label class="block text-[10px] text-slate-400 mb-1">Total Iklan</label><input
-                                type="number" v-model.number="budgetConfig.meta.totalAds"
+                        <div><label for="budget-meta-total-ads" class="block text-[10px] text-slate-400 mb-1">Total Iklan</label><input
+                                id="budget-meta-total-ads" name="budget_meta_total_ads" type="number" v-model.number="budgetConfig.meta.totalAds"
                                 class="w-full text-[11px] font-bold p-2 rounded-xl border border-slate-200 bg-slate-50 outline-none focus:border-ppp-accent" />
                         </div>
-                        <div><label class="block text-[10px] text-slate-400 mb-1">Durasi (Hari)</label><input
-                                type="number" v-model.number="budgetConfig.meta.days"
+                        <div><label for="budget-meta-days" class="block text-[10px] text-slate-400 mb-1">Durasi (Hari)</label><input
+                                id="budget-meta-days" name="budget_meta_days" type="number" v-model.number="budgetConfig.meta.days"
                                 class="w-full text-[11px] font-bold p-2 rounded-xl border border-slate-200 bg-slate-50 outline-none focus:border-ppp-accent" />
                         </div>
-                        <div><label class="block text-[10px] text-slate-400 mb-1">Sisa Saldo</label><input type="number"
+                        <div><label for="budget-meta-balance" class="block text-[10px] text-slate-400 mb-1">Sisa Saldo</label><input id="budget-meta-balance" name="budget_meta_balance" type="number"
                                 v-model.number="budgetConfig.meta.balance"
                                 class="w-full text-[11px] font-bold p-2 rounded-xl border border-slate-200 bg-slate-50 outline-none focus:border-ppp-accent" />
                         </div>
@@ -119,19 +112,19 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 pb-4 border-b border-slate-100">
                         <div class="col-span-full text-[10px] font-bold text-slate-500 uppercase mb-1">
                             Konfigurasi Google</div>
-                        <div><label class="block text-[10px] text-slate-400 mb-1">Biaya / Ads</label><input
-                                type="number" v-model.number="budgetConfig.google.costPerAd"
+                        <div><label for="budget-google-cost-per-ad" class="block text-[10px] text-slate-400 mb-1">Biaya / Ads</label><input
+                                id="budget-google-cost-per-ad" name="budget_google_cost_per_ad" type="number" v-model.number="budgetConfig.google.costPerAd"
                                 class="w-full text-[11px] font-bold p-2 rounded-xl border border-slate-200 bg-slate-50 outline-none focus:border-ppp-accent" />
                         </div>
-                        <div><label class="block text-[10px] text-slate-400 mb-1">Total Ads</label><input type="number"
+                        <div><label for="budget-google-total-ads" class="block text-[10px] text-slate-400 mb-1">Total Ads</label><input id="budget-google-total-ads" name="budget_google_total_ads" type="number"
                                 v-model.number="budgetConfig.google.totalAds"
                                 class="w-full text-[11px] font-bold p-2 rounded-xl border border-slate-200 bg-slate-50 outline-none focus:border-ppp-accent" />
                         </div>
-                        <div><label class="block text-[10px] text-slate-400 mb-1">Durasi (Hari)</label><input
-                                type="number" v-model.number="budgetConfig.google.days"
+                        <div><label for="budget-google-days" class="block text-[10px] text-slate-400 mb-1">Durasi (Hari)</label><input
+                                id="budget-google-days" name="budget_google_days" type="number" v-model.number="budgetConfig.google.days"
                                 class="w-full text-[11px] font-bold p-2 rounded-xl border border-slate-200 bg-slate-50 outline-none focus:border-ppp-accent" />
                         </div>
-                        <div><label class="block text-[10px] text-slate-400 mb-1">Sisa Saldo</label><input type="number"
+                        <div><label for="budget-google-balance" class="block text-[10px] text-slate-400 mb-1">Sisa Saldo</label><input id="budget-google-balance" name="budget_google_balance" type="number"
                                 v-model.number="budgetConfig.google.balance"
                                 class="w-full text-[11px] font-bold p-2 rounded-xl border border-slate-200 bg-slate-50 outline-none focus:border-ppp-accent" />
                         </div>
@@ -140,41 +133,41 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 pb-4 border-b border-slate-100">
                         <div class="col-span-full text-[10px] font-bold text-slate-500 uppercase mb-1">
                             Konfigurasi Mekari</div>
-                        <div><label class="block text-[10px] text-slate-400 mb-1">Visitor Target /
-                                Hari</label><input type="number"
+                        <div><label for="budget-mekari-visitor-target" class="block text-[10px] text-slate-400 mb-1">Visitor Target /
+                                Hari</label><input id="budget-mekari-visitor-target" name="budget_mekari_visitor_target" type="number"
                                 v-model.number="budgetConfig.mekari.visitor.targetPerDay"
                                 class="w-full text-[11px] font-bold p-2 rounded-xl border border-slate-200 bg-slate-50 outline-none focus:border-ppp-accent" />
                         </div>
-                        <div><label class="block text-[10px] text-slate-400 mb-1">Durasi Visitor
-                                (Hari)</label><input type="number" v-model.number="budgetConfig.mekari.visitor.days"
+                        <div><label for="budget-mekari-visitor-days" class="block text-[10px] text-slate-400 mb-1">Durasi Visitor
+                                (Hari)</label><input id="budget-mekari-visitor-days" name="budget_mekari_visitor_days" type="number" v-model.number="budgetConfig.mekari.visitor.days"
                                 class="w-full text-[11px] font-bold p-2 rounded-xl border border-slate-200 bg-slate-50 outline-none focus:border-ppp-accent" />
                         </div>
-                        <div><label class="block text-[10px] text-slate-400 mb-1">Saldo Visitor
-                                (Unit)</label><input type="number" v-model.number="budgetConfig.mekari.visitor.balance"
+                        <div><label for="budget-mekari-visitor-balance" class="block text-[10px] text-slate-400 mb-1">Saldo Visitor
+                                (Unit)</label><input id="budget-mekari-visitor-balance" name="budget_mekari_visitor_balance" type="number" v-model.number="budgetConfig.mekari.visitor.balance"
                                 class="w-full text-[11px] font-bold p-2 rounded-xl border border-slate-200 bg-slate-50 outline-none focus:border-ppp-accent" />
                         </div>
-                        <div><label class="block text-[10px] text-slate-400 mb-1">Biaya Topup Visitor
-                                (Manual)</label><input type="number"
+                        <div><label for="budget-mekari-visitor-topup-cost" class="block text-[10px] text-slate-400 mb-1">Biaya Topup Visitor
+                                (Manual)</label><input id="budget-mekari-visitor-topup-cost" name="budget_mekari_visitor_topup_cost" type="number"
                                 v-model.number="budgetConfig.mekari.visitor.topupCost"
                                 class="w-full text-[11px] font-bold p-2 rounded-xl border border-slate-200 bg-slate-50 outline-none focus:border-ppp-accent" />
                         </div>
                         <div class="col-span-full border-t border-dashed border-slate-200 my-1"></div>
-                        <div><label class="block text-[10px] text-slate-400 mb-1">Biaya Broadcast /
-                                Minggu</label><input type="number"
+                        <div><label for="budget-mekari-broadcast-cost-per-week" class="block text-[10px] text-slate-400 mb-1">Biaya Broadcast /
+                                Minggu</label><input id="budget-mekari-broadcast-cost-per-week" name="budget_mekari_broadcast_cost_per_week" type="number"
                                 v-model.number="budgetConfig.mekari.broadcast.costPerWeek"
                                 class="w-full text-[11px] font-bold p-2 rounded-xl border border-slate-200 bg-slate-50 outline-none focus:border-ppp-accent" />
                         </div>
-                        <div><label class="block text-[10px] text-slate-400 mb-1">Durasi (Minggu)</label><input
-                                type="number" v-model.number="budgetConfig.mekari.broadcast.weeks"
+                        <div><label for="budget-mekari-broadcast-weeks" class="block text-[10px] text-slate-400 mb-1">Durasi (Minggu)</label><input
+                                id="budget-mekari-broadcast-weeks" name="budget_mekari_broadcast_weeks" type="number" v-model.number="budgetConfig.mekari.broadcast.weeks"
                                 class="w-full text-[11px] font-bold p-2 rounded-xl border border-slate-200 bg-slate-50 outline-none focus:border-ppp-accent" />
                         </div>
-                        <div><label class="block text-[10px] text-slate-400 mb-1">Special Price
-                                Addon</label><input type="number"
+                        <div><label for="budget-mekari-broadcast-special-price" class="block text-[10px] text-slate-400 mb-1">Special Price
+                                Addon</label><input id="budget-mekari-broadcast-special-price" name="budget_mekari_broadcast_special_price" type="number"
                                 v-model.number="budgetConfig.mekari.broadcast.specialPrice"
                                 class="w-full text-[11px] font-bold p-2 rounded-xl border border-slate-200 bg-slate-50 outline-none focus:border-ppp-accent" />
                         </div>
-                        <div><label class="block text-[10px] text-slate-400 mb-1">Saldo Broadcast
-                                (Rp)</label><input type="number" v-model.number="budgetConfig.mekari.broadcast.balance"
+                        <div><label for="budget-mekari-broadcast-balance" class="block text-[10px] text-slate-400 mb-1">Saldo Broadcast
+                                (Rp)</label><input id="budget-mekari-broadcast-balance" name="budget_mekari_broadcast_balance" type="number" v-model.number="budgetConfig.mekari.broadcast.balance"
                                 class="w-full text-[11px] font-bold p-2 rounded-xl border border-slate-200 bg-slate-50 outline-none focus:border-ppp-accent" />
                         </div>
                     </div>
@@ -206,12 +199,12 @@
                                     </div>
                                 </div>
                             </div>
-                            <div><label class="block text-[9px] text-slate-400 mb-1">Biaya Paket</label><input
-                                    type="number" v-model.number="partner.packageCost"
+                            <div><label :for="`budget-colab-package-cost-${idx}`" class="block text-[9px] text-slate-400 mb-1">Biaya Paket</label><input
+                                    :id="`budget-colab-package-cost-${idx}`" :name="`budget_colab_package_cost_${idx}`" type="number" v-model.number="partner.packageCost"
                                     class="w-full text-[11px] bg-white border border-slate-200 rounded-lg p-2 outline-none" />
                             </div>
-                            <div><label class="block text-[9px] text-slate-400 mb-1">Slot Video</label><input
-                                    type="number" v-model.number="partner.slots"
+                            <div><label :for="`budget-colab-slots-${idx}`" class="block text-[9px] text-slate-400 mb-1">Slot Video</label><input
+                                    :id="`budget-colab-slots-${idx}`" :name="`budget_colab_slots_${idx}`" type="number" v-model.number="partner.slots"
                                     class="w-full text-[11px] bg-white border border-slate-200 rounded-lg p-2 outline-none" />
                             </div>
                             <button @click="budgetConfig.colabPartners.splice(idx, 1)"
@@ -233,23 +226,23 @@
                         </div>
                         <div v-for="(item, idx) in budgetConfig.others" :key="'oth'+idx"
                             class="grid grid-cols-2 md:grid-cols-6 gap-2 mb-2 bg-slate-50 p-3 rounded-xl border border-slate-100 relative">
-                            <div class="col-span-2"><label class="block text-[9px] text-slate-400 mb-1">Nama
-                                    Platform</label><input type="text" v-model="item.name"
+                            <div class="col-span-2"><label :for="`budget-other-name-${idx}`" class="block text-[9px] text-slate-400 mb-1">Nama
+                                    Platform</label><input :id="`budget-other-name-${idx}`" :name="`budget_other_name_${idx}`" type="text" v-model="item.name"
                                     class="w-full text-[11px] font-bold bg-white border border-slate-200 rounded-lg p-2 outline-none" />
                             </div>
-                            <div><label class="block text-[9px] text-slate-400 mb-1">Biaya Satuan</label><input
-                                    type="number" v-model.number="item.costPerUnit"
+                            <div><label :for="`budget-other-cost-per-unit-${idx}`" class="block text-[9px] text-slate-400 mb-1">Biaya Satuan</label><input
+                                    :id="`budget-other-cost-per-unit-${idx}`" :name="`budget_other_cost_per_unit_${idx}`" type="number" v-model.number="item.costPerUnit"
                                     class="w-full text-[11px] bg-white border border-slate-200 rounded-lg p-2 outline-none" />
                             </div>
-                            <div><label class="block text-[9px] text-slate-400 mb-1">Qty</label><input type="number"
+                            <div><label :for="`budget-other-quantity-${idx}`" class="block text-[9px] text-slate-400 mb-1">Qty</label><input :id="`budget-other-quantity-${idx}`" :name="`budget_other_quantity_${idx}`" type="number"
                                     v-model.number="item.quantity"
                                     class="w-full text-[11px] bg-white border border-slate-200 rounded-lg p-2 outline-none" />
                             </div>
-                            <div><label class="block text-[9px] text-slate-400 mb-1">Durasi</label><input type="number"
+                            <div><label :for="`budget-other-duration-${idx}`" class="block text-[9px] text-slate-400 mb-1">Durasi</label><input :id="`budget-other-duration-${idx}`" :name="`budget_other_duration_${idx}`" type="number"
                                     v-model.number="item.duration"
                                     class="w-full text-[11px] bg-white border border-slate-200 rounded-lg p-2 outline-none" />
                             </div>
-                            <div><label class="block text-[9px] text-slate-400 mb-1">Saldo</label><input type="number"
+                            <div><label :for="`budget-other-balance-${idx}`" class="block text-[9px] text-slate-400 mb-1">Saldo</label><input :id="`budget-other-balance-${idx}`" :name="`budget_other_balance_${idx}`" type="number"
                                     v-model.number="item.balance"
                                     class="w-full text-[11px] bg-white border border-slate-200 rounded-lg p-2 outline-none" />
                             </div>
@@ -263,7 +256,7 @@
                     </div>
                     <div class="flex justify-end pt-2 border-t border-slate-100">
                         <button @click="saveBudgetServer" :disabled="submitting"
-                            class="px-5 py-2.5 bg-ppp-accent text-white rounded-xl text-[11px] font-bold flex items-center gap-2 hover:bg-ppp-accent-dark transition shadow-sm disabled:opacity-50">
+                            class="px-5 py-2.5 bg-ppp-accent text-white rounded-xl text-[11px] font-bold flex items-center gap-2 hover:bg-ppp-accent-dark transition disabled:opacity-50">
                             <i v-if="!submitting" class="fa-solid fa-floppy-disk"></i>
                             <i v-else class="fa-solid fa-circle-notch fa-spin"></i>
                             {{ submitting ? 'Menyimpan...' : 'Simpan Konfigurasi' }}
@@ -271,184 +264,19 @@
                     </div>
                 </div>
 
-                <!-- Summary cards -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <!-- Meta Ads -->
-                    <div class="dashboard-summary-card stat-card">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="icon-utility-button icon-utility-bordered !w-10 !h-10 text-slate-600">
-                                <i class="fa-brands fa-meta text-lg"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-slate-900">Meta Ads</h3>
-                                <p class="text-[10px] text-slate-400 uppercase tracking-wider">Facebook &amp;
-                                    Instagram</p>
-                            </div>
+                <!-- Summary cards (compact) -->
+                <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                    <div v-for="c in budgetSummary.cards" :key="c.label" class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
+                        <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i :class="[c.iconPrefix || 'fa-solid', c.icon, 'text-[120px]']"></i></div>
+                        <p :class="['text-[9px] font-bold uppercase tracking-widest mb-3', c.color]">{{ c.label }}</p>
+                        <div class="flex items-baseline gap-2">
+                            <span class="dashboard-summary-value">{{ c.value }}</span>
+                            <span v-if="c.unit" :class="['dashboard-summary-unit', c.unitColor]">{{ c.unit }}</span>
                         </div>
-                        <div class="space-y-2 text-[11px] text-slate-600">
-                            <div class="flex justify-between border-b border-slate-50 pb-2"><span>Biaya /
-                                    Iklan</span><span class="font-bold">{{ formatCurrency(budgetConfig.meta.costPerAd) }}</span></div>
-                            <div class="flex justify-between border-b border-slate-50 pb-2"><span>Total
-                                    Iklan</span><span class="font-bold">{{ budgetConfig.meta.totalAds }}
-                                    Slot</span></div>
-                            <div class="flex justify-between border-b border-slate-50 pb-2">
-                                <span>Durasi</span><span class="font-bold">{{ budgetConfig.meta.days }}
-                                    Hari</span>
-                            </div>
-                            <div class="flex justify-between bg-slate-50 p-2 rounded-lg"><span>Total
-                                    Anggaran</span><span class="font-bold">{{ formatCurrency(budgetCalculations.metaTotal) }}</span></div>
-                            <div class="flex justify-between text-slate-400"><span>Sisa Saldo</span><span>- {{ formatCurrency(budgetConfig.meta.balance) }}</span></div>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center">
-                            <span class="text-[11px] font-bold text-slate-600">Topup Rencana</span>
-                            <span class="type-title font-bold text-slate-900">{{ formatCurrency(budgetCalculations.metaTopup) }}</span>
-                        </div>
-                    </div>
-                    <!-- Google Ads -->
-                    <div class="dashboard-summary-card stat-card">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="icon-utility-button icon-utility-bordered !w-10 !h-10 text-slate-600">
-                                <i class="fa-brands fa-google text-lg"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-slate-900">Google Ads</h3>
-                                <p class="text-[10px] text-slate-400 uppercase tracking-wider">Search &amp;
-                                    Display</p>
-                            </div>
-                        </div>
-                        <div class="space-y-2 text-[11px] text-slate-600">
-                            <div class="flex justify-between border-b border-slate-50 pb-2"><span>Biaya /
-                                    Ads</span><span class="font-bold">{{ formatCurrency(budgetConfig.google.costPerAd) }}</span></div>
-                            <div class="flex justify-between border-b border-slate-50 pb-2"><span>Total
-                                    Ads</span><span class="font-bold">{{ budgetConfig.google.totalAds }}
-                                    Slot</span></div>
-                            <div class="flex justify-between border-b border-slate-50 pb-2">
-                                <span>Durasi</span><span class="font-bold">{{ budgetConfig.google.days }}
-                                    Hari</span>
-                            </div>
-                            <div class="flex justify-between bg-slate-50 p-2 rounded-lg"><span>Total
-                                    Anggaran</span><span class="font-bold">{{ formatCurrency(budgetCalculations.googleTotal) }}</span></div>
-                            <div class="flex justify-between text-slate-400"><span>Sisa Saldo</span><span>- {{ formatCurrency(budgetConfig.google.balance) }}</span></div>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center">
-                            <span class="text-[11px] font-bold text-slate-600">Topup Rencana</span>
-                            <span class="type-title font-bold text-slate-900">{{ formatCurrency(budgetCalculations.googleTopup) }}</span>
-                        </div>
-                    </div>
-                    <!-- Mekari -->
-                    <div class="dashboard-summary-card stat-card">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="icon-utility-button icon-utility-bordered !w-10 !h-10 text-slate-600">
-                                <i class="fa-solid fa-bullhorn text-lg"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-slate-900">Mekari Ecosystem</h3>
-                                <p class="text-[10px] text-slate-400 uppercase tracking-wider">Visitor &amp;
-                                    Broadcast</p>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <p class="text-[10px] font-bold text-slate-500 uppercase mb-2">Mekari Visitor</p>
-                            <div class="bg-slate-50 p-2 rounded-lg space-y-1 text-[11px] mb-2">
-                                <div class="flex justify-between"><span>Target</span><b>{{ budgetConfig.mekari.visitor.targetPerDay }} visit/hari x {{ budgetConfig.mekari.visitor.days }}</b></div>
-                                <div class="flex justify-between"><span>Total Visitor</span><b>{{ formatNumber(budgetCalculations.mekariVisitorTotal) }}</b></div>
-                                <div class="flex justify-between text-slate-400"><span>Sisa Saldo</span><b>-{{ formatNumber(budgetConfig.mekari.visitor.balance) }}</b></div>
-                                <div class="flex justify-between font-bold border-t border-slate-200 pt-1 mt-1">
-                                    <span>Need Topup</span><span>~{{ formatNumber(budgetCalculations.mekariVisitorNeeded) }} Unit</span>
-                                </div>
-                            </div>
-                            <div class="text-right font-bold text-slate-900">{{ formatCurrency(budgetConfig.mekari.visitor.topupCost) }}</div>
-                        </div>
-                        <div>
-                            <p class="text-[10px] font-bold text-slate-500 uppercase mb-2">Mekari Broadcast</p>
-                            <div class="bg-slate-50 p-2 rounded-lg space-y-1 text-[11px] mb-2">
-                                <div class="flex justify-between"><span>Paket</span><b>{{ formatNumber(budgetConfig.mekari.broadcast.costPerWeek/1000) }}rb/mg x
-                                        {{ budgetConfig.mekari.broadcast.weeks }}mg</b></div>
-                                <div class="flex justify-between"><span>Special Price</span><b>+ {{ formatCurrency(budgetConfig.mekari.broadcast.specialPrice) }}</b></div>
-                                <div class="flex justify-between"><span>Total Anggaran</span><b>{{ formatCurrency(budgetCalculations.mekariBroadcastTotal) }}</b></div>
-                                <div class="flex justify-between text-slate-400"><span>Sisa Saldo</span><b>-{{ formatCurrency(budgetConfig.mekari.broadcast.balance) }}</b></div>
-                            </div>
-                            <div class="text-right font-bold text-slate-900">{{ formatCurrency(budgetCalculations.mekariBroadcastTopup) }}</div>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center">
-                            <span class="text-[11px] font-bold text-slate-600">Total Topup Mekari</span>
-                            <span class="type-title font-bold text-slate-900">{{ formatCurrency(budgetCalculations.mekariTopupTotal) }}</span>
-                        </div>
-                    </div>
-                    <!-- Paid Colab -->
-                    <div class="dashboard-summary-card stat-card">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="icon-utility-button icon-utility-bordered !w-10 !h-10 text-slate-600">
-                                <i class="fa-solid fa-handshake text-lg"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-slate-900">Paid Collaboration</h3>
-                                <p class="text-[10px] text-slate-400 uppercase tracking-wider">Track by Partner
-                                </p>
-                            </div>
-                        </div>
-                        <div class="space-y-3">
-                            <div v-for="(colab, idx) in budgetCalculations.colabBreakdown" :key="'cb'+idx"
-                                class="bg-slate-50 p-2 rounded-xl">
-                                <div class="flex justify-between text-[11px] font-bold text-slate-700 mb-1">
-                                    <span>{{ colab.name }}</span>
-                                    <span :class="colab.remaining < 0 ? 'text-rose-500' : ''">{{ colab.used }} /
-                                        {{ colab.slots }}</span>
-                                </div>
-                                <div class="w-full bg-slate-200 rounded-full h-1.5 mb-1">
-                                    <div class="bg-ppp-accent h-1.5 rounded-full transition-all"
-                                        :style="'width:' + Math.min((colab.used / (colab.slots || 1)) * 100, 100) + '%'">
-                                    </div>
-                                </div>
-                                <div class="flex justify-between text-[9px] text-slate-500">
-                                    <span>Sisa Slot: <strong class="text-slate-700">{{ Math.max(0, colab.remaining) }}</strong></span>
-                                    <span>Cost: {{ formatCurrency(colab.packageCost) }}</span>
-                                </div>
-                            </div>
-                            <div v-if="budgetCalculations.colabBreakdown.length === 0"
-                                class="text-center text-[10px] text-slate-400 italic py-4">Belum ada partner
-                                colab. Tambahkan di pengaturan.</div>
-                            <button @click="showColabListModal = true"
-                                class="w-full text-[11px] font-bold text-slate-500 hover:text-ppp-accent flex items-center justify-center gap-2 py-2 rounded-xl hover:bg-slate-50 transition"><i
-                                    class="fa-solid fa-list-ul"></i> Lihat Detail Riwayat</button>
-                        </div>
-                    </div>
-                    <!-- Others -->
-                    <div v-for="(item, idx) in budgetCalculations.othersCalculated" :key="'oth'+idx"
-                        class="dashboard-summary-card stat-card">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div
-                                class="icon-utility-button icon-utility-bordered !w-10 !h-10 text-slate-600 bg-slate-100">
-                                <i class="fa-solid fa-layer-group text-lg"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-slate-900">{{ item.name || 'Platform Lain' }}</h3>
-                                <p class="text-[10px] text-slate-400 uppercase tracking-wider">Additional
-                                    Channel</p>
-                            </div>
-                        </div>
-                        <div class="space-y-2 text-[11px] text-slate-600">
-                            <div class="flex justify-between border-b border-slate-50 pb-2"><span>Biaya
-                                    Satuan</span><span class="font-bold">{{ formatCurrency(item.costPerUnit) }}</span></div>
-                            <div class="flex justify-between border-b border-slate-50 pb-2"><span>Jumlah
-                                    (Qty)</span><span class="font-bold">{{ item.quantity }}</span></div>
-                            <div class="flex justify-between border-b border-slate-50 pb-2">
-                                <span>Durasi</span><span class="font-bold">{{ item.duration }}</span>
-                            </div>
-                            <div class="flex justify-between bg-slate-50 p-2 rounded-lg"><span>Total
-                                    Anggaran</span><span class="font-bold">{{ formatCurrency(item.total) }}</span></div>
-                            <div class="flex justify-between text-slate-400"><span>Sisa Saldo</span><span>- {{ formatCurrency(item.balance) }}</span></div>
-                        </div>
-                        <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center">
-                            <span class="text-[11px] font-bold text-slate-600">Topup Rencana</span>
-                            <span class="type-title font-bold text-slate-900">{{ formatCurrency(item.topup) }}</span>
-                        </div>
+                        <p :class="['text-[10px] font-bold mt-3', c.subColor]">{{ c.sub }}</p>
                     </div>
                 </div>
             </div>
-
-            </main>
-        </div>
 
     <!-- Harga Kompetitor Modal -->
     <teleport to="body">
@@ -462,7 +290,7 @@
                     <div class="modal-header-bar radius-sheet-top">
                         <div class="modal-header-copy">
                             <div
-                                class="modal-header-icon bg-blue-50 text-blue-500">
+                                class="modal-header-icon bg-blue-50 text-blue-600">
                                 <i class="fa-solid fa-calculator"></i>
                             </div>
                             <div>
@@ -476,16 +304,16 @@
                     </div>
                     <div class="flex-1 overflow-y-auto p-6 space-y-4">
                         <div>
-                            <label class="type-meta font-bold text-slate-400 uppercase mb-1.5">Nama
+                            <label for="harga-kompetitor-nama-produk" class="type-meta font-bold text-slate-400 uppercase mb-1.5">Nama
                                 Produk</label>
-                            <input v-model="hargaKompetitorForm.Nama_Produk" type="text" class="form-input-compact"
+                            <input id="harga-kompetitor-nama-produk" name="harga_kompetitor_nama_produk" v-model="hargaKompetitorForm.Nama_Produk" type="text" class="form-input-compact"
                                 placeholder="Contoh: Samsung S24 Ultra 256GB" />
                         </div>
                         <div>
                             <label class="type-meta font-bold text-slate-400 uppercase mb-1.5">Tanggal
                                 Cek</label>
                             <button @click="openCalendar($event, 'form', '', 'hargaKompetitorCek')"
-                                class="filter-trigger-button toolbar-trigger-field">
+                                class="date-trigger-button toolbar-trigger-field">
                                 <i class="fa-solid fa-calendar-days text-[10px] text-slate-400"></i>
                                 <span
                                     :class="hargaKompetitorForm.Tanggal_Cek ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ hargaKompetitorForm.Tanggal_Cek || 'Pilih tanggal' }}</span>
@@ -493,36 +321,36 @@
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase mb-1.5">Harga
+                                <label for="harga-kompetitor-distributor-1" class="type-meta font-bold text-slate-400 uppercase mb-1.5">Harga
                                     Distributor 1</label>
-                                <input v-model.number="hargaKompetitorForm.Harga_Distributor_1" type="number"
+                                <input id="harga-kompetitor-distributor-1" name="harga_kompetitor_distributor_1" v-model.number="hargaKompetitorForm.Harga_Distributor_1" type="number"
                                     class="form-input-compact" />
                             </div>
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase mb-1.5">Harga
+                                <label for="harga-kompetitor-distributor-2" class="type-meta font-bold text-slate-400 uppercase mb-1.5">Harga
                                     Distributor 2</label>
-                                <input v-model.number="hargaKompetitorForm.Harga_Distributor_2" type="number"
+                                <input id="harga-kompetitor-distributor-2" name="harga_kompetitor_distributor_2" v-model.number="hargaKompetitorForm.Harga_Distributor_2" type="number"
                                     class="form-input-compact" />
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase mb-1.5">Harga
+                                <label for="harga-kompetitor-kompetitor" class="type-meta font-bold text-slate-400 uppercase mb-1.5">Harga
                                     Kompetitor</label>
-                                <input v-model.number="hargaKompetitorForm.Harga_Kompetitor" type="number"
+                                <input id="harga-kompetitor-kompetitor" name="harga_kompetitor_harga_kompetitor" v-model.number="hargaKompetitorForm.Harga_Kompetitor" type="number"
                                     class="form-input-compact" />
                             </div>
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase mb-1.5">Harga
+                                <label for="harga-kompetitor-rencana-jual" class="type-meta font-bold text-slate-400 uppercase mb-1.5">Harga
                                     Rencana Jual</label>
-                                <input v-model.number="hargaKompetitorForm.Harga_Rencana_Jual" type="number"
+                                <input id="harga-kompetitor-rencana-jual" name="harga_kompetitor_harga_rencana_jual" v-model.number="hargaKompetitorForm.Harga_Rencana_Jual" type="number"
                                     class="form-input-compact" />
                             </div>
                         </div>
                         <div>
-                            <label class="type-meta font-bold text-slate-400 uppercase mb-1.5">Margin
+                            <label for="harga-kompetitor-margin-profit" class="type-meta font-bold text-slate-400 uppercase mb-1.5">Margin
                                 Profit</label>
-                            <input v-model.number="hargaKompetitorForm.Margin_Profit" type="number"
+                            <input id="harga-kompetitor-margin-profit" name="harga_kompetitor_margin_profit" v-model.number="hargaKompetitorForm.Margin_Profit" type="number"
                                 class="form-input-compact" />
                         </div>
                         <div class="bg-slate-50 p-3 rounded-xl text-[11px] text-slate-600">
@@ -572,22 +400,22 @@
                             <div class="col-span-2">
                                 <label class="type-meta font-bold text-slate-400 uppercase mb-1.5">Tanggal <span class="text-red-500">*</span></label>
                                 <button @click="openCalendar($event, 'form', '', 'adsTanggal')"
-                                    class="filter-trigger-button toolbar-trigger-field">
+                                    class="date-trigger-button toolbar-trigger-field">
                                     <i class="fa-solid fa-calendar-days text-[10px] text-slate-400"></i>
                                     <span :class="adsForm.Tanggal ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ adsForm.Tanggal || 'Pilih tanggal' }}</span>
                                 </button>
                             </div>
                         </div>
                         <div>
-                            <label class="type-meta font-bold text-slate-400 uppercase mb-1.5">Nama Iklan /
+                            <label for="ads-nama" class="type-meta font-bold text-slate-400 uppercase mb-1.5">Nama Iklan /
                                 Campaign <span class="text-red-500">*</span></label>
-                            <input v-model="adsForm.Nama" type="text" class="form-input-compact"
+                            <input id="ads-nama" name="ads_nama" v-model="adsForm.Nama" type="text" class="form-input-compact"
                                 placeholder="Contoh: Promo Lebaran Reel" />
                         </div>
                         <div>
-                            <label class="type-meta font-bold text-slate-400 uppercase mb-1.5">ID Ads
+                            <label for="ads-id-ads" class="type-meta font-bold text-slate-400 uppercase mb-1.5">ID Ads
                                 (Optional)</label>
-                            <input v-model="adsForm.ID_Ads" type="text"
+                            <input id="ads-id-ads" name="ads_id_ads" v-model="adsForm.ID_Ads" type="text"
                                 class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-[11px] font-mono outline-none focus:border-ppp-accent"
                                 placeholder="ID dari Ads Manager" />
                         </div>
@@ -631,25 +459,25 @@
                                 Engagement Metrics</p>
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label class="type-meta font-bold text-slate-400 uppercase mb-1.5">Jangkauan
+                                    <label for="ads-jangkauan" class="type-meta font-bold text-slate-400 uppercase mb-1.5">Jangkauan
                                         (Reach)</label>
-                                    <input v-model.number="adsForm.Jangkauan" type="number" min="0"
+                                    <input id="ads-jangkauan" name="ads_jangkauan" v-model.number="adsForm.Jangkauan" type="number" min="0"
                                         class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-[11px] text-right outline-none focus:border-ppp-accent" />
                                 </div>
                                 <div>
-                                    <label class="type-meta font-bold text-slate-400 uppercase mb-1.5">Suka
+                                    <label for="ads-suka" class="type-meta font-bold text-slate-400 uppercase mb-1.5">Suka
                                         / Like</label>
-                                    <input v-model.number="adsForm.Suka" type="number" min="0"
+                                    <input id="ads-suka" name="ads_suka" v-model.number="adsForm.Suka" type="number" min="0"
                                         class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-[11px] text-right outline-none focus:border-ppp-accent" />
                                 </div>
                                 <div>
-                                    <label class="type-meta font-bold text-slate-400 uppercase mb-1.5">Komentar</label>
-                                    <input v-model.number="adsForm.Komentar" type="number" min="0"
+                                    <label for="ads-komentar" class="type-meta font-bold text-slate-400 uppercase mb-1.5">Komentar</label>
+                                    <input id="ads-komentar" name="ads_komentar" v-model.number="adsForm.Komentar" type="number" min="0"
                                         class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-[11px] text-right outline-none focus:border-ppp-accent" />
                                 </div>
                                 <div>
-                                    <label class="type-meta font-bold text-slate-400 uppercase mb-1.5">Share</label>
-                                    <input v-model.number="adsForm.Share" type="number" min="0"
+                                    <label for="ads-share" class="type-meta font-bold text-slate-400 uppercase mb-1.5">Share</label>
+                                    <input id="ads-share" name="ads_share" v-model.number="adsForm.Share" type="number" min="0"
                                         class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-[11px] text-right outline-none focus:border-ppp-accent" />
                                 </div>
                             </div>
@@ -664,15 +492,15 @@
                             </p>
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label class="type-meta font-bold text-slate-400 uppercase mb-1.5">Biaya
+                                    <label for="ads-biaya" class="type-meta font-bold text-slate-400 uppercase mb-1.5">Biaya
                                         Iklan (Spent)</label>
-                                    <input v-model.number="adsForm.Biaya" type="number" min="0"
+                                    <input id="ads-biaya" name="ads_biaya" v-model.number="adsForm.Biaya" type="number" min="0"
                                         class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-[11px] text-right outline-none focus:border-ppp-accent" />
                                 </div>
                                 <div>
-                                    <label class="type-meta font-bold text-slate-400 uppercase mb-1.5">Sisa
+                                    <label for="ads-sisa-saldo" class="type-meta font-bold text-slate-400 uppercase mb-1.5">Sisa
                                         Saldo Platform</label>
-                                    <input v-model.number="adsForm.Sisa_Saldo" type="number" min="0"
+                                    <input id="ads-sisa-saldo" name="ads_sisa_saldo" v-model.number="adsForm.Sisa_Saldo" type="number" min="0"
                                         class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-[11px] text-right outline-none focus:border-ppp-accent" />
                                 </div>
                             </div>
@@ -701,7 +529,7 @@
                     <div class="modal-header-bar radius-sheet-top">
                         <div class="modal-header-copy">
                             <div
-                                class="modal-header-icon bg-violet-50 text-violet-500">
+                                class="modal-header-icon bg-violet-50 text-violet-600">
                                 <i class="fa-solid fa-calendar-check"></i>
                             </div>
                             <div>
@@ -714,16 +542,16 @@
                     </div>
                     <div class="flex-1 overflow-y-auto p-6 space-y-4">
                         <div>
-                            <label class="type-meta font-bold text-slate-400 uppercase mb-1.5">Nama
+                            <label for="lpjk-nama-event" class="type-meta font-bold text-slate-400 uppercase mb-1.5">Nama
                                 Event</label>
-                            <input v-model="lpjkForm.Nama_Event" type="text" class="form-input-compact"
+                            <input id="lpjk-nama-event" name="lpjk_nama_event" v-model="lpjkForm.Nama_Event" type="text" class="form-input-compact"
                                 placeholder="Contoh: Open Table Mall Hartono" />
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
                                 <label class="type-meta font-bold text-slate-400 uppercase mb-1.5">Tanggal</label>
                                 <button @click="openCalendar($event, 'form', '', 'lpjkTanggal')"
-                                    class="filter-trigger-button toolbar-trigger-field">
+                                    class="date-trigger-button toolbar-trigger-field">
                                     <i class="fa-solid fa-calendar-days text-[10px] text-slate-400"></i>
                                     <span :class="lpjkForm.Tanggal ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ lpjkForm.Tanggal || 'Pilih tanggal' }}</span>
                                 </button>
@@ -748,21 +576,21 @@
                         </div>
                         <div class="grid grid-cols-2 gap-3">
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase mb-1.5">Budget
+                                <label for="lpjk-budget-rencana" class="type-meta font-bold text-slate-400 uppercase mb-1.5">Budget
                                     Rencana</label>
-                                <input v-model.number="lpjkForm.Budget_Rencana" type="number"
+                                <input id="lpjk-budget-rencana" name="lpjk_budget_rencana" v-model.number="lpjkForm.Budget_Rencana" type="number"
                                     class="form-input-compact" />
                             </div>
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase mb-1.5">Realisasi
+                                <label for="lpjk-realisasi-biaya" class="type-meta font-bold text-slate-400 uppercase mb-1.5">Realisasi
                                     Biaya</label>
-                                <input v-model.number="lpjkForm.Realisasi_Biaya" type="number"
+                                <input id="lpjk-realisasi-biaya" name="lpjk_realisasi_biaya" v-model.number="lpjkForm.Realisasi_Biaya" type="number"
                                     class="form-input-compact" />
                             </div>
                         </div>
                         <div>
-                            <label class="type-meta font-bold text-slate-400 uppercase mb-1.5">Keterangan</label>
-                            <textarea v-model="lpjkForm.Keterangan" rows="2" class="form-input-compact resize-none"
+                            <label for="lpjk-keterangan" class="type-meta font-bold text-slate-400 uppercase mb-1.5">Keterangan</label>
+                            <textarea id="lpjk-keterangan" name="lpjk_keterangan" v-model="lpjkForm.Keterangan" rows="2" class="form-input-compact resize-none"
                                 placeholder="Catatan tambahan..."></textarea>
                         </div>
                     </div>
@@ -790,7 +618,7 @@
                         class="modal-header-bar radius-sheet-top shrink-0">
                         <div class="modal-header-copy">
                             <div
-                                class="modal-header-icon bg-violet-500 text-white shadow-lg">
+                                class="modal-header-icon bg-violet-500 text-white">
                                 <i class="fa-solid fa-file-invoice-dollar"></i>
                             </div>
                             <div>
@@ -830,32 +658,32 @@
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="type-meta font-bold text-slate-400 uppercase mb-1">Nama
+                                    <label for="lpjk-detail-nama-pengeluaran" class="type-meta font-bold text-slate-400 uppercase mb-1">Nama
                                         Pengeluaran</label>
-                                    <input v-model="lpjkDetailItem.Nama_Pengeluaran" type="text"
+                                    <input id="lpjk-detail-nama-pengeluaran" name="lpjk_detail_nama_pengeluaran" v-model="lpjkDetailItem.Nama_Pengeluaran" type="text"
                                         class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-[11px] outline-none focus:border-ppp-accent"
                                         placeholder="Contoh: Print Undangan" />
                                 </div>
                                 <div class="grid grid-cols-2 gap-3">
                                     <div>
-                                        <label class="type-meta font-bold text-slate-400 uppercase mb-1">Harga
+                                        <label for="lpjk-detail-satuan" class="type-meta font-bold text-slate-400 uppercase mb-1">Harga
                                             Satuan</label>
-                                        <input v-model.number="lpjkDetailItem.Satuan" type="number"
+                                        <input id="lpjk-detail-satuan" name="lpjk_detail_satuan" v-model.number="lpjkDetailItem.Satuan" type="number"
                                             @input="lpjkDetailItem.Total = (lpjkDetailItem.Satuan||0)*(lpjkDetailItem.Jumlah||0)"
                                             class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-[11px] outline-none focus:border-ppp-accent" />
                                     </div>
                                     <div>
-                                        <label class="type-meta font-bold text-slate-400 uppercase mb-1">Jumlah
+                                        <label for="lpjk-detail-jumlah" class="type-meta font-bold text-slate-400 uppercase mb-1">Jumlah
                                             (Qty)</label>
-                                        <input v-model.number="lpjkDetailItem.Jumlah" type="number"
+                                        <input id="lpjk-detail-jumlah" name="lpjk_detail_jumlah" v-model.number="lpjkDetailItem.Jumlah" type="number"
                                             @input="lpjkDetailItem.Total = (lpjkDetailItem.Satuan||0)*(lpjkDetailItem.Jumlah||0)"
                                             class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-[11px] outline-none focus:border-ppp-accent" />
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="type-meta font-bold text-slate-400 uppercase mb-1">Bukti /
+                                    <label for="lpjk-detail-bukti" class="type-meta font-bold text-slate-400 uppercase mb-1">Bukti /
                                         No. Nota</label>
-                                    <input v-model="lpjkDetailItem.Bukti" type="text"
+                                    <input id="lpjk-detail-bukti" name="lpjk_detail_bukti" v-model="lpjkDetailItem.Bukti" type="text"
                                         class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-[11px] outline-none focus:border-ppp-accent"
                                         placeholder="Nota No 01" />
                                 </div>
@@ -1015,7 +843,7 @@
                         class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
                         <div class="flex items-center gap-3">
                             <div
-                                class="modal-header-icon bg-emerald-50 text-emerald-500 border border-emerald-100">
+                                class="modal-header-icon bg-emerald-50 text-emerald-600 border border-emerald-100">
                                 <i class="fa-solid fa-arrow-trend-up"></i>
                             </div>
                             <div>
@@ -1045,7 +873,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text" placeholder="Cari vendor..."
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari vendor sell out" placeholder="Cari vendor..."
                                                 class="form-input-popover" @click.stop />
                                         </div>
                                         <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -1056,7 +885,8 @@
                                         </div>
                                     </div>
                                 </transition>
-                                <input v-model="sellOutForm.Vendor" type="text" placeholder="atau ketik manual..."
+                                <label for="sell-out-vendor-manual" class="sr-only">Vendor sell out manual</label>
+                                <input id="sell-out-vendor-manual" name="sell_out_vendor_manual" v-model="sellOutForm.Vendor" type="text" placeholder="atau ketik manual..." autocomplete="off"
                                     class="w-full bg-transparent border-0 px-4 pt-1 pb-0 text-[10px] text-slate-400 outline-none" />
                             </div>
                             <!-- Kategori -->
@@ -1075,7 +905,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text" placeholder="Cari..."
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari opsi sell out" placeholder="Cari..."
                                                 class="form-input-popover" @click.stop />
                                         </div>
                                         <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -1104,7 +935,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text" placeholder="Cari..."
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari opsi sell out" placeholder="Cari..."
                                                 class="form-input-popover" @click.stop />
                                         </div>
                                         <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -1132,7 +964,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text" placeholder="Cari / Ketik..."
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari atau ketik seri sell out" placeholder="Cari / Ketik..."
                                                 class="form-input-popover" @click.stop />
                                         </div>
                                         <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -1144,7 +977,8 @@
                                         </div>
                                     </div>
                                 </transition>
-                                <input v-model="sellOutForm.Seri" @input="buildSellOutProductName" type="text"
+                                <label for="sell-out-seri-manual" class="sr-only">Seri sell out manual</label>
+                                <input id="sell-out-seri-manual" name="sell_out_seri_manual" v-model="sellOutForm.Seri" @input="buildSellOutProductName" type="text" autocomplete="off"
                                     placeholder="tambah data di menu Nama Stock"
                                     class="w-full bg-transparent border-0 px-4 pt-1 pb-0 text-[10px] text-slate-400 outline-none" />
                             </div>
@@ -1163,7 +997,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text" placeholder="Cari..."
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari opsi sell out" placeholder="Cari..."
                                                 class="form-input-popover" @click.stop />
                                         </div>
                                         <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -1192,7 +1027,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text" placeholder="Cari..."
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari opsi sell out" placeholder="Cari..."
                                                 class="form-input-popover" @click.stop />
                                         </div>
                                         <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -1220,7 +1056,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text" placeholder="Cari..."
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari opsi sell out" placeholder="Cari..."
                                                 class="form-input-popover" @click.stop />
                                         </div>
                                         <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -1249,7 +1086,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text" placeholder="Cari..."
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari opsi sell out" placeholder="Cari..."
                                                 class="form-input-popover" @click.stop />
                                         </div>
                                         <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -1264,32 +1102,32 @@
                             </div>
                             <!-- Nama Produk (auto) -->
                             <div class="col-span-2">
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Nama
+                                <label for="sell-out-nama-produk" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Nama
                                     Produk <span class="text-ppp-accent">(auto)</span></label>
-                                <input v-model="sellOutForm.Nama_Produk" type="text" disabled
+                                <input id="sell-out-nama-produk" name="sell_out_nama_produk" v-model="sellOutForm.Nama_Produk" type="text" disabled
                                     class="w-full bg-slate-100 border border-slate-200 rounded-2xl px-4 py-3 text-[12px] font-bold text-slate-500 outline-none cursor-not-allowed"
                                     placeholder="Terisi otomatis dari field di atas..." />
                             </div>
                             <!-- Target Unit -->
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Target
+                                <label for="sell-out-target-unit" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Target
                                     Unit</label>
-                                <input v-model.number="sellOutForm.Target_Unit" type="number" min="0"
+                                <input id="sell-out-target-unit" name="sell_out_target_unit" v-model.number="sellOutForm.Target_Unit" type="number" min="0"
                                     class="form-input text-right" />
                             </div>
                             <!-- Bonus per Unit -->
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Bonus
+                                <label for="sell-out-bonus-nominal" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Bonus
                                     / Unit (Rp)</label>
-                                <input v-model.number="sellOutForm.Bonus_Nominal" type="number" min="0"
+                                <input id="sell-out-bonus-nominal" name="sell_out_bonus_nominal" v-model.number="sellOutForm.Bonus_Nominal" type="number" min="0"
                                     class="form-input text-right" />
                             </div>
                             <!-- Realisasi -->
                             <div>
-                                <label
+                                <label for="sell-out-realisasi-unit"
                                     class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Realisasi
                                     (unit terjual)</label>
-                                <input v-model.number="sellOutForm.Realisasi_Unit" type="number" min="0"
+                                <input id="sell-out-realisasi-unit" name="sell_out_realisasi_unit" v-model.number="sellOutForm.Realisasi_Unit" type="number" min="0"
                                     class="form-input text-right" />
                             </div>
                             <!-- Preview bonus -->
@@ -1303,29 +1141,29 @@
                             <div class="relative search-select-container">
                                 <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Periode
                                     Mulai</label>
-                                <div @click="openCalendar($event, 'form', '', 'sotDate1')"
-                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                <button type="button" @click="openCalendar($event, 'form', '', 'sotDate1')"
+                                    class="date-trigger-button toolbar-trigger-field">
+                                    <i class="fa-solid fa-calendar-days text-[10px] text-slate-400"></i>
                                     <span
-                                        :class="sellOutForm.Periode_Start ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ sellOutForm.Periode_Start ? formatFullDate(sellOutForm.Periode_Start) : 'Pilih Tanggal' }}</span>
-                                    <i class="fa-solid fa-calendar-day text-[10px] text-slate-300"></i>
-                                </div>
+                                        :class="sellOutForm.Periode_Start ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ sellOutForm.Periode_Start ? formatFullDate(sellOutForm.Periode_Start) : 'Pilih Tanggal' }}</span>
+                                </button>
                             </div>
                             <!-- Periode End -->
                             <div class="relative search-select-container">
                                 <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Periode
                                     Selesai</label>
-                                <div @click="openCalendar($event, 'form', '', 'sotDate2')"
-                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                <button type="button" @click="openCalendar($event, 'form', '', 'sotDate2')"
+                                    class="date-trigger-button toolbar-trigger-field">
+                                    <i class="fa-solid fa-calendar-days text-[10px] text-slate-400"></i>
                                     <span
-                                        :class="sellOutForm.Periode_End ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ sellOutForm.Periode_End ? formatFullDate(sellOutForm.Periode_End) : 'Pilih Tanggal' }}</span>
-                                    <i class="fa-solid fa-calendar-day text-[10px] text-slate-300"></i>
-                                </div>
+                                        :class="sellOutForm.Periode_End ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ sellOutForm.Periode_End ? formatFullDate(sellOutForm.Periode_End) : 'Pilih Tanggal' }}</span>
+                                </button>
                             </div>
                             <!-- Catatan -->
                             <div class="col-span-2">
-                                <label
+                                <label for="sell-out-catatan"
                                     class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Catatan</label>
-                                <textarea v-model="sellOutForm.Catatan" rows="2" placeholder="Catatan tambahan..."
+                                <textarea id="sell-out-catatan" name="sell_out_catatan" v-model="sellOutForm.Catatan" rows="2" placeholder="Catatan tambahan..."
                                     class="form-input resize-none"></textarea>
                             </div>
                         </div>
@@ -1341,13 +1179,14 @@
     </teleport>
 
     <!-- Master Plan Modal -->
-    <transition name="fade">
-        <div v-if="modalOpen"
-            class="fixed inset-0 z-[1000] overflow-y-auto custom-scrollbar flex items-end md:items-start justify-center md:p-6 overlay-motion-sheet">
-            <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm overlay-backdrop"></div>
+    <teleport to="body">
+        <transition name="fade">
+            <div v-if="modalOpen"
+                class="fixed inset-0 z-[1000] overflow-y-auto custom-scrollbar flex items-end md:items-start justify-center md:p-6 overlay-motion-sheet">
+                <div class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm overlay-backdrop"></div>
 
-            <div
-                class="mobile-sheet modal-width-form radius-sheet modal-sheet-surface-mobile-center z-[1001]">
+                <div
+                    class="mobile-sheet modal-width-form radius-sheet modal-sheet-surface-mobile-center z-[1001]">
                 <!-- Sticky Header -->
                 <div
                     class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[1010]">
@@ -1380,21 +1219,21 @@
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                 <!-- 1. Judul -->
                                 <div class="md:col-span-2">
-                                    <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Judul
+                                    <label for="master-plan-judul" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Judul
                                         Konten <span class="text-red-500">*</span></label>
-                                    <input v-model="masterForm.Judul" type="text" placeholder="Contoh: Review iPhone 15 Pro"
+                                    <input id="master-plan-judul" name="master_plan_judul" v-model="masterForm.Judul" type="text" placeholder="Contoh: Review iPhone 15 Pro"
                                         class="form-input" />
                                 </div>
 
                                 <!-- 2. Link Folder Drive -->
                                 <div class="md:col-span-2">
-                                    <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Link
+                                    <label for="master-plan-link-drive" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Link
                                         Folder Drive (Materi/Raw)</label>
                                     <div class="relative">
                                         <i
                                             class="fa-brands fa-google-drive absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 text-[12px]"></i>
-                                        <input v-model="masterForm.Link_Drive" type="text"
-                                            placeholder="https://drive.google.com/..." class="form-input pl-10" />
+                                        <input id="master-plan-link-drive" name="master_plan_link_drive" v-model="masterForm.Link_Drive" type="text"
+                                            placeholder="https://drive.google.com/..." class="form-input form-input-leading-icon" />
                                     </div>
                                 </div>
 
@@ -1414,7 +1253,8 @@
                                             <div class="relative mb-2">
                                                 <i
                                                     class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                                <input v-model="searchSelectQuery" type="text" placeholder="Cari format..."
+                                                <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                    autocomplete="off" aria-label="Cari format konten" placeholder="Cari format..."
                                                     class="form-input-popover" @click.stop />
                                             </div>
                                             <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -1464,7 +1304,8 @@
                                             <div class="relative mb-2">
                                                 <i
                                                     class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                                <input v-model="searchSelectQuery" type="text" placeholder="Cari editor..."
+                                                <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                    autocomplete="off" aria-label="Cari editor master plan" placeholder="Cari editor..."
                                                     class="form-input-popover" @click.stop />
                                             </div>
                                             <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -1483,12 +1324,12 @@
                                 <div class="relative search-select-container">
                                     <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Tanggal
                                         Rencana</label>
-                                    <div @click="openCalendar($event, 'form', '', 'master')"
-                                        class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <button type="button" @click="openCalendar($event, 'form', '', 'master')"
+                                        class="date-trigger-button toolbar-trigger-field">
+                                        <i class="fa-solid fa-calendar-days text-[10px] text-slate-400"></i>
                                         <span
-                                            :class="masterForm.Tanggal_Rencana ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ masterForm.Tanggal_Rencana ? formatFullDate(masterForm.Tanggal_Rencana) : 'Pilih Tanggal' }}</span>
-                                        <i class="fa-solid fa-calendar-day text-[10px] text-slate-300"></i>
-                                    </div>
+                                            :class="masterForm.Tanggal_Rencana ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ masterForm.Tanggal_Rencana ? formatFullDate(masterForm.Tanggal_Rencana) : 'Pilih Tanggal' }}</span>
+                                    </button>
                                 </div>
 
                                 <div class="relative md:col-span-2 search-select-container">
@@ -1513,7 +1354,8 @@
                                             <div class="relative mb-2">
                                                 <i
                                                     class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                                <input v-model="searchSelectQuery" type="text" placeholder="Cari talent..."
+                                                <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                    autocomplete="off" aria-label="Cari talent master plan" placeholder="Cari talent..."
                                                     class="form-input-popover" @click.stop />
                                             </div>
                                             <div class="max-h-48 overflow-y-auto custom-scrollbar space-y-1 p-1">
@@ -1566,7 +1408,8 @@
                                             <div class="relative mb-2">
                                                 <i
                                                     class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                                <input v-model="searchSelectQuery" type="text" placeholder="Cari platform..."
+                                                <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                    autocomplete="off" aria-label="Cari platform master plan" placeholder="Cari platform..."
                                                     class="form-input-popover" @click.stop />
                                             </div>
                                             <div class="max-h-48 overflow-y-auto custom-scrollbar space-y-1 p-1">
@@ -1608,7 +1451,8 @@
                                             <div class="relative mb-2">
                                                 <i
                                                     class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                                <input v-model="searchSelectQuery" type="text" placeholder="Cari colab..."
+                                                <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                    autocomplete="off" aria-label="Cari kolaborator master plan" placeholder="Cari colab..."
                                                     class="form-input-popover" @click.stop />
                                             </div>
                                             <div class="max-h-48 overflow-y-auto custom-scrollbar space-y-1 p-1">
@@ -1645,9 +1489,10 @@
                                                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
                                                     <div class="sm:col-span-1">
                                                         <label
+                                                            :for="`master-distribution-link-${String(plat).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`"
                                                             class="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">Link
                                                             Post</label>
-                                                        <input v-model="masterForm.Distribution_Meta[plat].link" type="text"
+                                                        <input :id="`master-distribution-link-${String(plat).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`" :name="`master_distribution_link_${String(plat).toLowerCase().replace(/[^a-z0-9]+/g, '_')}`" v-model="masterForm.Distribution_Meta[plat].link" type="text"
                                                             placeholder="https://..." class="form-input-compact-white" />
                                                     </div>
                                                     <div>
@@ -1661,7 +1506,7 @@
                                                             <transition name="fade">
                                                                 <div v-if="searchSelectOpen === 'distType_'+plat"
                                                                     :style="popoverStyle"
-                                                                    class="bg-white border border-slate-100 rounded-xl overflow-hidden p-1 animate-fadeIn shadow-2xl">
+                                                                    class="bg-white border border-slate-100 rounded-xl overflow-hidden p-1 animate-fadeIn">
                                                                     <div v-for="t in ['Regular','Colab','Ad']" :key="t"
                                                                         @click.stop="masterForm.Distribution_Meta[plat].type = t; searchSelectOpen = null"
                                                                         :class="['px-3 py-2 text-[11px] rounded-lg cursor-pointer transition-all', masterForm.Distribution_Meta[plat].type === t ? 'popover-option-active' : '']">
@@ -1692,7 +1537,7 @@
                                 <!-- 8. Skrip & Caption -->
                                 <div>
                                     <div class="flex items-center justify-between mb-2">
-                                        <label
+                                        <label for="master-plan-skrip"
                                             class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Skrip</label>
                                         <div
                                             class="flex rounded-xl overflow-hidden border border-slate-100 text-[10px] font-bold">
@@ -1703,14 +1548,14 @@
                                         </div>
                                     </div>
                                     <transition name="fade">
-                                        <textarea v-if="masterForm.Skrip !== 'Tidak'" v-model="masterForm.Skrip" rows="4"
+                                        <textarea id="master-plan-skrip" name="master_plan_skrip" v-if="masterForm.Skrip !== 'Tidak'" v-model="masterForm.Skrip" rows="4"
                                             placeholder="Isi skrip konten..."
                                             class="form-input resize-none custom-scrollbar"></textarea>
                                     </transition>
                                 </div>
                                 <div>
                                     <div class="flex items-center justify-between mb-2">
-                                        <label
+                                        <label for="master-plan-caption"
                                             class="block text-[10px] font-bold text-slate-400 uppercase tracking-widest">Caption</label>
                                         <div
                                             class="flex rounded-xl overflow-hidden border border-slate-100 text-[10px] font-bold">
@@ -1721,7 +1566,7 @@
                                         </div>
                                     </div>
                                     <transition name="fade">
-                                        <textarea v-if="masterForm.Caption !== 'Tidak'" v-model="masterForm.Caption" rows="4"
+                                        <textarea id="master-plan-caption" name="master_plan_caption" v-if="masterForm.Caption !== 'Tidak'" v-model="masterForm.Caption" rows="4"
                                             placeholder="Caption untuk posting..."
                                             class="form-input resize-none custom-scrollbar"></textarea>
                                     </transition>
@@ -1731,18 +1576,19 @@
                     </div>
                 </div>
 
-                <!-- Sticky Footer -->
-                <div class="modal-footer-bar modal-footer-actions">
-                    <button @click="modalOpen = false" class="modal-secondary-button flex-1">Batal</button>
-                    <button @click="saveMasterPlan" :disabled="submitting" class="modal-primary-button flex-1">
-                        <i v-if="submitting" class="fa-solid fa-circle-notch fa-spin text-xs"></i>
-                        <i v-else class="fa-solid fa-floppy-disk text-xs"></i>
-                        {{ submitting ? 'Menyimpan...' : (modalType === 'create' ? 'Simpan' : 'Update') }}
-                    </button>
+                    <!-- Sticky Footer -->
+                    <div class="modal-footer-bar modal-footer-actions">
+                        <button @click="modalOpen = false" class="modal-secondary-button flex-1">Batal</button>
+                        <button @click="saveMasterPlan" :disabled="submitting" class="modal-primary-button flex-1">
+                            <i v-if="submitting" class="fa-solid fa-circle-notch fa-spin text-xs"></i>
+                            <i v-else class="fa-solid fa-floppy-disk text-xs"></i>
+                            {{ submitting ? 'Menyimpan...' : (modalType === 'create' ? 'Simpan' : 'Update') }}
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-    </transition>
+        </transition>
+    </teleport>
 
     <teleport to="body">
         <transition name="fade">
@@ -1786,9 +1632,9 @@
                     </div>
                     <div class="p-4 pt-0 flex items-center justify-between gap-2">
                         <button @click="resetCalendar"
-                            class="px-4 py-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest hover:text-rose-500 transition-colors">Reset</button>
+                            class="calendar-footer-action text-slate-400 hover:text-rose-500">Reset</button>
                         <button @click="calendarOpen = false"
-                            class="px-4 py-2 text-[10px] font-bold text-blue-600 uppercase tracking-widest">Selesai</button>
+                            class="calendar-footer-action text-blue-600">Selesai</button>
                     </div>
                 </div>
             </div>
@@ -1865,7 +1711,7 @@
                                     <div class="relative mb-2">
                                         <i
                                             class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                        <input v-model="searchSelectQuery" type="text" placeholder="Cari kategori..."
+                                        <input id="nama-stock-kategori-search" name="search_select_query" v-model="searchSelectQuery" type="text" placeholder="Cari kategori..." autocomplete="off" aria-label="Cari kategori nama stock"
                                             class="form-input-popover" @click.stop />
                                     </div>
                                     <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -1897,7 +1743,7 @@
                                     <div class="relative mb-2">
                                         <i
                                             class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                        <input v-model="searchSelectQuery" type="text" placeholder="Cari brand..."
+                                        <input id="nama-stock-brand-search" name="search_select_query" v-model="searchSelectQuery" type="text" placeholder="Cari brand..." autocomplete="off" aria-label="Cari brand nama stock"
                                             class="form-input-popover" @click.stop />
                                     </div>
                                     <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -1915,8 +1761,8 @@
                             </transition>
                         </div>
                         <div class="space-y-1">
-                            <label class="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">Seri</label>
-                            <input v-model.trim="namaStockForm.SERI" type="text" placeholder="Ketik seri"
+                            <label for="nama-stock-seri" class="text-[10px] font-semibold text-slate-500 uppercase tracking-wide">Seri</label>
+                            <input id="nama-stock-seri" name="nama_stock_seri" v-model.trim="namaStockForm.SERI" type="text" placeholder="Ketik seri"
                                 class="form-input-compact-white" />
                         </div>
                         </div>
@@ -1975,35 +1821,35 @@
                             <div class="relative search-select-container">
                                 <label
                                     class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Tanggal</label>
-                                <div @click="openCalendar($event, 'form', '', 'story')"
-                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                <button type="button" @click="openCalendar($event, 'form', '', 'story')"
+                                    class="date-trigger-button toolbar-trigger-field">
+                                    <i class="fa-solid fa-calendar-days text-[10px] text-slate-400"></i>
                                     <span
-                                        :class="storyForm.Tanggal ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ storyForm.Tanggal ? formatFullDate(storyForm.Tanggal) : 'Pilih Tanggal' }}</span>
-                                    <i class="fa-solid fa-calendar-day text-[10px] text-slate-300"></i>
-                                </div>
+                                        :class="storyForm.Tanggal ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ storyForm.Tanggal ? formatFullDate(storyForm.Tanggal) : 'Pilih Tanggal' }}</span>
+                                </button>
                             </div>
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Waktu
+                                <label for="story-jam" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Waktu
                                     Tayang (Jam) <span class="text-red-500">*</span></label>
-                                <input v-model="storyForm.Jam" type="time" class="form-input" />
+                                <input id="story-jam" name="story_jam" v-model="storyForm.Jam" type="time" class="form-input" />
                             </div>
                         </div>
                         <div>
-                            <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Story
+                            <label for="story-konten" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Story
                                 (Konten) <span class="text-red-500">*</span></label>
-                            <input v-model="storyForm.Story" type="text" placeholder="Ketik ide konten..."
+                            <input id="story-konten" name="story_konten" v-model="storyForm.Story" type="text" placeholder="Ketik ide konten..."
                                 class="form-input uppercase" />
                         </div>
                         <div>
-                            <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Internal
+                            <label for="story-catatan" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Internal
                                 Note (Opsional)</label>
-                            <textarea v-model="storyForm.Catatan" rows="3" placeholder="Catatan singkat..."
+                            <textarea id="story-catatan" name="story_catatan" v-model="storyForm.Catatan" rows="3" placeholder="Catatan singkat..."
                                 class="form-input custom-scrollbar"></textarea>
                         </div>
                         <div>
-                            <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Link
+                            <label for="story-link" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Link
                                 Reference (Opsional)</label>
-                            <input v-model="storyForm.Link" type="url" placeholder="https://..." class="form-input" />
+                            <input id="story-link" name="story_link" v-model="storyForm.Link" type="url" placeholder="https://..." class="form-input" />
                         </div>
                         <div class="relative search-select-container">
                             <label
@@ -2053,7 +1899,7 @@
                         class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
                         <div class="modal-header-copy">
                             <div
-                                class="modal-header-icon bg-cyan-50 text-cyan-500 border border-cyan-100">
+                                class="modal-header-icon bg-cyan-50 text-cyan-600 border border-cyan-100">
                                 <i class="fa-solid fa-cart-shopping"></i>
                             </div>
                             <div>
@@ -2070,12 +1916,12 @@
                             <div class="relative search-select-container">
                                 <label
                                     class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Tanggal</label>
-                                <div @click="openCalendar($event, 'form', '', 'orderanOnline1')"
-                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                <button type="button" @click="openCalendar($event, 'form', '', 'orderanOnline1')"
+                                    class="date-trigger-button toolbar-trigger-field">
+                                    <i class="fa-solid fa-calendar-days text-[10px] text-slate-400"></i>
                                     <span
-                                        :class="orderanOnlineForm['TANGGAL'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ orderanOnlineForm['TANGGAL'] ? formatFullDate(orderanOnlineForm['TANGGAL']) : 'Pilih Tanggal' }}</span>
-                                    <i class="fa-solid fa-calendar-day text-[10px] text-slate-300"></i>
-                                </div>
+                                        :class="orderanOnlineForm['TANGGAL'] ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ orderanOnlineForm['TANGGAL'] ? formatFullDate(orderanOnlineForm['TANGGAL']) : 'Pilih Tanggal' }}</span>
+                                </button>
                             </div>
                             <div class="relative search-select-container">
                                 <label
@@ -2093,7 +1939,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text"
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari ecommerce order online"
                                                 placeholder="Cari ecommerce..." class="form-input-popover"
                                                 @click.stop />
                                         </div>
@@ -2127,7 +1974,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text"
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari handle order online"
                                                 placeholder="Cari handle..." class="form-input-popover"
                                                 @click.stop />
                                         </div>
@@ -2146,24 +1994,24 @@
                                 </transition>
                             </div>
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Nama
+                                <label for="order-online-nama" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Nama
                                     Customer</label>
-                                <input v-model="orderanOnlineForm['NAMA']" type="text" class="form-input" />
+                                <input id="order-online-nama" name="order_online_nama" v-model="orderanOnlineForm['NAMA']" type="text" class="form-input" />
                             </div>
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">No
+                                <label for="order-online-hp" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">No
                                     HP</label>
-                                <input v-model="orderanOnlineForm['HP']" type="text" class="form-input" />
+                                <input id="order-online-hp" name="order_online_hp" v-model="orderanOnlineForm['HP']" type="text" class="form-input" />
                             </div>
                             <div>
-                                <label
+                                <label for="order-online-username"
                                     class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Username</label>
-                                <input v-model="orderanOnlineForm['USERNAME']" type="text" class="form-input" />
+                                <input id="order-online-username" name="order_online_username" v-model="orderanOnlineForm['USERNAME']" type="text" class="form-input" />
                             </div>
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">No
+                                <label for="order-online-no-pesanan" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">No
                                     Pesanan</label>
-                                <input v-model="orderanOnlineForm['NO PESANAN']" type="text" class="form-input" />
+                                <input id="order-online-no-pesanan" name="order_online_no_pesanan" v-model="orderanOnlineForm['NO PESANAN']" type="text" class="form-input" />
                             </div>
                             <div class="relative search-select-container">
                                 <label
@@ -2181,7 +2029,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text"
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari pengiriman order online"
                                                 placeholder="Cari pengiriman..." class="form-input-popover"
                                                 @click.stop />
                                         </div>
@@ -2200,9 +2049,9 @@
                                 </transition>
                             </div>
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">No
+                                <label for="order-online-no-resi" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">No
                                     Resi</label>
-                                <input v-model="orderanOnlineForm['NO RESI']" type="text" class="form-input" />
+                                <input id="order-online-no-resi" name="order_online_no_resi" v-model="orderanOnlineForm['NO RESI']" type="text" class="form-input" />
                             </div>
                             <div class="relative search-select-container">
                                 <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Type
@@ -2220,7 +2069,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text"
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari type unit order online"
                                                 placeholder="Cari type unit..." class="form-input-popover"
                                                 @click.stop />
                                         </div>
@@ -2239,31 +2089,31 @@
                                 </transition>
                             </div>
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">IMEI
+                                <label for="order-online-imei-sn" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">IMEI
                                     / SN</label>
-                                <input v-model="orderanOnlineForm['IMEI/SN']" type="text" class="form-input" />
+                                <input id="order-online-imei-sn" name="order_online_imei_sn" v-model="orderanOnlineForm['IMEI/SN']" type="text" class="form-input" />
                             </div>
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">No
+                                <label for="order-online-no-nota" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">No
                                     Nota</label>
-                                <input v-model="orderanOnlineForm['NO NOTA']" type="text" class="form-input" />
+                                <input id="order-online-no-nota" name="order_online_no_nota" v-model="orderanOnlineForm['NO NOTA']" type="text" class="form-input" />
                             </div>
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Harga
+                                <label for="order-online-harga-online" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Harga
                                     Online</label>
-                                <input v-model.number="orderanOnlineForm['HARGA ONLINE']" type="number"
+                                <input id="order-online-harga-online" name="order_online_harga_online" v-model.number="orderanOnlineForm['HARGA ONLINE']" type="number"
                                     class="form-input" />
                             </div>
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Nominal
+                                <label for="order-online-nominal-cair" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Nominal
                                     Cair</label>
-                                <input v-model.number="orderanOnlineForm['NOMINAL CAIR']" type="number"
+                                <input id="order-online-nominal-cair" name="order_online_nominal_cair" v-model.number="orderanOnlineForm['NOMINAL CAIR']" type="number"
                                     class="form-input" />
                             </div>
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Admin
+                                <label for="order-online-admin-persentase" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Admin
                                     %</label>
-                                <input v-model="orderanOnlineForm['ADMIN %']" type="text" placeholder="2% / 3%"
+                                <input id="order-online-admin-persentase" name="order_online_admin_persentase" v-model="orderanOnlineForm['ADMIN %']" type="text" placeholder="2% / 3%"
                                     class="form-input" />
                             </div>
                             <div class="relative search-select-container">
@@ -2312,7 +2162,7 @@
                         class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
                         <div class="modal-header-copy">
                             <div
-                                class="modal-header-icon bg-amber-50 text-amber-500 border border-amber-100">
+                                class="modal-header-icon bg-amber-50 text-amber-600 border border-amber-100">
                                 <i class="fa-solid fa-circle-question"></i>
                             </div>
                             <div>
@@ -2329,12 +2179,12 @@
                             <div class="relative search-select-container">
                                 <label
                                     class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Tanggal</label>
-                                <div @click="openCalendar($event, 'form', '', 'unitDitanya1')"
-                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                <button type="button" @click="openCalendar($event, 'form', '', 'unitDitanya1')"
+                                    class="date-trigger-button toolbar-trigger-field">
+                                    <i class="fa-solid fa-calendar-days text-[10px] text-slate-400"></i>
                                     <span
-                                        :class="unitDitanyaForm['TANGGAL'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ unitDitanyaForm['TANGGAL'] ? formatFullDate(unitDitanyaForm['TANGGAL']) : 'Pilih Tanggal' }}</span>
-                                    <i class="fa-solid fa-calendar-day text-[10px] text-slate-300"></i>
-                                </div>
+                                        :class="unitDitanyaForm['TANGGAL'] ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ unitDitanyaForm['TANGGAL'] ? formatFullDate(unitDitanyaForm['TANGGAL']) : 'Pilih Tanggal' }}</span>
+                                </button>
                             </div>
                             <div class="relative search-select-container">
                                 <label
@@ -2352,7 +2202,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text"
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari kategori unit ditanya"
                                                 placeholder="Cari kategori..." class="form-input-popover" @click.stop />
                                         </div>
                                         <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -2385,7 +2236,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text" placeholder="Cari brand..."
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari brand unit ditanya" placeholder="Cari brand..."
                                                 class="form-input-popover" @click.stop />
                                         </div>
                                         <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -2418,7 +2270,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text" placeholder="Cari seri..."
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari seri unit ditanya" placeholder="Cari seri..."
                                                 class="form-input-popover" @click.stop />
                                         </div>
                                         <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -2454,7 +2307,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text" placeholder="Cari RAM..."
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari RAM unit ditanya" placeholder="Cari RAM..."
                                                 class="form-input-popover" @click.stop />
                                         </div>
                                         <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -2487,7 +2341,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text"
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari internal unit ditanya"
                                                 placeholder="Cari internal..." class="form-input-popover"
                                                 @click.stop />
                                         </div>
@@ -2521,7 +2376,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text"
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari size unit ditanya"
                                                 placeholder="Cari size..." class="form-input-popover"
                                                 @click.stop />
                                         </div>
@@ -2540,9 +2396,9 @@
                                 </transition>
                             </div>
                             <div>
-                                <label
+                                <label for="unit-ditanya-warna"
                                     class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Warna</label>
-                                <input v-model="unitDitanyaForm['WARNA']" type="text" class="form-input" />
+                                <input id="unit-ditanya-warna" name="unit_ditanya_warna" v-model="unitDitanyaForm['WARNA']" type="text" class="form-input" />
                             </div>
                             <div class="relative search-select-container">
                                 <label
@@ -2582,7 +2438,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text" placeholder="Cari tipe..."
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari tipe unit ditanya" placeholder="Cari tipe..."
                                                 class="form-input-popover" @click.stop />
                                         </div>
                                         <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -2600,9 +2457,9 @@
                                 </transition>
                             </div>
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Jumlah
+                                <label for="unit-ditanya-ditanya" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Jumlah
                                     Ditanya</label>
-                                <input v-model.number="unitDitanyaForm['DITANYA']" type="number" min="1"
+                                <input id="unit-ditanya-ditanya" name="unit_ditanya_jumlah" v-model.number="unitDitanyaForm['DITANYA']" type="number" min="1"
                                     class="form-input" />
                             </div>
                             <div class="relative search-select-container">
@@ -2651,7 +2508,7 @@
                         class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
                         <div class="modal-header-copy">
                             <div
-                                class="modal-header-icon bg-rose-50 text-rose-500 border border-rose-100">
+                                class="modal-header-icon bg-rose-50 text-rose-600 border border-rose-100">
                                 <i class="fa-solid fa-shield-heart"></i>
                             </div>
                             <div>
@@ -2670,60 +2527,60 @@
                                 <div class="form-section-copy">Data pelanggan, kontak, dan timeline layanan.</div>
                             </div>
                             <div class="col-span-2">
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Nama
+                                <label for="claim-nama-customer" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Nama
                                     Customer</label>
-                                <input v-model="claimGaransiForm['NAMA_CUSTOMER']" type="text" class="form-input" />
+                                <input id="claim-nama-customer" name="claim_nama_customer" v-model="claimGaransiForm['NAMA_CUSTOMER']" type="text" class="form-input" />
                             </div>
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">No
+                                <label for="claim-no-service" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">No
                                     Service</label>
-                                <input v-model="claimGaransiForm['NO_SERVICE']" type="text" class="form-input" />
+                                <input id="claim-no-service" name="claim_no_service" v-model="claimGaransiForm['NO_SERVICE']" type="text" class="form-input" />
                             </div>
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">No
+                                <label for="claim-no-transaksi" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">No
                                     Transaksi</label>
-                                <input v-model="claimGaransiForm['NO_TRANSAKSI']" type="text" class="form-input" />
+                                <input id="claim-no-transaksi" name="claim_no_transaksi" v-model="claimGaransiForm['NO_TRANSAKSI']" type="text" class="form-input" />
                             </div>
                             <div class="relative search-select-container">
                                 <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Tanggal
                                     Masuk</label>
-                                <div @click="openCalendar($event, 'form', '', 'claimGaransi1')"
-                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                <button type="button" @click="openCalendar($event, 'form', '', 'claimGaransi1')"
+                                    class="date-trigger-button toolbar-trigger-field">
+                                    <i class="fa-solid fa-calendar-days text-[10px] text-slate-400"></i>
                                     <span
-                                        :class="claimGaransiForm['TANGGAL_MASUK'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ claimGaransiForm['TANGGAL_MASUK'] ? formatFullDate(claimGaransiForm['TANGGAL_MASUK']) : 'Pilih Tanggal' }}</span>
-                                    <i class="fa-solid fa-calendar-day text-[10px] text-slate-300"></i>
-                                </div>
+                                        :class="claimGaransiForm['TANGGAL_MASUK'] ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ claimGaransiForm['TANGGAL_MASUK'] ? formatFullDate(claimGaransiForm['TANGGAL_MASUK']) : 'Pilih Tanggal' }}</span>
+                                </button>
                             </div>
                             <div class="relative search-select-container">
                                 <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Tanggal
                                     Estimasi</label>
-                                <div @click="openCalendar($event, 'form', '', 'claimGaransi3')"
-                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                <button type="button" @click="openCalendar($event, 'form', '', 'claimGaransi3')"
+                                    class="date-trigger-button toolbar-trigger-field">
+                                    <i class="fa-solid fa-calendar-days text-[10px] text-slate-400"></i>
                                     <span
-                                        :class="claimGaransiForm['TANGGAL_ESTIMASI'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ claimGaransiForm['TANGGAL_ESTIMASI'] ? formatFullDate(claimGaransiForm['TANGGAL_ESTIMASI']) : 'Pilih Tanggal' }}</span>
-                                    <i class="fa-solid fa-calendar-day text-[10px] text-slate-300"></i>
-                                </div>
+                                        :class="claimGaransiForm['TANGGAL_ESTIMASI'] ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ claimGaransiForm['TANGGAL_ESTIMASI'] ? formatFullDate(claimGaransiForm['TANGGAL_ESTIMASI']) : 'Pilih Tanggal' }}</span>
+                                </button>
                             </div>
                             <div class="relative search-select-container">
                                 <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Tanggal
                                     Diambil</label>
-                                <div @click="openCalendar($event, 'form', '', 'claimGaransi2')"
-                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                <button type="button" @click="openCalendar($event, 'form', '', 'claimGaransi2')"
+                                    class="date-trigger-button toolbar-trigger-field">
+                                    <i class="fa-solid fa-calendar-days text-[10px] text-slate-400"></i>
                                     <span
-                                        :class="claimGaransiForm['TANGGAL_DIAMBIL'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ claimGaransiForm['TANGGAL_DIAMBIL'] ? formatFullDate(claimGaransiForm['TANGGAL_DIAMBIL']) : 'Pilih Tanggal' }}</span>
-                                    <i class="fa-solid fa-calendar-day text-[10px] text-slate-300"></i>
-                                </div>
+                                        :class="claimGaransiForm['TANGGAL_DIAMBIL'] ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ claimGaransiForm['TANGGAL_DIAMBIL'] ? formatFullDate(claimGaransiForm['TANGGAL_DIAMBIL']) : 'Pilih Tanggal' }}</span>
+                                </button>
                             </div>
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">WA
+                                <label for="claim-wa-customer" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">WA
                                     Customer</label>
-                                <input v-model="claimGaransiForm['WA_CUSTOMER']" type="text" placeholder="08xxx"
+                                <input id="claim-wa-customer" name="claim_wa_customer" v-model="claimGaransiForm['WA_CUSTOMER']" type="text" placeholder="08xxx"
                                     class="form-input" />
                             </div>
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">WA
+                                <label for="claim-wa2-customer" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">WA
                                     2 Customer</label>
-                                <input v-model="claimGaransiForm['WA2_CUSTOMER']" type="text"
+                                <input id="claim-wa2-customer" name="claim_wa2_customer" v-model="claimGaransiForm['WA2_CUSTOMER']" type="text"
                                     placeholder="08xxx (opsional)" class="form-input" />
                             </div>
                             <div class="form-section-card">
@@ -2746,7 +2603,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text" placeholder="Cari tipe..."
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari tipe claim garansi" placeholder="Cari tipe..."
                                                 class="form-input-popover" @click.stop />
                                         </div>
                                         <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -2764,9 +2622,9 @@
                                 </transition>
                             </div>
                             <div>
-                                <label
+                                <label for="claim-imei"
                                     class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">IMEI</label>
-                                <input v-model="claimGaransiForm['IMEI']" type="text" class="form-input" />
+                                <input id="claim-imei" name="claim_imei" v-model="claimGaransiForm['IMEI']" type="text" class="form-input" />
                             </div>
                             <div class="relative search-select-container">
                                 <label
@@ -2784,7 +2642,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text" placeholder="Cari seri..."
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari seri claim garansi" placeholder="Cari seri..."
                                                 class="form-input-popover" @click.stop />
                                         </div>
                                         <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -2817,7 +2676,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text" placeholder="Cari model..."
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari model claim garansi" placeholder="Cari model..."
                                                 class="form-input-popover" @click.stop />
                                         </div>
                                         <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -2835,14 +2695,14 @@
                                 </transition>
                             </div>
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">HP
+                                <label for="claim-hp-pinjaman" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">HP
                                     Pinjaman</label>
-                                <input v-model="claimGaransiForm['HP_PINJAMAN']" type="text" class="form-input" />
+                                <input id="claim-hp-pinjaman" name="claim_hp_pinjaman" v-model="claimGaransiForm['HP_PINJAMAN']" type="text" class="form-input" />
                             </div>
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">IMEI
+                                <label for="claim-imei-pinjaman" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">IMEI
                                     Pinjaman</label>
-                                <input v-model="claimGaransiForm['IMEI_PINJAMAN']" type="text" class="form-input" />
+                                <input id="claim-imei-pinjaman" name="claim_imei_pinjaman" v-model="claimGaransiForm['IMEI_PINJAMAN']" type="text" class="form-input" />
                             </div>
                             <div class="relative search-select-container">
                                 <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Lokasi
@@ -2860,7 +2720,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text" placeholder="Cari lokasi..."
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari lokasi claim garansi" placeholder="Cari lokasi..."
                                                 class="form-input-popover" @click.stop />
                                         </div>
                                         <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -2922,15 +2783,15 @@
                                 </transition>
                             </div>
                             <div class="col-span-2">
-                                <label
+                                <label for="claim-kerusakan"
                                     class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Kerusakan</label>
-                                <textarea v-model="claimGaransiForm['KERUSAKAN']" rows="3"
+                                <textarea id="claim-kerusakan" name="claim_kerusakan" v-model="claimGaransiForm['KERUSAKAN']" rows="3"
                                     class="form-input resize-none"></textarea>
                             </div>
                             <div class="col-span-2">
-                                <label
+                                <label for="claim-keterangan"
                                     class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Keterangan</label>
-                                <textarea v-model="claimGaransiForm['KETERANGAN']" rows="2"
+                                <textarea id="claim-keterangan" name="claim_keterangan" v-model="claimGaransiForm['KETERANGAN']" rows="2"
                                     placeholder="Catatan tambahan..." class="form-input resize-none"></textarea>
                             </div>
                         </div>
@@ -2957,7 +2818,7 @@
                         class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
                         <div class="modal-header-copy">
                             <div
-                                class="modal-header-icon bg-indigo-50 text-indigo-500 border border-indigo-100">
+                                class="modal-header-icon bg-indigo-50 text-indigo-600 border border-indigo-100">
                                 <i class="fa-solid fa-box-archive"></i>
                             </div>
                             <div>
@@ -2997,20 +2858,20 @@
                                 </button>
                             </div>
                             <div class="col-span-2">
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Nama
+                                <label for="keep-nama-customer" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Nama
                                     Customer</label>
-                                <input v-model="keepBarangForm['NAMA']" type="text" class="form-input" />
+                                <input id="keep-nama-customer" name="keep_nama_customer" v-model="keepBarangForm['NAMA']" type="text" class="form-input" />
                             </div>
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">No
+                                <label for="keep-nomor-hp" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">No
                                     HP</label>
-                                <input v-model="keepBarangForm['NOMOR_HP']" type="text" placeholder="08xxx"
+                                <input id="keep-nomor-hp" name="keep_nomor_hp" v-model="keepBarangForm['NOMOR_HP']" type="text" placeholder="08xxx"
                                     class="form-input" />
                             </div>
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">No
+                                <label for="keep-nomor-hp-2" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">No
                                     HP 2</label>
-                                <input v-model="keepBarangForm['NOMOR_HP_2']" type="text" placeholder="08xxx (opsional)"
+                                <input id="keep-nomor-hp-2" name="keep_nomor_hp_2" v-model="keepBarangForm['NOMOR_HP_2']" type="text" placeholder="08xxx (opsional)"
                                     class="form-input" />
                             </div>
                             <div class="relative search-select-container">
@@ -3029,7 +2890,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text" placeholder="Cari type HP..."
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari type HP keep barang" placeholder="Cari type HP..."
                                                 class="form-input-popover" @click.stop />
                                         </div>
                                         <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -3047,20 +2909,20 @@
                                 </transition>
                             </div>
                             <div>
-                                <label
+                                <label for="keep-imei-full"
                                     class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">IMEI</label>
-                                <input v-model="keepBarangForm['IMEI_FULL']" type="text" class="form-input" />
+                                <input id="keep-imei-full" name="keep_imei_full" v-model="keepBarangForm['IMEI_FULL']" type="text" class="form-input" />
                             </div>
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">DP
+                                <label for="keep-dp-uang-muka" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">DP
                                     (Uang Muka)</label>
-                                <input v-model.number="keepBarangForm['DP_UANG_MUKA']" type="number" min="0"
+                                <input id="keep-dp-uang-muka" name="keep_dp_uang_muka" v-model.number="keepBarangForm['DP_UANG_MUKA']" type="number" min="0"
                                     class="form-input" />
                             </div>
                             <div>
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Harga
+                                <label for="keep-harga-jual" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Harga
                                     Jual</label>
-                                <input v-model.number="keepBarangForm['HARGA_JUAL']" type="number" min="0"
+                                <input id="keep-harga-jual" name="keep_harga_jual" v-model.number="keepBarangForm['HARGA_JUAL']" type="number" min="0"
                                     class="form-input" />
                             </div>
                             <div class="relative search-select-container">
@@ -3079,7 +2941,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text"
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari handle by keep barang"
                                                 placeholder="Cari handle by..." class="form-input-popover"
                                                 @click.stop />
                                         </div>
@@ -3113,7 +2976,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text"
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari kasir by keep barang"
                                                 placeholder="Cari kasir by..." class="form-input-popover"
                                                 @click.stop />
                                         </div>
@@ -3147,7 +3011,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text"
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari team gudang keep barang"
                                                 placeholder="Cari team gudang..." class="form-input-popover"
                                                 @click.stop />
                                         </div>
@@ -3221,7 +3086,7 @@
                         class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
                         <div class="modal-header-copy">
                             <div
-                                class="modal-header-icon bg-orange-50 text-orange-500 border border-orange-100">
+                                class="modal-header-icon bg-orange-50 text-orange-600 border border-orange-100">
                                 <i class="fa-solid fa-bullhorn"></i>
                             </div>
                             <div>
@@ -3260,23 +3125,23 @@
                         </div>
                         <!-- Nama Program -->
                         <div>
-                            <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Nama
+                            <label for="promo-program" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Nama
                                 Program <span class="text-red-500">*</span></label>
-                            <input v-model="promoForm.Program" type="text" placeholder="Promo Cashback..."
+                            <input id="promo-program" name="promo_program" v-model="promoForm.Program" type="text" placeholder="Promo Cashback..."
                                 class="form-input" />
                         </div>
                         <!-- Varian -->
                         <div>
-                            <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Varian
+                            <label for="promo-varian" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Varian
                                 / Unit</label>
-                            <input v-model="promoForm.Warna" type="text" placeholder="Semua Tipe / Galaxy S25..."
+                            <input id="promo-varian" name="promo_varian" v-model="promoForm.Warna" type="text" placeholder="Semua Tipe / Galaxy S25..."
                                 class="form-input" />
                         </div>
                         <!-- Harga -->
                         <div>
-                            <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Nominal
+                            <label for="promo-harga" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Nominal
                                 Potongan (Rp)</label>
-                            <input v-model.number="promoForm.Harga" type="number" min="0"
+                            <input id="promo-harga" name="promo_harga" v-model.number="promoForm.Harga" type="number" min="0"
                                 class="form-input text-right" />
                         </div>
                         <!-- Periode -->
@@ -3309,36 +3174,36 @@
                                 </div>
                                 <!-- Date range pickers -->
                                 <div class="flex gap-1.5">
-                                    <div @click="openCalendar($event, 'form', '', 'promoDate1')"
-                                        class="select-trigger-button select-trigger-button-form-tight">
-                                        <i class="fa-solid fa-calendar-day text-[10px] text-slate-300"></i>
+                                    <button type="button" @click="openCalendar($event, 'form', '', 'promoDate1')"
+                                        class="date-trigger-button toolbar-trigger-field">
+                                        <i class="fa-solid fa-calendar-days text-[10px] text-slate-400"></i>
                                         <span
                                             :class="promoTempDate.start ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ promoTempDate.start ? formatShortDate(promoTempDate.start) : 'Mulai' }}</span>
-                                    </div>
-                                    <div @click="openCalendar($event, 'form', '', 'promoDate2')"
-                                        class="select-trigger-button select-trigger-button-form-tight">
-                                        <i class="fa-solid fa-calendar-day text-[10px] text-slate-300"></i>
+                                    </button>
+                                    <button type="button" @click="openCalendar($event, 'form', '', 'promoDate2')"
+                                        class="date-trigger-button toolbar-trigger-field">
+                                        <i class="fa-solid fa-calendar-days text-[10px] text-slate-400"></i>
                                         <span
                                             :class="promoTempDate.end ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ promoTempDate.end ? formatShortDate(promoTempDate.end) : 'Selesai' }}</span>
-                                    </div>
+                                    </button>
                                 </div>
                             </div>
-                            <input v-model="promoForm.Periode" type="text"
+                            <input id="promo-periode" name="promo_periode" v-model="promoForm.Periode" type="text"
                                 placeholder="Ketik periode manual atau pilih preset di atas..."
                                 class="form-input bg-white font-medium" />
                         </div>
                         <!-- Rules -->
                         <div>
-                            <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">S&K
+                            <label for="promo-rules" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">S&K
                                 / Rules</label>
-                            <textarea v-model="promoForm.Rules" rows="3" placeholder="Syarat dan ketentuan berlaku..."
+                            <textarea id="promo-rules" name="promo_rules" v-model="promoForm.Rules" rows="3" placeholder="Syarat dan ketentuan berlaku..."
                                 class="form-input resize-none"></textarea>
                         </div>
                         <!-- Benefit -->
                         <div>
-                            <label
+                            <label for="promo-benefit"
                                 class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Benefit</label>
-                            <textarea v-model="promoForm.Benefit" rows="3" placeholder="Keuntungan yang didapat..."
+                            <textarea id="promo-benefit" name="promo_benefit" v-model="promoForm.Benefit" rows="3" placeholder="Keuntungan yang didapat..."
                                 class="form-input resize-none"></textarea>
                         </div>
                     </div>
@@ -3380,9 +3245,9 @@
                     <div class="p-6 overflow-y-auto custom-scrollbar flex-1">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div class="md:col-span-2">
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Judul
+                                <label for="unboxing-judul" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Judul
                                     Unboxing <span class="text-red-500">*</span></label>
-                                <input v-model="unboxingForm.Nama" type="text"
+                                <input id="unboxing-judul" name="unboxing_judul" v-model="unboxingForm.Nama" type="text"
                                     placeholder="Contoh: Unboxing Samsung S24 Ultra" class="form-input" />
                             </div>
                             <div class="relative search-select-container">
@@ -3400,7 +3265,8 @@
                                         <div class="relative mb-2">
                                             <i
                                                 class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                            <input v-model="searchSelectQuery" type="text" placeholder="Cari editor..."
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari editor unboxing" placeholder="Cari editor..."
                                                 class="form-input-popover" @click.stop />
                                         </div>
                                         <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -3449,9 +3315,9 @@
                                 </button>
                             </div>
                             <div class="md:col-span-2">
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Link
+                                <label for="unboxing-link-video" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Link
                                     Video</label>
-                                <input v-model="unboxingForm.Link" type="text" placeholder="https://..."
+                                <input id="unboxing-link-video" name="unboxing_link_video" v-model="unboxingForm.Link" type="text" placeholder="https://..."
                                     class="form-input" />
                             </div>
                         </div>
@@ -3491,9 +3357,9 @@
                     <div class="p-6 overflow-y-auto custom-scrollbar flex-1">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div class="md:col-span-2">
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Judul
+                                <label for="distribution-judul" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Judul
                                     <span class="text-red-500">*</span></label>
-                                <input v-model="distributionForm.Judul" type="text" placeholder="Judul konten"
+                                <input id="distribution-judul" name="distribution_judul" v-model="distributionForm.Judul" type="text" placeholder="Judul konten"
                                     class="form-input" />
                             </div>
                             <div class="relative search-select-container">
@@ -3530,9 +3396,9 @@
                                 </button>
                             </div>
                             <div class="md:col-span-2">
-                                <label
+                                <label for="distribution-link"
                                     class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Link</label>
-                                <input v-model="distributionForm.Link" type="text" placeholder="https://..."
+                                <input id="distribution-link" name="distribution_link" v-model="distributionForm.Link" type="text" placeholder="https://..."
                                     class="form-input" />
                             </div>
                         </div>
@@ -3573,9 +3439,9 @@
                     <div class="p-6 overflow-y-auto custom-scrollbar flex-1">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div class="md:col-span-2">
-                                <label class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Judul
+                                <label for="analytics-judul" class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Judul
                                     <span class="text-red-500">*</span></label>
-                                <input v-model="analyticsForm.Judul" type="text" placeholder="Judul konten"
+                                <input id="analytics-judul" name="analytics_judul" v-model="analyticsForm.Judul" type="text" placeholder="Judul konten"
                                     class="form-input" />
                             </div>
                             <div class="relative search-select-container">
@@ -3600,25 +3466,25 @@
                                 </transition>
                             </div>
                             <div>
-                                <label
+                                <label for="analytics-views"
                                     class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Views</label>
-                                <input v-model.number="analyticsForm.Views" type="number" min="0" class="form-input" />
+                                <input id="analytics-views" name="analytics_views" v-model.number="analyticsForm.Views" type="number" min="0" class="form-input" />
                             </div>
                             <div>
-                                <label
+                                <label for="analytics-likes"
                                     class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Likes</label>
-                                <input v-model.number="analyticsForm.Likes" type="number" min="0" class="form-input" />
+                                <input id="analytics-likes" name="analytics_likes" v-model.number="analyticsForm.Likes" type="number" min="0" class="form-input" />
                             </div>
                             <div>
-                                <label
+                                <label for="analytics-comments"
                                     class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Comments</label>
-                                <input v-model.number="analyticsForm.Comments" type="number" min="0"
+                                <input id="analytics-comments" name="analytics_comments" v-model.number="analyticsForm.Comments" type="number" min="0"
                                     class="form-input" />
                             </div>
                             <div>
-                                <label
+                                <label for="analytics-shares"
                                     class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Shares</label>
-                                <input v-model.number="analyticsForm.Shares" type="number" min="0" class="form-input" />
+                                <input id="analytics-shares" name="analytics_shares" v-model.number="analyticsForm.Shares" type="number" min="0" class="form-input" />
                             </div>
                         </div>
                     </div>
@@ -3657,7 +3523,7 @@
                         </div>
                         <div v-else class="space-y-3">
                             <div v-for="item in calendarDayModalItems" :key="item.ID || item.Nama_Event"
-                                :class="['p-3 rounded-xl border transition-all', item.TYPE === 'event' ? 'bg-slate-50 border-slate-100' : 'bg-white border-slate-100 hover:shadow-md']">
+                                :class="['p-3 rounded-xl border transition-all', item.TYPE === 'event' ? 'bg-slate-50 border-slate-100' : 'bg-white border-slate-100']">
 
                                 <template v-if="item.TYPE === 'content'">
                                     <div class="flex items-start justify-between gap-2 mb-1.5">
@@ -3719,7 +3585,7 @@
                                 <template v-else>
                                     <div class="flex items-center gap-2.5">
                                         <div
-                                            class="w-8 h-8 rounded-lg flex items-center justify-center text-white shadow-sm bg-amber-500">
+                                            class="w-8 h-8 rounded-lg flex items-center justify-center text-white bg-amber-500">
                                             <i class="fa-solid fa-star text-[10px]"></i>
                                         </div>
                                         <div>
@@ -3737,5 +3603,4 @@
             </div>
         </transition>
     </teleport>
-    </div>
 @endverbatim

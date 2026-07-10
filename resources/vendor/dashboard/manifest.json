@@ -1,0 +1,46 @@
+{
+  "assets": [
+    {
+      "id": "vue",
+      "source": "node_modules/vue/dist/vue.global.prod.js",
+      "runtimePath": "/vendor/dashboard/vue/vue.global.prod.js",
+      "strategy": "npm-sync",
+      "kind": "script"
+    },
+    {
+      "id": "papaparse",
+      "source": "node_modules/papaparse/papaparse.min.js",
+      "runtimePath": "/vendor/dashboard/papaparse/papaparse.min.js",
+      "strategy": "npm-sync",
+      "kind": "script"
+    },
+    {
+      "id": "apexcharts",
+      "source": "node_modules/apexcharts/dist/apexcharts.min.js",
+      "runtimePath": "/vendor/dashboard/apexcharts/apexcharts.min.js",
+      "strategy": "npm-sync",
+      "kind": "script"
+    },
+    {
+      "id": "fontawesome-css",
+      "source": "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
+      "runtimePath": "/vendor/dashboard/fontawesome/css/all.min.css",
+      "strategy": "npm-sync",
+      "kind": "style"
+    },
+    {
+      "id": "fontawesome-webfonts",
+      "source": "node_modules/@fortawesome/fontawesome-free/webfonts",
+      "runtimePath": "/vendor/dashboard/fontawesome/webfonts",
+      "strategy": "npm-sync",
+      "kind": "font-directory"
+    },
+    {
+      "id": "xlsx",
+      "source": "resources/vendor/dashboard/xlsx/xlsx.full.min.js",
+      "runtimePath": "/vendor/dashboard/xlsx/xlsx.full.min.js",
+      "strategy": "repo-local-sync",
+      "kind": "script"
+    }
+  ]
+}

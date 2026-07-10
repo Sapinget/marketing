@@ -52,6 +52,24 @@ class MarketingDashboardShellTest extends TestCase
         );
     }
 
+    protected function readLegacyDashboardSourceHtml(): string
+    {
+        $html = file_get_contents(resource_path('legacy/marketing-dashboard-source.html'));
+
+        $this->assertIsString($html);
+
+        return $html;
+    }
+
+    protected function readLegacyDesignSystemArchiveHtml(): string
+    {
+        $html = file_get_contents(resource_path('legacy/design-system-archive.html'));
+
+        $this->assertIsString($html);
+
+        return $html;
+    }
+
     public function test_root_serves_marketing_dashboard_shell(): void
     {
         $response = $this->get('/');
@@ -73,6 +91,24 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlMatches('/<script[^>]+src="[^"]*\/vendor\/dashboard\/papaparse\/papaparse\.min\.js"/', $html);
         $this->assertHtmlMatches('/<script[^>]+src="[^"]*\/vendor\/dashboard\/apexcharts\/apexcharts\.min\.js"/', $html);
         $this->assertHtmlMatches('/<link[^>]+href="[^"]*\/vendor\/dashboard\/fontawesome\/css\/all\.min\.css"/', $html);
+    }
+
+    public function test_root_render_does_not_depend_on_public_dashboard_snapshot(): void
+    {
+        $publicSnapshotPath = public_path('marketing-dashboard.html');
+        $temporarySnapshotPath = $publicSnapshotPath . '.tmp-test';
+
+        rename($publicSnapshotPath, $temporarySnapshotPath);
+
+        try {
+            $response = $this->get('/');
+
+            $response->assertOk();
+            $response->assertSee('Marketing Dashboard', false);
+            $response->assertSee('Selamat Datang', false);
+        } finally {
+            rename($temporarySnapshotPath, $publicSnapshotPath);
+        }
     }
 
     public function test_root_injects_backend_url_and_no_store_meta_into_shell_response(): void
@@ -128,6 +164,20 @@ class MarketingDashboardShellTest extends TestCase
         $response->assertSee('</html>', false);
     }
 
+    public function test_dashboard_shell_uses_blade_app_frame_partial_instead_of_raw_legacy_shell_fragment(): void
+    {
+        $bodyPartial = file_get_contents(resource_path('views/dashboard/partials/shell/body.blade.php'));
+        $appFramePartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-frame.blade.php'));
+
+        $this->assertIsString($bodyPartial);
+        $this->assertIsString($appFramePartial);
+        $this->assertHtmlContains("@include('dashboard.partials.shell.app-frame')", $bodyPartial);
+        $this->assertHtmlNotContains('{!! $bodyBeforeDashboardMenu !!}', $bodyPartial);
+        $this->assertHtmlContains('<div id="app" class="min-h-[100dvh]" v-cloak>', $appFramePartial);
+        $this->assertHtmlContains("switchTab('dashboard')", $appFramePartial);
+        $this->assertHtmlContains('breadcrumbItems', $appFramePartial);
+    }
+
     public function test_dashboard_shell_moves_large_inline_head_styles_into_vite_css(): void
     {
         $head = file_get_contents(resource_path('views/dashboard/partials/shell/head.blade.php'));
@@ -160,118 +210,53 @@ class MarketingDashboardShellTest extends TestCase
 
         $this->assertSame(' lang="id"', $fragments['htmlAttributes']);
         $this->assertSame(' class="text-ppp-text antialiased"', $fragments['bodyAttributes']);
-        $this->assertHtmlContains('<div id="app"', $fragments['bodyHtml']);
-        $this->assertHtmlContains('v-cloak', $fragments['bodyHtml']);
-        $this->assertHtmlContains('const { createApp, ref, computed, watch, onMounted, onBeforeUnmount, nextTick } = Vue;', $fragments['bodyHtml']);
+        $this->assertSame('', $fragments['bodyHtml']);
         $this->assertFragmentHasKey('backendUrl', $fragments);
         $this->assertSame('https://backend.example.test', $fragments['backendUrl']);
         $this->assertFragmentNotHasKey('headHtml', $fragments);
         $this->assertFragmentNotHasKey('doctype', $fragments);
-        $this->assertHtmlNotContains('window.MARKETING_BACKEND_URL=', $fragments['bodyHtml']);
-        $this->assertHtmlNotContains('http-equiv="Cache-Control"', $fragments['bodyHtml']);
-        $this->assertHtmlNotContains('http-equiv="Pragma"', $fragments['bodyHtml']);
     }
 
-    public function test_shell_builder_splits_calendar_menu_markup_from_legacy_body(): void
+    // These tests read Blade partials directly — they verify the partials exist and contain expected content.
+    // Unlike build() tests below, they do NOT depend on legacy fragment extraction.
+
+    public function test_shell_builder_splits_notification_error_utility_cluster_from_legacy_body_script(): void
+    {
+        $utilityPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-notification-error-utils.blade.php'));
+        $protectedPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-protected-user-settings.blade.php'));
+
+        $this->assertIsString($utilityPartial);
+        $this->assertIsString($protectedPartial);
+        $this->assertHtmlContains('const inferNotificationType = (message = \'\') => {', $utilityPartial);
+        $this->assertHtmlContains('const showNotification = (message, type = null) => {', $utilityPartial);
+        $this->assertHtmlContains('const getFriendlyErrorMessage = (error, fallback = \'Terjadi kendala saat memproses permintaan.\') => {', $utilityPartial);
+        $this->assertHtmlContains('const notifyError = (prefix, error, fallback) => {', $utilityPartial);
+        $this->assertHtmlNotContains('const inferNotificationType = (message = \'\') => {', $protectedPartial);
+    }
+
+    public function test_shell_builder_splits_shell_interaction_helper_cluster_from_legacy_body_script(): void
+    {
+        $helperPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-shell-interaction-helpers.blade.php'));
+        $protectedPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-protected-user-settings.blade.php'));
+
+        $this->assertIsString($helperPartial);
+        $this->assertIsString($protectedPartial);
+        $this->assertHtmlContains('const toggleSidebar = () => {', $helperPartial);
+        $this->assertHtmlContains('const closeProfileMenu = (e) => {', $helperPartial);
+        $this->assertHtmlContains('const openProfileSetting = () => {', $helperPartial);
+        $this->assertHtmlNotContains('const toggleSidebar = () => {', $protectedPartial);
+    }
+
+    public function test_shell_builder_splits_runner_factory_cluster_from_legacy_body_script(): void
     {
         $shell = app(MarketingDashboardShell::class);
 
         $fragments = $shell->build('https://backend.example.test');
 
-        $this->assertFragmentHasKey('bodyBeforeCalendarMenu', $fragments);
-        $this->assertFragmentHasKey('bodyAfterCalendarMenu', $fragments);
-        $this->assertHtmlContains('<!-- Calendar View -->', $fragments['bodyBeforeCalendarMenu']);
-        $this->assertHtmlContains('<!-- Story Schedule View -->', $fragments['bodyAfterCalendarMenu']);
-        $this->assertHtmlNotContains('<div v-if="activeTab === \'calendar\'" class="space-y-6 animate-fadeIn pb-10">', $fragments['bodyBeforeCalendarMenu']);
-        $this->assertHtmlNotContains('<div v-if="activeTab === \'calendar\'" class="space-y-6 animate-fadeIn pb-10">', $fragments['bodyAfterCalendarMenu']);
-        $this->assertHtmlNotContains('Jadwal publikasi konten bulanan', $fragments['bodyBeforeCalendarMenu']);
-        $this->assertHtmlNotContains('Jadwal publikasi konten bulanan', $fragments['bodyAfterCalendarMenu']);
-    }
-
-    public function test_shell_builder_splits_story_menu_markup_from_legacy_body(): void
-    {
-        $shell = app(MarketingDashboardShell::class);
-
-        $fragments = $shell->build('https://backend.example.test');
-
-        $this->assertFragmentHasKey('bodyBeforeStoryMenu', $fragments);
-        $this->assertFragmentHasKey('bodyAfterStoryMenu', $fragments);
-        $this->assertHtmlContains('<!-- Story Schedule View -->', $fragments['bodyBeforeStoryMenu']);
-        $this->assertHtmlContains('<!-- Analisa Insight & Tren View -->', $fragments['bodyAfterStoryMenu']);
-        $this->assertHtmlNotContains('<div v-if="activeTab === \'story\'" class="space-y-6 animate-fadeIn pb-10">', $fragments['bodyBeforeStoryMenu']);
-        $this->assertHtmlNotContains('<div v-if="activeTab === \'story\'" class="space-y-6 animate-fadeIn pb-10">', $fragments['bodyAfterStoryMenu']);
-        $this->assertHtmlNotContains('Pengaturan jadwal story harian Instagram &', $fragments['bodyBeforeStoryMenu']);
-        $this->assertHtmlNotContains('Pengaturan jadwal story harian Instagram &', $fragments['bodyAfterStoryMenu']);
-    }
-
-    public function test_shell_builder_splits_ideation_menu_markup_from_legacy_body(): void
-    {
-        $shell = app(MarketingDashboardShell::class);
-
-        $fragments = $shell->build('https://backend.example.test');
-
-        $this->assertFragmentHasKey('bodyBeforeIdeationMenu', $fragments);
-        $this->assertFragmentHasKey('bodyAfterIdeationMenu', $fragments);
-        $this->assertFragmentHasKey('bodyBeforeMasterPlanMenu', $fragments);
-        $this->assertFragmentHasKey('bodyAfterMasterPlanMenu', $fragments);
-        $this->assertFragmentHasKey('bodyBeforeDashboardMenu', $fragments);
-        $this->assertFragmentHasKey('bodyAfterDashboardMenu', $fragments);
-        $this->assertEmpty($fragments['bodyBeforeMasterPlanMenu']);
-        $this->assertStringStartsWith('<!-- Ideation View -->', ltrim($fragments['bodyAfterMasterPlanMenu']));
-        $this->assertHtmlContains('<!-- Distribution View -->', $fragments['bodyAfterIdeationMenu']);
-        $this->assertHtmlNotContains('<div v-if="activeTab === \'master\'" class="space-y-6 animate-fadeIn pb-10">', $fragments['bodyBeforeIdeationMenu']);
-        $this->assertHtmlNotContains('<div v-if="activeTab === \'ideation\'" class="space-y-6 animate-fadeIn pb-10">', $fragments['bodyBeforeIdeationMenu']);
-        $this->assertHtmlNotContains('<div v-if="activeTab === \'ideation\'" class="space-y-6 animate-fadeIn pb-10">', $fragments['bodyAfterIdeationMenu']);
-        $this->assertHtmlNotContains('Brainstorming ide konten dan tracking', $fragments['bodyBeforeIdeationMenu']);
-        $this->assertHtmlNotContains('Brainstorming ide konten dan tracking', $fragments['bodyAfterIdeationMenu']);
-    }
-
-    public function test_shell_builder_splits_distribution_menu_markup_from_legacy_body(): void
-    {
-        $shell = app(MarketingDashboardShell::class);
-
-        $fragments = $shell->build('https://backend.example.test');
-
-        $this->assertFragmentHasKey('bodyBeforeDistributionMenu', $fragments);
-        $this->assertFragmentHasKey('bodyAfterDistributionMenu', $fragments);
-        $this->assertHtmlContains('<!-- Distribution View -->', $fragments['bodyBeforeDistributionMenu']);
-        $this->assertHtmlContains('<!-- Analytics View -->', $fragments['bodyAfterDistributionMenu']);
-        $this->assertHtmlNotContains('<div v-if="activeTab === \'distribution\'" class="space-y-6 animate-fadeIn pb-10">', $fragments['bodyBeforeDistributionMenu']);
-        $this->assertHtmlNotContains('<div v-if="activeTab === \'distribution\'" class="space-y-6 animate-fadeIn pb-10">', $fragments['bodyAfterDistributionMenu']);
-        $this->assertHtmlNotContains('Monitoring penyebaran konten di berbagai', $fragments['bodyBeforeDistributionMenu']);
-        $this->assertHtmlNotContains('Monitoring penyebaran konten di berbagai', $fragments['bodyAfterDistributionMenu']);
-    }
-
-    public function test_shell_builder_splits_analytics_menu_markup_from_legacy_body(): void
-    {
-        $shell = app(MarketingDashboardShell::class);
-
-        $fragments = $shell->build('https://backend.example.test');
-
-        $this->assertFragmentHasKey('bodyBeforeAnalyticsMenu', $fragments);
-        $this->assertFragmentHasKey('bodyAfterAnalyticsMenu', $fragments);
-        $this->assertHtmlContains('<!-- Analytics View -->', $fragments['bodyBeforeAnalyticsMenu']);
-        $this->assertHtmlContains('<!-- Calendar View -->', $fragments['bodyAfterAnalyticsMenu']);
-        $this->assertHtmlNotContains('<div v-if="activeTab === \'analytics\'" class="space-y-6 animate-fadeIn pb-10">', $fragments['bodyBeforeAnalyticsMenu']);
-        $this->assertHtmlNotContains('<div v-if="activeTab === \'analytics\'" class="space-y-6 animate-fadeIn pb-10">', $fragments['bodyAfterAnalyticsMenu']);
-        $this->assertHtmlNotContains('Analisis performa konten berdasarkan', $fragments['bodyBeforeAnalyticsMenu']);
-        $this->assertHtmlNotContains('Analisis performa konten berdasarkan', $fragments['bodyAfterAnalyticsMenu']);
-    }
-
-    public function test_shell_builder_splits_analytics_pdf_cluster_from_legacy_body_script(): void
-    {
-        $shell = app(MarketingDashboardShell::class);
-
-        $fragments = $shell->build('https://backend.example.test');
-
-        $this->assertFragmentHasKey('bodyBeforeAnalyticsPdfCluster', $fragments);
-        $this->assertFragmentHasKey('bodyAfterAnalyticsPdfCluster', $fragments);
-        $this->assertHtmlContains('}).exportToExcel(activeTab.value, currentData);', $fragments['bodyBeforeAnalyticsPdfCluster']);
-        $this->assertHtmlContains('const formatShortDate = (dateStr) => {', $fragments['bodyAfterAnalyticsPdfCluster']);
-        $this->assertHtmlNotContains('const exportAnalyticsToPDF = () => {', $fragments['bodyBeforeAnalyticsPdfCluster']);
-        $this->assertHtmlNotContains('const exportAnalyticsToPDF = () => {', $fragments['bodyAfterAnalyticsPdfCluster']);
-        $this->assertHtmlNotContains('const exportPdf = () => {', $fragments['bodyBeforeAnalyticsPdfCluster']);
-        $this->assertHtmlNotContains('const exportPdf = () => {', $fragments['bodyAfterAnalyticsPdfCluster']);
+        $this->assertFragmentHasKey('bodyBeforeRunnerFactoriesCluster', $fragments);
+        $this->assertFragmentHasKey('bodyAfterRunnerFactoriesCluster', $fragments);
+        $this->assertSame('', $fragments['bodyBeforeRunnerFactoriesCluster']);
+        $this->assertSame('', $fragments['bodyAfterRunnerFactoriesCluster']);
     }
 
     public function test_shell_builder_splits_customer_service_pdf_cluster_from_legacy_body_script(): void
@@ -282,18 +267,8 @@ class MarketingDashboardShellTest extends TestCase
 
         $this->assertFragmentHasKey('bodyBeforeCustomerServicePdfCluster', $fragments);
         $this->assertFragmentHasKey('bodyAfterCustomerServicePdfCluster', $fragments);
-        $this->assertHtmlContains('const deleteKeepBarang = (id) => {', $fragments['bodyBeforeCustomerServicePdfCluster']);
-        $this->assertHtmlContains('const formatCurrency = (value) => {', $fragments['bodyAfterCustomerServicePdfCluster']);
-        $this->assertHtmlNotContains('const buildUnitDitanyaGrouped_ = (rows) => {', $fragments['bodyBeforeCustomerServicePdfCluster']);
-        $this->assertHtmlNotContains('const buildUnitDitanyaGrouped_ = (rows) => {', $fragments['bodyAfterCustomerServicePdfCluster']);
-        $this->assertHtmlNotContains('const exportUnitDitanyaToExcel = async () => {', $fragments['bodyBeforeCustomerServicePdfCluster']);
-        $this->assertHtmlNotContains('const exportUnitDitanyaToExcel = async () => {', $fragments['bodyAfterCustomerServicePdfCluster']);
-        $this->assertHtmlNotContains('const exportUnitDitanyaToPDF = () => {', $fragments['bodyBeforeCustomerServicePdfCluster']);
-        $this->assertHtmlNotContains('const exportClaimGaransiToPDF = () => {', $fragments['bodyAfterCustomerServicePdfCluster']);
-        $this->assertHtmlNotContains('const exportKeepBarangToExcel = async () => {', $fragments['bodyBeforeCustomerServicePdfCluster']);
-        $this->assertHtmlNotContains('const exportKeepBarangToExcel = async () => {', $fragments['bodyAfterCustomerServicePdfCluster']);
-        $this->assertHtmlNotContains('const exportKeepBarangToPDF = () => {', $fragments['bodyBeforeCustomerServicePdfCluster']);
-        $this->assertHtmlNotContains('const exportKeepBarangToPDF = () => {', $fragments['bodyAfterCustomerServicePdfCluster']);
+        $this->assertSame('', $fragments['bodyBeforeCustomerServicePdfCluster']);
+        $this->assertSame('', $fragments['bodyAfterCustomerServicePdfCluster']);
     }
 
     public function test_root_uses_customer_service_export_bridge_for_pilot_menu_exports(): void
@@ -316,6 +291,530 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlNotContains("title: 'CLAIM GARANSI & ASURANSI',", $html);
         $this->assertHtmlNotContains("title: 'Keep Barang',", $html);
         $this->assertHtmlNotContains("'Type HP': normalizeKeepBarangTypeHpValue(r.TYPE_HP) || '',", $html);
+    }
+
+    public function test_dashboard_shell_uses_blade_auth_session_partial_for_session_bootstrap_cluster(): void
+    {
+        $assemblyPartial = file_get_contents(resource_path('views/dashboard/partials/shell/body-legacy-assembly.blade.php'));
+        $authSessionPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-auth-session.blade.php'));
+
+        $this->assertIsString($assemblyPartial);
+        $this->assertIsString($authSessionPartial);
+        $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-auth-session')", $assemblyPartial);
+        $this->assertHtmlContains('const submitting = ref(false);', $authSessionPartial);
+        $this->assertHtmlContains('const loadStoredUser = () => {', $authSessionPartial);
+        $this->assertHtmlContains('const currentUser = ref(loadStoredUser());', $authSessionPartial);
+        $this->assertHtmlContains('const hasPermission = (tab, action) => {', $authSessionPartial);
+        $this->assertHtmlContains('const loginForm = ref({ username: "", pin: "" });', $authSessionPartial);
+    }
+
+    public function test_dashboard_shell_login_and_user_forms_have_bound_labels_and_field_names(): void
+    {
+        $appFramePartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-frame.blade.php'));
+        $authUsersPartial = file_get_contents(resource_path('views/dashboard/partials/menus/auth-users.blade.php'));
+        $profilePartial = file_get_contents(resource_path('views/dashboard/partials/menus/profile.blade.php'));
+
+        $this->assertIsString($appFramePartial);
+        $this->assertIsString($authUsersPartial);
+        $this->assertIsString($profilePartial);
+
+        foreach ([
+            'label for="login-username"',
+            'input id="login-username" name="username"',
+            'autocomplete="username"',
+            'label for="login-pin"',
+            'input id="login-pin" name="pin"',
+            'autocomplete="current-password"',
+        ] as $needle) {
+            $this->assertHtmlContains($needle, $appFramePartial);
+        }
+
+        foreach ([
+            'label for="auth-user-username"',
+            'input id="auth-user-username" name="auth_user_username"',
+            'label for="auth-user-nama"',
+            'input id="auth-user-nama" name="auth_user_nama"',
+            'label for="auth-user-email"',
+            'input id="auth-user-email" name="auth_user_email"',
+            'label for="auth-user-pin"',
+            'input id="auth-user-pin" name="auth_user_pin"',
+            'label for="auth-user-confirm-pin"',
+            'input id="auth-user-confirm-pin" name="auth_user_confirm_pin"',
+        ] as $needle) {
+            $this->assertHtmlContains($needle, $authUsersPartial);
+        }
+
+        foreach ([
+            'label for="profile-nama-lengkap"',
+            'input id="profile-nama-lengkap" name="profile_nama_lengkap"',
+            'label for="profile-role"',
+            'input id="profile-role" name="profile_role"',
+            'label for="profile-old-pin"',
+            'input id="profile-old-pin" name="profile_old_pin"',
+            'label for="profile-new-pin"',
+            'input id="profile-new-pin" name="profile_new_pin"',
+            'label for="profile-confirm-pin"',
+            'input id="profile-confirm-pin" name="profile_confirm_pin"',
+        ] as $needle) {
+            $this->assertHtmlContains($needle, $profilePartial);
+        }
+    }
+
+    public function test_dashboard_shell_toolbar_search_fields_have_names_and_accessible_labels(): void
+    {
+        $partials = [
+            file_get_contents(resource_path('views/dashboard/partials/menus/master-plan.blade.php')),
+            file_get_contents(resource_path('views/dashboard/partials/menus/distribution.blade.php')),
+            file_get_contents(resource_path('views/dashboard/partials/menus/analytics.blade.php')),
+            file_get_contents(resource_path('views/dashboard/partials/menus/activity-logs.blade.php')),
+            file_get_contents(resource_path('views/dashboard/partials/menus/unit-ditanya.blade.php')),
+            file_get_contents(resource_path('views/dashboard/partials/menus/claim-garansi.blade.php')),
+            file_get_contents(resource_path('views/dashboard/partials/menus/unboxing.blade.php')),
+            file_get_contents(resource_path('views/dashboard/partials/menus/order-online.blade.php')),
+            file_get_contents(resource_path('views/dashboard/partials/menus/program-promo.blade.php')),
+            file_get_contents(resource_path('views/dashboard/partials/menus/harga-kompetitor.blade.php')),
+            file_get_contents(resource_path('views/dashboard/partials/menus/laporan-event.blade.php')),
+            file_get_contents(resource_path('views/dashboard/partials/menus/editor-performance.blade.php')),
+            file_get_contents(resource_path('views/dashboard/partials/menus/keep-barang.blade.php')),
+            file_get_contents(resource_path('views/dashboard/partials/menus/meta-story.blade.php')),
+            file_get_contents(resource_path('views/dashboard/partials/menus/meta-feed.blade.php')),
+            file_get_contents(resource_path('views/dashboard/partials/menus/ideation.blade.php')),
+            file_get_contents(resource_path('views/dashboard/partials/menus/nama-stock.blade.php')),
+        ];
+
+        foreach ($partials as $partial) {
+            $this->assertIsString($partial);
+        }
+
+        foreach ([
+            'id="master-search" name="master_search"',
+            'id="distribution-search" name="distribution_search"',
+            'id="analytics-search" name="analytics_search"',
+            'id="activity-log-record-key" name="activity_log_record_key"',
+            'id="activity-log-table-name" name="activity_log_table_name"',
+            'id="activity-log-action" name="activity_log_action"',
+            'id="unit-ditanya-search" name="unit_ditanya_search"',
+            'id="claim-garansi-search" name="claim_garansi_search"',
+            'id="unboxing-search" name="unboxing_search"',
+            'id="order-online-search" name="order_online_search"',
+            'id="promo-search" name="promo_search"',
+            'id="harga-kompetitor-search" name="harga_kompetitor_search"',
+            'id="lpjk-search" name="lpjk_search"',
+            'id="ads-log-search" name="ads_log_search"',
+            'id="sell-out-search" name="sell_out_search"',
+            'id="keep-barang-search" name="keep_barang_search"',
+            'id="meta-story-search" name="meta_story_search"',
+            'id="meta-feed-search" name="meta_feed_search"',
+            'id="ideation-search" name="ideation_search"',
+            'id="nama-stock-search" name="nama_stock_search"',
+            'id="meta-story-upload" name="meta_story_upload"',
+            'id="meta-feed-upload" name="meta_feed_upload"',
+        ] as $needle) {
+            $this->assertTrue(
+                collect($partials)->contains(fn ($partial) => is_string($partial) && str_contains($partial, $needle)),
+                "Failed asserting toolbar field marker exists: {$needle}"
+            );
+        }
+    }
+
+    public function test_dashboard_shell_budgeting_modals_expose_named_labeled_core_fields(): void
+    {
+        $budgetingPartial = file_get_contents(resource_path('views/dashboard/partials/menus/budgeting.blade.php'));
+
+        $this->assertIsString($budgetingPartial);
+
+        foreach ([
+            'for="harga-kompetitor-nama-produk"',
+            'id="harga-kompetitor-nama-produk" name="harga_kompetitor_nama_produk"',
+            'for="ads-nama"',
+            'id="ads-nama" name="ads_nama"',
+            'for="ads-jangkauan"',
+            'id="ads-jangkauan" name="ads_jangkauan"',
+            'for="unboxing-judul"',
+            'id="unboxing-judul" name="unboxing_judul"',
+            'for="distribution-judul"',
+            'id="distribution-judul" name="distribution_judul"',
+            'for="analytics-judul"',
+            'id="analytics-judul" name="analytics_judul"',
+            'for="claim-nama-customer"',
+            'id="claim-nama-customer" name="claim_nama_customer"',
+            'for="keep-nama-customer"',
+            'id="keep-nama-customer" name="keep_nama_customer"',
+            'for="promo-program"',
+            'id="promo-program" name="promo_program"',
+            'for="lpjk-nama-event"',
+            'id="lpjk-nama-event" name="lpjk_nama_event"',
+            'for="master-plan-judul"',
+            'id="master-plan-judul" name="master_plan_judul"',
+            'for="story-konten"',
+            'id="sell-out-target-unit" name="sell_out_target_unit"',
+            'for="sell-out-vendor-manual"',
+            'id="sell-out-vendor-manual" name="sell_out_vendor_manual"',
+            'for="sell-out-seri-manual"',
+            'id="sell-out-seri-manual" name="sell_out_seri_manual"',
+            'id="story-konten" name="story_konten"',
+            'for="order-online-nama"',
+            'id="order-online-nama" name="order_online_nama"',
+            'for="unit-ditanya-warna"',
+            'id="unit-ditanya-warna" name="unit_ditanya_warna"',
+        ] as $needle) {
+            $this->assertHtmlContains($needle, $budgetingPartial);
+        }
+    }
+
+    public function test_dashboard_shell_budgeting_popover_search_fields_have_names_and_aria_labels(): void
+    {
+        $budgetingPartial = file_get_contents(resource_path('views/dashboard/partials/menus/budgeting.blade.php'));
+
+        $this->assertIsString($budgetingPartial);
+        $this->assertHtmlContains('name="search_select_query"', $budgetingPartial);
+        $this->assertHtmlContains('aria-label="Cari kategori unit ditanya"', $budgetingPartial);
+        $this->assertHtmlContains('aria-label="Cari tipe claim garansi"', $budgetingPartial);
+        $this->assertHtmlContains('aria-label="Cari type HP keep barang"', $budgetingPartial);
+        $this->assertHtmlContains('aria-label="Cari ecommerce order online"', $budgetingPartial);
+        $this->assertHtmlContains('aria-label="Cari editor master plan"', $budgetingPartial);
+        $this->assertHtmlContains('aria-label="Cari kategori nama stock"', $budgetingPartial);
+        $this->assertHtmlContains('aria-label="Cari brand nama stock"', $budgetingPartial);
+    }
+
+    public function test_dashboard_shell_settings_and_bonus_forms_have_named_bound_inputs(): void
+    {
+        $settingsPartial = file_get_contents(resource_path('views/dashboard/partials/menus/settings.blade.php'));
+        $bonusPartial = file_get_contents(resource_path('views/dashboard/partials/menus/bonus-report.blade.php'));
+
+        $this->assertIsString($settingsPartial);
+        $this->assertIsString($bonusPartial);
+
+        foreach ([
+            'label for="settings-search-query"',
+            'id="settings-search-query"',
+            'name="settings_search_query"',
+            'label for="settings-active-value-search"',
+            'id="settings-active-value-search"',
+            'name="settings_active_value_search"',
+            'label for="settings-bulk-add-text"',
+            'id="settings-bulk-add-text"',
+            'name="settings_bulk_add_text"',
+            ':name="`settings_option_',
+            ':name="`settings_option_mobile_',
+        ] as $needle) {
+            $this->assertHtmlContains($needle, $settingsPartial);
+        }
+
+        foreach ([
+            'id="bonus-instagram-like-unit" name="bonus_instagram_like_unit"',
+            'id="bonus-instagram-like-bonus" name="bonus_instagram_like_bonus"',
+            'id="bonus-tiktok-like-unit" name="bonus_tiktok_like_unit"',
+            'id="bonus-tiktok-like-bonus" name="bonus_tiktok_like_bonus"',
+            'id="bonus-comment-unit" name="bonus_comment_unit"',
+            'id="bonus-comment-bonus" name="bonus_comment_bonus"',
+            ':name="`bonus_reels_non_colab_min_',
+            ':name="`bonus_reels_colab_amount_',
+        ] as $needle) {
+            $this->assertHtmlContains($needle, $bonusPartial);
+        }
+    }
+
+    public function test_dashboard_shell_uses_blade_domain_state_wrapper_and_child_partials(): void
+    {
+        $assemblyPartial = file_get_contents(resource_path('views/dashboard/partials/shell/body-legacy-assembly.blade.php'));
+        $domainStatePartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-domain-state.blade.php'));
+        $domainStateCorePartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-domain-state-core.blade.php'));
+        $domainStateBonusReportingPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-domain-state-bonus-reporting.blade.php'));
+        $domainStateTableSortingPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-domain-state-table-sorting.blade.php'));
+        $domainStateContentFormsPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-domain-state-content-forms.blade.php'));
+
+        $this->assertIsString($assemblyPartial);
+        $this->assertIsString($domainStatePartial);
+        $this->assertIsString($domainStateCorePartial);
+        $this->assertIsString($domainStateBonusReportingPartial);
+        $this->assertIsString($domainStateTableSortingPartial);
+        $this->assertIsString($domainStateContentFormsPartial);
+        $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-domain-state')", $assemblyPartial);
+        $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-domain-state-core')", $domainStatePartial);
+        $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-domain-state-bonus-reporting')", $domainStatePartial);
+        $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-domain-state-table-sorting')", $domainStatePartial);
+        $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-domain-state-content-forms')", $domainStatePartial);
+        $this->assertHtmlContains('const getDefaultDateRange = () => {', $domainStateCorePartial);
+        $this->assertHtmlContains('const orderanOnlineSearch = ref(\'\');', $domainStateCorePartial);
+        $this->assertHtmlContains('const bonusMonth = ref(_bonusDefault.month);', $domainStateBonusReportingPartial);
+        $this->assertHtmlContains('const hydrateSortableTableHeaders = () => {', $domainStateTableSortingPartial);
+        $this->assertHtmlContains('const storyTab = ref("Ganjil");', $domainStateContentFormsPartial);
+        $this->assertHtmlNotContains('const getDefaultDateRange = () => {', $domainStatePartial);
+        $this->assertHtmlNotContains('const hydrateSortableTableHeaders = () => {', $domainStatePartial);
+    }
+
+    public function test_dashboard_shell_uses_blade_protected_user_settings_partial_for_protected_loader_cluster(): void
+    {
+        $assemblyPartial = file_get_contents(resource_path('views/dashboard/partials/shell/body-legacy-assembly.blade.php'));
+        $protectedPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-protected-user-settings.blade.php'));
+
+        $this->assertIsString($assemblyPartial);
+        $this->assertIsString($protectedPartial);
+        $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-protected-user-settings')", $assemblyPartial);
+        $this->assertHtmlContains('// Profile Form', $protectedPartial);
+        $this->assertHtmlContains('const loadAuthUsers = () => {', $protectedPartial);
+        $this->assertHtmlContains('const loadActivityLogs = () => {', $protectedPartial);
+    }
+
+    public function test_dashboard_shell_uses_blade_settings_cluster_partial_for_settings_loader_cluster(): void
+    {
+        $assemblyPartial = file_get_contents(resource_path('views/dashboard/partials/shell/body-legacy-assembly.blade.php'));
+        $settingsPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-settings-cluster.blade.php'));
+        $protectedPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-protected-user-settings.blade.php'));
+
+        $this->assertIsString($assemblyPartial);
+        $this->assertIsString($settingsPartial);
+        $this->assertIsString($protectedPartial);
+        $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-settings-cluster')", $assemblyPartial);
+        $this->assertHtmlContains('const settings = ref({});', $protectedPartial);
+        $this->assertHtmlContains('const loadSettings = () => {', $settingsPartial);
+        $this->assertHtmlContains('const saveSettingsBackend = () => {', $settingsPartial);
+        $this->assertHtmlNotContains('const settings = ref({});', $settingsPartial);
+    }
+
+    public function test_dashboard_shell_uses_blade_nama_stock_action_partial_for_stock_handlers_cluster(): void
+    {
+        $assemblyPartial = file_get_contents(resource_path('views/dashboard/partials/shell/body-legacy-assembly.blade.php'));
+        $namaStockActionPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-nama-stock-actions.blade.php'));
+        $protectedPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-protected-user-settings.blade.php'));
+
+        $this->assertIsString($assemblyPartial);
+        $this->assertIsString($namaStockActionPartial);
+        $this->assertIsString($protectedPartial);
+        $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-nama-stock-actions')", $assemblyPartial);
+        $this->assertHtmlContains('const openNamaStockFormModal = (mode = \'create\', row = null) => {', $namaStockActionPartial);
+        $this->assertHtmlContains('const saveNamaStockSettings = async () => {', $namaStockActionPartial);
+        $this->assertHtmlContains('const removeNamaStockRow = (id) => {', $namaStockActionPartial);
+        $this->assertHtmlNotContains('const openNamaStockFormModal = (mode = \'create\', row = null) => {', $protectedPartial);
+        $this->assertHtmlNotContains('const saveNamaStockSettings = async () => {', $protectedPartial);
+    }
+
+    public function test_dashboard_shell_uses_blade_meta_ig_partial_for_analytics_cluster(): void
+    {
+        $assemblyPartial = file_get_contents(resource_path('views/dashboard/partials/shell/body-legacy-assembly.blade.php'));
+        $metaPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-meta-ig-analytics.blade.php'));
+        $protectedPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-protected-user-settings.blade.php'));
+
+        $this->assertIsString($assemblyPartial);
+        $this->assertIsString($metaPartial);
+        $this->assertIsString($protectedPartial);
+        $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-meta-ig-analytics')", $assemblyPartial);
+        $this->assertHtmlContains('const loadMetaStory = () => new Promise(resolve => {', $metaPartial);
+        $this->assertHtmlContains('const uploadMetaCsv = (file, dataset) => {', $metaPartial);
+        $this->assertHtmlContains('const renderMetaCharts = (dataset) => {', $metaPartial);
+        $this->assertHtmlContains('const metaStorySummary = computed(() => {', $metaPartial);
+        $this->assertHtmlNotContains('const loadMetaStory = () => new Promise(resolve => {', $protectedPartial);
+        $this->assertHtmlNotContains('const renderMetaCharts = (dataset) => {', $protectedPartial);
+    }
+
+    public function test_dashboard_shell_uses_blade_profile_user_mutation_partial_for_profile_handler_cluster(): void
+    {
+        $assemblyPartial = file_get_contents(resource_path('views/dashboard/partials/shell/body-legacy-assembly.blade.php'));
+        $mutationPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-profile-user-mutations.blade.php'));
+
+        $this->assertIsString($assemblyPartial);
+        $this->assertIsString($mutationPartial);
+        $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-profile-user-mutations')", $assemblyPartial);
+        $this->assertHtmlContains('const saveProfileInfo = () => {', $mutationPartial);
+        $this->assertHtmlContains('const saveProfileSetting = () => {', $mutationPartial);
+        $this->assertHtmlContains('const submitAuthUserForm = () => {', $mutationPartial);
+    }
+
+    public function test_dashboard_shell_uses_blade_notification_error_utility_partial_for_feedback_cluster(): void
+    {
+        $protectedPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-protected-user-settings.blade.php'));
+        $utilityPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-notification-error-utils.blade.php'));
+
+        $this->assertIsString($protectedPartial);
+        $this->assertIsString($utilityPartial);
+        $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-notification-error-utils')", $protectedPartial);
+        $this->assertHtmlContains('const inferNotificationType = (message = \'\') => {', $utilityPartial);
+        $this->assertHtmlContains('const showNotification = (message, type = null) => {', $utilityPartial);
+        $this->assertHtmlContains('const getFriendlyErrorMessage = (error, fallback = \'Terjadi kendala saat memproses permintaan.\') => {', $utilityPartial);
+        $this->assertHtmlContains('const notifyError = (prefix, error, fallback) => {', $utilityPartial);
+    }
+
+    public function test_dashboard_shell_uses_blade_shell_interaction_helper_partial_for_profile_menu_cluster(): void
+    {
+        $protectedPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-protected-user-settings.blade.php'));
+        $helperPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-shell-interaction-helpers.blade.php'));
+
+        $this->assertIsString($protectedPartial);
+        $this->assertIsString($helperPartial);
+        $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-shell-interaction-helpers')", $protectedPartial);
+        $this->assertHtmlContains('const toggleSidebar = () => {', $helperPartial);
+        $this->assertHtmlContains('const clearPopoverTriggerState = () => {', $helperPartial);
+        $this->assertHtmlContains('const closeProfileMenu = (e) => {', $helperPartial);
+        $this->assertHtmlContains('const openProfileSetting = () => {', $helperPartial);
+    }
+
+    public function test_dashboard_shell_uses_blade_runner_factories_partial_for_runtime_runner_cluster(): void
+    {
+        $assemblyPartial = file_get_contents(resource_path('views/dashboard/partials/shell/body-legacy-assembly.blade.php'));
+        $runnerPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-runner-factories.blade.php'));
+
+        $this->assertIsString($assemblyPartial);
+        $this->assertIsString($runnerPartial);
+        $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-runner-factories')", $assemblyPartial);
+        $this->assertHtmlNotContains('{!! $bodyBeforeRunnerFactoriesCluster !!}', $assemblyPartial);
+        $this->assertHtmlContains('const createMockRunner = () => {', $runnerPartial);
+        $this->assertHtmlContains('const createWebRunner = () => {', $runnerPartial);
+        $this->assertHtmlContains('const ensureRunApi = () => createWebRunner();', $runnerPartial);
+        $this->assertHtmlContains('const resumeActiveTabAfterBootstrap = () => {', $runnerPartial);
+    }
+
+    public function test_web_runner_supports_promo_and_sell_out_crud_methods(): void
+    {
+        $runnerPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-runner-factories.blade.php'));
+
+        $this->assertIsString($runnerPartial);
+        foreach ([
+            "getPromoData() { return fetchJson_('/api/program-promo').then(r => r.data || []); },",
+            "savePromo(data) {",
+            'const id = data.ID; const url = id ? `/api/program-promo/${encodeURIComponent(id)}` : \'/api/program-promo\';',
+            'deletePromo(id) { return jsonApi(`/api/program-promo/${encodeURIComponent(id)}`, { method: \'DELETE\' }); },',
+            "getSellOutTargetData() { return fetchJson_('/api/sell-out-targets').then(r => r.data || []); },",
+            "saveSellOutTarget(data) {",
+            'const id = data.ID; const url = id ? `/api/sell-out-targets/${encodeURIComponent(id)}` : \'/api/sell-out-targets\';',
+            'deleteSellOutTarget(id) { return jsonApi(`/api/sell-out-targets/${encodeURIComponent(id)}`, { method: \'DELETE\' }); },',
+        ] as $needle) {
+            $this->assertHtmlContains($needle, $runnerPartial);
+        }
+    }
+
+    public function test_root_keeps_runner_export_and_mount_clusters_inside_main_app_script_in_order(): void
+    {
+        $response = $this->get('/');
+        $html = $response->getContent();
+
+        $response->assertOk();
+        $this->assertIsString($html);
+
+        $appScriptStart = strpos($html, 'const { createApp, ref, computed, watch, onMounted, onBeforeUnmount, nextTick } = Vue;');
+        $runnerTail = strpos($html, 'const hasBlockingOverlayOpen = computed(() => Boolean(');
+        $analyticsBridge = strpos($html, 'const getAnalyticsExportBridge_ = () => {');
+        $promoLoader = strpos($html, 'const loadPromoData = () => new Promise(resolve => {');
+        $mount = strpos($html, '}).mount("#app");');
+
+        $this->assertNotFalse($appScriptStart);
+        $this->assertNotFalse($runnerTail);
+        $this->assertNotFalse($analyticsBridge);
+        $this->assertNotFalse($promoLoader);
+        $this->assertNotFalse($mount);
+
+        $appScriptClose = strpos($html, '</script>', $appScriptStart);
+
+        $this->assertNotFalse($appScriptClose);
+        $this->assertTrue($appScriptStart < $analyticsBridge);
+        $this->assertTrue($appScriptStart < $runnerTail);
+        $this->assertTrue($analyticsBridge < $mount);
+        $this->assertTrue($runnerTail < $mount);
+        $this->assertTrue($promoLoader < $mount);
+        $this->assertTrue($mount < $appScriptClose);
+        $this->assertFalse((bool) strpos($html, 'const getAnalyticsExportBridge_ = () => {', $mount));
+    }
+
+    public function test_root_renders_single_blocking_overlay_declaration_and_balanced_script_tags(): void
+    {
+        $response = $this->get('/');
+        $html = $response->getContent();
+
+        $response->assertOk();
+        $this->assertIsString($html);
+        $this->assertSame(1, substr_count($html, 'const hasBlockingOverlayOpen = computed(() => Boolean('));
+        $this->assertSame(substr_count($html, '<script'), substr_count($html, '</script>'));
+    }
+
+    public function test_root_declares_default_date_range_and_confirm_modal_before_consumers(): void
+    {
+        $response = $this->get('/');
+        $html = $response->getContent();
+
+        $response->assertOk();
+        $this->assertIsString($html);
+
+        $defaultDateRange = strpos($html, 'const getDefaultDateRange = () => {');
+        $masterFilter = strpos($html, 'const getInitialMasterFilter = () => {');
+        $confirmModal = strpos($html, 'const confirmModal = ref({');
+        $showConfirm = strpos($html, 'const showConfirm = (title, message, onConfirm, type = "danger") => {');
+        $confirmConsumer = strpos($html, 'confirmModal.value.open');
+
+        $this->assertNotFalse($defaultDateRange);
+        $this->assertNotFalse($masterFilter);
+        $this->assertTrue($defaultDateRange < $masterFilter);
+        $this->assertNotFalse($confirmModal);
+        $this->assertNotFalse($showConfirm);
+        $this->assertNotFalse($confirmConsumer);
+        $this->assertTrue($confirmModal < $showConfirm);
+        $this->assertTrue($showConfirm < $confirmConsumer);
+    }
+
+    public function test_root_declares_operational_state_before_watchers_and_computed_consumers(): void
+    {
+        $response = $this->get('/');
+        $html = $response->getContent();
+
+        $response->assertOk();
+        $this->assertIsString($html);
+
+        $contentTableSearch = strpos($html, 'const contentTableSearch = ref("");');
+        $distributionWatcher = strpos($html, 'watch(() => [contentTableSearch.value, commonDateFilter.value.start, commonDateFilter.value.end], () => { distributionPage.value = 1; analyticsPage.value = 1; });');
+        $ideationViewMode = strpos($html, 'const ideationViewMode = ref("board");');
+        $ideationBoardMobileTab = strpos($html, "const ideationBoardMobileTab = ref('');");
+        $ideationWatcher = strpos($html, 'watch(() => ideationDraftLabel.value, (label) => {');
+        $storyTab = strpos($html, 'const storyTab = ref("Ganjil");');
+        $storyWatcher = strpos($html, 'watch(() => storyTab.value, () => { storyPage.value = 1; });');
+        $unboxingSearch = strpos($html, "const unboxingSearch = ref('');");
+        $unboxingWatcher = strpos($html, 'watch(() => [unboxingSearch.value, commonDateFilter.value.start, commonDateFilter.value.end], () => { unboxingPage.value = 1; });');
+        $orderanOnlineSearch = strpos($html, "const orderanOnlineSearch = ref('');");
+        $orderanOnlineForm = strpos($html, 'const orderanOnlineForm = ref({});');
+        $orderanWatcher = strpos($html, 'watch(() => [orderanOnlineSearch.value, orderanOnlineDateRange.value.start, orderanOnlineDateRange.value.end], () => { orderanPage.value = 1; });');
+        $unitDitanyaSearch = strpos($html, "const unitDitanyaSearch = ref('');");
+        $unitWatcher = strpos($html, 'watch(() => [unitDitanyaSearch.value, unitDitanyaDateRange.value.start, unitDitanyaDateRange.value.end, unitDitanyaAvailableFilter.value], () => { unitDitanyaPage.value = 1; });');
+        $claimGaransiSearch = strpos($html, "const claimGaransiSearch = ref('');");
+        $claimWatcher = strpos($html, 'watch(() => [claimGaransiSearch.value, claimGaransiStatusFilter.value, claimGaransiGaransiFilter.value], () => { claimPage.value = 1; });');
+        $bonusMonth = strpos($html, 'const bonusMonth = ref(_bonusDefault.month);');
+        $bonusConsumer = strpos($html, 'bonusMonth, bonusYear,');
+        $sortableHeaders = strpos($html, 'const hydrateSortableTableHeaders = () => {');
+        $sortableConsumer = strpos($html, 'nextTick(() => hydrateSortableTableHeaders());');
+
+        foreach ([
+            $contentTableSearch,
+            $distributionWatcher,
+            $ideationViewMode,
+            $ideationBoardMobileTab,
+            $ideationWatcher,
+            $storyTab,
+            $storyWatcher,
+            $unboxingSearch,
+            $unboxingWatcher,
+            $orderanOnlineSearch,
+            $orderanOnlineForm,
+            $orderanWatcher,
+            $unitDitanyaSearch,
+            $unitWatcher,
+            $claimGaransiSearch,
+            $claimWatcher,
+            $bonusMonth,
+            $bonusConsumer,
+            $sortableHeaders,
+            $sortableConsumer,
+        ] as $position) {
+            $this->assertNotFalse($position);
+        }
+
+        $this->assertTrue($contentTableSearch < $distributionWatcher);
+        $this->assertTrue($ideationViewMode < $ideationWatcher);
+        $this->assertTrue($ideationBoardMobileTab < $ideationWatcher);
+        $this->assertTrue($storyTab < $storyWatcher);
+        $this->assertTrue($unboxingSearch < $unboxingWatcher);
+        $this->assertTrue($orderanOnlineSearch < $orderanWatcher);
+        $this->assertTrue($orderanOnlineForm < $orderanWatcher);
+        $this->assertTrue($unitDitanyaSearch < $unitWatcher);
+        $this->assertTrue($claimGaransiSearch < $claimWatcher);
+        $this->assertTrue($bonusMonth < $bonusConsumer);
+        $this->assertTrue($sortableHeaders < $sortableConsumer);
     }
 
     public function test_root_uses_reporting_export_bridge_for_ads_log_pdf(): void
@@ -429,7 +928,8 @@ class MarketingDashboardShellTest extends TestCase
         $response->assertOk();
         $this->assertIsString($html);
         $this->assertHtmlContains('target="_blank" rel="noopener noreferrer"', $html);
-        $this->assertHtmlContains('pw.location.href = `${backendUrl}/print-job/${encodeURIComponent(token)}`;', $html);
+        $this->assertHtmlContains('window.openPrintWindow(html, reportName, {', $html);
+        $this->assertHtmlContains('resolveAppUrl,', $html);
         $this->assertHtmlNotContains('ngrok-skip-browser-warning=1', $html);
     }
 
@@ -481,11 +981,8 @@ class MarketingDashboardShellTest extends TestCase
 
         $this->assertFragmentHasKey('bodyBeforeSalesAndPromoPdfCluster', $fragments);
         $this->assertFragmentHasKey('bodyAfterSalesAndPromoPdfCluster', $fragments);
-        $this->assertHtmlContains('const saveBonusConfig = () => {', $fragments['bodyBeforeSalesAndPromoPdfCluster']);
-        $this->assertHtmlContains('watch([sellOutSearch, sellOutVendorFilter, sellOutMonth], () => { sellOutPage.value = 1; });', $fragments['bodyAfterSalesAndPromoPdfCluster']);
-        $this->assertHtmlNotContains('const exportBonusToPDF = () => {', $fragments['bodyBeforeSalesAndPromoPdfCluster']);
-        $this->assertHtmlNotContains('const exportPromoToPDF = () => {', $fragments['bodyAfterSalesAndPromoPdfCluster']);
-        $this->assertHtmlNotContains('const exportSellOutToPDF = () => {', $fragments['bodyBeforeSalesAndPromoPdfCluster']);
+        $this->assertSame('', $fragments['bodyBeforeSalesAndPromoPdfCluster']);
+        $this->assertSame('', $fragments['bodyAfterSalesAndPromoPdfCluster']);
     }
 
     public function test_shell_builder_splits_print_helpers_from_legacy_body_script(): void
@@ -496,12 +993,8 @@ class MarketingDashboardShellTest extends TestCase
 
         $this->assertFragmentHasKey('bodyBeforePrintHelpers', $fragments);
         $this->assertFragmentHasKey('bodyAfterPrintHelpers', $fragments);
-        $this->assertHtmlContains('const adsSaldoPlatform = computed(() => {', $fragments['bodyBeforePrintHelpers']);
-        $this->assertHtmlContains('// Ads Log PDF', $fragments['bodyAfterPrintHelpers']);
-        $this->assertHtmlContains('const exportAdsLogToPDF = () => {', $fragments['bodyAfterPrintHelpers']);
-        $this->assertHtmlNotContains('// PDF print helpers', $fragments['bodyBeforePrintHelpers']);
-        $this->assertHtmlNotContains('const getPrintBaseStyles_ = () => {', $fragments['bodyBeforePrintHelpers']);
-        $this->assertHtmlNotContains('const openPrintWindow_ = (html, reportName) => {', $fragments['bodyAfterPrintHelpers']);
+        $this->assertSame('', $fragments['bodyBeforePrintHelpers']);
+        $this->assertSame('', $fragments['bodyAfterPrintHelpers']);
     }
 
     public function test_shell_builder_splits_ads_log_pdf_export_from_remaining_legacy_script(): void
@@ -512,11 +1005,8 @@ class MarketingDashboardShellTest extends TestCase
 
         $this->assertFragmentHasKey('bodyBeforeAdsLogPdfExport', $fragments);
         $this->assertFragmentHasKey('bodyAfterAdsLogPdfExport', $fragments);
-        $this->assertSame('', trim($fragments['bodyBeforeAdsLogPdfExport']));
-        $this->assertHtmlContains('// Harga & Kompetitor', $fragments['bodyAfterAdsLogPdfExport']);
-        $this->assertHtmlContains('const filteredHargaKompetitorData = computed(() => {', $fragments['bodyAfterAdsLogPdfExport']);
-        $this->assertHtmlNotContains('const exportAdsLogToPDF = () => {', $fragments['bodyBeforeAdsLogPdfExport']);
-        $this->assertHtmlNotContains('const exportAdsLogToPDF = () => {', $fragments['bodyAfterAdsLogPdfExport']);
+        $this->assertSame('', $fragments['bodyBeforeAdsLogPdfExport']);
+        $this->assertSame('', $fragments['bodyAfterAdsLogPdfExport']);
     }
 
     public function test_shell_builder_splits_price_comparison_pdf_export_from_remaining_legacy_script(): void
@@ -527,11 +1017,8 @@ class MarketingDashboardShellTest extends TestCase
 
         $this->assertFragmentHasKey('bodyBeforePriceComparisonPdfExport', $fragments);
         $this->assertFragmentHasKey('bodyAfterPriceComparisonPdfExport', $fragments);
-        $this->assertHtmlContains('const deleteHargaKompetitor = (id) => {', $fragments['bodyBeforePriceComparisonPdfExport']);
-        $this->assertHtmlContains('// Laporan Event (LPJK)', $fragments['bodyAfterPriceComparisonPdfExport']);
-        $this->assertHtmlContains('const filteredLpjkData = computed(() => {', $fragments['bodyAfterPriceComparisonPdfExport']);
-        $this->assertHtmlNotContains('const exportPriceComparisonToPDF = () => {', $fragments['bodyBeforePriceComparisonPdfExport']);
-        $this->assertHtmlNotContains('const exportPriceComparisonToPDF = () => {', $fragments['bodyAfterPriceComparisonPdfExport']);
+        $this->assertSame('', $fragments['bodyBeforePriceComparisonPdfExport']);
+        $this->assertSame('', $fragments['bodyAfterPriceComparisonPdfExport']);
     }
 
     public function test_shell_builder_splits_lpjk_detail_pdf_export_from_remaining_legacy_script(): void
@@ -542,11 +1029,8 @@ class MarketingDashboardShellTest extends TestCase
 
         $this->assertFragmentHasKey('bodyBeforeLpjkDetailPdfExport', $fragments);
         $this->assertFragmentHasKey('bodyAfterLpjkDetailPdfExport', $fragments);
-        $this->assertHtmlContains('const deleteLpjkDetail = (id) => {', $fragments['bodyBeforeLpjkDetailPdfExport']);
-        $this->assertHtmlContains('// Budgeting', $fragments['bodyAfterLpjkDetailPdfExport']);
-        $this->assertHtmlContains('const budgetCalculations = computed(() => {', $fragments['bodyAfterLpjkDetailPdfExport']);
-        $this->assertHtmlNotContains('const exportLpjkDetailToPDF = () => {', $fragments['bodyBeforeLpjkDetailPdfExport']);
-        $this->assertHtmlNotContains('const exportLpjkDetailToPDF = () => {', $fragments['bodyAfterLpjkDetailPdfExport']);
+        $this->assertSame('', $fragments['bodyBeforeLpjkDetailPdfExport']);
+        $this->assertSame('', $fragments['bodyAfterLpjkDetailPdfExport']);
     }
 
     public function test_shell_builder_splits_budget_pdf_export_from_remaining_legacy_script(): void
@@ -557,10 +1041,20 @@ class MarketingDashboardShellTest extends TestCase
 
         $this->assertFragmentHasKey('bodyBeforeBudgetPdfExport', $fragments);
         $this->assertFragmentHasKey('bodyAfterBudgetPdfExport', $fragments);
-        $this->assertHtmlContains('const saveBudgetServer = () => {', $fragments['bodyBeforeBudgetPdfExport']);
-        $this->assertHtmlContains('const exportBudgetToExcel = () => {', $fragments['bodyAfterBudgetPdfExport']);
-        $this->assertHtmlNotContains('const exportBudgetToPDF = () => {', $fragments['bodyBeforeBudgetPdfExport']);
-        $this->assertHtmlNotContains('const exportBudgetToPDF = () => {', $fragments['bodyAfterBudgetPdfExport']);
+        $this->assertSame('', $fragments['bodyBeforeBudgetPdfExport']);
+        $this->assertSame('', $fragments['bodyAfterBudgetPdfExport']);
+    }
+
+    public function test_shell_builder_splits_vue_app_script_mount_tail_from_legacy_body_script(): void
+    {
+        $shell = app(MarketingDashboardShell::class);
+
+        $fragments = $shell->build('https://backend.example.test');
+
+        $this->assertFragmentHasKey('bodyBeforeVueAppMountEnd', $fragments);
+        $this->assertFragmentHasKey('bodyAfterVueAppMountEnd', $fragments);
+        $this->assertSame('', $fragments['bodyBeforeVueAppMountEnd']);
+        $this->assertSame('', $fragments['bodyAfterVueAppMountEnd']);
     }
 
     public function test_dashboard_shell_does_not_embed_mockup_business_data(): void
@@ -612,6 +1106,45 @@ class MarketingDashboardShellTest extends TestCase
         ] as $label) {
             $response->assertSee($label, false);
         }
+    }
+
+    public function test_dashboard_shell_uses_blade_vue_app_script_wrapper_partials_instead_of_raw_legacy_script_wrapper(): void
+    {
+        $legacyAssemblyPartial = file_get_contents(resource_path('views/dashboard/partials/shell/body-legacy-assembly.blade.php'));
+        $appScriptOpenPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-open.blade.php'));
+        $appScriptClosePartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-close.blade.php'));
+
+        $this->assertIsString($legacyAssemblyPartial);
+        $this->assertIsString($appScriptOpenPartial);
+        $this->assertIsString($appScriptClosePartial);
+        $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-open')", $legacyAssemblyPartial);
+        $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-close')", $legacyAssemblyPartial);
+        $this->assertHtmlContains('const { createApp, ref, computed, watch, onMounted, onBeforeUnmount, nextTick } = Vue;', $appScriptOpenPartial);
+        $this->assertHtmlContains('}).mount("#app");', $appScriptClosePartial);
+    }
+
+    public function test_dashboard_shell_uses_blade_vue_app_date_helper_partial_instead_of_raw_legacy_cluster(): void
+    {
+        $legacyAssemblyPartial = file_get_contents(resource_path('views/dashboard/partials/shell/body-legacy-assembly.blade.php'));
+        $dateHelpersPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-date-helpers.blade.php'));
+
+        $this->assertIsString($legacyAssemblyPartial);
+        $this->assertIsString($dateHelpersPartial);
+        $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-date-helpers')", $legacyAssemblyPartial);
+        $this->assertHtmlContains('const fmtLocalDate = (d) =>', $dateHelpersPartial);
+        $this->assertHtmlContains('const isDateInRange = (value, start, end) => {', $dateHelpersPartial);
+    }
+
+    public function test_dashboard_shell_uses_blade_vue_app_bootstrap_navigation_partial_instead_of_raw_legacy_cluster(): void
+    {
+        $legacyAssemblyPartial = file_get_contents(resource_path('views/dashboard/partials/shell/body-legacy-assembly.blade.php'));
+        $bootstrapNavigationPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-bootstrap-navigation.blade.php'));
+
+        $this->assertIsString($legacyAssemblyPartial);
+        $this->assertIsString($bootstrapNavigationPartial);
+        $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-bootstrap-navigation')", $legacyAssemblyPartial);
+        $this->assertHtmlContains('const appLoading = ref(true);', $bootstrapNavigationPartial);
+        $this->assertHtmlContains('const groupForTab = (tab) => {', $bootstrapNavigationPartial);
     }
 
     public function test_master_plans_api_returns_database_rows_for_legacy_frontend(): void
@@ -682,7 +1215,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_settings_tab_loads_database_settings_when_opened(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains("newTab === 'settings'", $html);
         $this->assertHtmlContains('loadSettings();', $html);
@@ -690,7 +1223,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_dropdown_settings_are_bootstrapped_before_settings_tab_is_opened(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('const settingsLoaded = ref(false);', $html);
         $this->assertHtmlContains('if (currentUser.value && !settingsLoaded.value && newTab !== \'dashboard\') {', $html);
@@ -699,7 +1232,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_master_plan_and_settings_shell_include_talent_controls(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains("'Talent'", $html);
         $this->assertHtmlContains('masterForm.Talent', $html);
@@ -708,7 +1241,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_bonus_shell_includes_talent_bonus_tab_and_computed_data(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains("switchTab('talent_bonus')", $html);
         $this->assertHtmlContains("activeTab === 'talent_bonus'", $html);
@@ -719,7 +1252,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_talent_bonus_uses_master_plan_as_source_of_truth(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('return masterPlanData.value', $html);
         $this->assertHtmlContains('const distByMaster = new Map();', $html);
@@ -729,7 +1262,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_talent_bonus_shell_includes_daily_carry_over_rules(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('const TALENT_DAILY_BONUS = 150000;', $html);
         $this->assertHtmlContains('const buildTalentDailyRows = (rows) => {', $html);
@@ -739,7 +1272,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_bonus_tabs_refresh_master_plan_and_related_sources(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('const refreshBonusSourceData = () => Promise.allSettled([', $html);
         $this->assertHtmlContains("if (['bonus_report', 'talent_bonus', 'editor_performance'].includes(newTab)) {", $html);
@@ -748,22 +1281,44 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_web_bootstrap_checks_dashboard_session_before_loading_protected_settings(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlNotContains('await loadSettings();'."\n".'                        const bootstrap = await new Promise', $html);
         $this->assertHtmlContains('const bootstrap = await new Promise((resolve, reject) => {', $html);
     }
 
+    public function test_web_bootstrap_defers_protected_fetches_until_session_check_finishes(): void
+    {
+        $response = $this->get('/');
+        $html = $response->getContent();
+
+        $response->assertOk();
+        $this->assertIsString($html);
+        $this->assertHtmlContains('const authBootstrapPending = ref(true);', $html);
+        $this->assertHtmlContains('if (authBootstrapPending.value) {', $html);
+        $this->assertHtmlContains('authBootstrapPending.value = false;', $html);
+    }
+
+    public function test_web_bootstrap_replays_active_protected_tab_loader_after_session_check(): void
+    {
+        $html = $this->readLegacyDashboardSourceHtml();
+
+        $this->assertHtmlContains('const resumeActiveTabAfterBootstrap = () => {', $html);
+        $this->assertHtmlContains("if (activeTab.value === 'activity_logs') {", $html);
+        $this->assertHtmlContains('loadActivityLogs();', $html);
+        $this->assertHtmlContains('resumeActiveTabAfterBootstrap();', $html);
+    }
+
     public function test_tab_data_loader_requires_authenticated_user_before_fetching_protected_tab_payloads(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('if (currentUser.value && dataKey) loadTabData(dataKey);', $html);
     }
 
     public function test_distribution_and_analytics_tabs_load_database_rows_when_opened(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains("newTab === 'distribution'", $html);
         $this->assertHtmlContains('loadDistributionData();', $html);
@@ -773,7 +1328,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_meta_analytics_tabs_include_actionable_insight_sections(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('Insight Story yang Bisa Dipakai', $html);
         $this->assertHtmlContains('Insight Feed yang Bisa Dipakai', $html);
@@ -785,7 +1340,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_meta_story_trend_uses_average_per_content(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('Average Views & Reach per Konten', $html);
         $this->assertHtmlContains("const metaStoryDaily = computed(() => _metaDaily(filteredMetaStory.value, 'average'));", $html);
@@ -797,7 +1352,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_meta_story_top_list_and_table_use_updated_limits_and_pagination(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains("const metaStoryTop = computed(() => [...filteredMetaStory.value].sort((a, b) => (Number(b.views) || 0) - (Number(a.views) || 0)).slice(0, 5));", $html);
         $this->assertHtmlContains('const metaStoryTotalPages = computed(() => Math.max(1, Math.ceil(filteredMetaStory.value.length / PAGE_SIZE)));', $html);
@@ -807,7 +1362,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_meta_analytics_tabs_include_folder_import_and_monthly_summary_sections(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('Import Folder', $html);
         $this->assertHtmlContains('Ringkasan Bulanan per Akun', $html);
@@ -818,7 +1373,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_meta_import_flow_requests_confirmation_before_overwrite(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains("importMetaStory(rows, options = {})", $html);
         $this->assertHtmlContains("importMetaFeed(rows, options = {})", $html);
@@ -833,7 +1388,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_meta_feed_toolbar_uses_consistent_custom_select_shell(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains("toggleSearchSelect(\$event, 'meta_feed_account')", $html);
         $this->assertHtmlContains('.select-trigger-button-form:hover,', $html);
@@ -846,7 +1401,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_meta_story_sidebar_menu_uses_visible_solid_icon(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('fa-solid fa-clapperboard text-[11px] w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110', $html);
         $this->assertHtmlNotContains('fa-brands fa-instagram text-[11px] w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110', $html);
@@ -854,7 +1409,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_meta_story_and_feed_place_summary_cards_above_header_card(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $storySummaryPos = strpos($html, "v-for=\"c in metaStorySummary.cards\"");
         $storyHeaderPos = strpos($html, 'Story IG Analytics');
@@ -871,7 +1426,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_sell_out_searchable_dropdowns_use_select_trigger_pattern(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains("toggleSearchSelect(\$event, 'sellOutVendor')", $html);
         $this->assertHtmlContains("toggleSearchSelect(\$event, 'sellOutMonth')", $html);
@@ -881,7 +1436,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_unit_and_claim_searchable_dropdowns_use_select_trigger_pattern(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains("toggleSearchSelect(\$event, 'filter_available')", $html);
         $this->assertHtmlContains("toggleSearchSelect(\$event, 'filter_claim_status')", $html);
@@ -893,14 +1448,14 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_distribution_and_analytics_start_without_date_filter(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains("const commonDateFilter = ref({ start: '', end: '' });", $html);
     }
 
     public function test_all_dashboard_tables_use_10px_headers_and_9px_body(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('#app table thead,', $html);
         $this->assertHtmlContains('#app table thead * {', $html);
@@ -920,7 +1475,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_dashboard_tables_use_shared_sortable_headers(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('.table-sortable {', $html);
         $this->assertHtmlContains('.table-sortable.table-sort-asc::after {', $html);
@@ -932,7 +1487,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_ideation_kanban_caps_font_size_at_10px(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('.ideation-kanban-board,', $html);
         $this->assertHtmlContains('.ideation-kanban-board * {', $html);
@@ -941,7 +1496,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_dashboard_write_actions_use_laravel_crud_api(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         foreach ([
             'jsonApi',
@@ -960,7 +1515,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_nama_stock_uses_laravel_raw_sheet_api(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('/api/raw-sheets/Nama_Stock', $html);
         $this->assertHtmlContains('getNamaStockData()', $html);
@@ -969,7 +1524,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_nama_stock_form_uses_dropdowns_for_kategori_brand_and_manual_input_for_seri(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         foreach ([
             'namaStockKategoriOptions',
@@ -990,7 +1545,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_other_seri_selectors_still_source_options_from_nama_stock_master(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         foreach ([
             "const getSeriOptions = (kat, brand) => {",
@@ -1005,7 +1560,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_nama_stock_view_uses_kategori_and_brand_filter_dropdowns(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         foreach ([
             "const namaStockKategoriFilter = ref('');",
@@ -1026,7 +1581,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_keep_barang_type_hp_selector_sources_options_from_nama_stock_master(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains("searchSelectOpen === 'keep_type_hp'", $html);
         $this->assertHtmlContains(<<<'HTML'
@@ -1047,7 +1602,7 @@ HTML, $html);
 
     public function test_keep_barang_type_hp_selector_uses_accessible_button_and_empty_state(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('<button type="button" @click="toggleSearchSelect($event, \'keep_type_hp\')"', $html);
         $this->assertHtmlContains("v-if=\"keepBarangTypeHpOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0\"", $html);
@@ -1056,7 +1611,7 @@ HTML, $html);
 
     public function test_open_keep_barang_modal_loads_nama_stock_master_when_needed(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains("if (!namaStockLoaded.value) loadNamaStockData();", $html);
         $this->assertHtmlContains("TYPE_HP: normalizeKeepBarangTypeHpValue(row.TYPE_HP)", $html);
@@ -1064,7 +1619,7 @@ HTML, $html);
 
     public function test_customer_service_save_handlers_prevent_double_submit_and_validate_required_fields(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         foreach ([
             "const saveOrderanOnline = () => {",
@@ -1085,7 +1640,7 @@ HTML, $html);
 
     public function test_sell_out_default_month_range_uses_valid_end_date_format(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains("const lastDay = String(new Date(year, month + 1, 0).getDate()).padStart(2, '0');", $html);
         $this->assertHtmlContains(<<<'HTML'
@@ -1098,7 +1653,7 @@ HTML, $html);
 
     public function test_customer_service_search_selectors_use_accessible_buttons(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         foreach ([
             '<button type="button" @click="toggleSearchSelect($event, \'ecommerce\')"',
@@ -1120,7 +1675,7 @@ HTML, $html);
 
     public function test_customer_service_modals_preload_nama_stock_master_when_needed(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('const openOrderanOnlineModal = (type = \'create\', row = null) => {', $html);
         $this->assertHtmlContains('const openClaimGaransiModal = (type = \'create\', row = null) => {', $html);
@@ -1129,7 +1684,7 @@ HTML, $html);
 
     public function test_master_plan_links_render_drive_and_normalized_distribution_meta(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('const normalizeMasterPlanRow = (item = {}) => {', $html);
         $this->assertHtmlContains("normalizedKey === 'contentType'", $html);
@@ -1140,7 +1695,7 @@ HTML, $html);
 
     public function test_master_plan_search_input_is_bound_to_returned_state(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('const masterSearch = ref("");', $html);
         $this->assertHtmlContains('<input v-model="masterSearch" type="text" placeholder="Cari judul atau colab..."', $html);
@@ -1149,7 +1704,7 @@ HTML, $html);
 
     public function test_settings_and_master_plan_use_runner_via_is_web_proxy(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('if (!ensureRunApi().isWebProxy) {', $html);
         $this->assertHtmlContains('.getSettings();', $html);
@@ -1158,7 +1713,7 @@ HTML, $html);
 
     public function test_ideation_board_card_has_delete_button(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('@click.stop="deleteMasterPlan(item.ID)"', $html);
         $this->assertHtmlContains("class=\"w-6 h-6 rounded-full bg-rose-50 border border-rose-100 text-rose-400", $html);
@@ -1166,7 +1721,7 @@ HTML, $html);
 
     public function test_ideation_board_card_shows_idea_age(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('const getIdeaAgeLabel = (item) => {', $html);
         $this->assertHtmlContains("return `Umur \${diffDays}h`;", $html);
@@ -1175,7 +1730,7 @@ HTML, $html);
 
     public function test_content_calendar_renders_content_story_and_event_lists_without_content_slice(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains("getCalendarItems(day).filter(i => i.TYPE === 'content')", $html);
         $this->assertHtmlContains("getCalendarItems(day).filter(i => i.TYPE === 'story')", $html);
@@ -1186,7 +1741,7 @@ HTML, $html);
 
     public function test_content_calendar_uses_distinct_colors_for_content_story_and_hari_raya(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('bg-blue-50 border border-blue-100', $html);
         $this->assertHtmlContains('bg-rose-50 border border-rose-100', $html);
@@ -1198,7 +1753,7 @@ HTML, $html);
 
     public function test_content_calendar_date_cells_grow_with_item_count_without_inner_scroll(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('class="min-h-[140px] bg-slate-50/50 rounded-2xl border border-dashed border-slate-100"', $html);
         $this->assertHtmlContains(":class=\"['min-h-[140px] rounded-2xl border p-3 transition-all group relative cursor-pointer'", $html);
@@ -1209,7 +1764,7 @@ HTML, $html);
 
     public function test_calendar_day_modal_cards_use_compact_spacing(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains("['p-3 rounded-xl border transition-all'", $html);
         $this->assertHtmlContains('class="flex items-start justify-between gap-2 mb-1.5"', $html);
@@ -1220,7 +1775,7 @@ HTML, $html);
 
     public function test_desktop_form_modals_are_horizontally_centered(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('class="fixed inset-0 z-[2500] flex items-end md:items-center justify-center md:p-4 overlay-motion-sheet"', $html);
         $this->assertHtmlContains('class="fixed inset-0 z-[2000] flex items-end md:items-center justify-center md:p-4 overlay-motion-sheet"', $html);
@@ -1229,7 +1784,7 @@ HTML, $html);
 
     public function test_notifications_are_type_aware_with_icon_and_tone(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('const notification = ref({ open: false, message: \'\', type: \'success\', icon: \'fa-circle-check\' });', $html);
         $this->assertHtmlContains("notification.type === 'error'", $html);
@@ -1239,7 +1794,7 @@ HTML, $html);
 
     public function test_long_form_modals_use_sticky_mobile_safe_footers(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('.modal-footer-bar {', $html);
         $this->assertHtmlContains('.radius-sheet-bottom {', $html);
@@ -1249,7 +1804,7 @@ HTML, $html);
 
     public function test_blocking_overlays_lock_document_scroll(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('html.modal-scroll-lock,', $html);
         $this->assertHtmlContains("document.documentElement.classList.toggle('modal-scroll-lock', locked);", $html);
@@ -1261,7 +1816,7 @@ HTML, $html);
 
     public function test_table_row_actions_use_labeled_tap_safe_buttons(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('.table-action-button {', $html);
         $this->assertHtmlContains('white-space: nowrap;', $html);
@@ -1280,15 +1835,15 @@ HTML, $html);
 
     public function test_icon_utility_buttons_use_shared_classes(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('.icon-utility-button {', $html);
         $this->assertHtmlContains('.icon-utility-button.icon-utility-bordered {', $html);
         $this->assertHtmlContains('.icon-utility-button.icon-utility-round {', $html);
         $this->assertHtmlContains('.icon-utility-button.icon-utility-danger:hover {', $html);
         $this->assertHtmlContains('class="icon-utility-button icon-utility-bordered"', $html);
-        $this->assertHtmlContains('class="icon-utility-button icon-utility-bordered !w-10 !h-10 text-slate-600"', $html);
-        $this->assertHtmlContains('class="icon-utility-button icon-utility-bordered !w-10 !h-10 text-slate-600"', $html);
+        $this->assertHtmlContains('class="icon-utility-button icon-utility-bordered"', $html);
+        $this->assertHtmlContains('class="icon-utility-button icon-utility-bordered"', $html);
         $this->assertHtmlContains('class="icon-utility-button icon-utility-round"', $html);
         $this->assertHtmlContains('class="icon-utility-button icon-utility-danger"', $html);
         $this->assertHtmlNotContains('class="w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:bg-white transition-all disabled:opacity-30"', $html);
@@ -1300,7 +1855,7 @@ HTML, $html);
 
     public function test_secondary_cta_buttons_use_shared_classes(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('.secondary-cta-button {', $html);
         $this->assertHtmlContains('class="secondary-cta-button secondary-cta-link">', $html);
@@ -1324,7 +1879,7 @@ HTML, $html);
 
     public function test_forms_and_dialogs_use_shared_ui_primitives(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('.form-input {', $html);
         $this->assertHtmlContains('.form-input-auth {', $html);
@@ -1373,7 +1928,7 @@ HTML, $html);
 
     public function test_export_buttons_only_use_pdf_or_excel_labels(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('class="fa-solid fa-file-pdf"></i> PDF', $html);
         $this->assertHtmlContains('class="fa-solid fa-file-excel text-[9px]"></i> Excel', $html);
@@ -1402,7 +1957,7 @@ HTML, $html);
 
     public function test_primary_cta_filter_trigger_and_modal_footer_buttons_use_shared_classes(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('.primary-cta-button {', $html);
         $this->assertHtmlContains('.filter-trigger-button,', $html);
@@ -1451,7 +2006,7 @@ HTML, $html);
 
     public function test_summary_cards_use_compact_shared_layout_tokens(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('.dashboard-summary-card-compact {', $html);
         $this->assertHtmlContains('.dashboard-summary-grid-compact {', $html);
@@ -1461,24 +2016,34 @@ HTML, $html);
         $this->assertHtmlContains('padding-right: 4.25rem;', $html);
         $this->assertHtmlContains('opacity: 0.06;', $html);
         $this->assertHtmlContains('transform: scale(0.62);', $html);
+        $this->assertHtmlContains('grid-template-columns: repeat(2, minmax(0, 1fr)) !important;', $html);
+        $this->assertHtmlContains('@media (min-width: 768px) {', $html);
         $this->assertHtmlContains('grid-template-columns: repeat(4, minmax(0, 1fr)) !important;', $html);
         $this->assertHtmlContains('@media (max-width: 767px) {', $html);
         $this->assertHtmlContains('min-height: 4.65rem;', $html);
-        $this->assertHtmlContains('border-radius: 0 !important;', $html);
+        $this->assertHtmlContains('border-radius: 16px !important;', $html);
         $this->assertHtmlContains('font-size: 15px;', $html);
-        $this->assertHtmlContains('class="dashboard-summary-grid-compact grid grid-cols-3 md:grid-cols-4 gap-3 md:gap-4"', $html);
-        $this->assertHtmlContains('class="dashboard-summary-card-compact bg-white radius-panel border border-slate-100"', $html);
+        $this->assertHtmlContains('class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4"', $html);
+        $this->assertHtmlContains('class="dashboard-summary-card-compact stat-card relative overflow-hidden group"', $html);
         $this->assertHtmlContains('class="dashboard-summary-value"', $html);
         $this->assertHtmlContains('dashboard-summary-unit', $html);
         $this->assertHtmlContains('.dashboard-summary-card .icon-utility-button {', $html);
-        $this->assertHtmlNotContains('class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4"', $html);
+        $this->assertHtmlNotContains('class="dashboard-summary-grid-compact grid grid-cols-3 md:grid-cols-4 gap-3 md:gap-4"', $html);
         $this->assertHtmlNotContains('class="bg-white radius-panel border border-slate-100 p-6 relative overflow-hidden group"', $html);
         $this->assertHtmlNotContains('class="text-[22px] font-bold text-slate-900 leading-none tracking-tight"', $html);
     }
 
+    public function test_dashboard_header_account_panel_does_not_force_mobile_overflow(): void
+    {
+        $html = $this->readLegacyDashboardSourceHtml();
+
+        $this->assertHtmlContains('class="grid grid-cols-1 gap-2 type-body text-slate-500 w-full min-w-0 md:min-w-[220px]"', $html);
+        $this->assertHtmlNotContains('class="grid grid-cols-1 gap-2 type-body text-slate-500 min-w-[220px]"', $html);
+    }
+
     public function test_link_ctas_are_consistent_between_mobile_and_desktop_cards(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('class="secondary-cta-button secondary-cta-link">', $html);
         $this->assertHtmlContains('<i class="fa-solid fa-link"></i> Buka Link', $html);
@@ -1490,7 +2055,7 @@ HTML, $html);
 
     public function test_shell_typography_uses_shared_type_tiers_for_navigation_and_section_headers(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('.type-micro {', $html);
         $this->assertHtmlContains('.type-meta {', $html);
@@ -1506,7 +2071,7 @@ HTML, $html);
 
     public function test_table_and_modal_typography_continue_migrating_to_shared_type_tiers(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('class="type-title font-semibold text-slate-900">Gabungan Semua Platform</h3>', $html);
         $this->assertHtmlContains('<h3 class="type-title font-bold text-slate-800 mb-4"><i', $html);
@@ -1533,7 +2098,7 @@ HTML, $html);
 
     public function test_radius_tokens_are_used_for_panels_cards_and_dialog_shells(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('.radius-card {', $html);
         $this->assertHtmlContains('.radius-panel {', $html);
@@ -1542,7 +2107,7 @@ HTML, $html);
         $this->assertHtmlContains('.radius-sheet-top {', $html);
         $this->assertHtmlContains('.radius-sheet-bottom {', $html);
         $this->assertHtmlContains('.radius-panel {', $html);
-        $this->assertHtmlContains('class="dashboard-summary-card stat-card"', $html);
+        $this->assertHtmlContains('class="dashboard-summary-card-compact stat-card relative overflow-hidden group"', $html);
         $this->assertHtmlContains('class="mobile-sheet modal-width-form radius-sheet modal-sheet-surface"', $html);
         $this->assertHtmlContains('class="modal-footer-bar modal-footer-actions"', $html);
         $this->assertHtmlNotContains('class="bg-white rounded-[28px] border border-slate-100 p-5 md:p-6"', $html);
@@ -1552,7 +2117,7 @@ HTML, $html);
 
     public function test_small_primary_actions_use_shared_modal_button_variants(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('.modal-primary-button.modal-primary-button--success {', $html);
         $this->assertHtmlContains('.modal-primary-button.modal-primary-button--danger {', $html);
@@ -1569,7 +2134,7 @@ HTML, $html);
 
     public function test_existing_mobile_table_cards_share_compact_helpers_and_patterns(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('.mobile-data-card {', $html);
         $this->assertHtmlContains('.mobile-data-card__header {', $html);
@@ -1587,7 +2152,7 @@ HTML, $html);
 
     public function test_mobile_operational_tabs_use_compact_card_layouts_instead_of_mobile_tables(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         foreach ([
             "activeTab === 'unboxing'",
@@ -1632,7 +2197,7 @@ HTML, $html);
 
     public function test_master_plan_and_claim_forms_are_grouped_with_section_headers(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('Ringkasan Konten', $html);
         $this->assertHtmlContains('Distribusi & Asset', $html);
@@ -1642,7 +2207,7 @@ HTML, $html);
 
     public function test_error_messages_use_friendly_formatter_and_avoid_generic_required_copy(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('const getFriendlyErrorMessage = (error, fallback = \'Terjadi kendala saat memproses permintaan.\') => {', $html);
         $this->assertHtmlContains('const notifyError = (prefix, error, fallback) => {', $html);
@@ -1652,7 +2217,7 @@ HTML, $html);
 
     public function test_dashboard_uses_no_native_select_dropdowns(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertSame(2, substr_count($html, '<select'));
         $this->assertSame(2, substr_count($html, '</select>'));
@@ -1662,7 +2227,7 @@ HTML, $html);
 
     public function test_dashboard_uses_only_custom_date_pickers_with_shared_calendar_contexts(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlNotContains('type="date"', $html);
         $this->assertHtmlContains("openCalendar(\$event, 'filter', '', 'budgeting')", $html);
@@ -1682,7 +2247,7 @@ HTML, $html);
 
     public function test_keep_barang_default_view_does_not_hide_non_pending_rows(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('const filteredKeepBarangData = computed(() => {', $html);
         $this->assertHtmlNotContains("if (!isFiltering && r.STATUS !== 'PENDING') return false;", $html);
@@ -1690,7 +2255,7 @@ HTML, $html);
 
     public function test_keep_barang_summary_counts_use_full_dataset_not_filtered_rows(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('const keepBarangSummary = computed(() => {', $html);
         $this->assertHtmlContains('const rows = keepBarangData.value || [];', $html);
@@ -1700,7 +2265,7 @@ HTML, $html);
 
     public function test_mobile_date_and_select_triggers_share_full_width_and_trailing_chevron_rules(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('.select-trigger-button-compact {', $html);
         $this->assertHtmlContains('width: 100%;', $html);
@@ -1718,7 +2283,7 @@ HTML, $html);
 
     public function test_period_toolbar_groups_use_shared_mobile_stack_layout(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('.compact-period-toolbar {', $html);
         $this->assertHtmlContains('.compact-period-toolbar__controls {', $html);
@@ -1728,7 +2293,7 @@ HTML, $html);
 
     public function test_shared_action_filter_toolbar_stacks_consistently_on_mobile(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('.mobile-toolbar-stack {', $html);
         $this->assertTrue(
@@ -1739,7 +2304,7 @@ HTML, $html);
 
     public function test_ideation_board_uses_mobile_lane_switch_to_avoid_three_long_stacks(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains("const ideationBoardMobileTab = ref('');", $html);
         $this->assertHtmlContains('@click="ideationBoardMobileTab = ideationDraftLabel"', $html);
@@ -1752,7 +2317,7 @@ HTML, $html);
 
     public function test_story_modal_and_content_modals_share_dashboard_controls_consistently(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlNotContains('type="radio" v-model="storyForm.is_genap"', $html);
         $this->assertHtmlContains("@click=\"storyForm.is_genap = 'Ganjil'\"", $html);
@@ -1768,7 +2333,7 @@ HTML, $html);
 
     public function test_ideation_lane_shell_and_remaining_icon_buttons_follow_shared_dashboard_tokens(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlNotContains('bg-white/60 backdrop-blur-sm radius-dialog p-5 border border-slate-100/50', $html);
         $this->assertHtmlContains('class="bg-white radius-panel border border-slate-100 p-5 flex flex-col min-h-[400px]"', $html);
@@ -1780,7 +2345,7 @@ HTML, $html);
 
     public function test_crud_modals_use_shared_sticky_header_shell(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlNotContains('class="p-6 border-b border-slate-100 flex items-center justify-between radius-sheet-top bg-white"', $html);
         $this->assertHtmlContains('.modal-header-bar-sticky {', $html);
@@ -1789,7 +2354,7 @@ HTML, $html);
 
     public function test_primary_pagination_icon_buttons_have_accessible_labels(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('@click="masterPage--" :disabled="masterPage <= 1"', $html);
         $this->assertHtmlContains('@click="masterPage++" :disabled="masterPage >= masterTotalPages"', $html);
@@ -1821,7 +2386,7 @@ HTML, $html);
 
     public function test_ads_log_uses_dedicated_ads_performance_crud_instead_of_master_plan_bridge(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains("saveAds(data)", $html);
         $this->assertHtmlContains("deleteAds(id)", $html);
@@ -1830,7 +2395,7 @@ HTML, $html);
 
     public function test_ads_log_kategori_column_is_wide_and_never_wraps(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('<th class="px-4 py-3 text-center w-36 whitespace-nowrap">Kategori</th>', $html);
         $this->assertHtmlContains('<td class="px-4 py-3 text-center whitespace-nowrap">', $html);
@@ -1839,7 +2404,7 @@ HTML, $html);
 
     public function test_table_status_badges_never_wrap(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold whitespace-nowrap"', $html);
         $this->assertHtmlContains('class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap"', $html);
@@ -1884,8 +2449,8 @@ HTML, $html);
             resource_path('views/dashboard/partials/menus/meta-story.blade.php'),
             resource_path('views/dashboard/partials/shell/head.blade.php'),
             resource_path('views/welcome.blade.php'),
+            resource_path('legacy/marketing-dashboard-source.html'),
             base_path('routes/web.php'),
-            public_path('marketing-dashboard.html'),
             public_path('design-system.html'),
         ];
 
@@ -1923,6 +2488,157 @@ HTML, $html);
         $this->assertHtmlContains("openPrintWindow(html, 'Ads Report', {", $adsLogExport);
     }
 
+    public function test_excel_export_modules_load_sheetjs_from_local_vendor_asset(): void
+    {
+        $vendorManifest = file_get_contents(resource_path('vendor/dashboard/manifest.json'));
+        $xlsxLoader = file_get_contents(resource_path('js/dashboard/export/xlsx-loader.js'));
+        $bonusExcel = file_get_contents(resource_path('js/dashboard/export/bonus-excel.js'));
+        $budgetExcel = file_get_contents(resource_path('js/dashboard/export/budget-excel.js'));
+        $sellOutExcel = file_get_contents(resource_path('js/dashboard/export/sell-out-excel.js'));
+        $unitDitanya = file_get_contents(resource_path('js/dashboard/export/unit-ditanya.js'));
+        $claimGaransi = file_get_contents(resource_path('js/dashboard/export/claim-garansi.js'));
+        $keepBarang = file_get_contents(resource_path('js/dashboard/export/keep-barang.js'));
+        $vendorSyncScript = file_get_contents(base_path('scripts/sync-dashboard-vendor-assets.mjs'));
+        $packageJson = file_get_contents(base_path('package.json'));
+
+        $this->assertIsString($vendorManifest);
+        $this->assertHtmlContains("const DASHBOARD_XLSX_VENDOR_PATH = '/vendor/dashboard/xlsx/xlsx.full.min.js';", $xlsxLoader);
+        $this->assertHtmlContains("script.src = buildDashboardAssetUrl(DASHBOARD_XLSX_VENDOR_PATH);", $xlsxLoader);
+        $this->assertHtmlNotContains('cdn.sheetjs.com', $xlsxLoader);
+        $this->assertHtmlContains('"id": "xlsx"', $vendorManifest);
+        $this->assertHtmlContains('"strategy": "repo-local-sync"', $vendorManifest);
+        $this->assertHtmlContains('"runtimePath": "/vendor/dashboard/xlsx/xlsx.full.min.js"', $vendorManifest);
+        $this->assertHtmlContains("path.join(projectRoot, 'resources', 'vendor', 'dashboard', 'manifest.json')", $vendorSyncScript);
+        $this->assertHtmlNotContains('"xlsx":', $packageJson);
+
+        foreach ([
+            $bonusExcel,
+            $budgetExcel,
+            $sellOutExcel,
+            $unitDitanya,
+            $claimGaransi,
+            $keepBarang,
+        ] as $source) {
+            $this->assertHtmlContains("import { ensureXLSX } from './xlsx-loader.js';", $source);
+            $this->assertHtmlNotContains('cdn.sheetjs.com', $source);
+        }
+    }
+
+    public function test_dashboard_vendor_manifest_documents_local_runtime_assets(): void
+    {
+        $manifestContents = file_get_contents(resource_path('vendor/dashboard/manifest.json'));
+
+        $this->assertIsString($manifestContents);
+
+        $manifest = json_decode($manifestContents, true, 512, JSON_THROW_ON_ERROR);
+        $assets = collect($manifest['assets'] ?? [])->keyBy('id');
+
+        foreach ([
+            'vue',
+            'papaparse',
+            'apexcharts',
+            'fontawesome-css',
+            'fontawesome-webfonts',
+            'xlsx',
+        ] as $assetId) {
+            $this->assertTrue($assets->has($assetId), "Failed asserting that vendor manifest contains [{$assetId}].");
+        }
+
+        $this->assertSame('/vendor/dashboard/vue/vue.global.prod.js', data_get($assets->get('vue'), 'runtimePath'));
+        $this->assertSame('/vendor/dashboard/papaparse/papaparse.min.js', data_get($assets->get('papaparse'), 'runtimePath'));
+        $this->assertSame('/vendor/dashboard/apexcharts/apexcharts.min.js', data_get($assets->get('apexcharts'), 'runtimePath'));
+        $this->assertSame('/vendor/dashboard/fontawesome/css/all.min.css', data_get($assets->get('fontawesome-css'), 'runtimePath'));
+        $this->assertSame('/vendor/dashboard/fontawesome/webfonts', data_get($assets->get('fontawesome-webfonts'), 'runtimePath'));
+        $this->assertSame('/vendor/dashboard/xlsx/xlsx.full.min.js', data_get($assets->get('xlsx'), 'runtimePath'));
+        $this->assertSame('repo-local-sync', data_get($assets->get('xlsx'), 'strategy'));
+        $this->assertSame('npm-sync', data_get($assets->get('vue'), 'strategy'));
+        $this->assertSame('npm-sync', data_get($assets->get('fontawesome-css'), 'strategy'));
+        $this->assertSame('node_modules/vue/dist/vue.global.prod.js', data_get($assets->get('vue'), 'source'));
+        $this->assertSame('resources/vendor/dashboard/xlsx/xlsx.full.min.js', data_get($assets->get('xlsx'), 'source'));
+    }
+
+    public function test_demo_and_welcome_surfaces_use_local_fontawesome_asset(): void
+    {
+        $welcome = file_get_contents(resource_path('views/welcome.blade.php'));
+        $designSystemView = file_get_contents(resource_path('views/reference/design-system.blade.php'));
+
+        $this->assertHtmlContains("{{ asset('vendor/dashboard/fontawesome/css/all.min.css') }}", $welcome);
+        $this->assertHtmlContains("{{ asset('vendor/dashboard/fontawesome/css/all.min.css') }}", $designSystemView);
+        $this->assertHtmlNotContains('cdnjs.cloudflare.com', $welcome);
+        $this->assertHtmlNotContains('cdnjs.cloudflare.com', $designSystemView);
+    }
+
+    public function test_active_sidebar_menu_forces_text_labels_to_inherit_white_color(): void
+    {
+        $appCss = file_get_contents(resource_path('css/app.css'));
+        $dashboardShellCss = file_get_contents(resource_path('css/dashboard-shell.css'));
+        $legacySource = $this->readLegacyDashboardSourceHtml();
+
+        $this->assertIsString($appCss);
+        $this->assertIsString($dashboardShellCss);
+        $this->assertHtmlContains('.nav-item.is-active .type-body,', $appCss);
+        $this->assertHtmlContains('.nav-subitem.is-active .type-meta,', $appCss);
+        $this->assertHtmlContains('color: inherit;', $appCss);
+        $this->assertHtmlContains('.sidebar-nav-item-active .type-body,', $dashboardShellCss);
+        $this->assertHtmlContains('.sidebar-nav-item-active .type-meta,', $dashboardShellCss);
+        $this->assertHtmlContains('color: inherit !important;', $dashboardShellCss);
+        $this->assertHtmlContains("sidebar-nav-item-active bg-gradient-to-r from-ppp-accent to-[#3D4FDB] text-white", $legacySource);
+    }
+
+    public function test_design_system_route_renders_from_laravel_view(): void
+    {
+        $response = $this->get('/design-system');
+
+        $response->assertOk();
+        $response->assertSee('Design System - Pura Pura Ponsel', false);
+        $response->assertSee('Pura Pura Ponsel', false);
+        $response->assertSee('/vendor/dashboard/fontawesome/css/all.min.css', false);
+    }
+
+    public function test_design_system_route_does_not_depend_on_public_snapshot(): void
+    {
+        $publicSnapshotPath = public_path('design-system.html');
+        $temporarySnapshotPath = $publicSnapshotPath . '.tmp-test';
+
+        rename($publicSnapshotPath, $temporarySnapshotPath);
+
+        try {
+            $response = $this->get('/design-system');
+
+            $response->assertOk();
+            $response->assertSee('Design System - Pura Pura Ponsel', false);
+        } finally {
+            rename($temporarySnapshotPath, $publicSnapshotPath);
+        }
+    }
+
+    public function test_public_design_system_snapshot_is_stub_that_points_to_laravel_route(): void
+    {
+        $publicSnapshot = file_get_contents(public_path('design-system.html'));
+        $archiveSnapshot = $this->readLegacyDesignSystemArchiveHtml();
+
+        $this->assertIsString($publicSnapshot);
+        $this->assertHtmlContains('/design-system', $publicSnapshot);
+        $this->assertHtmlContains('Halaman ini dipindahkan ke route Laravel', $publicSnapshot);
+        $this->assertHtmlNotContains('<nav class="ds-nav">', $publicSnapshot);
+        $this->assertHtmlContains('<nav class="ds-nav">', $archiveSnapshot);
+        $this->assertHtmlContains('Design System - Pura Pura Ponsel', $archiveSnapshot);
+    }
+
+    public function test_public_dashboard_snapshot_is_archive_not_runtime_source(): void
+    {
+        $publicSnapshot = file_get_contents(public_path('marketing-dashboard.html'));
+        $legacySource = $this->readLegacyDashboardSourceHtml();
+
+        $this->assertIsString($publicSnapshot);
+        $this->assertHtmlContains('url=/', $publicSnapshot);
+        $this->assertHtmlContains('Halaman ini dipindahkan ke route Laravel utama dashboard.', $publicSnapshot);
+        $this->assertHtmlContains('<a href="/">/</a>', $publicSnapshot);
+        $this->assertHtmlNotContains('<div id="app"', $publicSnapshot);
+        $this->assertHtmlContains('<div id="app"', $legacySource);
+        $this->assertHtmlContains('Marketing Dashboard | Pura Pura Ponsel', $legacySource);
+    }
+
     public function test_print_templates_use_readable_typography_for_exports(): void
     {
         $printCore = file_get_contents(resource_path('js/dashboard/export/print-core.js'));
@@ -1949,16 +2665,22 @@ HTML, $html);
         $this->assertHtmlContains('export function buildStandalonePrintHtml(html, { autoPrint = false } = {}) {', $printCore);
         $this->assertHtmlContains('const waitForPrintAssets_ = window.waitForPrintAssets;', $printHelpers);
         $this->assertHtmlContains("const printDocumentHtml = buildStandalonePrintHtml_(html);", $printHelpers);
-        $this->assertHtmlContains('const submitBrowserPrintJob_ = (printHtml) => {', $printHelpers);
-        $this->assertHtmlContains("return jsonApi('/print-job', {", $printHelpers);
-        $this->assertHtmlContains("body: JSON.stringify({ html: printHtml }),", $printHelpers);
-        $this->assertHtmlContains("const autoPrintHtml = buildStandalonePrintHtml_(html, { autoPrint: true });", $printHelpers);
-        $this->assertHtmlContains("pw.document.write('<!DOCTYPE html><html><head><meta charset=\"UTF-8\"></head><body style=\"font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0\"><p style=\"color:#64748b;font-size:14px\">[1/2] Menyiapkan dokumen print...</p></body></html>');", $printHelpers);
-        $this->assertHtmlContains("const backendUrl = new URL(resolveAppUrl('/print-job'), window.location.origin).origin.replace(/\\/+$/, '');", $printHelpers);
-        $this->assertHtmlContains("const token = String((result && result.token) || '').trim();", $printHelpers);
-        $this->assertHtmlContains('pw.location.href = `${backendUrl}/print-job/${encodeURIComponent(token)}`;', $printHelpers);
-        $this->assertHtmlContains("_pwStatus('[2/2] Dokumen siap - membuka print...');", $printHelpers);
-        $this->assertHtmlContains("notifyError('Print gagal', err, 'Dokumen print harus dibuka dari backend print-job.');", $printHelpers);
+        $this->assertHtmlContains('const submitBrowserPrintJob_ = window.submitBrowserPrintJob;', $printHelpers);
+        $this->assertHtmlContains('const openPrintWindow_ = (html, reportName) => window.openPrintWindow(html, reportName, {', $printHelpers);
+        $this->assertHtmlContains('buildStandalonePrintHtmlFn: buildStandalonePrintHtml_,', $printHelpers);
+        $this->assertHtmlContains('jsonApi,', $printHelpers);
+        $this->assertHtmlContains('showNotification,', $printHelpers);
+        $this->assertHtmlContains('notifyError,', $printHelpers);
+        $this->assertHtmlContains('getFriendlyErrorMessage,', $printHelpers);
+        $this->assertHtmlContains('resolveAppUrl,', $printHelpers);
+        $this->assertHtmlNotContains("return jsonApi('/print-job', {", $printHelpers);
+        $this->assertHtmlNotContains("body: JSON.stringify({ html: printHtml }),", $printHelpers);
+        $this->assertHtmlNotContains("pw.document.write('<!DOCTYPE html><html><head><meta charset=\"UTF-8\"></head><body style=\"font-family:Arial,sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;margin:0\"><p style=\"color:#64748b;font-size:14px\">[1/2] Menyiapkan dokumen print...</p></body></html>');", $printHelpers);
+        $this->assertHtmlNotContains("const backendUrl = new URL(resolveAppUrl('/print-job'), window.location.origin).origin.replace(/\\/+$/, '');", $printHelpers);
+        $this->assertHtmlNotContains("const token = String((result && result.token) || '').trim();", $printHelpers);
+        $this->assertHtmlNotContains('pw.location.href = `${backendUrl}/print-job/${encodeURIComponent(token)}`;', $printHelpers);
+        $this->assertHtmlNotContains("_pwStatus('[2/2] Dokumen siap - membuka print...');", $printHelpers);
+        $this->assertHtmlNotContains("notifyError('Print gagal', err, 'Dokumen print harus dibuka dari backend print-job.');", $printHelpers);
         $this->assertHtmlNotContains('fallbackWrite', $printSources);
         $this->assertHtmlNotContains('createObjectURL(blob)', $printSources);
         $this->assertHtmlNotContains('new Blob([printDocumentHtml]', $printSources);
@@ -1984,7 +2706,7 @@ HTML, $html);
 
     public function test_profile_tab_includes_dashboard_user_management_panel(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('Manajemen User', $html);
         $this->assertHtmlContains("switchTab('auth_users')", $html);
@@ -1996,7 +2718,7 @@ HTML, $html);
 
     public function test_settings_sidebar_and_shell_include_activity_logs_panel(): void
     {
-        $html = file_get_contents(public_path('marketing-dashboard.html'));
+        $html = $this->readLegacyDashboardSourceHtml();
 
         $this->assertHtmlContains('Activity Logs', $html);
         $this->assertHtmlContains("switchTab('activity_logs')", $html);

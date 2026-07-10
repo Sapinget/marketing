@@ -10,60 +10,54 @@
                                         Laravel
                                         dengan data real dari database yang sudah terhubung.</p>
                                 </div>
-                                <div class="grid grid-cols-1 gap-2 type-body text-slate-500 min-w-[220px]">
+                                <div class="grid grid-cols-1 gap-2 type-body text-slate-500 w-full min-w-0 md:min-w-[220px]">
                                     <div
                                         class="flex items-center justify-between gap-3 bg-slate-50 rounded-2xl px-4 py-3">
                                         <span>User</span>
-                                        <span class="font-medium text-slate-800">{{ currentUser.username }}</span>
+                                        <span class="font-medium text-slate-800">{{ currentUser?.username || currentUser?.nama || 'User' }}</span>
                                     </div>
                                     <div
                                         class="flex items-center justify-between gap-3 bg-slate-50 rounded-2xl px-4 py-3">
                                         <span>Role</span>
-                                        <span class="font-medium text-slate-800">{{ currentUser.role }}</span>
+                                        <span class="font-medium text-slate-800">{{ currentUser?.role || '-' }}</span>
                                     </div>
 
                                 </div>
                             </div>
                         </div>
 
-                        <div class="dashboard-summary-grid-compact grid grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
-                            <div class="bg-white p-4 md:p-5 radius-card border border-slate-100">
-                                <div
-                                    class="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4">
-                                    <i class="fa-solid fa-layer-group text-[12px]"></i>
+                        <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                            <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
+                                <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-layer-group text-[120px]"></i></div>
+                                <p class="text-[9px] font-bold uppercase tracking-widest text-indigo-500 mb-3">Total Plan</p>
+                                <div class="flex items-baseline gap-2">
+                                    <span class="dashboard-summary-value">{{ masterPlanData.length }}</span>
                                 </div>
-                                <div class="text-[9px] uppercase font-medium text-slate-400 mb-1 tracking-[0.12em]">
-                                    Total Plan</div>
-                                <div class="text-base md:text-lg font-semibold text-slate-900">{{ masterPlanData.length }}</div>
+                                <p class="text-[10px] font-bold text-indigo-600 mt-3">Master Plan</p>
                             </div>
-                            <div class="bg-white p-4 md:p-5 radius-card border border-slate-100">
-                                <div
-                                    class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mb-4">
-                                    <i class="fa-solid fa-circle-check text-[12px]"></i>
+                            <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
+                                <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-circle-check text-[120px]"></i></div>
+                                <p class="text-[9px] font-bold uppercase tracking-widest text-emerald-500 mb-3">Published</p>
+                                <div class="flex items-baseline gap-2">
+                                    <span class="dashboard-summary-value">{{ masterPlanData.filter(i => i.Status === 'PUBLISHED').length }}</span>
                                 </div>
-                                <div class="text-[9px] uppercase font-medium text-slate-400 mb-1 tracking-[0.12em]">
-                                    Published</div>
-                                <div class="text-base md:text-lg font-semibold text-slate-900">{{ masterPlanData.filter(i => i.Status === 'PUBLISHED').length }}</div>
+                                <p class="text-[10px] font-bold text-emerald-600 mt-3">Konten terpublish</p>
                             </div>
-                            <div class="bg-white p-4 md:p-5 radius-card border border-slate-100">
-                                <div
-                                    class="w-10 h-10 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-4">
-                                    <i class="fa-solid fa-pen-nib text-[12px]"></i>
+                            <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
+                                <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-pen-nib text-[120px]"></i></div>
+                                <p class="text-[9px] font-bold uppercase tracking-widest text-amber-500 mb-3">On Progress</p>
+                                <div class="flex items-baseline gap-2">
+                                    <span class="dashboard-summary-value">{{ masterPlanData.filter(i => ['SHOOTING','EDITING'].includes(i.Status)).length }}</span>
                                 </div>
-                                <div class="text-[9px] uppercase font-medium text-slate-400 mb-1 tracking-[0.12em]">On
-                                    Progress</div>
-                                <div class="text-base md:text-lg font-semibold text-slate-900">{{ masterPlanData.filter(i => ['SHOOTING','EDITING'].includes(i.Status)).length }}
-                                </div>
+                                <p class="text-[10px] font-bold text-amber-600 mt-3">Sedang dikerjakan</p>
                             </div>
-                            <div class="bg-white p-4 md:p-5 radius-card border border-slate-100">
-                                <div
-                                    class="w-10 h-10 rounded-2xl bg-violet-50 text-violet-600 flex items-center justify-center mb-4">
-                                    <i class="fa-solid fa-clapperboard text-[12px]"></i>
+                            <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
+                                <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-clapperboard text-[120px]"></i></div>
+                                <p class="text-[9px] font-bold uppercase tracking-widest text-violet-500 mb-3">Jadwal Story</p>
+                                <div class="flex items-baseline gap-2">
+                                    <span class="dashboard-summary-value">{{ storyData.length }}</span>
                                 </div>
-                                <div class="text-[9px] uppercase font-medium text-slate-400 mb-1 tracking-[0.12em]">
-                                    Jadwal Story</div>
-                                <div class="text-base md:text-lg font-semibold text-slate-900">{{ storyData.length }}
-                                </div>
+                                <p class="text-[10px] font-bold text-violet-600 mt-3">Story terjadwal</p>
                             </div>
                         </div>
 

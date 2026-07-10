@@ -6,7 +6,7 @@
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
                                 <div class="flex items-center gap-4">
                                     <div
-                                        class="w-12 h-12 rounded-2xl bg-gradient-to-br from-ppp-accent to-[#3D4FDB] flex items-center justify-center">
+                                        class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
                                         <i class="fa-solid fa-microscope text-white text-[16px]"></i>
                                     </div>
                                     <div>
@@ -17,7 +17,7 @@
                                 <!-- Filter tanggal + sub-tab toggle -->
                                 <div class="mobile-toolbar-stack md:items-center">
                                     <button @click="openCalendar($event, 'filter', '', 'insight')"
-                                        class="filter-trigger-button md:w-auto">
+                                        class="date-trigger-button date-trigger-button-compact">
                                         <i class="fa-solid fa-calendar-days text-[10px] text-slate-400"></i>
                                         <template v-if="insightDateFilter.start">
                                             {{ formatShortDate(insightDateFilter.start) }}

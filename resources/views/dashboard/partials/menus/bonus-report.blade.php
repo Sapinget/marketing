@@ -1,10 +1,11 @@
 @verbatim
 <!-- Bonus Report tab -->
-                    <div v-if="activeTab === 'bonus_report' && !bonusConfigLoaded"
-                        class="space-y-6 animate-fadeIn pb-10 animate-pulse">
-                        <div class="dashboard-summary-grid-compact grid grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
+                    <div v-if="activeTab === 'bonus_report'" class="space-y-6 animate-fadeIn pb-10">
+                        <template v-if="!bonusConfigLoaded">
+                        <div class="space-y-6 animate-pulse">
+                        <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                             <div v-for="i in 4" :key="'sk-br-st'+i"
-                                class="bg-white p-4 radius-card border border-slate-100">
+                                class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
                                 <div class="w-10 h-10 rounded-2xl bg-slate-200 mb-4"></div>
                                 <div class="h-3 bg-slate-100 rounded-full w-20 mb-2"></div>
                                 <div class="h-5 bg-slate-200 rounded-full w-16"></div>
@@ -43,12 +44,12 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div v-if="activeTab === 'bonus_report' && bonusConfigLoaded"
-                        class="space-y-6 animate-fadeIn pb-10">
+                        </div>
+                        </template>
+                        <template v-else>
 
                         <!-- Summary Cards (dipisah dari header, diletakkan di atas) -->
-                        <div class="dashboard-summary-grid-compact grid grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
+                        <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                             <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
                                 <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-coins text-[120px]"></i></div>
                                 <p class="text-[9px] font-bold uppercase tracking-widest text-amber-500 mb-3">Total Bonus</p>
@@ -71,7 +72,7 @@
                                 <p class="text-[9px] font-bold uppercase tracking-widest text-rose-500 mb-3">Likes</p>
                                 <div class="flex items-baseline gap-2">
                                     <span class="dashboard-summary-value">{{ formatNumber(bonusTotal.likes) }}</span>
-                                    <span class="text-[14px] font-bold text-rose-400 uppercase">Suka</span>
+                                    <span class="dashboard-summary-unit text-rose-400">Suka</span>
                                 </div>
                                 <p class="text-[10px] font-bold text-rose-600 mt-3">Dalam periode aktif</p>
                             </div>
@@ -80,7 +81,7 @@
                                 <p class="text-[9px] font-bold uppercase tracking-widest text-emerald-500 mb-3">Komentar</p>
                                 <div class="flex items-baseline gap-2">
                                     <span class="dashboard-summary-value">{{ formatNumber(bonusTotal.comments) }}</span>
-                                    <span class="text-[14px] font-bold text-emerald-400 uppercase">Komen</span>
+                                    <span class="dashboard-summary-unit text-emerald-400">Komen</span>
                                 </div>
                                 <p class="text-[10px] font-bold text-emerald-600 mt-3">Dalam periode aktif</p>
                             </div>
@@ -91,7 +92,7 @@
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
                                 <div class="flex items-center gap-3">
                                     <div
-                                        class="w-12 h-12 rounded-2xl bg-ppp-accent text-white flex items-center justify-center border border-blue-200">
+                                        class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
                                         <i class="fa-solid fa-coins text-[16px]"></i>
                                     </div>
                                     <div>
@@ -172,96 +173,106 @@
                                             class="bg-slate-50 border border-slate-100 rounded-xl p-2.5 flex items-center justify-between gap-3">
                                             <div>
                                                 <p class="text-[8px] text-slate-400 font-bold uppercase">Min Views</p>
-                                                <input type="number" v-model.number="tier.min"
+                                                <label :for="`bonus-reels-non-colab-min-${idx}`" class="sr-only">Min views non colab {{ idx + 1 }}</label>
+                                                <input :id="`bonus-reels-non-colab-min-${idx}`" :name="`bonus_reels_non_colab_min_${idx}`" type="number" v-model.number="tier.min"
                                                     class="w-20 text-[11px] font-bold text-slate-700 bg-transparent outline-none" />
                                             </div>
                                             <div class="text-right">
                                                 <p class="text-[8px] text-slate-400 font-bold uppercase">Bonus (Rp)</p>
-                                                <input type="number" v-model.number="tier.amount"
+                                                <label :for="`bonus-reels-non-colab-amount-${idx}`" class="sr-only">Bonus non colab {{ idx + 1 }}</label>
+                                                <input :id="`bonus-reels-non-colab-amount-${idx}`" :name="`bonus_reels_non_colab_amount_${idx}`" type="number" v-model.number="tier.amount"
                                                     class="w-24 text-[11px] font-bold text-ppp-accent bg-transparent outline-none text-right" />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <!-- Colab -->
-                            <div>
-                                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-3"><i
-                                        class="fa-solid fa-handshake text-slate-400 mr-1"></i> Views Colab</p>
-                                <div class="space-y-2">
-                                    <div v-for="(tier, idx) in bonusConfig.reelsColab" :key="'c'+idx"
-                                        class="bg-slate-50 border border-slate-100 rounded-xl p-2.5 flex items-center justify-between gap-3">
-                                        <div>
-                                            <p class="text-[8px] text-slate-400 font-bold uppercase">Min Views</p>
-                                            <input type="number" v-model.number="tier.min"
-                                                class="w-20 text-[11px] font-bold text-slate-700 bg-transparent outline-none" />
-                                        </div>
-                                        <div class="text-right">
-                                            <p class="text-[8px] text-slate-400 font-bold uppercase">Bonus (Rp)</p>
-                                            <input type="number" v-model.number="tier.amount"
-                                                class="w-24 text-[11px] font-bold text-emerald-600 bg-transparent outline-none text-right" />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Engagement -->
-                            <div>
-                                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-3"><i
-                                        class="fa-solid fa-medal text-amber-400 mr-1"></i> Engagement Fixed</p>
-                                <div class="space-y-2">
-                                    <div class="bg-slate-50 border border-slate-100 rounded-xl p-2.5">
-                                        <p class="text-[8px] text-slate-400 font-bold uppercase mb-1">Instagram
-                                            Likes Min</p>
-                                        <div class="flex justify-between items-center">
-                                            <input type="number"
-                                                v-model.number="bonusConfig.engagement.instagram.likeUnit"
-                                                class="w-20 text-[11px] font-bold text-slate-700 bg-transparent outline-none" />
-                                            <div class="text-right">
-                                                <p class="text-[8px] text-slate-400 font-bold uppercase">Bonus</p>
-                                                <input type="number"
-                                                    v-model.number="bonusConfig.engagement.instagram.likeBonus"
-                                                    class="w-24 text-[11px] font-bold text-ppp-accent bg-transparent outline-none text-right" />
+                                <!-- Colab -->
+                                <div>
+                                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-3"><i
+                                            class="fa-solid fa-handshake text-slate-400 mr-1"></i> Views Colab</p>
+                                    <div class="space-y-2">
+                                        <div v-for="(tier, idx) in bonusConfig.reelsColab" :key="'c'+idx"
+                                            class="bg-slate-50 border border-slate-100 rounded-xl p-2.5 flex items-center justify-between gap-3">
+                                            <div>
+                                                <p class="text-[8px] text-slate-400 font-bold uppercase">Min Views</p>
+                                                <label :for="`bonus-reels-colab-min-${idx}`" class="sr-only">Min views colab {{ idx + 1 }}</label>
+                                                <input :id="`bonus-reels-colab-min-${idx}`" :name="`bonus_reels_colab_min_${idx}`" type="number" v-model.number="tier.min"
+                                                    class="w-20 text-[11px] font-bold text-slate-700 bg-transparent outline-none" />
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="bg-slate-50 border border-slate-100 rounded-xl p-2.5">
-                                        <p class="text-[8px] text-slate-400 font-bold uppercase mb-1">TikTok Likes
-                                            Min</p>
-                                        <div class="flex justify-between items-center">
-                                            <input type="number" v-model.number="bonusConfig.engagement.tiktok.likeUnit"
-                                                class="w-20 text-[11px] font-bold text-slate-700 bg-transparent outline-none" />
                                             <div class="text-right">
-                                                <p class="text-[8px] text-slate-400 font-bold uppercase">Bonus</p>
-                                                <input type="number"
-                                                    v-model.number="bonusConfig.engagement.tiktok.likeBonus"
-                                                    class="w-24 text-[11px] font-bold text-ppp-accent bg-transparent outline-none text-right" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="bg-slate-50 border border-slate-100 rounded-xl p-2.5">
-                                        <p class="text-[8px] text-slate-400 font-bold uppercase mb-1">Comments Min
-                                        </p>
-                                        <div class="flex justify-between items-center">
-                                            <input type="number"
-                                                v-model.number="bonusConfig.engagement.general.commentUnit"
-                                                class="w-20 text-[11px] font-bold text-slate-700 bg-transparent outline-none" />
-                                            <div class="text-right">
-                                                <p class="text-[8px] text-slate-400 font-bold uppercase">Bonus</p>
-                                                <input type="number"
-                                                    v-model.number="bonusConfig.engagement.general.commentBonus"
-                                                    class="w-24 text-[11px] font-bold text-ppp-accent bg-transparent outline-none text-right" />
+                                                <p class="text-[8px] text-slate-400 font-bold uppercase">Bonus (Rp)</p>
+                                                <label :for="`bonus-reels-colab-amount-${idx}`" class="sr-only">Bonus colab {{ idx + 1 }}</label>
+                                                <input :id="`bonus-reels-colab-amount-${idx}`" :name="`bonus_reels_colab_amount_${idx}`" type="number" v-model.number="tier.amount"
+                                                    class="w-24 text-[11px] font-bold text-emerald-600 bg-transparent outline-none text-right" />
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                                <!-- Engagement -->
+                                <div>
+                                    <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-3"><i
+                                            class="fa-solid fa-medal text-amber-400 mr-1"></i> Engagement Fixed</p>
+                                    <div class="space-y-2">
+                                        <div class="bg-slate-50 border border-slate-100 rounded-xl p-2.5">
+                                            <p class="text-[8px] text-slate-400 font-bold uppercase mb-1">Instagram
+                                                Likes Min</p>
+                                            <div class="flex justify-between items-center">
+                                                <label for="bonus-instagram-like-unit" class="sr-only">Instagram likes min</label>
+                                                <input id="bonus-instagram-like-unit" name="bonus_instagram_like_unit" type="number"
+                                                    v-model.number="bonusConfig.engagement.instagram.likeUnit"
+                                                    class="w-20 text-[11px] font-bold text-slate-700 bg-transparent outline-none" />
+                                                <div class="text-right">
+                                                    <p class="text-[8px] text-slate-400 font-bold uppercase">Bonus</p>
+                                                    <label for="bonus-instagram-like-bonus" class="sr-only">Instagram likes bonus</label>
+                                                    <input id="bonus-instagram-like-bonus" name="bonus_instagram_like_bonus" type="number"
+                                                        v-model.number="bonusConfig.engagement.instagram.likeBonus"
+                                                        class="w-24 text-[11px] font-bold text-ppp-accent bg-transparent outline-none text-right" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="bg-slate-50 border border-slate-100 rounded-xl p-2.5">
+                                            <p class="text-[8px] text-slate-400 font-bold uppercase mb-1">TikTok Likes
+                                                Min</p>
+                                            <div class="flex justify-between items-center">
+                                                <label for="bonus-tiktok-like-unit" class="sr-only">TikTok likes min</label>
+                                                <input id="bonus-tiktok-like-unit" name="bonus_tiktok_like_unit" type="number" v-model.number="bonusConfig.engagement.tiktok.likeUnit"
+                                                    class="w-20 text-[11px] font-bold text-slate-700 bg-transparent outline-none" />
+                                                <div class="text-right">
+                                                    <p class="text-[8px] text-slate-400 font-bold uppercase">Bonus</p>
+                                                    <label for="bonus-tiktok-like-bonus" class="sr-only">TikTok likes bonus</label>
+                                                    <input id="bonus-tiktok-like-bonus" name="bonus_tiktok_like_bonus" type="number"
+                                                        v-model.number="bonusConfig.engagement.tiktok.likeBonus"
+                                                        class="w-24 text-[11px] font-bold text-ppp-accent bg-transparent outline-none text-right" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="bg-slate-50 border border-slate-100 rounded-xl p-2.5">
+                                            <p class="text-[8px] text-slate-400 font-bold uppercase mb-1">Comments Min
+                                            </p>
+                                            <div class="flex justify-between items-center">
+                                                <label for="bonus-comment-unit" class="sr-only">Comments min</label>
+                                                <input id="bonus-comment-unit" name="bonus_comment_unit" type="number"
+                                                    v-model.number="bonusConfig.engagement.general.commentUnit"
+                                                    class="w-20 text-[11px] font-bold text-slate-700 bg-transparent outline-none" />
+                                                <div class="text-right">
+                                                    <p class="text-[8px] text-slate-400 font-bold uppercase">Bonus</p>
+                                                    <label for="bonus-comment-bonus" class="sr-only">Comments bonus</label>
+                                                    <input id="bonus-comment-bonus" name="bonus_comment_bonus" type="number"
+                                                        v-model.number="bonusConfig.engagement.general.commentBonus"
+                                                        class="w-24 text-[11px] font-bold text-ppp-accent bg-transparent outline-none text-right" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                    <div class="flex justify-end mt-5">
-                        <button @click="saveBonusConfig"
-                            class="px-6 py-2.5 bg-ppp-accent text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-ppp-accent-dark transition-all active:scale-95">
-                            <i class="fa-solid fa-floppy-disk mr-1.5"></i> Simpan Matrix
-                        </button>
-                    </div>
-                    </section>
+                            <div class="flex justify-end mt-5">
+                                <button @click="saveBonusConfig"
+                                    class="px-6 py-2.5 bg-ppp-accent text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-ppp-accent-dark transition-all active:scale-95">
+                                    <i class="fa-solid fa-floppy-disk mr-1.5"></i> Simpan Matrix
+                                </button>
+                            </div>
+                        </section>
 
                     <!-- Tabel Bonus -->
                     <div class="hidden md:block section-card section-card-shell">
@@ -406,6 +417,7 @@
                             </div>
                         </div>
                     </div>
+                        </template>
 
             </div>
 @endverbatim

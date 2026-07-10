@@ -405,6 +405,10 @@ Route::get('/', function (MarketingDashboardShell $dashboardShell) {
         ->header('Pragma', 'no-cache');
 });
 
+Route::get('/design-system', function () {
+    return response()->view('reference.design-system');
+});
+
 Route::middleware('dashboard.auth')->group(function () use (
     $actor,
     $actorLabel,

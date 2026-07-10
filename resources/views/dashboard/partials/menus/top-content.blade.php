@@ -5,7 +5,7 @@
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
                                 <div class="flex items-center gap-4">
                                     <div
-                                        class="w-12 h-12 rounded-2xl bg-yellow-50 text-yellow-500 flex items-center justify-center border border-yellow-100">
+                                        class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
                                         <i class="fa-solid fa-trophy text-lg"></i>
                                     </div>
                                     <div>
@@ -15,7 +15,7 @@
                                     </div>
                                 </div>
                                 <div class="mobile-toolbar-stack">
-                                    <button @click="openCalendar($event, 'filter')" class="filter-trigger-button toolbar-trigger-field">
+                                    <button @click="openCalendar($event, 'filter')" class="date-trigger-button date-trigger-button-compact">
                                         <i class="fa-solid fa-calendar-days text-[10px] text-slate-400"></i>
                                         <template v-if="commonDateFilter.start">
                                             {{ formatShortDate(commonDateFilter.start) }}

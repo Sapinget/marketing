@@ -20,12 +20,12 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5 auto-rows-min">
                             <!-- User Avatar & Identity -->
                             <div
-                                class="md:col-span-2 lg:col-span-4 bg-white radius-dialog border border-slate-100 p-8 flex flex-col items-center text-center shadow-sm relative overflow-hidden group">
+                                class="md:col-span-2 lg:col-span-4 bg-white radius-dialog border border-slate-100 p-8 flex flex-col items-center text-center relative overflow-hidden group">
                                 <div
                                     class="absolute top-0 left-0 w-full h-32 bg-gradient-to-br from-indigo-500 to-purple-600 opacity-[0.08] group-hover:opacity-20 transition-opacity duration-500">
                                 </div>
                                 <div
-                                    class="relative w-28 h-28 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-5xl font-bold mb-5 mt-2 border-[6px] border-white shadow-xl">
+                                    class="relative w-28 h-28 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-5xl font-bold mb-5 mt-2 border-[6px] border-white">
                                     {{ currentUser?.nama?.charAt(0)?.toUpperCase() || 'U' }}
                                 </div>
                                 <h3 class="text-xl font-bold text-slate-900">{{ currentUser?.nama || 'Guest User' }}
@@ -55,8 +55,8 @@
                             </div>
 
                             <!-- Informasi Pribadi -->
-                            <div
-                                class="md:col-span-1 lg:col-span-4 bg-white radius-dialog border border-slate-100 p-6 md:p-8 shadow-sm flex flex-col group">
+                            <form @submit.prevent="saveProfileInfo"
+                                class="md:col-span-1 lg:col-span-4 bg-white radius-dialog border border-slate-100 p-6 md:p-8 flex flex-col group">
                                 <h3 class="type-title font-bold text-slate-900 mb-6 flex items-center gap-2">
                                     <div
                                         class="w-8 h-8 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -66,33 +66,34 @@
                                 </h3>
                                 <div class="space-y-4 flex-1">
                                     <div>
-                                        <label
+                                        <label for="profile-nama-lengkap"
                                             class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Nama
                                             Lengkap</label>
-                                        <input type="text" v-model="profileForm.namaLengkap" placeholder="Masukkan nama"
+                                        <input id="profile-nama-lengkap" name="profile_nama_lengkap" type="text" v-model="profileForm.namaLengkap" placeholder="Masukkan nama"
+                                            autocomplete="name"
                                             class="form-input font-bold" />
                                     </div>
                                     <div>
-                                        <label
+                                        <label for="profile-role"
                                             class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Posisi
                                             / Role</label>
-                                        <input type="text" :value="currentUser?.role || 'Marketing'" disabled
+                                        <input id="profile-role" name="profile_role" type="text" :value="currentUser?.role || 'Marketing'" disabled
                                             class="form-input-disabled" />
                                     </div>
                                 </div>
                                 <div class="pt-5 mt-auto">
-                                    <button @click="saveProfileInfo" :disabled="submittingInfo"
+                                    <button type="submit" :disabled="submittingInfo"
                                         class="modal-primary-button w-full modal-primary-button--info shadow-lg shadow-blue-100 active:scale-95 disabled:opacity-50">
                                         <i v-if="submittingInfo" class="fa-solid fa-spinner fa-spin"></i>
                                         <i v-else class="fa-solid fa-floppy-disk"></i>
                                         Simpan Profil
                                     </button>
                                 </div>
-                            </div>
+                            </form>
 
                             <!-- Ganti PIN Keamanan -->
-                            <div
-                                class="md:col-span-1 lg:col-span-4 bg-white radius-dialog border border-slate-100 p-6 md:p-8 shadow-sm flex flex-col group">
+                            <form @submit.prevent="saveProfileSetting"
+                                class="md:col-span-1 lg:col-span-4 bg-white radius-dialog border border-slate-100 p-6 md:p-8 flex flex-col group">
                                 <h3 class="type-title font-bold text-slate-900 mb-6 flex items-center gap-2">
                                     <div
                                         class="w-8 h-8 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -100,39 +101,46 @@
                                     </div>
                                     Keamanan (PIN)
                                 </h3>
+                                <div class="sr-only" aria-hidden="true">
+                                    <label for="profile-pin-username">Username</label>
+                                    <input id="profile-pin-username" name="username" type="text"
+                                        :value="currentUser?.username || ''" autocomplete="username" readonly />
+                                </div>
                                 <div class="space-y-4 flex-1">
                                     <div>
-                                        <label
+                                        <label for="profile-old-pin"
                                             class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">PIN
                                             Saat Ini</label>
-                                        <input type="password" v-model="profileForm.oldPin"
-                                            placeholder="Masukkan PIN saat ini" class="form-input" />
+                                        <input id="profile-old-pin" name="profile_old_pin" type="password" v-model="profileForm.oldPin"
+                                            placeholder="Masukkan PIN saat ini" autocomplete="current-password"
+                                            class="form-input" />
                                     </div>
                                     <div class="grid grid-cols-2 gap-3">
                                         <div>
-                                            <label
+                                            <label for="profile-new-pin"
                                                 class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">PIN
                                                 Baru</label>
-                                            <input type="password" v-model="profileForm.newPin" placeholder="PIN Baru"
+                                            <input id="profile-new-pin" name="profile_new_pin" type="password" v-model="profileForm.newPin" placeholder="PIN Baru"
+                                                autocomplete="new-password"
                                                 class="form-input" />
                                         </div>
                                         <div>
-                                            <label
+                                            <label for="profile-confirm-pin"
                                                 class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Konfirmasi</label>
-                                            <input type="password" v-model="profileForm.confirmPin"
-                                                placeholder="Ulangi PIN" class="form-input" />
+                                            <input id="profile-confirm-pin" name="profile_confirm_pin" type="password" v-model="profileForm.confirmPin"
+                                                placeholder="Ulangi PIN" autocomplete="new-password" class="form-input" />
                                         </div>
                                     </div>
                                 </div>
                                 <div class="pt-5 mt-auto">
-                                    <button @click="saveProfileSetting" :disabled="submittingPin"
+                                    <button type="submit" :disabled="submittingPin"
                                         class="modal-primary-button w-full modal-primary-button--danger shadow-lg shadow-rose-100 active:scale-95 disabled:opacity-50">
                                         <i v-if="submittingPin" class="fa-solid fa-spinner fa-spin"></i>
                                         <i v-else class="fa-solid fa-lock"></i>
                                         Update PIN
                                     </button>
                                 </div>
-                            </div>
+                            </form>
                         </div>
 
                     </div>

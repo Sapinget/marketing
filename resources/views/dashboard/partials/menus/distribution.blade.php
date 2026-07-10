@@ -1,7 +1,7 @@
 @verbatim
 <div v-if="activeTab === 'distribution'" class="space-y-6 animate-fadeIn pb-10">
     <div class="space-y-3">
-        <div class="dashboard-summary-grid-compact grid grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
+        <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
             <div v-for="c in distributionSummary.cards" :key="c.label" class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
                 <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i :class="['fa-solid', c.icon, 'text-[120px]']"></i></div>
                 <p :class="['text-[9px] font-bold uppercase tracking-widest mb-3', c.color]">{{ c.label }}</p>
@@ -18,7 +18,7 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
             <div class="flex items-center gap-4">
                 <div
-                    class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100">
+                    class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
                     <i class="fa-solid fa-share-nodes text-lg"></i>
                 </div>
                 <div>
@@ -32,11 +32,12 @@
                 <div class="relative flex-1 sm:w-64">
                     <i
                         class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px]"></i>
-                    <input v-model="contentTableSearch" type="text" placeholder="Cari konten..."
+                    <input id="distribution-search" name="distribution_search" v-model="contentTableSearch" type="text" placeholder="Cari konten..."
+                        autocomplete="off" aria-label="Cari konten distribusi"
                         class="form-input-search" />
                 </div>
                 <div class="relative group">
-                    <button @click="openCalendar($event, 'filter')" class="filter-trigger-button toolbar-trigger-field">
+                    <button @click="openCalendar($event, 'filter')" class="date-trigger-button date-trigger-button-compact">
                         <i class="fa-solid fa-calendar-days text-[10px] text-slate-400"></i>
                         <template v-if="commonDateFilter.start">
                             {{ formatShortDate(commonDateFilter.start) }}

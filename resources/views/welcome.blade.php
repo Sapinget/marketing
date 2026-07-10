@@ -8,7 +8,7 @@
         <title>Marketing Dashboard | Pura Pura Ponsel</title>
 
         @fonts
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+        <link rel="stylesheet" href="{{ asset('vendor/dashboard/fontawesome/css/all.min.css') }}">
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <!-- Vite sources: resources/css/app.css resources/js/app.js -->
     </head>

@@ -18,29 +18,38 @@
                             </div>
                         </div>
                     </div>
-                    <div v-if="activeTab === 'nama_stock' && namaStockLoaded" class="animate-fadeIn">
-                        <div class="section-card section-card-shell">
-                            <div class="py-3 px-4 border-b border-slate-100 flex items-center justify-between gap-2">
-                                <div class="flex items-center gap-3">
-                                    <div class="h-9 w-9 rounded-xl bg-teal-50 flex items-center justify-center">
-                                        <i class="fa-solid fa-list-check text-teal-500 text-sm"></i>
+                    <div v-if="activeTab === 'nama_stock' && namaStockLoaded" class="space-y-4 animate-fadeIn pb-10">
+                        <section class="section-card section-card-body">
+                            <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
+                                <div class="flex items-center gap-4">
+                                    <div
+                                        class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
+                                        <i class="fa-solid fa-list-check text-[11px]"></i>
                                     </div>
                                     <div>
-                                        <h2 class="type-title font-bold text-slate-900">Nama Stock</h2>
-                                        <p class="type-meta text-slate-400">Master relasi Kategori, Brand, dan Seri
-                                        </p>
+                                        <h2 class="type-body font-bold text-slate-900">Nama Stock</h2>
+                                        <p class="type-body text-slate-500">Master relasi kategori, brand, dan seri untuk form dashboard.</p>
                                     </div>
                                 </div>
-                                <span class="type-meta text-slate-400">{{ namaStockRows.length }} baris</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="summary-counter-pill">{{ namaStockRows.length }} baris</span>
+                                    <button @click="openNamaStockFormModal('create')"
+                                        class="secondary-cta-button secondary-cta-link active:scale-95">
+                                        <i class="fa-solid fa-plus text-[10px]"></i> Tambah
+                                    </button>
+                                </div>
                             </div>
+                        </section>
+
+                        <section class="section-card section-card-shell">
                             <div class="py-3 px-4 border-b border-slate-100 flex flex-col md:flex-row items-stretch md:items-center gap-2">
                                 <div class="relative flex-1">
                                     <i
                                         class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
-                                    <input :value="namaStockSearchQuery"
+                                    <input id="nama-stock-search" name="nama_stock_search" :value="namaStockSearchQuery"
                                         @input="namaStockSearchQuery = $event.target.value" type="text"
                                         placeholder="Cari kategori / brand / seri..."
-                                        class="w-full pl-9 pr-3 py-2 rounded-xl border border-slate-200 bg-white text-xs text-slate-700 outline-none focus:border-ppp-accent focus:ring-2 focus:ring-ppp-accent/10" />
+                                        class="form-input-search" />
                                 </div>
                                 <div class="grid grid-cols-2 gap-2 md:flex md:items-center md:gap-2">
                                     <div class="relative search-select-container">
@@ -56,7 +65,7 @@
                                                 class="search-select-popover">
                                                 <div class="relative mb-2">
                                                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                                    <input v-model="searchSelectQuery" type="text" placeholder="Cari kategori..."
+                                                    <input id="nama-stock-filter-kategori-search" name="search_select_query" v-model="searchSelectQuery" type="text" placeholder="Cari kategori..." autocomplete="off" aria-label="Cari filter kategori nama stock"
                                                         class="form-input-popover" @click.stop />
                                                 </div>
                                                 <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -91,7 +100,7 @@
                                                 class="search-select-popover">
                                                 <div class="relative mb-2">
                                                     <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
-                                                    <input v-model="searchSelectQuery" type="text" placeholder="Cari brand..."
+                                                    <input id="nama-stock-filter-brand-search" name="search_select_query" v-model="searchSelectQuery" type="text" placeholder="Cari brand..." autocomplete="off" aria-label="Cari filter brand nama stock"
                                                         class="form-input-popover" @click.stop />
                                                 </div>
                                                 <div class="max-h-48 overflow-y-auto custom-scrollbar">
@@ -114,10 +123,6 @@
                                         </transition>
                                     </div>
                                 </div>
-                                <button @click="openNamaStockFormModal('create')"
-                                    class="px-3 py-2 rounded-xl bg-ppp-accent hover:bg-ppp-accent/90 text-white text-xs font-semibold transition flex items-center gap-1.5">
-                                    <i class="fa-solid fa-plus text-[10px]"></i> Tambah
-                                </button>
                             </div>
                             <div class="md:hidden space-y-3 p-3">
                                 <div v-if="namaStockFilteredRows.length === 0"
@@ -229,6 +234,6 @@
                                             class="fa-solid fa-chevron-right text-[10px]"></i></button>
                                 </div>
                             </div>
-                        </div>
+                        </section>
                     </div>
 @endverbatim

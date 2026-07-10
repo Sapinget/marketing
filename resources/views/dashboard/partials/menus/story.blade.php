@@ -1,7 +1,7 @@
 @verbatim
 <div v-if="activeTab === 'story'" class="space-y-6 animate-fadeIn pb-10">
     <div class="space-y-3">
-        <div class="dashboard-summary-grid-compact grid grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
+        <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
             <div v-for="c in storySummary.cards" :key="c.label" class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
                 <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i :class="['fa-solid', c.icon, 'text-[120px]']"></i></div>
                 <p :class="['text-[9px] font-bold uppercase tracking-widest mb-3', c.color]">{{ c.label }}</p>
@@ -18,7 +18,7 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
             <div class="flex items-center gap-4">
                 <div
-                    class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-100">
+                    class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
                     <i class="fa-solid fa-clapperboard text-lg"></i>
                 </div>
                 <div>
@@ -48,11 +48,11 @@
 
     <div class="md:hidden grid grid-cols-1 gap-4">
         <div v-for="story in pagedStories" :key="story.ID"
-            class="bg-white radius-card border border-slate-100 p-5 space-y-3 hover:shadow-md transition-all group">
+            class="bg-white radius-card border border-slate-100 p-5 space-y-3 transition-all group">
             <div class="flex items-start justify-between">
                 <div class="flex items-center gap-2">
                     <div
-                        class="w-9 h-9 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center border border-rose-100">
+                        class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
                         <i class="fa-solid fa-clock text-[11px]"></i>
                     </div>
                     <div>

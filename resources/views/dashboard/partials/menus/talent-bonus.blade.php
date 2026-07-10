@@ -2,8 +2,8 @@
 <!-- Talent Bonus tab -->
             <div v-if="activeTab === 'talent_bonus' && !bonusConfigLoaded"
                 class="space-y-6 animate-fadeIn pb-10 animate-pulse">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <div v-for="i in 4" :key="'sk-tb-st'+i" class="bg-white radius-panel border border-slate-100 p-4">
+                <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                    <div v-for="i in 4" :key="'sk-tb-st'+i" class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
                         <div class="h-3 bg-slate-100 rounded-full w-20 mb-2"></div>
                         <div class="h-6 bg-slate-200 rounded-full w-24 mb-1"></div>
                         <div class="h-3 bg-slate-100 rounded-full w-16"></div>
@@ -20,25 +20,37 @@
                 </div>
             </div>
             <div v-if="activeTab === 'talent_bonus' && bonusConfigLoaded" class="space-y-6 animate-fadeIn pb-10">
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="dashboard-summary-card-compact bg-white radius-panel border border-slate-100">
+                <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                    <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
+                        <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-coins text-[120px]"></i></div>
                         <p class="text-[9px] font-bold uppercase tracking-widest text-amber-500 mb-3">Total Bonus</p>
-                        <span class="dashboard-summary-value">{{ formatCurrency(talentDashboardData.totalBonus) }}</span>
+                        <div class="flex items-baseline gap-2">
+                            <span class="dashboard-summary-value">{{ formatCurrency(talentDashboardData.totalBonus) }}</span>
+                        </div>
                         <p class="text-[10px] font-bold text-amber-600 mt-3">{{ talentDashboardData.totalEntries }} kredit talent</p>
                     </div>
-                    <div class="dashboard-summary-card-compact bg-white radius-panel border border-slate-100">
+                    <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
+                        <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-eye text-[120px]"></i></div>
                         <p class="text-[9px] font-bold uppercase tracking-widest text-blue-500 mb-3">Views</p>
-                        <span class="dashboard-summary-value">{{ formatNumber(talentDashboardData.totalViews) }}</span>
+                        <div class="flex items-baseline gap-2">
+                            <span class="dashboard-summary-value">{{ formatNumber(talentDashboardData.totalViews) }}</span>
+                        </div>
                         <p class="text-[10px] font-bold text-blue-600 mt-3">Akumulasi kredit</p>
                     </div>
-                    <div class="dashboard-summary-card-compact bg-white radius-panel border border-slate-100">
+                    <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
+                        <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-heart text-[120px]"></i></div>
                         <p class="text-[9px] font-bold uppercase tracking-widest text-rose-500 mb-3">Likes</p>
-                        <span class="dashboard-summary-value">{{ formatNumber(talentDashboardData.totalLikes) }}</span>
+                        <div class="flex items-baseline gap-2">
+                            <span class="dashboard-summary-value">{{ formatNumber(talentDashboardData.totalLikes) }}</span>
+                        </div>
                         <p class="text-[10px] font-bold text-rose-600 mt-3">Akumulasi kredit</p>
                     </div>
-                    <div class="dashboard-summary-card-compact bg-white radius-panel border border-slate-100">
+                    <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
+                        <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-comment text-[120px]"></i></div>
                         <p class="text-[9px] font-bold uppercase tracking-widest text-emerald-500 mb-3">Komentar</p>
-                        <span class="dashboard-summary-value">{{ formatNumber(talentDashboardData.totalComments) }}</span>
+                        <div class="flex items-baseline gap-2">
+                            <span class="dashboard-summary-value">{{ formatNumber(talentDashboardData.totalComments) }}</span>
+                        </div>
                         <p class="text-[10px] font-bold text-emerald-600 mt-3">Akumulasi kredit</p>
                     </div>
                 </div>
@@ -46,7 +58,7 @@
                 <section class="section-card section-card-body">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div class="modal-header-copy">
-                            <div class="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center">
+                            <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
                                 <i class="fa-solid fa-user-tag text-[16px]"></i>
                             </div>
                             <div>

@@ -9,27 +9,7 @@
 
 import { getPrintHTML } from './print-core.js';
 import { openPrintWindow } from './print-browser.js';
-
-// ----------------------------------------------
-// Helpers
-// ----------------------------------------------
-
-/**
- * Dynamically load the SheetJS (XLSX) library from CDN if not already loaded.
- *
- * @returns {Promise<void>}
- */
-function ensureXLSX() {
-  if (window.XLSX) return Promise.resolve();
-  return new Promise((resolve, reject) => {
-    const s = document.createElement('script');
-    s.src =
-      'https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js';
-    s.onload = () => resolve();
-    s.onerror = () => reject(new Error('Gagal memuat library Excel'));
-    document.head.appendChild(s);
-  });
-}
+import { ensureXLSX } from './xlsx-loader.js';
 
 // ----------------------------------------------
 // Data helpers

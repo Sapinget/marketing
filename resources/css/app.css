@@ -3,6 +3,7 @@
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
+@source '../../resources/views/**/*.blade.php';
 
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
@@ -13,6 +14,10 @@
     --color-ppp-text: #0f172a;
     --color-ppp-muted: #94a3b8;
     --color-ppp-nav-text: #5066eb;
+    --color-ppp-line: #e2e8f0;
+    --color-ppp-bg: #f8fafc;
+    --color-ppp-card: #ffffff;
+    --color-ppp-danger: #b91c1c;
 }
 
 :root {
@@ -25,7 +30,7 @@
     --ppp-line: #e2e8f0;
     --ppp-bg: #f8fafc;
     --ppp-card: #ffffff;
-    --ppp-danger: #dc2626;
+    --ppp-danger: #b91c1c;
 }
 
 * {
@@ -397,6 +402,16 @@ button {
 .nav-subitem.is-active {
     background: linear-gradient(90deg, var(--ppp-accent), var(--ppp-accent-dark));
     color: #fff;
+}
+
+.nav-item.is-active .type-body,
+.nav-item.is-active .nav-icon,
+.nav-item.is-active .nav-icon i,
+.nav-item.is-active span,
+.nav-subitem.is-active .type-meta,
+.nav-subitem.is-active span,
+.nav-subitem.is-active i {
+    color: inherit;
 }
 
 .nav-group.is-open .chevron {

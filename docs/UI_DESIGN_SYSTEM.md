@@ -766,8 +766,9 @@ localStorage.setItem('ppp_user', JSON.stringify(user)); // session user
 3. Ikuti tier tipografi yang berlaku
 4. Pastikan ada state hover, focus, active
 5. Test di mobile 375px sebelum merge
-6. Tambahkan ke `public/design-system.html` sebagai referensi visual
+6. Tambahkan ke route Laravel `/design-system` sebagai referensi visual aktif
 
 ---
 
-*Referensi visual interaktif: [`public/design-system.html`](../public/design-system.html)*
+*Referensi visual interaktif aktif: `/design-system`*
+*Snapshot arsip: [`public/design-system.html`](../public/design-system.html)*

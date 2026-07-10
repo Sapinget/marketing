@@ -35,31 +35,17 @@ const exportBonusToPDF = () => {
 };
 
 const exportBonusToExcel = async () => {
-    await ensureXLSX();
     try {
-        const rows = filteredBonusRows.value;
-        if (!rows.length) { showNotification('Tidak ada data untuk diekspor'); return; }
-        const headers = ['No', 'Judul Konten', 'Platform', 'Editor', 'Views', 'Likes', 'Comments', 'Bonus (Rp)', 'View Bonus (Rp)', 'Like Bonus (Rp)', 'Comment Bonus (Rp)', 'Tipe Konten', 'Tanggal Publish'];
-        const data = rows.map((r, i) => [
-            i + 1, r.Judul || '-', r.Platform || '-', r.Editor || '-',
-            formatNumber(r.Views || 0), formatNumber(r.Likes || 0), formatNumber(r.Comments || 0),
-            formatCurrency(r.calculatedBonus || 0), formatCurrency(r.viewBonus || 0),
-            formatCurrency(r.likeBonus || 0), formatCurrency(r.commentBonus || 0),
-            r.contentType || '-', r.date ? formatShortDate(r.date) : '-'
-        ]);
-        const ws = XLSX.utils.aoa_to_sheet([headers, ...data]);
-        ws['!cols'] = [{ wch: 5 }, { wch: 30 }, { wch: 15 }, { wch: 14 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 18 }, { wch: 12 }, { wch: 15 }];
-        const range = XLSX.utils.decode_range(ws['!ref']);
-        for (let C = range.s.c; C <= range.e.c; C++) {
-            const addr = XLSX.utils.encode_cell({ r: 0, c: C });
-            if (!ws[addr]) ws[addr] = {};
-            ws[addr].s = { font: { bold: true }, fill: { fgColor: { rgb: 'FF4F46E5' } }, alignment: { horizontal: 'center' } };
-        }
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, 'Bonus Report');
-        const today = new Date().toISOString().split('T')[0];
-        XLSX.writeFile(wb, `Bonus_Report_${today}.xlsx`);
-        showNotification('File Excel berhasil diunduh');
+        const bridge = getSalesExportBridge_();
+
+        return bridge.exportBonusToExcel({
+            rows: filteredBonusRows.value,
+            formatNumber,
+            formatCurrency,
+            formatShortDate,
+            showNotification,
+            notifyError,
+        });
     } catch (err) {
         notifyError('Gagal export Excel', err, 'File Excel belum berhasil dibuat.');
     }
@@ -465,47 +451,19 @@ const deleteSellOut = (id) => {
 };
 
 const exportSellOutToExcel = async () => {
-    await ensureXLSX();
     try {
-        const rows = filteredSellOutData.value;
-        if (!rows.length) { showNotification('Tidak ada data untuk diekspor'); return; }
-        const mapped = rows
-            .map((r, i) => ({ r, p: getSellOutProgress(r) }))
-            .filter(({ p }) => p.status !== 'TIDAK DIPAKAI')
-            .map(({ r, p }, i) => ({
-                'No': i + 1,
-                'Brand': r.Brand || '',
-                'Vendor': r.Vendor || '',
-                'Nama Produk': r.Nama_Produk || '',
-                'Terjual': r.Realisasi_Unit || 0,
-                'Target': r.Target_Unit || 0,
-                'Bonus/Unit': r.Bonus_Nominal || 0,
-                'Total Bonus': p.bonusTotal || 0,
-                'Status': p.status || '',
-                'Periode': `${r.Periode_Start || '-'} - ${r.Periode_End || '-'}`
-            }));
-        mapped.sort((a, b) => String(a.Brand).localeCompare(String(b.Brand)) || String(a.Vendor).localeCompare(String(b.Vendor)));
-        const brandSummary = {};
-        mapped.forEach(r => {
-            const key = String(r.Brand || 'LAINNYA');
-            if (!brandSummary[key]) brandSummary[key] = { Brand: key, Terjual: 0, Target: 0, TotalBonus: 0, Count: 0 };
-            brandSummary[key].Terjual += Number(r['Terjual'] || 0);
-            brandSummary[key].Target += Number(r['Target'] || 0);
-            brandSummary[key].TotalBonus += Number(r['Total Bonus'] || 0);
-            brandSummary[key].Count += 1;
+        const bridge = getSalesExportBridge_();
+
+        return bridge.exportSellOutToExcel({
+            rows: filteredSellOutData.value,
+            getSellOutProgress,
+            formatNumber,
+            formatCurrency,
+            sellOutMonth: sellOutMonth.value,
+            sellOutVendorFilter: sellOutVendorFilter.value,
+            showNotification,
+            notifyError,
         });
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(mapped), 'Target Vendor');
-        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(Object.values(brandSummary)), 'By Brand');
-        const month = sellOutMonth.value || 'All';
-        XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([
-            ['Filter Bulan', month],
-            ['Filter Vendor', sellOutVendorFilter.value || 'Semua'],
-            ['Total Bonus', mapped.reduce((s, r) => s + Number(r['Total Bonus'] || 0), 0)]
-        ]), 'Summary');
-        const today = new Date().toISOString().split('T')[0];
-        XLSX.writeFile(wb, `SellOut_Target_${month}_${today}.xlsx`);
-        showNotification(`${mapped.length} data berhasil diunduh`);
     } catch (err) {
         notifyError('Gagal export', err, 'File belum berhasil dibuat.');
     }

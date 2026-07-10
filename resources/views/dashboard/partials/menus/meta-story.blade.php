@@ -1,7 +1,7 @@
 @verbatim
 <div v-if="activeTab === 'meta_story'" class="space-y-6 animate-fadeIn pb-10">
                         <template v-if="metaStoryData.length">
-                            <div class="dashboard-summary-grid-compact grid grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
+                            <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                                 <div v-for="c in metaStorySummary.cards" :key="c.label" class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
                                     <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i :class="['fa-solid', c.icon, 'text-[120px]']"></i></div>
                                     <p :class="['text-[9px] font-bold uppercase tracking-widest mb-3', c.color]">{{ c.label }}</p>
@@ -13,14 +13,14 @@
                         <section class="section-card section-card-body">
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-pink-500 to-rose-500 text-white flex items-center justify-center"><i class="fa-brands fa-instagram text-[18px]"></i></div>
+                                    <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100"><i class="fa-brands fa-instagram text-[18px]"></i></div>
                                     <div>
                                         <h2 class="type-title font-bold text-slate-900">Story IG Analytics</h2>
                                         <p class="text-[10px] text-slate-400 uppercase tracking-widest mt-0.5">Traffic & engagement Instagram Story</p>
                                     </div>
                                 </div>
                                 <div class="mobile-toolbar-stack">
-                                    <button @click="openCalendar($event, 'filter', '', 'metaStory')" class="filter-trigger-button toolbar-trigger-field">
+                                    <button @click="openCalendar($event, 'filter', '', 'metaStory')" class="date-trigger-button date-trigger-button-compact">
                                         <i class="fa-solid fa-calendar-days text-[10px] text-slate-400"></i>
                                         <template v-if="metaStoryDateFilter.start">{{ formatShortDate(metaStoryDateFilter.start) }}<span v-if="metaStoryDateFilter.end"> - {{ formatShortDate(metaStoryDateFilter.end) }}</span></template>
                                         <template v-else>Semua Tanggal</template>
@@ -28,11 +28,11 @@
                                     </button>
                                     <div class="relative flex-1 sm:w-48">
                                         <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px]"></i>
-                                        <input v-model="metaStorySearch" type="text" placeholder="Cari konten / Post ID..." class="form-input-search" />
+                                        <input id="meta-story-search" name="meta_story_search" v-model="metaStorySearch" type="text" placeholder="Cari konten / Post ID..." autocomplete="off" aria-label="Cari konten atau Post ID meta story" class="form-input-search" />
                                     </div>
-                                    <label class="primary-cta-button primary-cta-button--accent active:scale-95 cursor-pointer">
+                                    <label for="meta-story-upload" class="primary-cta-button primary-cta-button--accent active:scale-95 cursor-pointer">
                                         <i :class="metaUploading ? 'fa-solid fa-spinner fa-spin' : 'fa-solid fa-upload'"></i> Upload CSV
-                                        <input type="file" accept=".csv" class="hidden" @change="handleMetaFileInput($event, 'story')" />
+                                        <input id="meta-story-upload" name="meta_story_upload" type="file" accept=".csv" class="hidden" aria-label="Upload CSV meta story" @change="handleMetaFileInput($event, 'story')" />
                                     </label>
                                     <button @click="importMetaFolder('story')" class="secondary-cta-button secondary-cta-neutral active:scale-95" :disabled="metaUploading">
                                         <i :class="metaUploading ? 'fa-solid fa-spinner fa-spin' : 'fa-solid fa-folder-open'"></i> Import Folder

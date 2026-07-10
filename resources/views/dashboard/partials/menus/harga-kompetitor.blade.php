@@ -46,7 +46,7 @@
                 class="space-y-6 animate-fadeIn pb-10">
                 <!-- Summary cards -->
                 <div class="space-y-3">
-                    <div class="dashboard-summary-grid-compact grid grid-cols-3 md:grid-cols-4 gap-3 md:gap-4">
+                    <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
                         <div v-for="c in hargaSummary.cards" :key="c.label" class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
                             <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i :class="['fa-solid', c.icon, 'text-[120px]']"></i></div>
                             <p :class="['text-[9px] font-bold uppercase tracking-widest mb-3', c.color]">{{ c.label }}</p>
@@ -62,7 +62,7 @@
                 <section class="section-card section-card-body">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
                         <div class="modal-header-copy">
-                            <div class="w-12 h-12 rounded-2xl bg-blue-500 text-white flex items-center justify-center">
+                            <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
                                 <i class="fa-solid fa-calculator text-[16px]"></i>
                             </div>
                             <div>
@@ -74,7 +74,7 @@
                         <div class="mobile-toolbar-stack">
                             <div class="relative group search-select-container">
                                 <button @click="openCalendar($event, 'filter', '', 'hargaKompetitor')"
-                                    class="filter-trigger-button toolbar-trigger-field">
+                                    class="date-trigger-button date-trigger-button-compact">
                                     <i class="fa-solid fa-calendar-days text-[10px] text-slate-400"></i>
                                     <template v-if="hargaKompetitorDateFilter.start">
                                         {{ formatShortDate(hargaKompetitorDateFilter.start) }}
@@ -89,7 +89,8 @@
                             <div class="relative flex-1 sm:w-44">
                                 <i
                                     class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px]"></i>
-                                <input v-model="hargaKompetitorSearch" type="text" placeholder="Cari produk..."
+                                <input id="harga-kompetitor-search" name="harga_kompetitor_search" v-model="hargaKompetitorSearch" type="text" placeholder="Cari produk..."
+                                    autocomplete="off" aria-label="Cari produk harga kompetitor"
                                     class="form-input-search" />
                             </div>
                             <div class="toolbar-actions">

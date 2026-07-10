@@ -47,7 +47,7 @@
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
                                 <div class="flex items-center gap-4">
                                     <div
-                                        class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center border border-indigo-100">
+                                        class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
                                         <i class="fa-solid fa-box-archive text-lg"></i>
                                     </div>
                                     <div>
@@ -61,7 +61,8 @@
                                 <div class="relative flex-1">
                                     <i
                                         class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px]"></i>
-                                    <input v-model="keepBarangSearch" type="text"
+                                    <input id="keep-barang-search" name="keep_barang_search" v-model="keepBarangSearch" type="text"
+                                        autocomplete="off" aria-label="Cari keep barang"
                                         placeholder="Cari nama / HP / tipe / IMEI..." class="form-input-search" />
                                 </div>
                                 <div class="relative search-select-container">

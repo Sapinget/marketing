@@ -4,7 +4,7 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
             <div class="flex items-center gap-4">
                 <div
-                    class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100">
+                    class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
                     <i class="fa-solid fa-calendar-days text-lg"></i>
                 </div>
                 <div>
@@ -18,12 +18,12 @@
     <div class="flex justify-center">
         <div class="inline-flex items-center gap-1 bg-slate-50 border border-slate-100 rounded-2xl p-1">
             <button @click="changeCalendarMonth(-1)" aria-label="Bulan sebelumnya"
-                class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:bg-white hover:text-ppp-accent hover:shadow-sm transition-all active:scale-95">
+                class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:bg-white hover:text-ppp-accent transition-all active:scale-95">
                 <i class="fa-solid fa-chevron-left text-[11px]"></i></button>
             <div class="px-4 min-w-[150px] text-center text-[13px] font-bold text-slate-700 tracking-wide">
                 {{ monthNames[calendarActiveDate.getMonth()] }} {{ calendarActiveDate.getFullYear() }}</div>
             <button @click="changeCalendarMonth(1)" aria-label="Bulan berikutnya"
-                class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:bg-white hover:text-ppp-accent hover:shadow-sm transition-all active:scale-95">
+                class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:bg-white hover:text-ppp-accent transition-all active:scale-95">
                 <i class="fa-solid fa-chevron-right text-[11px]"></i></button>
         </div>
     </div>
@@ -69,7 +69,7 @@
                 </div>
                 <div v-for="day in getCalendarDaysInMonth(calendarActiveDate)" :key="day"
                     @click="openCalendarDayModal(day)"
-                    :class="['min-h-[140px] rounded-2xl border p-3 transition-all group relative cursor-pointer', isTodayCalendar(day) ? 'bg-ppp-accent/5 border-ppp-accent/20' : 'bg-white border-slate-100 hover:border-ppp-accent/30 hover:shadow-lg hover:shadow-slate-100']">
+                    :class="['min-h-[140px] rounded-2xl border p-3 transition-all group relative cursor-pointer', isTodayCalendar(day) ? 'bg-ppp-accent/5 border-ppp-accent/20' : 'bg-white border-slate-100 hover:border-ppp-accent/30 ']">
                     <div class="flex items-center justify-between mb-2">
                         <span
                             :class="['text-[11px] font-bold', isTodayCalendar(day) ? 'text-ppp-accent' : 'text-slate-400 group-hover:text-slate-600']">{{ day }}</span>
@@ -79,7 +79,7 @@
                     <div class="space-y-1.5">
                         <div v-for="item in getCalendarItems(day).filter(i => i.TYPE === 'content')"
                             :key="item.ID" @click.stop="openEditModal(item)"
-                            class="px-2 py-1 rounded-lg bg-blue-50 border border-blue-100 flex items-center gap-1.5 cursor-pointer hover:bg-blue-500 hover:border-blue-500 transition-all group/item">
+                            class="px-2 py-1 rounded-lg bg-blue-50 border border-indigo-100 flex items-center gap-1.5 cursor-pointer hover:bg-blue-500 hover:border-blue-500 transition-all group/item">
                             <i
                                 :class="[getPlatformIcon(item.Platform || (item.Platforms || '').split(',')[0]), 'text-[8px] text-blue-400 group-hover/item:text-white']"></i>
                             <div
