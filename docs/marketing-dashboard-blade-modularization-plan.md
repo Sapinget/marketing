@@ -420,17 +420,15 @@ Checklist operasional:
   - [ ] pindahkan loader, form state, submit, delete, dan opsi dropdown penuh ke modul JS terpisah
   - target modul awal:
     - `resources/js/dashboard/menu/nama-stock.js`
-- `customer service`:
-  - pecah alur `orderan-online`, `unit-ditanya`, `claim-garansi`, `keep-barang`
-  - ekstrak helper pencarian dropdown dan validasi form yang masih berbagi closure global
-  - target modul awal:
-    - `resources/js/dashboard/menu/customer-service.js`
-- `LPJK dan reporting operasional`:
-  - pecah handler CRUD LPJK, LPJK detail, ads log, harga kompetitor, bonus/budget config
-  - audit dependensi terhadap export/reporting bridge sebelum modul dipisah
-  - target modul awal:
-    - `resources/js/dashboard/menu/lpjk.js`
-    - `resources/js/dashboard/menu/reporting.js`
+- `customer service`: ✅ SELESAI
+  - [x] inline polyfill `createCustomerServiceState` + `createCustomerServiceCrud` dihapus dari blade
+  - [x] `menu/customer-service.js` menjadi sumber tunggal via `runtime-helpers.js`
+  - [x] optional chaining ditambah agar tidak crash saat deps belum tersedia di urutan setup()
+- `LPJK dan reporting operasional`: ✅ SELESAI (LPJK)
+  - [x] `menu/lpjk.js` dibuat dengan `createLpjkOperations(deps)` — computed + watch + actions
+  - [x] `app-script-lpjk-operations.blade.php` diringkas 112 → 34 lines
+  - [x] `runtime-helpers.js` expose `createLpjkOperations`
+  - [ ] `reporting.js` belum dibuat — `saveBonusConfig` masih inline di `app-script-reporting-and-budgeting.blade.php` (12 lines, low priority)
 
 File sumber yang paling layak dijadikan titik potong berikutnya:
 
@@ -591,8 +589,8 @@ Status backlog saat ini:
 - [x] langkah 1 sudah mulai berjalan, tetapi belum selesai penuh
 - [x] langkah 2 sudah mulai berjalan, tetapi belum selesai penuh
 - [x] langkah 3 sudah mulai berjalan, tetapi belum selesai penuh
-- [ ] langkah 4 belum dimulai sebagai batch modularisasi terpisah
-- [ ] langkah 5 belum dimulai sebagai batch modularisasi terpisah
+- [x] langkah 4 selesai: customer service domain diekstrak ke `menu/customer-service.js`; inline polyfill di `app-script-customer-service-crud.blade.php` dan `app-script-domain-state-core.blade.php` dihapus (-143 dan -53 lines); optional chaining ditambah agar call aman di urutan setup()
+- [x] langkah 5 selesai: LPJK domain diekstrak ke `menu/lpjk.js` dengan `createLpjkOperations(deps)` (5 computed, 1 watch, 8 action); `app-script-lpjk-operations.blade.php` menyusut 112 → 34 lines; `runtime-helpers.js` sudah wire ke modul baru
 - [ ] langkah 6 masih tersisa
 - [ ] langkah 7 masih tersisa
 
