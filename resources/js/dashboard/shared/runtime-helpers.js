@@ -18,6 +18,7 @@ import {
     createNamaStockActions,
 } from '../menu/nama-stock.js';
 import { createLpjkOperations } from '../menu/lpjk.js';
+import { createReportingOperations } from '../menu/reporting.js';
 import {
     fmtLocalDate,
     todayStr,
@@ -58,4 +59,5 @@ window.MarketingDashboardRuntimeHelpers = {
     ensureRunApi,
     setRunnerFactory,
     createLpjkOperations,
+    createReportingOperations,
 };

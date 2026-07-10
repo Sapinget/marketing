@@ -428,7 +428,7 @@ Checklist operasional:
   - [x] `menu/lpjk.js` dibuat dengan `createLpjkOperations(deps)` — computed + watch + actions
   - [x] `app-script-lpjk-operations.blade.php` diringkas 112 → 34 lines
   - [x] `runtime-helpers.js` expose `createLpjkOperations`
-  - [ ] `reporting.js` belum dibuat — `saveBonusConfig` masih inline di `app-script-reporting-and-budgeting.blade.php` (12 lines, low priority)
+  - [x] `menu/reporting.js` dibuat dengan `createReportingOperations(deps)`; `app-script-reporting-and-budgeting.blade.php` diringkas 12 → 8 lines; `runtime-helpers.js` expose `createReportingOperations`
 
 File sumber yang paling layak dijadikan titik potong berikutnya:
 
