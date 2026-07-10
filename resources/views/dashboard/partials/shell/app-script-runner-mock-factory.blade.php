@@ -263,6 +263,20 @@
                                 },
                             };
                         },
+                        updateAuthUser(id, payload) {
+                            return {
+                                status: 'success',
+                                data: {
+                                    id,
+                                    username: payload.username,
+                                    nama: payload.nama,
+                                    email: payload.email || '',
+                                },
+                            };
+                        },
+                        deleteAuthUser(id) {
+                            return { status: 'success', id };
+                        },
                         exportToExcel(tab, data) {
                             if (!data || !data.length) { showNotification('Tidak ada data untuk diekspor'); return null; }
                             const esc = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;

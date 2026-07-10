@@ -10,8 +10,71 @@ use Illuminate\Support\Str;
 
 class DashboardAuth
 {
+    public const ROLE_SUPER_ADMIN = 'super_admin';
+    public const ROLE_ADMIN = 'admin';
+    public const ROLE_KASIR = 'kasir';
+    public const ROLE_OPERASIONAL = 'operasional';
+
+    protected function allowsConfiguredAdminBootstrap(): bool
+    {
+        return in_array((string) config('app.env'), ['local', 'testing'], true);
+    }
+
+    public function assignableRoles(): array
+    {
+        return [
+            self::ROLE_SUPER_ADMIN,
+            self::ROLE_ADMIN,
+            self::ROLE_KASIR,
+            self::ROLE_OPERASIONAL,
+        ];
+    }
+
+    public function canManageUsers(?User $user): bool
+    {
+        return $user instanceof User && $user->role === self::ROLE_SUPER_ADMIN;
+    }
+
+    public function canAccessSensitiveLogs(?User $user): bool
+    {
+        return $user instanceof User && in_array($user->role, [
+            self::ROLE_SUPER_ADMIN,
+            self::ROLE_ADMIN,
+        ], true);
+    }
+
+    public function canManageSettings(?User $user): bool
+    {
+        return $this->canAccessSensitiveLogs($user);
+    }
+
+    public function canManageRawSheets(?User $user): bool
+    {
+        return $this->canAccessSensitiveLogs($user);
+    }
+
+    public function canImportAnalytics(?User $user): bool
+    {
+        return $this->canAccessSensitiveLogs($user);
+    }
+
+    public function roleLabel(?string $role): string
+    {
+        return match ((string) $role) {
+            self::ROLE_SUPER_ADMIN => 'Super Admin',
+            self::ROLE_ADMIN => 'Admin',
+            self::ROLE_KASIR => 'Kasir',
+            self::ROLE_OPERASIONAL => 'Operasional',
+            default => 'Operasional',
+        };
+    }
+
     public function bootstrapConfiguredAdminSession(): ?User
     {
+        if (! $this->allowsConfiguredAdminBootstrap()) {
+            return null;
+        }
+
         if (Auth::check()) {
             $user = Auth::user();
 
@@ -32,6 +95,10 @@ class DashboardAuth
 
     public function ensureConfiguredAdminUser(): ?User
     {
+        if (! $this->allowsConfiguredAdminBootstrap()) {
+            return null;
+        }
+
         $username = trim((string) env('TEST_ADMIN_USERNAME', ''));
         $pin = (string) env('TEST_ADMIN_PIN', '');
 
@@ -48,6 +115,7 @@ class DashboardAuth
                     'username' => $username,
                     'name' => $username,
                     'email' => $email,
+                    'role' => self::ROLE_SUPER_ADMIN,
                     'email_verified_at' => now(),
                     'password' => Hash::make($pin),
                     'remember_token' => Str::random(10),
@@ -69,6 +137,10 @@ class DashboardAuth
 
         if (blank($user->email)) {
             $updates['email'] = $email;
+        }
+
+        if (blank($user->role)) {
+            $updates['role'] = self::ROLE_SUPER_ADMIN;
         }
 
         if ($updates !== []) {
@@ -106,21 +178,54 @@ class DashboardAuth
         request()->session()->regenerateToken();
     }
 
-    public function createUser(string $username, string $pin, ?string $name = null, ?string $email = null): User
+    public function createUser(string $username, string $pin, ?string $name = null, ?string $email = null, ?string $role = null): User
     {
         $normalizedUsername = trim($username);
         $normalizedName = trim((string) ($name ?: $normalizedUsername));
         $normalizedEmail = trim((string) ($email ?: sprintf('%s@dashboard.local', Str::slug($normalizedUsername, '.'))));
+        $normalizedRole = in_array((string) $role, $this->assignableRoles(), true)
+            ? (string) $role
+            : self::ROLE_OPERASIONAL;
 
-        return User::query()->updateOrCreate(
-            ['username' => $normalizedUsername],
-            [
-                'name' => $normalizedName,
-                'email' => $normalizedEmail,
-                'email_verified_at' => now(),
-                'password' => Hash::make($pin),
-            ],
-        );
+        return User::query()->create([
+            'username' => $normalizedUsername,
+            'name' => $normalizedName,
+            'email' => $normalizedEmail,
+            'role' => $normalizedRole,
+            'email_verified_at' => now(),
+            'password' => Hash::make($pin),
+        ]);
+    }
+
+    public function updateUser(User $user, string $username, ?string $pin = null, ?string $name = null, ?string $email = null, ?string $role = null): User
+    {
+        $normalizedUsername = trim($username);
+        $normalizedName = trim((string) ($name ?: $normalizedUsername));
+        $normalizedEmail = trim((string) ($email ?: sprintf('%s@dashboard.local', Str::slug($normalizedUsername, '.'))));
+        $normalizedRole = in_array((string) $role, $this->assignableRoles(), true)
+            ? (string) $role
+            : $user->role;
+
+        $updates = [
+            'username' => $normalizedUsername,
+            'name' => $normalizedName,
+            'email' => $normalizedEmail,
+            'role' => $normalizedRole,
+            'email_verified_at' => now(),
+        ];
+
+        if ($pin !== null && $pin !== '') {
+            $updates['password'] = Hash::make($pin);
+        }
+
+        $user->forceFill($updates)->save();
+
+        return $user->refresh();
+    }
+
+    public function deleteUser(User $user): void
+    {
+        $user->delete();
     }
 
     public function listUsers(): array
@@ -164,7 +269,8 @@ class DashboardAuth
             'username' => $username,
             'nama' => $name,
             'email' => (string) $user->email,
-            'role' => 'Super Admin',
+            'role' => $this->roleLabel($user->role),
+            'role_key' => (string) $user->role,
             'outlet_id' => 'LOCAL-WEB',
         ];
     }

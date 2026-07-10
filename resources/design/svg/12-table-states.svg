@@ -1,0 +1,228 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="600" viewBox="0 0 1000 600">
+  <defs>
+    <filter id="shadow-sm">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000" flood-opacity="0.06"/>
+    </filter>
+    <filter id="shadow-md">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.08"/>
+    </filter>
+    <!-- Clip for State 1 empty table -->
+    <clipPath id="clip-empty">
+      <rect x="24" y="72" width="440" height="200" rx="24"/>
+    </clipPath>
+    <!-- Clip for State 2 skeleton table -->
+    <clipPath id="clip-skeleton">
+      <rect x="24" y="308" width="440" height="260" rx="24"/>
+    </clipPath>
+    <!-- Clip for State 3 sorted -->
+    <clipPath id="clip-sorted">
+      <rect x="520" y="72" width="456" height="180" rx="24"/>
+    </clipPath>
+    <!-- Clip for State 4 row interactions -->
+    <clipPath id="clip-rows">
+      <rect x="520" y="308" width="456" height="160" rx="24"/>
+    </clipPath>
+  </defs>
+
+  <!-- Artboard background -->
+  <rect width="1000" height="600" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="24" y="36" font-family="system-ui,-apple-system,sans-serif" font-size="16" font-weight="700" fill="#0f172a">TABLE STATES</text>
+
+  <!-- ===================== STATE 1 — EMPTY ===================== -->
+  <g id="Component/TableStateEmpty">
+    <text x="24" y="64" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="0.5">EMPTY STATE</text>
+
+    <!-- Card container -->
+    <rect x="24" y="72" width="440" height="200" rx="24" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow-sm)"/>
+
+    <!-- Header row (clipped to card) -->
+    <g clip-path="url(#clip-empty)">
+      <rect x="24" y="72" width="440" height="40" fill="#4f63ff"/>
+      <text x="54" y="96" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#ffffff" text-anchor="middle">NO</text>
+      <text x="130" y="96" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#ffffff">NAMA PROGRAM</text>
+      <text x="310" y="96" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#ffffff">PLATFORM</text>
+      <text x="430" y="96" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#ffffff" text-anchor="end">VIEWS</text>
+    </g>
+
+    <!-- Empty area with dashed border -->
+    <rect x="44" y="124" width="400" height="124" rx="12" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4" fill="none"/>
+
+    <!-- Empty icon placeholder -->
+    <rect x="212" y="136" width="40" height="40" rx="8" fill="#f1f5f9"/>
+    <!-- Simple icon: document with lines -->
+    <rect x="221" y="143" width="22" height="26" rx="2" fill="#e2e8f0"/>
+    <line x1="225" y1="151" x2="239" y2="151" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="225" y1="156" x2="239" y2="156" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="225" y1="161" x2="233" y2="161" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"/>
+
+    <!-- Empty text -->
+    <text x="244" y="160" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="600" fill="#0f172a" text-anchor="middle">Belum ada data</text>
+    <text x="244" y="178" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">Tambahkan data pertama Anda</text>
+
+    <!-- CTA button -->
+    <rect x="192" y="190" width="104" height="30" rx="12" fill="#4f63ff"/>
+    <text x="244" y="208" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">+ Tambah Data</text>
+  </g>
+
+  <!-- ===================== STATE 2 — LOADING SKELETON ===================== -->
+  <g id="Component/TableStateSkeleton">
+    <text x="24" y="300" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="0.5">LOADING SKELETON STATE</text>
+
+    <!-- Card container -->
+    <rect x="24" y="308" width="440" height="260" rx="24" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow-sm)"/>
+
+    <!-- Header row (clipped) -->
+    <g clip-path="url(#clip-skeleton)">
+      <rect x="24" y="308" width="440" height="40" fill="#4f63ff"/>
+      <text x="54" y="332" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#ffffff" text-anchor="middle">NO</text>
+      <text x="130" y="332" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#ffffff">NAMA PROGRAM</text>
+      <text x="310" y="332" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#ffffff">PLATFORM</text>
+      <text x="430" y="332" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#ffffff" text-anchor="end">STATUS</text>
+
+      <!-- Skeleton rows -->
+      <!-- Row 1 -->
+      <rect x="24" y="348" width="440" height="44" fill="#ffffff"/>
+      <line x1="24" y1="392" x2="464" y2="392" stroke="#f1f5f9" stroke-width="1"/>
+      <rect x="40" y="362" width="28" height="12" rx="4" fill="#e2e8f0"/>
+      <rect x="100" y="362" width="120" height="12" rx="4" fill="#e2e8f0"/>
+      <rect x="270" y="362" width="76" height="12" rx="4" fill="#e2e8f0"/>
+      <rect x="384" y="360" width="52" height="16" rx="8" fill="#e2e8f0"/>
+
+      <!-- Row 2 -->
+      <rect x="24" y="392" width="440" height="44" fill="#ffffff"/>
+      <line x1="24" y1="436" x2="464" y2="436" stroke="#f1f5f9" stroke-width="1"/>
+      <rect x="40" y="406" width="28" height="12" rx="4" fill="#e2e8f0"/>
+      <rect x="100" y="406" width="100" height="12" rx="4" fill="#e2e8f0"/>
+      <rect x="270" y="406" width="88" height="12" rx="4" fill="#e2e8f0"/>
+      <rect x="384" y="404" width="52" height="16" rx="8" fill="#e2e8f0"/>
+
+      <!-- Row 3 -->
+      <rect x="24" y="436" width="440" height="44" fill="#ffffff"/>
+      <line x1="24" y1="480" x2="464" y2="480" stroke="#f1f5f9" stroke-width="1"/>
+      <rect x="40" y="450" width="28" height="12" rx="4" fill="#e2e8f0"/>
+      <rect x="100" y="450" width="140" height="12" rx="4" fill="#e2e8f0"/>
+      <rect x="270" y="450" width="66" height="12" rx="4" fill="#e2e8f0"/>
+      <rect x="384" y="448" width="52" height="16" rx="8" fill="#e2e8f0"/>
+
+      <!-- Row 4 -->
+      <rect x="24" y="480" width="440" height="44" fill="#ffffff"/>
+      <line x1="24" y1="524" x2="464" y2="524" stroke="#f1f5f9" stroke-width="1"/>
+      <rect x="40" y="494" width="28" height="12" rx="4" fill="#e2e8f0"/>
+      <rect x="100" y="494" width="110" height="12" rx="4" fill="#e2e8f0"/>
+      <rect x="270" y="494" width="80" height="12" rx="4" fill="#e2e8f0"/>
+      <rect x="384" y="492" width="52" height="16" rx="8" fill="#e2e8f0"/>
+
+      <!-- Row 5 -->
+      <rect x="24" y="524" width="440" height="44" fill="#ffffff"/>
+      <rect x="40" y="538" width="28" height="12" rx="4" fill="#e2e8f0"/>
+      <rect x="100" y="538" width="92" height="12" rx="4" fill="#e2e8f0"/>
+      <rect x="270" y="538" width="96" height="12" rx="4" fill="#e2e8f0"/>
+      <rect x="384" y="536" width="52" height="16" rx="8" fill="#e2e8f0"/>
+    </g>
+
+    <!-- Shimmer annotation -->
+    <text x="244" y="574" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#94a3b8" text-anchor="middle">(shimmer animation: bg gradient #f1f5f9 → #e2e8f0 → #f1f5f9)</text>
+  </g>
+
+  <!-- ===================== STATE 3 — SORTED COLUMN ===================== -->
+  <g id="Component/TableStateSorted">
+    <text x="520" y="64" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="0.5">SORTED COLUMN STATE</text>
+
+    <!-- Card container -->
+    <rect x="520" y="72" width="456" height="180" rx="24" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow-sm)"/>
+
+    <g clip-path="url(#clip-sorted)">
+      <!-- Header row -->
+      <rect x="520" y="72" width="456" height="40" fill="#4f63ff"/>
+
+      <!-- NO header -->
+      <text x="548" y="96" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#ffffff" text-anchor="middle">NO</text>
+
+      <!-- Nama Program — sorted ASC (active sort) -->
+      <text x="620" y="96" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#ffffff">NAMA PROGRAM</text>
+      <!-- Up arrow: sorted ASC, highlighted -->
+      <rect x="726" y="84" width="16" height="14" rx="4" fill="#ffffff" fill-opacity="0.2"/>
+      <text x="734" y="95" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#ffffff" text-anchor="middle">↑</text>
+
+      <!-- Views header — default sort icon -->
+      <text x="820" y="96" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#ffffff" text-anchor="end">VIEWS</text>
+      <text x="826" y="96" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#ffffff" fill-opacity="0.45">↕</text>
+
+      <!-- Status header -->
+      <text x="940" y="96" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#ffffff" text-anchor="middle">STATUS</text>
+
+      <!-- Sorted row 1 (top of ASC sort) -->
+      <rect x="520" y="112" width="456" height="44" fill="#ffffff"/>
+      <line x1="520" y1="156" x2="976" y2="156" stroke="#e2e8f0" stroke-width="1"/>
+      <!-- Sorted indicator column highlight -->
+      <rect x="608" y="112" width="128" height="44" fill="#eef0ff" fill-opacity="0.5"/>
+      <text x="548" y="138" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155" text-anchor="middle">1</text>
+      <text x="620" y="138" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155">Flash Sale Preview</text>
+      <text x="820" y="138" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155" text-anchor="end">12.5K</text>
+      <rect x="906" y="126" width="56" height="20" rx="10" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/>
+      <text x="934" y="140" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#c2410c" text-anchor="middle">Pending</text>
+
+      <!-- Sorted row 2 -->
+      <rect x="520" y="156" width="456" height="44" fill="#ffffff"/>
+      <rect x="608" y="156" width="128" height="44" fill="#eef0ff" fill-opacity="0.5"/>
+      <text x="548" y="182" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155" text-anchor="middle">2</text>
+      <text x="620" y="182" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155">Kolaborasi Brand</text>
+      <text x="820" y="182" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155" text-anchor="end">31.8K</text>
+      <rect x="906" y="170" width="44" height="20" rx="10" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+      <text x="928" y="184" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#15803d" text-anchor="middle">Aktif</text>
+    </g>
+
+    <!-- Sorted column annotation -->
+    <text x="734" y="260" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#4f63ff" text-anchor="middle">sorted col: bg tint #eef0ff · header ↑ active icon</text>
+  </g>
+
+  <!-- ===================== STATE 4 — ROW INTERACTION STATES ===================== -->
+  <g id="Component/TableStateRowInteraction">
+    <text x="520" y="300" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="0.5">ROW INTERACTION STATES</text>
+
+    <!-- Card container -->
+    <rect x="520" y="308" width="456" height="160" rx="24" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow-sm)"/>
+
+    <g clip-path="url(#clip-rows)">
+      <!-- Row Default -->
+      <rect x="520" y="308" width="456" height="52" fill="#ffffff"/>
+      <line x1="520" y1="360" x2="976" y2="360" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="548" y="338" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155" text-anchor="middle">1</text>
+      <text x="590" y="338" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155">Konten Ramadan 2026</text>
+      <rect x="810" y="326" width="44" height="20" rx="10" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+      <text x="832" y="340" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#15803d" text-anchor="middle">Aktif</text>
+      <!-- State label -->
+      <rect x="898" y="320" width="64" height="20" rx="6" fill="#f1f5f9"/>
+      <text x="930" y="333" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#64748b" text-anchor="middle">Default</text>
+
+      <!-- Row Hovered -->
+      <rect x="520" y="360" width="456" height="52" fill="#f8fafc"/>
+      <line x1="520" y1="412" x2="976" y2="412" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="548" y="390" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155" text-anchor="middle">2</text>
+      <text x="590" y="390" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155">Tutorial Unboxing</text>
+      <rect x="810" y="378" width="44" height="20" rx="10" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+      <text x="832" y="392" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#15803d" text-anchor="middle">Aktif</text>
+      <!-- State label -->
+      <rect x="892" y="372" width="78" height="20" rx="6" fill="#fff7ed"/>
+      <text x="931" y="385" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#c2410c" text-anchor="middle">Hover #f8fafc</text>
+
+      <!-- Row Selected -->
+      <rect x="520" y="412" width="456" height="56" fill="#eef0ff"/>
+      <text x="548" y="444" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155" text-anchor="middle">3</text>
+      <text x="590" y="444" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155">Flash Sale Preview</text>
+      <rect x="810" y="432" width="56" height="20" rx="10" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/>
+      <text x="838" y="446" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#c2410c" text-anchor="middle">Pending</text>
+      <!-- Checkbox selected indicator -->
+      <rect x="532" y="430" width="14" height="14" rx="4" fill="#4f63ff"/>
+      <polyline points="535,437 538,440 544,433" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- State label -->
+      <rect x="888" y="430" width="86" height="20" rx="6" fill="#eef0ff" stroke="#4f63ff" stroke-width="0.5"/>
+      <text x="931" y="443" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#4f63ff" text-anchor="middle">Selected #eef0ff</text>
+    </g>
+
+    <!-- Legend -->
+    <text x="520" y="480" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#94a3b8">Row states: default=white · hover=#f8fafc · selected=#eef0ff · checked: fill=#4f63ff</text>
+  </g>
+</svg>

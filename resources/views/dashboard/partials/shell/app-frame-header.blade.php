@@ -12,15 +12,15 @@
                     <button @click="profileMenuOpen = !profileMenuOpen"
                         class="flex items-center gap-2.5 px-2 py-1.5 transition-colors group" id="profile-menu-btn">
                         <div
-                            class="w-8 h-8 rounded-full bg-ppp-accent text-white flex items-center justify-center text-[11px] font-semibold uppercase flex-shrink-0">
+                            class="w-8 h-8 rounded-full bg-ppp-accent text-white flex items-center justify-center text-body font-semibold uppercase flex-shrink-0">
                             {{ ((currentUser?.nama || currentUser?.username || 'U')[0]) }}</div>
                         <div class="hidden sm:block text-left">
                             <div
-                                class="text-[11px] font-semibold text-slate-800 group-hover:text-ppp-accent leading-tight transition-colors">
+                                class="text-body font-semibold text-slate-800 group-hover:text-ppp-accent leading-tight transition-colors">
                                 {{ currentUser?.nama || currentUser?.username || 'User' }}</div>
-                            <div class="text-[9px] text-slate-400 uppercase tracking-widest leading-tight mt-0.5">{{ currentUser?.role || '-' }}</div>
+                            <div class="type-micro text-slate-400 uppercase tracking-widest">{{ currentUser?.role || '-' }}</div>
                         </div>
-                        <i class="fa-solid fa-chevron-down text-[8px] text-slate-400 hidden sm:block transition-transform duration-200"
+                        <i class="fa-solid fa-chevron-down text-overline-xs text-slate-400 hidden sm:block transition-transform duration-200"
                             :class="profileMenuOpen ? 'rotate-180' : ''"></i>
                     </button>
 
@@ -41,11 +41,11 @@
                                     id="btn-profile-setting">
                                     <div
                                         class="w-7 h-7 rounded-xl bg-blue-50 text-ppp-accent flex items-center justify-center flex-shrink-0">
-                                        <i class="fa-solid fa-user text-[10px]"></i>
+                                        <i class="fa-solid fa-user text-body-sm"></i>
                                     </div>
                                     <div>
-                                        <div class="text-[11px] font-medium text-slate-700">Profile Setting</div>
-                                        <div class="text-[9px] text-slate-400">Ubah data & PIN akses</div>
+                                        <div class="text-body font-medium text-slate-700">Profile Setting</div>
+                                        <div class="text-overline text-slate-400">Ubah data & PIN akses</div>
                                     </div>
                                 </button>
                             </div>
@@ -57,9 +57,9 @@
                                     id="btn-dropdown-logout">
                                     <div
                                         class="w-7 h-7 rounded-xl bg-red-50 text-red-500 flex items-center justify-center flex-shrink-0">
-                                        <i class="fa-solid fa-right-from-bracket text-[10px]"></i>
+                                        <i class="fa-solid fa-right-from-bracket text-body-sm"></i>
                                     </div>
-                                    <div class="text-[11px] font-medium text-red-500">Logout</div>
+                                    <div class="text-body font-medium text-red-500">Logout</div>
                                 </button>
                             </div>
                         </div>

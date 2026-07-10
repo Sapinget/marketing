@@ -1,0 +1,150 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="560" viewBox="0 0 1100 560">
+  <defs>
+    <filter id="shadow-sm">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000" flood-opacity="0.06"/>
+    </filter>
+    <filter id="shadow-md">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <!-- Artboard background -->
+  <rect width="1100" height="560" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="24" y="36" font-family="system-ui,-apple-system,sans-serif" font-size="16" font-weight="700" fill="#0f172a">DASHBOARD SUMMARY CARD</text>
+  <text x="24" y="56" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#94a3b8">radius=20px · p=16px · border=1px #e2e8f0 · hover: shadow lift</text>
+
+  <!-- ===================== ANATOMY ===================== -->
+  <g id="Component/CardAnatomy">
+    <text x="24" y="80" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="0.5">ANATOMY</text>
+
+    <!-- Card shell -->
+    <rect x="24" y="88" width="220" height="110" rx="20" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow-sm)"/>
+
+    <!-- Icon block -->
+    <rect x="40" y="104" width="36" height="36" rx="10" fill="#eef0ff"/>
+    <!-- Chart icon placeholder: 2 bars -->
+    <rect x="51" y="118" width="5" height="12" rx="1" fill="#4f63ff"/>
+    <rect x="59" y="113" width="5" height="17" rx="1" fill="#4f63ff"/>
+
+    <!-- Label -->
+    <text x="88" y="116" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8">Total Views</text>
+
+    <!-- Value -->
+    <text x="40" y="162" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">148.2K</text>
+
+    <!-- Sub text -->
+    <text x="40" y="178" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#94a3b8">views bulan ini</text>
+
+    <!-- Trend indicator -->
+    <text x="40" y="192" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#22c55e">↑ +12.4%</text>
+
+    <!-- Annotation lines -->
+    <line x1="76" y1="122" x2="85" y2="100" stroke="#94a3b8" stroke-width="0.5" stroke-dasharray="2,2"/>
+    <text x="87" y="99" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#94a3b8">icon-block 36×36 rx=10</text>
+
+    <line x1="148" y1="162" x2="172" y2="152" stroke="#94a3b8" stroke-width="0.5" stroke-dasharray="2,2"/>
+    <text x="174" y="155" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#94a3b8">value 22px fw=700</text>
+  </g>
+
+  <!-- ===================== DEFAULT vs HOVER ===================== -->
+  <g id="Component/CardStates">
+    <!-- Default -->
+    <text x="280" y="80" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="0.5">DEFAULT</text>
+    <rect x="280" y="88" width="200" height="110" rx="20" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow-sm)"/>
+    <rect x="296" y="104" width="36" height="36" rx="10" fill="#eef0ff"/>
+    <rect x="307" y="118" width="5" height="12" rx="1" fill="#4f63ff"/>
+    <rect x="315" y="113" width="5" height="17" rx="1" fill="#4f63ff"/>
+    <text x="344" y="116" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8">Total Views</text>
+    <text x="296" y="162" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">148.2K</text>
+    <text x="296" y="178" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#94a3b8">views bulan ini</text>
+    <text x="296" y="192" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#22c55e">↑ +12.4%</text>
+    <text x="280" y="212" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#94a3b8">shadow-sm</text>
+
+    <!-- Hover (shifted up 2px) -->
+    <text x="510" y="80" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="0.5">HOVER: LIFT -1px</text>
+    <rect x="510" y="86" width="200" height="110" rx="20" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow-md)"/>
+    <rect x="526" y="102" width="36" height="36" rx="10" fill="#eef0ff"/>
+    <rect x="537" y="116" width="5" height="12" rx="1" fill="#4f63ff"/>
+    <rect x="545" y="111" width="5" height="17" rx="1" fill="#4f63ff"/>
+    <text x="574" y="114" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8">Total Views</text>
+    <text x="526" y="160" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">148.2K</text>
+    <text x="526" y="176" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#94a3b8">views bulan ini</text>
+    <text x="526" y="190" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#22c55e">↑ +12.4%</text>
+    <text x="510" y="212" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#94a3b8">shadow-md · translateY(-1px)</text>
+  </g>
+
+  <!-- ===================== 4-COLUMN GRID ===================== -->
+  <g id="Component/CardGrid4Col">
+    <text x="24" y="260" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="0.5">GRID — 4 COLUMNS DESKTOP</text>
+
+    <!-- Card 1: Total Views (accent) -->
+    <rect x="24" y="268" width="220" height="110" rx="20" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow-sm)"/>
+    <rect x="40" y="284" width="36" height="36" rx="10" fill="#eef0ff"/>
+    <rect x="51" y="298" width="5" height="12" rx="1" fill="#4f63ff"/>
+    <rect x="59" y="293" width="5" height="17" rx="1" fill="#4f63ff"/>
+    <text x="88" y="296" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8">Total Views</text>
+    <text x="40" y="342" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">148.2K</text>
+    <text x="40" y="358" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#94a3b8">views bulan ini</text>
+    <text x="40" y="372" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#22c55e">↑ +12.4%</text>
+
+    <!-- Card 2: Engagement (success) -->
+    <rect x="260" y="268" width="220" height="110" rx="20" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow-sm)"/>
+    <rect x="276" y="284" width="36" height="36" rx="10" fill="#f0fdf4"/>
+    <!-- checkmark icon -->
+    <polyline points="284,302 288,306 295,299" stroke="#22c55e" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="324" y="296" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8">Engagement</text>
+    <text x="276" y="342" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">8.4%</text>
+    <text x="276" y="358" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#94a3b8">rate interaksi</text>
+    <text x="276" y="372" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#22c55e">↑ +0.8%</text>
+
+    <!-- Card 3: Followers (info) -->
+    <rect x="496" y="268" width="220" height="110" rx="20" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow-sm)"/>
+    <rect x="512" y="284" width="36" height="36" rx="10" fill="#eff6ff"/>
+    <!-- user icon placeholder -->
+    <circle cx="530" cy="296" r="5" fill="#3b82f6"/>
+    <path d="M520,310 Q530,304 540,310" stroke="#3b82f6" stroke-width="1.5" fill="none"/>
+    <text x="560" y="296" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8">Followers</text>
+    <text x="512" y="342" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">52.1K</text>
+    <text x="512" y="358" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#94a3b8">total pengikut</text>
+    <text x="512" y="372" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#22c55e">↑ +1.2K</text>
+
+    <!-- Card 4: Komentar (warning) -->
+    <rect x="732" y="268" width="220" height="110" rx="20" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow-sm)"/>
+    <rect x="748" y="284" width="36" height="36" rx="10" fill="#fff7ed"/>
+    <!-- chat bubble icon -->
+    <rect x="756" y="292" width="14" height="10" rx="3" fill="#f97316"/>
+    <polygon points="756,304 760,308 762,304" fill="#f97316"/>
+    <text x="796" y="296" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8">Komentar</text>
+    <text x="748" y="342" font-family="system-ui,-apple-system,sans-serif" font-size="22" font-weight="700" fill="#0f172a">2.8K</text>
+    <text x="748" y="358" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#94a3b8">komentar masuk</text>
+    <text x="748" y="372" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#f97316">↑ +340</text>
+  </g>
+
+  <!-- ===================== MOBILE 2-COLUMN GRID ===================== -->
+  <g id="Component/CardGrid2ColMobile">
+    <text x="24" y="440" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="0.5">GRID — 2 COLUMNS MOBILE</text>
+
+    <!-- Card M1 -->
+    <rect x="24" y="448" width="160" height="88" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow-sm)"/>
+    <rect x="36" y="460" width="28" height="28" rx="8" fill="#eef0ff"/>
+    <rect x="44" y="470" width="4" height="9" rx="1" fill="#4f63ff"/>
+    <rect x="50" y="466" width="4" height="13" rx="1" fill="#4f63ff"/>
+    <text x="72" y="469" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#94a3b8">Total Views</text>
+    <text x="36" y="502" font-family="system-ui,-apple-system,sans-serif" font-size="17" font-weight="700" fill="#0f172a">148.2K</text>
+    <text x="36" y="516" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#22c55e">↑ +12.4%</text>
+
+    <!-- Card M2 -->
+    <rect x="200" y="448" width="160" height="88" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow-sm)"/>
+    <rect x="212" y="460" width="28" height="28" rx="8" fill="#f0fdf4"/>
+    <polyline points="218,474 222,478 229,471" stroke="#22c55e" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="248" y="469" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#94a3b8">Engagement</text>
+    <text x="212" y="502" font-family="system-ui,-apple-system,sans-serif" font-size="17" font-weight="700" fill="#0f172a">8.4%</text>
+    <text x="212" y="516" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#22c55e">↑ +0.8%</text>
+
+    <!-- Dimension annotation -->
+    <text x="380" y="464" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8">w=160px, h=88px, rx=16px</text>
+    <text x="380" y="478" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8">gap=16px, p=12px</text>
+  </g>
+</svg>

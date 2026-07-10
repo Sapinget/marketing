@@ -146,7 +146,7 @@
                     if (tab === 'settings') {
                         loadSettings();
                     }
-                    if (tab === 'auth_users') {
+                    if (tab === 'auth_users' && canManageUsers.value) {
                         loadAuthUsers();
                     }
                     if (tab === 'master' || tab === 'ideation' || tab === 'top_content_platform' || tab === 'low_content_platform') {

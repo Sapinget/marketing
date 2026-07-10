@@ -8,6 +8,7 @@ export function createAdminUserSettingsState(ref) {
         }),
         authUsers: ref([]),
         authUsersLoaded: ref(false),
+        authUserSearchQuery: ref(''),
         activityLogs: ref([]),
         activityLogsLoaded: ref(false),
         activityLogFilters: ref({
@@ -17,10 +18,13 @@ export function createAdminUserSettingsState(ref) {
         }),
         submittingAuthUser: ref(false),
         showAuthUserModal: ref(false),
+        authUserFormMode: ref('create'),
         authUserForm: ref({
+            ID: null,
             username: '',
             nama: '',
             email: '',
+            role: 'operasional',
             pin: '',
             confirmPin: '',
         }),
@@ -38,13 +42,46 @@ export function createAdminUserSettingsActions(deps) {
         profileForm,
         submittingAuthUser,
         showAuthUserModal,
+        authUserFormMode,
         authUsers,
         authUsersLoaded,
         activityLogs,
         activityLogsLoaded,
         activityLogFilters,
         authUserForm,
+        showConfirm,
     } = deps;
+
+    const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || '').trim());
+    const buildEmptyAuthUserForm = () => ({
+        ID: null,
+        username: '',
+        nama: '',
+        email: '',
+        role: 'operasional',
+        pin: '',
+        confirmPin: '',
+    });
+
+    const openAuthUserModal = (mode = 'create', user = null) => {
+        authUserFormMode.value = mode === 'edit' ? 'edit' : 'create';
+        authUserForm.value = mode === 'edit' && user
+            ? {
+                ID: user.ID ?? user.id ?? null,
+                username: String(user.username || ''),
+                nama: String(user.nama || user.username || ''),
+                email: String(user.email || ''),
+                role: String(user.role_key || 'operasional'),
+                pin: '',
+                confirmPin: '',
+            }
+            : buildEmptyAuthUserForm();
+        showAuthUserModal.value = true;
+    };
+
+    const closeAuthUserModal = () => {
+        showAuthUserModal.value = false;
+    };
 
     const loadAuthUsers = () => {
         const runner = ensureRunApi();
@@ -142,41 +179,111 @@ export function createAdminUserSettingsActions(deps) {
     };
 
     const submitAuthUserForm = () => {
-        if (!authUserForm.value.username || !authUserForm.value.nama || !authUserForm.value.pin || !authUserForm.value.confirmPin) {
+        const formMode = authUserFormMode.value === 'edit' ? 'edit' : 'create';
+        const userId = authUserForm.value.ID ?? null;
+        const normalizedUsername = String(authUserForm.value.username || '').trim();
+        const normalizedNama = String(authUserForm.value.nama || '').trim();
+        const normalizedEmail = String(authUserForm.value.email || '').trim();
+        const normalizedRole = String(authUserForm.value.role || 'operasional').trim() || 'operasional';
+        const normalizedPin = String(authUserForm.value.pin || '');
+        const normalizedConfirmPin = String(authUserForm.value.confirmPin || '');
+
+        if (!normalizedUsername || !normalizedNama || (formMode === 'create' && (!normalizedPin || !normalizedConfirmPin))) {
             showNotification('Lengkapi form user baru terlebih dahulu!');
             return;
         }
-        if (authUserForm.value.pin !== authUserForm.value.confirmPin) {
-            showNotification('Konfirmasi PIN user baru tidak cocok!');
+
+        if (normalizedUsername.length < 3) {
+            showNotification('Username minimal 3 karakter!', 'error');
+            return;
+        }
+
+        if (normalizedEmail && !isValidEmail(normalizedEmail)) {
+            showNotification('Format email tidak valid!', 'error');
+            return;
+        }
+
+        if (formMode === 'create' && normalizedPin.length < 6) {
+            showNotification('Password login minimal 6 karakter!', 'error');
+            return;
+        }
+
+        if (formMode === 'edit' && normalizedPin && normalizedPin.length < 6) {
+            showNotification('Password login minimal 6 karakter!', 'error');
+            return;
+        }
+
+        if ((normalizedPin || normalizedConfirmPin) && normalizedPin !== normalizedConfirmPin) {
+            showNotification('Konfirmasi password user baru tidak cocok!');
+            return;
+        }
+
+        if (formMode === 'edit' && !userId) {
+            showNotification('User yang akan diubah tidak valid.', 'error');
             return;
         }
 
         submittingAuthUser.value = true;
-        ensureRunApi()
+
+        const payload = {
+            username: normalizedUsername,
+            nama: normalizedNama,
+            email: normalizedEmail || null,
+            role: normalizedRole,
+            ...(normalizedPin ? {
+                pin: normalizedPin,
+                pin_confirmation: normalizedConfirmPin,
+            } : {}),
+        };
+
+        const runner = ensureRunApi()
             .withSuccessHandler(() => {
                 submittingAuthUser.value = false;
-                authUserForm.value = {
-                    username: '',
-                    nama: '',
-                    email: '',
-                    pin: '',
-                    confirmPin: '',
-                };
+                authUserForm.value = buildEmptyAuthUserForm();
                 showAuthUserModal.value = false;
+                authUserFormMode.value = 'create';
                 loadAuthUsers();
-                showNotification('User baru berhasil dibuat!');
+                showNotification(formMode === 'edit' ? 'User berhasil diperbarui!' : 'User baru berhasil dibuat!');
             })
             .withFailureHandler((err) => {
                 submittingAuthUser.value = false;
-                notifyError('Gagal membuat user', err, 'User baru belum berhasil disimpan.');
-            })
-            .createAuthUser({
-                username: authUserForm.value.username,
-                nama: authUserForm.value.nama,
-                email: authUserForm.value.email || null,
-                pin: authUserForm.value.pin,
-                pin_confirmation: authUserForm.value.confirmPin,
+                notifyError(
+                    formMode === 'edit' ? 'Gagal memperbarui user' : 'Gagal membuat user',
+                    err,
+                    formMode === 'edit' ? 'Perubahan user belum berhasil disimpan.' : 'User baru belum berhasil disimpan.',
+                );
             });
+
+        if (formMode === 'edit') {
+            runner.updateAuthUser(userId, payload);
+            return;
+        }
+
+        runner.createAuthUser(payload);
+    };
+
+    const removeAuthUser = (user) => {
+        const userId = user?.ID ?? user?.id ?? null;
+        if (!userId) {
+            showNotification('User yang akan dihapus tidak valid.', 'error');
+            return;
+        }
+
+        showConfirm(
+            'Hapus User?',
+            `User @${String(user?.username || '-')} akan dihapus permanen.`,
+            () => {
+                ensureRunApi()
+                    .withSuccessHandler(() => {
+                        loadAuthUsers();
+                        showNotification('User berhasil dihapus!');
+                    })
+                    .withFailureHandler((err) => {
+                        notifyError('Gagal menghapus user', err, 'User belum berhasil dihapus.');
+                    })
+                    .deleteAuthUser(userId);
+            },
+        );
     };
 
     return {
@@ -184,6 +291,9 @@ export function createAdminUserSettingsActions(deps) {
         loadActivityLogs,
         saveProfileInfo,
         saveProfileSetting,
+        openAuthUserModal,
+        closeAuthUserModal,
         submitAuthUserForm,
+        removeAuthUser,
     };
 }

@@ -31,24 +31,24 @@
                                 <h3 class="text-xl font-bold text-slate-900">{{ currentUser?.nama || 'Guest User' }}
                                 </h3>
                                 <p
-                                    class="text-[11px] font-bold text-indigo-500 uppercase tracking-widest mt-2 px-4 py-1.5 bg-indigo-50 rounded-full">
+                                    class="text-body font-bold text-indigo-500 uppercase tracking-widest mt-2 px-4 py-1.5 bg-indigo-50 rounded-full">
                                     {{ currentUser?.role || 'Marketing' }}</p>
 
                                 <div class="mt-8 w-full space-y-3">
                                     <div
                                         class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100">
                                         <span
-                                            class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Username</span>
-                                        <span class="text-[12px] font-bold text-slate-900">{{ currentUser?.username || '-' }}</span>
+                                            class="text-body-sm text-slate-400 font-bold uppercase tracking-widest">Username</span>
+                                        <span class="text-body font-bold text-slate-900">{{ currentUser?.username || '-' }}</span>
                                     </div>
                                     <div
                                         class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100">
                                         <span
-                                            class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Akses</span>
+                                            class="text-body-sm text-slate-400 font-bold uppercase tracking-widest">Akses</span>
                                         <div class="flex items-center gap-1.5">
                                             <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
                                             <span
-                                                class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Aktif</span>
+                                                class="text-body-sm font-bold text-emerald-600 uppercase tracking-widest">Aktif</span>
                                         </div>
                                     </div>
                                 </div>
@@ -60,14 +60,17 @@
                                 <h3 class="type-title font-bold text-slate-900 mb-6 flex items-center gap-2">
                                     <div
                                         class="w-8 h-8 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                        <i class="fa-solid fa-id-card text-[12px]"></i>
+                                        <i class="fa-solid fa-id-card text-body"></i>
                                     </div>
                                     Informasi Pribadi
                                 </h3>
                                 <div class="space-y-4 flex-1">
+                                    <!-- class="type-meta font-bold text-slate-400 uppercase mb-1.5">Nama -->
+                                    <!-- class="type-meta font-bold text-slate-400 uppercase mb-1.5">Tanggal -->
+                                    <!-- class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Vendor -->
                                     <div>
                                         <label for="profile-nama-lengkap"
-                                            class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Nama
+                                            class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Nama
                                             Lengkap</label>
                                         <input id="profile-nama-lengkap" name="profile_nama_lengkap" type="text" v-model="profileForm.namaLengkap" placeholder="Masukkan nama"
                                             autocomplete="name"
@@ -75,7 +78,7 @@
                                     </div>
                                     <div>
                                         <label for="profile-role"
-                                            class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Posisi
+                                            class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Posisi
                                             / Role</label>
                                         <input id="profile-role" name="profile_role" type="text" :value="currentUser?.role || 'Marketing'" disabled
                                             class="form-input-disabled" />
@@ -83,7 +86,7 @@
                                 </div>
                                 <div class="pt-5 mt-auto">
                                     <button type="submit" :disabled="submittingInfo"
-                                        class="modal-primary-button w-full modal-primary-button--info shadow-lg shadow-blue-100 active:scale-95 disabled:opacity-50">
+                                        class="primary-cta-button w-full primary-cta-button--info shadow-lg shadow-blue-100 active:scale-95 disabled:opacity-50">
                                         <i v-if="submittingInfo" class="fa-solid fa-spinner fa-spin"></i>
                                         <i v-else class="fa-solid fa-floppy-disk"></i>
                                         Simpan Profil
@@ -97,7 +100,7 @@
                                 <h3 class="type-title font-bold text-slate-900 mb-6 flex items-center gap-2">
                                     <div
                                         class="w-8 h-8 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                        <i class="fa-solid fa-shield-halved text-[12px]"></i>
+                                        <i class="fa-solid fa-shield-halved text-body"></i>
                                     </div>
                                     Keamanan (PIN)
                                 </h3>
@@ -109,7 +112,7 @@
                                 <div class="space-y-4 flex-1">
                                     <div>
                                         <label for="profile-old-pin"
-                                            class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">PIN
+                                            class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">PIN
                                             Saat Ini</label>
                                         <input id="profile-old-pin" name="profile_old_pin" type="password" v-model="profileForm.oldPin"
                                             placeholder="Masukkan PIN saat ini" autocomplete="current-password"
@@ -118,7 +121,7 @@
                                     <div class="grid grid-cols-2 gap-3">
                                         <div>
                                             <label for="profile-new-pin"
-                                                class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">PIN
+                                                class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">PIN
                                                 Baru</label>
                                             <input id="profile-new-pin" name="profile_new_pin" type="password" v-model="profileForm.newPin" placeholder="PIN Baru"
                                                 autocomplete="new-password"
@@ -126,7 +129,7 @@
                                         </div>
                                         <div>
                                             <label for="profile-confirm-pin"
-                                                class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Konfirmasi</label>
+                                                class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Konfirmasi</label>
                                             <input id="profile-confirm-pin" name="profile_confirm_pin" type="password" v-model="profileForm.confirmPin"
                                                 placeholder="Ulangi PIN" autocomplete="new-password" class="form-input" />
                                         </div>
@@ -134,7 +137,7 @@
                                 </div>
                                 <div class="pt-5 mt-auto">
                                     <button type="submit" :disabled="submittingPin"
-                                        class="modal-primary-button w-full modal-primary-button--danger shadow-lg shadow-rose-100 active:scale-95 disabled:opacity-50">
+                                        class="primary-cta-button w-full primary-cta-button--danger shadow-lg shadow-rose-100 active:scale-95 disabled:opacity-50">
                                         <i v-if="submittingPin" class="fa-solid fa-spinner fa-spin"></i>
                                         <i v-else class="fa-solid fa-lock"></i>
                                         Update PIN

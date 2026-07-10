@@ -1,0 +1,187 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="520" viewBox="0 0 1100 520" fill="none">
+  <defs>
+    <style>
+      text { font-family: system-ui, -apple-system, sans-serif; }
+    </style>
+
+    <!-- Subtle shadow for default states -->
+    <filter id="shadow-soft" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.06"/>
+    </filter>
+
+    <!-- Hover shadow — slightly lifted -->
+    <filter id="shadow-hover" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000000" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <!-- Artboard background -->
+  <rect width="1100" height="520" fill="#f8fafc"/>
+
+  <!-- ─── Page Title ─── -->
+  <text x="24" y="36" font-size="16" font-weight="700" fill="#0f172a" font-family="system-ui, -apple-system, sans-serif">SECONDARY CTA BUTTON</text>
+  <text x="24" y="56" font-size="11" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif">h=36px · px=12px · radius=16px · font=11px 700 uppercase</text>
+
+  <!-- ─── Column headers ─── -->
+  <!-- Col centres: Neutral=94, Success=339, Danger=584, Link=829 -->
+  <text x="94" y="80" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="1" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">NEUTRAL</text>
+  <text x="339" y="80" font-size="9" fill="#22c55e" font-weight="600" letter-spacing="1" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">SUCCESS</text>
+  <text x="584" y="80" font-size="9" fill="#ef4444" font-weight="600" letter-spacing="1" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">DANGER</text>
+  <text x="829" y="80" font-size="9" fill="#4f63ff" font-weight="600" letter-spacing="1" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">LINK</text>
+
+  <!-- ─── Row state labels ─── -->
+  <text x="10" y="122" font-size="9" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif">Default</text>
+  <text x="10" y="212" font-size="9" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif">Hover</text>
+  <text x="10" y="302" font-size="9" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif">Active</text>
+  <text x="10" y="392" font-size="9" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif">Disabled</text>
+
+  <!-- Horizontal dividers between rows -->
+  <line x1="24" y1="180" x2="1076" y2="180" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4 4"/>
+  <line x1="24" y1="270" x2="1076" y2="270" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4 4"/>
+  <line x1="24" y1="360" x2="1076" y2="360" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4 4"/>
+  <line x1="24" y1="450" x2="1076" y2="450" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4 4"/>
+
+  <!-- Vertical column dividers -->
+  <line x1="222" y1="68" x2="222" y2="460" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4 4"/>
+  <line x1="467" y1="68" x2="467" y2="460" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4 4"/>
+  <line x1="712" y1="68" x2="712" y2="460" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4 4"/>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- ROW 1 — DEFAULT STATE  (y=100)                            -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+
+  <!-- Neutral Default: bg=#f1f5f9, text=#475569 -->
+  <g id="SecondaryButton/Neutral/Default">
+    <rect x="34" y="100" width="120" height="36" rx="16" fill="#f1f5f9" filter="url(#shadow-soft)"/>
+    <text x="94" y="123" text-anchor="middle" font-size="11" font-weight="700" fill="#475569" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">BATALKAN</text>
+    <text x="94" y="148" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Default · bg #f1f5f9</text>
+  </g>
+
+  <!-- Success Default: bg=#f0fdf4, text=#16a34a, border #bbf7d0 -->
+  <g id="SecondaryButton/Success/Default">
+    <rect x="279" y="100" width="120" height="36" rx="16" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1" filter="url(#shadow-soft)"/>
+    <text x="339" y="123" text-anchor="middle" font-size="11" font-weight="700" fill="#16a34a" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">BATALKAN</text>
+    <text x="339" y="148" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Default · bg #f0fdf4</text>
+  </g>
+
+  <!-- Danger Default: bg=#fef2f2, text=#dc2626, border #fecaca -->
+  <g id="SecondaryButton/Danger/Default">
+    <rect x="524" y="100" width="120" height="36" rx="16" fill="#fef2f2" stroke="#fecaca" stroke-width="1" filter="url(#shadow-soft)"/>
+    <text x="584" y="123" text-anchor="middle" font-size="11" font-weight="700" fill="#dc2626" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">BATALKAN</text>
+    <text x="584" y="148" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Default · bg #fef2f2</text>
+  </g>
+
+  <!-- Link Default: bg=none, text=#4f63ff -->
+  <g id="SecondaryButton/Link/Default">
+    <rect x="769" y="100" width="120" height="36" rx="16" fill="transparent"/>
+    <text x="829" y="123" text-anchor="middle" font-size="11" font-weight="700" fill="#4f63ff" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">BATALKAN</text>
+    <text x="829" y="148" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Default · transparent</text>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- ROW 2 — HOVER STATE  (y=190)                              -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+
+  <!-- Neutral Hover: bg=#e2e8f0, text=#334155 -->
+  <g id="SecondaryButton/Neutral/Hover">
+    <rect x="34" y="190" width="120" height="36" rx="16" fill="#e2e8f0" filter="url(#shadow-hover)"/>
+    <text x="94" y="213" text-anchor="middle" font-size="11" font-weight="700" fill="#334155" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">BATALKAN</text>
+    <text x="94" y="238" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Hover · bg #e2e8f0</text>
+  </g>
+
+  <!-- Success Hover: bg=#dcfce7, text=#15803d, border #86efac -->
+  <g id="SecondaryButton/Success/Hover">
+    <rect x="279" y="190" width="120" height="36" rx="16" fill="#dcfce7" stroke="#86efac" stroke-width="1" filter="url(#shadow-hover)"/>
+    <text x="339" y="213" text-anchor="middle" font-size="11" font-weight="700" fill="#15803d" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">BATALKAN</text>
+    <text x="339" y="238" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Hover · bg #dcfce7</text>
+  </g>
+
+  <!-- Danger Hover: bg=#fee2e2, text=#b91c1c, border #fca5a5 -->
+  <g id="SecondaryButton/Danger/Hover">
+    <rect x="524" y="190" width="120" height="36" rx="16" fill="#fee2e2" stroke="#fca5a5" stroke-width="1" filter="url(#shadow-hover)"/>
+    <text x="584" y="213" text-anchor="middle" font-size="11" font-weight="700" fill="#b91c1c" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">BATALKAN</text>
+    <text x="584" y="238" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Hover · bg #fee2e2</text>
+  </g>
+
+  <!-- Link Hover: text=#3d4fd6, underline drawn as rect -->
+  <g id="SecondaryButton/Link/Hover">
+    <rect x="769" y="190" width="120" height="36" rx="16" fill="#eef0ff"/>
+    <text x="829" y="213" text-anchor="middle" font-size="11" font-weight="700" fill="#3d4fd6" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">BATALKAN</text>
+    <!-- Underline: approximate text width for BATALKAN at 11px ~62px, centred at 829 -->
+    <rect x="798" y="216" width="62" height="1" fill="#3d4fd6"/>
+    <text x="829" y="238" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Hover · underline</text>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- ROW 3 — ACTIVE/PRESSED STATE  (y=280)                     -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+
+  <!-- Neutral Active: bg=#cbd5e1, text=#1e293b, slightly inset -->
+  <g id="SecondaryButton/Neutral/Active">
+    <rect x="36" y="282" width="116" height="34" rx="15" fill="#cbd5e1"/>
+    <text x="94" y="304" text-anchor="middle" font-size="11" font-weight="700" fill="#1e293b" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">BATALKAN</text>
+    <text x="94" y="328" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Active · bg #cbd5e1</text>
+  </g>
+
+  <!-- Success Active: bg=#bbf7d0, text=#14532d -->
+  <g id="SecondaryButton/Success/Active">
+    <rect x="281" y="282" width="116" height="34" rx="15" fill="#bbf7d0" stroke="#86efac" stroke-width="1"/>
+    <text x="339" y="304" text-anchor="middle" font-size="11" font-weight="700" fill="#14532d" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">BATALKAN</text>
+    <text x="339" y="328" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Active · bg #bbf7d0</text>
+  </g>
+
+  <!-- Danger Active: bg=#fecaca, text=#7f1d1d -->
+  <g id="SecondaryButton/Danger/Active">
+    <rect x="526" y="282" width="116" height="34" rx="15" fill="#fecaca" stroke="#fca5a5" stroke-width="1"/>
+    <text x="584" y="304" text-anchor="middle" font-size="11" font-weight="700" fill="#7f1d1d" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">BATALKAN</text>
+    <text x="584" y="328" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Active · bg #fecaca</text>
+  </g>
+
+  <!-- Link Active: bg=#dde1ff, text=#2e3ab0 -->
+  <g id="SecondaryButton/Link/Active">
+    <rect x="771" y="282" width="116" height="34" rx="15" fill="#dde1ff"/>
+    <text x="829" y="304" text-anchor="middle" font-size="11" font-weight="700" fill="#2e3ab0" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">BATALKAN</text>
+    <!-- Underline persists on active -->
+    <rect x="798" y="307" width="62" height="1" fill="#2e3ab0"/>
+    <text x="829" y="328" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Active · bg #dde1ff</text>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- ROW 4 — DISABLED STATE  (y=370)                           -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+
+  <!-- Neutral Disabled -->
+  <g id="SecondaryButton/Neutral/Disabled" opacity="0.4">
+    <rect x="34" y="370" width="120" height="36" rx="16" fill="#f1f5f9"/>
+    <text x="94" y="393" text-anchor="middle" font-size="11" font-weight="700" fill="#475569" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">BATALKAN</text>
+  </g>
+  <text x="94" y="418" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Disabled · opacity 0.4</text>
+
+  <!-- Success Disabled -->
+  <g id="SecondaryButton/Success/Disabled" opacity="0.4">
+    <rect x="279" y="370" width="120" height="36" rx="16" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+    <text x="339" y="393" text-anchor="middle" font-size="11" font-weight="700" fill="#16a34a" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">BATALKAN</text>
+  </g>
+  <text x="339" y="418" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Disabled · opacity 0.4</text>
+
+  <!-- Danger Disabled -->
+  <g id="SecondaryButton/Danger/Disabled" opacity="0.4">
+    <rect x="524" y="370" width="120" height="36" rx="16" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
+    <text x="584" y="393" text-anchor="middle" font-size="11" font-weight="700" fill="#dc2626" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">BATALKAN</text>
+  </g>
+  <text x="584" y="418" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Disabled · opacity 0.4</text>
+
+  <!-- Link Disabled -->
+  <g id="SecondaryButton/Link/Disabled" opacity="0.4">
+    <rect x="769" y="370" width="120" height="36" rx="16" fill="transparent"/>
+    <text x="829" y="393" text-anchor="middle" font-size="11" font-weight="700" fill="#4f63ff" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">BATALKAN</text>
+  </g>
+  <text x="829" y="418" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Disabled · opacity 0.4</text>
+
+  <!-- ─── Bottom metadata bar ─── -->
+  <rect x="0" y="470" width="1100" height="50" fill="#f1f5f9"/>
+  <text x="24" y="491" font-size="9" fill="#64748b" font-weight="600" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">DESIGN SYSTEM</text>
+  <text x="24" y="506" font-size="9" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif">02-buttons-secondary.svg · Secondary CTA · 4 variants × 4 states</text>
+  <text x="1076" y="506" font-size="9" fill="#94a3b8" text-anchor="end" font-family="system-ui, -apple-system, sans-serif">Pura Pura Ponsel Dashboard</text>
+
+</svg>

@@ -110,17 +110,31 @@ class DashboardUserManagementTest extends TestCase
             ]);
     }
 
+    public function test_non_super_admin_cannot_list_dashboard_users(): void
+    {
+        $this->actingAsDashboardUser([
+            'role' => 'operasional',
+        ]);
+
+        $this->getJson('/api/auth/users')
+            ->assertForbidden()
+            ->assertSee('Forbidden');
+    }
+
     public function test_authenticated_user_can_create_dashboard_user_from_api(): void
     {
         $this->postJson('/api/auth/users', [
             'username' => 'supervisor',
             'nama' => 'Supervisor Shift',
             'email' => 'supervisor@example.com',
+            'role' => 'kasir',
             'pin' => '987654',
             'pin_confirmation' => '987654',
         ])->assertOk()
             ->assertJsonPath('data.username', 'supervisor')
-            ->assertJsonPath('data.nama', 'Supervisor Shift');
+            ->assertJsonPath('data.nama', 'Supervisor Shift')
+            ->assertJsonPath('data.role', 'Kasir')
+            ->assertJsonPath('data.role_key', 'kasir');
 
         auth()->logout();
         $this->flushSession();
@@ -136,5 +150,189 @@ class DashboardUserManagementTest extends TestCase
             'action' => 'create',
             'record_key' => 'supervisor',
         ]);
+    }
+
+    public function test_non_super_admin_cannot_create_dashboard_user_from_api(): void
+    {
+        $this->actingAsDashboardUser([
+            'role' => 'kasir',
+        ]);
+
+        $this->postJson('/api/auth/users', [
+            'username' => 'supervisor',
+            'nama' => 'Supervisor Shift',
+            'email' => 'supervisor@example.com',
+            'pin' => '987654',
+            'pin_confirmation' => '987654',
+        ])->assertForbidden()
+            ->assertSee('Forbidden');
+    }
+
+    public function test_authenticated_user_can_update_dashboard_user_from_api(): void
+    {
+        $user = User::factory()->create([
+            'username' => 'operator',
+            'name' => 'Operator Lama',
+            'email' => 'operator-lama@example.com',
+            'password' => Hash::make('111111'),
+        ]);
+
+        $this->putJson("/api/auth/users/{$user->id}", [
+            'username' => 'operator-baru',
+            'nama' => 'Operator Baru',
+            'email' => 'operator-baru@example.com',
+            'role' => 'admin',
+            'pin' => '222222',
+            'pin_confirmation' => '222222',
+        ])->assertOk()
+            ->assertJsonPath('data.username', 'operator-baru')
+            ->assertJsonPath('data.nama', 'Operator Baru')
+            ->assertJsonPath('data.email', 'operator-baru@example.com')
+            ->assertJsonPath('data.role', 'Admin')
+            ->assertJsonPath('data.role_key', 'admin');
+
+        auth()->logout();
+        $this->flushSession();
+
+        $this->postJson('/api/auth/login', [
+            'username' => 'operator-baru',
+            'pin' => '222222',
+        ])->assertOk()
+            ->assertJsonPath('user.username', 'operator-baru');
+
+        $this->assertDatabaseHas('users', [
+            'id' => $user->id,
+            'username' => 'operator-baru',
+            'name' => 'Operator Baru',
+            'email' => 'operator-baru@example.com',
+        ]);
+
+        $this->assertDatabaseHas('activity_logs', [
+            'table_name' => 'users',
+            'action' => 'update',
+            'record_key' => 'operator-baru',
+            'record_id' => $user->id,
+        ]);
+    }
+
+    public function test_non_super_admin_cannot_update_dashboard_user_from_api(): void
+    {
+        $this->actingAsDashboardUser([
+            'role' => 'operasional',
+        ]);
+
+        $user = User::factory()->create([
+            'username' => 'operator',
+        ]);
+
+        $this->putJson("/api/auth/users/{$user->id}", [
+            'username' => 'operator-baru',
+            'nama' => 'Operator Baru',
+            'email' => 'operator-baru@example.com',
+        ])->assertForbidden()
+            ->assertSee('Forbidden');
+    }
+
+    public function test_authenticated_user_can_delete_dashboard_user_from_api(): void
+    {
+        $user = User::factory()->create([
+            'username' => 'gudang',
+            'name' => 'Admin Gudang',
+            'email' => 'gudang@example.com',
+        ]);
+
+        $this->deleteJson("/api/auth/users/{$user->id}")
+            ->assertOk()
+            ->assertJsonPath('status', 'success');
+
+        $this->assertDatabaseMissing('users', [
+            'id' => $user->id,
+        ]);
+
+        $this->assertDatabaseHas('activity_logs', [
+            'table_name' => 'users',
+            'action' => 'delete',
+            'record_key' => 'gudang',
+            'record_id' => $user->id,
+        ]);
+    }
+
+    public function test_non_super_admin_cannot_delete_dashboard_user_from_api(): void
+    {
+        $this->actingAsDashboardUser([
+            'role' => 'operasional',
+        ]);
+
+        $user = User::factory()->create([
+            'username' => 'gudang',
+        ]);
+
+        $this->deleteJson("/api/auth/users/{$user->id}")
+            ->assertForbidden()
+            ->assertSee('Forbidden');
+    }
+
+    public function test_non_admin_cannot_access_activity_logs_endpoint(): void
+    {
+        $this->actingAsDashboardUser([
+            'role' => 'operasional',
+        ]);
+
+        $this->getJson('/api/activity-logs')
+            ->assertForbidden()
+            ->assertSee('Forbidden');
+    }
+
+    public function test_admin_can_access_activity_logs_endpoint(): void
+    {
+        $this->actingAsDashboardUser([
+            'role' => 'admin',
+        ]);
+
+        $this->getJson('/api/activity-logs')
+            ->assertOk()
+            ->assertJsonPath('data', []);
+    }
+
+    public function test_non_admin_cannot_manage_settings_or_raw_sheets(): void
+    {
+        $this->actingAsDashboardUser([
+            'role' => 'kasir',
+        ]);
+
+        $this->getJson('/api/settings')
+            ->assertForbidden()
+            ->assertSee('Forbidden');
+
+        $this->putJson('/api/settings', [
+            'data' => [
+                'Status' => ['DRAFT'],
+            ],
+        ])->assertForbidden()
+            ->assertSee('Forbidden');
+
+        $this->getJson('/api/raw-sheets/Nama_Stock')
+            ->assertForbidden()
+            ->assertSee('Forbidden');
+    }
+
+    public function test_admin_can_manage_settings_and_raw_sheets(): void
+    {
+        $this->actingAsDashboardUser([
+            'role' => 'admin',
+        ]);
+
+        $this->getJson('/api/settings')
+            ->assertOk();
+
+        $this->putJson('/api/settings', [
+            'data' => [
+                'Status' => ['DRAFT', 'DONE'],
+            ],
+        ])->assertOk()
+            ->assertJsonPath('data.Status.0', 'DRAFT');
+
+        $this->getJson('/api/raw-sheets/Nama_Stock')
+            ->assertOk();
     }
 }

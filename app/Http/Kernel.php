@@ -4,7 +4,6 @@ namespace App\Http;
 
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\EnsureDashboardAccess;
-use App\Http\Middleware\EnsureGasProxySecret;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\SetSecurityHeaders;
 use App\Http\Middleware\TrimStrings;
@@ -43,7 +42,6 @@ class Kernel extends HttpKernel
     protected $middlewareAliases = [
         'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
         'dashboard.auth' => EnsureDashboardAccess::class,
-        'gas.proxy' => EnsureGasProxySecret::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
     ];

@@ -10,9 +10,9 @@
                     class="w-full h-full object-contain" alt="Logo" />
             </div>
             <div class="text-center">
-                <div class="text-[11px] font-medium text-ppp-nav-text tracking-[0.2em] uppercase">Pura Pura Ponsel
+                <div class="text-body font-medium text-ppp-nav-text tracking-[0.2em] uppercase">Pura Pura Ponsel
                 </div>
-                <div class="text-[10px] text-slate-400 uppercase tracking-widest mt-2">Menyiapkan Dashboard...</div>
+                <div class="text-body-sm text-slate-400 uppercase tracking-widest mt-2">Menyiapkan Dashboard...</div>
             </div>
         </div>
     </transition>
@@ -22,8 +22,8 @@
         <div class="flex items-start gap-3">
             <i class="fa-solid fa-triangle-exclamation mt-0.5"></i>
             <div class="min-w-0 flex-1">
-                <div class="text-[10px] font-medium uppercase tracking-widest">Sistem Error</div>
-                <div class="text-[11px] leading-relaxed break-words mt-0.5">{{ runtimeError }}</div>
+                <div class="text-body-sm font-medium uppercase tracking-widest">Sistem Error</div>
+                <div class="text-body leading-relaxed break-words mt-0.5">{{ runtimeError }}</div>
             </div>
             <button @click="runtimeError = null" class="text-red-400 hover:text-red-600">
                 <i class="fa-solid fa-xmark"></i>
@@ -33,13 +33,13 @@
 
     <transition name="toast">
         <div v-if="notification && notification.open"
-            :class="['fixed bottom-6 left-1/2 -translate-x-1/2 z-[10000] px-5 py-3 rounded-2xl text-[11px] border shadow-xl flex items-center gap-3 min-w-[220px] max-w-[92vw]', notification.type === 'error' ? 'bg-rose-50 text-rose-700 border-rose-200' : notification.type === 'warning' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200']">
+            :class="['fixed bottom-6 left-1/2 -translate-x-1/2 z-[10000] px-5 py-3 rounded-2xl text-body border shadow-xl flex items-center gap-3 min-w-[220px] max-w-[92vw]', notification.type === 'error' ? 'bg-rose-50 text-rose-700 border-rose-200' : notification.type === 'warning' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200']">
             <div
                 :class="['w-8 h-8 rounded-xl flex items-center justify-center shrink-0', notification.type === 'error' ? 'bg-rose-100 text-rose-500' : notification.type === 'warning' ? 'bg-amber-100 text-amber-500' : 'bg-emerald-100 text-emerald-500']">
                 <i :class="['fa-solid text-[12px]', notification.icon]"></i>
             </div>
             <div class="min-w-0">
-                <div class="text-[10px] font-bold uppercase tracking-widest">
+                <div class="text-body-sm font-bold uppercase tracking-widest">
                     {{ notification.type === 'error' ? 'Error' : notification.type === 'warning' ? 'Perhatian' : 'Berhasil' }}
                 </div>
                 <div class="mt-0.5 break-words leading-relaxed">{{ notification.message }}</div>
@@ -51,17 +51,17 @@
         <div v-if="!currentUser && !appLoading"
             class="min-h-[100dvh] bg-white flex items-center justify-center p-6">
             <div class="w-full max-w-[360px] text-center">
-                <img src="/asset/images/logo.png" class="w-20 h-20 mx-auto mb-8"
+                <img src="/asset/images/logo.png" class="w-20 h-20 object-contain mx-auto mb-8"
                     alt="Logo" />
                 <h1 class="text-2xl font-semibold text-slate-900 mb-2">Selamat Datang</h1>
-                <p class="text-[11px] text-slate-400 mb-8 uppercase tracking-[0.2em]">Login untuk membuka dashboard
+                <p class="text-body text-slate-400 mb-8 uppercase tracking-[0.2em]">Login untuk membuka dashboard
                 </p>
 
                 <form class="space-y-4 mb-8" @submit.prevent="handleLogin">
                     <div class="relative">
                         <label for="login-username" class="sr-only">Username</label>
                         <i
-                            class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
+                            class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
                         <input id="login-username" name="username" v-model="loginForm.username" type="text" placeholder="Username"
                             autocomplete="username"
                             class="form-input-auth" />
@@ -69,7 +69,7 @@
                     <div class="relative">
                         <label for="login-pin" class="sr-only">PIN Akses</label>
                         <i
-                            class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
+                            class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
                         <input id="login-pin" name="pin" v-model="loginForm.pin" type="password" placeholder="PIN Akses"
                             autocomplete="current-password"
                             class="form-input-auth" @keyup.enter="handleLogin" />
@@ -77,31 +77,31 @@
                 </form>
 
                 <button @click="handleLogin" :disabled="submitting"
-                    class="w-full py-4 bg-slate-900 text-white rounded-2xl text-[11px] font-medium uppercase tracking-[0.2em] hover:bg-black transition-all disabled:opacity-50">{{ submitting ? 'Mengecek...' : 'Masuk Ke Sistem' }}</button>
+                    class="w-full py-4 bg-slate-900 text-white rounded-2xl text-body font-medium uppercase tracking-[0.2em] hover:bg-black transition-all disabled:opacity-50">{{ submitting ? 'Mengecek...' : 'Masuk Ke Sistem' }}</button>
             </div>
         </div>
     </transition>
 
     <div v-if="currentUser && !appLoading" class="min-h-[100dvh] bg-slate-50">
-        <transition name="fade">
-            <div v-if="isSidebarOpen" data-sidebar-backdrop @click="closeSidebar" class="fixed inset-0 z-[70] bg-slate-900/30 md:hidden">
-            </div>
-        </transition>
+        <div data-sidebar-backdrop @click="isSidebarOpen ? closeSidebar() : null"
+            :class="['fixed inset-0 z-[70] bg-slate-900/30 md:hidden transition-opacity duration-300 ease-out', isSidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none']">
+        </div>
 @endverbatim
         @include('dashboard.partials.shell.app-frame-sidebar')
 @verbatim
         <div
-            :class="['min-h-[100dvh] transform-gpu transition-[padding] duration-500 ease-in-out', isSidebarOpen ? 'md:pl-60' : 'md:pl-0']">
+            class="dashboard-main-shell min-h-[100dvh] transform-gpu"
+            :style="isMobileViewport ? null : { paddingLeft: isSidebarOpen ? '15rem' : '0px' }">
 @endverbatim
             @include('dashboard.partials.shell.app-frame-header')
 @verbatim
 
             <main class="px-3 py-3 md:px-6 md:py-5 space-y-4">
-                <div class="flex items-center gap-2 text-[11px] text-slate-400">
+                <div class="flex items-center gap-2 text-body text-slate-400">
                     <template v-for="(item, idx) in breadcrumbItems" :key="idx">
                         <span :class="idx === breadcrumbItems.length - 1 ? 'text-ppp-nav-text font-medium' : ''">{{ item }}</span>
                         <i v-if="idx < breadcrumbItems.length - 1"
-                            class="fa-solid fa-chevron-right text-[8px] opacity-50"></i>
+                            class="fa-solid fa-chevron-right text-overline-xs opacity-50"></i>
                     </template>
                 </div>
 @endverbatim

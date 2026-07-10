@@ -1,0 +1,202 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="520" viewBox="0 0 1100 520" fill="none">
+  <defs>
+    <style>
+      text { font-family: system-ui, -apple-system, sans-serif; }
+    </style>
+
+    <!-- Button drop shadow filter -->
+    <filter id="shadow-btn" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000000" flood-opacity="0.15"/>
+    </filter>
+
+    <!-- Accent hover shadow -->
+    <filter id="shadow-accent" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#4f63ff" flood-opacity="0.30"/>
+    </filter>
+
+    <!-- Info hover shadow -->
+    <filter id="shadow-info" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#3b82f6" flood-opacity="0.30"/>
+    </filter>
+
+    <!-- Success hover shadow -->
+    <filter id="shadow-success" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#22c55e" flood-opacity="0.30"/>
+    </filter>
+
+    <!-- Danger hover shadow -->
+    <filter id="shadow-danger" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#ef4444" flood-opacity="0.30"/>
+    </filter>
+  </defs>
+
+  <!-- Artboard background -->
+  <rect width="1100" height="520" fill="#f8fafc"/>
+
+  <!-- ─── Page Title ─── -->
+  <text x="24" y="36" font-size="16" font-weight="700" fill="#0f172a" font-family="system-ui, -apple-system, sans-serif">PRIMARY CTA BUTTON</text>
+  <text x="24" y="56" font-size="11" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif">h=36px · px=14px · radius=16px · font=11px 700 uppercase</text>
+
+  <!-- ─── Column headers ─── -->
+  <!-- Col centres: Accent=94, Info=339, Success=584, Danger=829 (col-width=245, btn-width=120) -->
+  <text x="94" y="80" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="1" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">ACCENT</text>
+  <text x="339" y="80" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="1" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">INFO</text>
+  <text x="584" y="80" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="1" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">SUCCESS</text>
+  <text x="829" y="80" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="1" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">DANGER</text>
+
+  <!-- ─── Row state labels (left side) ─── -->
+  <!-- Rows: y=100 Default, y=190 Hover, y=280 Active, y=370 Disabled -->
+  <!-- Row centres: 100+18=118, 190+18=208, 280+18=298, 370+18=388 -->
+  <text x="10" y="122" font-size="9" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">Default</text>
+  <text x="10" y="212" font-size="9" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">Hover</text>
+  <text x="10" y="302" font-size="9" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">Active</text>
+  <text x="10" y="392" font-size="9" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif" text-anchor="start">Disabled</text>
+
+  <!-- Horizontal dividers between rows -->
+  <line x1="24" y1="180" x2="1076" y2="180" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4 4"/>
+  <line x1="24" y1="270" x2="1076" y2="270" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4 4"/>
+  <line x1="24" y1="360" x2="1076" y2="360" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4 4"/>
+  <line x1="24" y1="450" x2="1076" y2="450" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4 4"/>
+
+  <!-- Vertical column dividers -->
+  <line x1="222" y1="68" x2="222" y2="460" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4 4"/>
+  <line x1="467" y1="68" x2="467" y2="460" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4 4"/>
+  <line x1="712" y1="68" x2="712" y2="460" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4 4"/>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- ROW 1 — DEFAULT STATE  (y=100)                            -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+
+  <!-- Accent Default -->
+  <g id="PrimaryButton/Accent/Default">
+    <rect x="34" y="100" width="120" height="36" rx="16" fill="#4f63ff" filter="url(#shadow-btn)"/>
+    <text x="94" y="123" text-anchor="middle" font-size="11" font-weight="700" fill="white" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">TAMBAH DATA</text>
+    <text x="94" y="148" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Default · #4f63ff</text>
+  </g>
+
+  <!-- Info Default -->
+  <g id="PrimaryButton/Info/Default">
+    <rect x="279" y="100" width="120" height="36" rx="16" fill="#3b82f6" filter="url(#shadow-btn)"/>
+    <text x="339" y="123" text-anchor="middle" font-size="11" font-weight="700" fill="white" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">TAMBAH DATA</text>
+    <text x="339" y="148" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Default · #3b82f6</text>
+  </g>
+
+  <!-- Success Default -->
+  <g id="PrimaryButton/Success/Default">
+    <rect x="524" y="100" width="120" height="36" rx="16" fill="#22c55e" filter="url(#shadow-btn)"/>
+    <text x="584" y="123" text-anchor="middle" font-size="11" font-weight="700" fill="white" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">TAMBAH DATA</text>
+    <text x="584" y="148" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Default · #22c55e</text>
+  </g>
+
+  <!-- Danger Default -->
+  <g id="PrimaryButton/Danger/Default">
+    <rect x="769" y="100" width="120" height="36" rx="16" fill="#ef4444" filter="url(#shadow-btn)"/>
+    <text x="829" y="123" text-anchor="middle" font-size="11" font-weight="700" fill="white" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">TAMBAH DATA</text>
+    <text x="829" y="148" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Default · #ef4444</text>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- ROW 2 — HOVER STATE  (y=190)                              -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+
+  <!-- Accent Hover — darken 12% = #3d4fd6, stronger shadow -->
+  <g id="PrimaryButton/Accent/Hover">
+    <rect x="34" y="190" width="120" height="36" rx="16" fill="#3d4fd6" filter="url(#shadow-accent)"/>
+    <text x="94" y="213" text-anchor="middle" font-size="11" font-weight="700" fill="white" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">TAMBAH DATA</text>
+    <text x="94" y="238" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Hover · #3d4fd6</text>
+  </g>
+
+  <!-- Info Hover — darken 12% = #2563eb -->
+  <g id="PrimaryButton/Info/Hover">
+    <rect x="279" y="190" width="120" height="36" rx="16" fill="#2563eb" filter="url(#shadow-info)"/>
+    <text x="339" y="213" text-anchor="middle" font-size="11" font-weight="700" fill="white" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">TAMBAH DATA</text>
+    <text x="339" y="238" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Hover · #2563eb</text>
+  </g>
+
+  <!-- Success Hover — darken 12% = #16a34a -->
+  <g id="PrimaryButton/Success/Hover">
+    <rect x="524" y="190" width="120" height="36" rx="16" fill="#16a34a" filter="url(#shadow-success)"/>
+    <text x="584" y="213" text-anchor="middle" font-size="11" font-weight="700" fill="white" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">TAMBAH DATA</text>
+    <text x="584" y="238" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Hover · #16a34a</text>
+  </g>
+
+  <!-- Danger Hover — darken 12% = #dc2626 -->
+  <g id="PrimaryButton/Danger/Hover">
+    <rect x="769" y="190" width="120" height="36" rx="16" fill="#dc2626" filter="url(#shadow-danger)"/>
+    <text x="829" y="213" text-anchor="middle" font-size="11" font-weight="700" fill="white" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">TAMBAH DATA</text>
+    <text x="829" y="238" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Hover · #dc2626</text>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- ROW 3 — ACTIVE/PRESSED STATE  (y=280)                     -->
+  <!-- slightly smaller (scale ~0.96) = inset 2px each side → w=116 h=34 -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+
+  <!-- Accent Active — darkest #2e3ab0, no shadow, slightly inset -->
+  <g id="PrimaryButton/Accent/Active">
+    <rect x="36" y="282" width="116" height="34" rx="15" fill="#2e3ab0"/>
+    <text x="94" y="304" text-anchor="middle" font-size="11" font-weight="700" fill="white" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">TAMBAH DATA</text>
+    <text x="94" y="328" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Active · #2e3ab0</text>
+  </g>
+
+  <!-- Info Active — darkest #1d4ed8 -->
+  <g id="PrimaryButton/Info/Active">
+    <rect x="281" y="282" width="116" height="34" rx="15" fill="#1d4ed8"/>
+    <text x="339" y="304" text-anchor="middle" font-size="11" font-weight="700" fill="white" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">TAMBAH DATA</text>
+    <text x="339" y="328" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Active · #1d4ed8</text>
+  </g>
+
+  <!-- Success Active — darkest #15803d -->
+  <g id="PrimaryButton/Success/Active">
+    <rect x="526" y="282" width="116" height="34" rx="15" fill="#15803d"/>
+    <text x="584" y="304" text-anchor="middle" font-size="11" font-weight="700" fill="white" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">TAMBAH DATA</text>
+    <text x="584" y="328" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Active · #15803d</text>
+  </g>
+
+  <!-- Danger Active — darkest #b91c1c -->
+  <g id="PrimaryButton/Danger/Active">
+    <rect x="771" y="282" width="116" height="34" rx="15" fill="#b91c1c"/>
+    <text x="829" y="304" text-anchor="middle" font-size="11" font-weight="700" fill="white" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">TAMBAH DATA</text>
+    <text x="829" y="328" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Active · #b91c1c</text>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════════════ -->
+  <!-- ROW 4 — DISABLED STATE  (y=370)                           -->
+  <!-- opacity=0.4 on the whole group                            -->
+  <!-- ═══════════════════════════════════════════════════════════ -->
+
+  <!-- Accent Disabled -->
+  <g id="PrimaryButton/Accent/Disabled" opacity="0.4">
+    <rect x="34" y="370" width="120" height="36" rx="16" fill="#4f63ff"/>
+    <text x="94" y="393" text-anchor="middle" font-size="11" font-weight="700" fill="white" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">TAMBAH DATA</text>
+  </g>
+  <text x="94" y="418" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Disabled · opacity 0.4</text>
+
+  <!-- Info Disabled -->
+  <g id="PrimaryButton/Info/Disabled" opacity="0.4">
+    <rect x="279" y="370" width="120" height="36" rx="16" fill="#3b82f6"/>
+    <text x="339" y="393" text-anchor="middle" font-size="11" font-weight="700" fill="white" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">TAMBAH DATA</text>
+  </g>
+  <text x="339" y="418" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Disabled · opacity 0.4</text>
+
+  <!-- Success Disabled -->
+  <g id="PrimaryButton/Success/Disabled" opacity="0.4">
+    <rect x="524" y="370" width="120" height="36" rx="16" fill="#22c55e"/>
+    <text x="584" y="393" text-anchor="middle" font-size="11" font-weight="700" fill="white" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">TAMBAH DATA</text>
+  </g>
+  <text x="584" y="418" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Disabled · opacity 0.4</text>
+
+  <!-- Danger Disabled -->
+  <g id="PrimaryButton/Danger/Disabled" opacity="0.4">
+    <rect x="769" y="370" width="120" height="36" rx="16" fill="#ef4444"/>
+    <text x="829" y="393" text-anchor="middle" font-size="11" font-weight="700" fill="white" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">TAMBAH DATA</text>
+  </g>
+  <text x="829" y="418" font-size="9" fill="#94a3b8" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif">Disabled · opacity 0.4</text>
+
+  <!-- ─── Bottom metadata bar ─── -->
+  <rect x="0" y="470" width="1100" height="50" fill="#f1f5f9"/>
+  <text x="24" y="491" font-size="9" fill="#64748b" font-weight="600" letter-spacing="0.5" font-family="system-ui, -apple-system, sans-serif">DESIGN SYSTEM</text>
+  <text x="24" y="506" font-size="9" fill="#94a3b8" font-family="system-ui, -apple-system, sans-serif">01-buttons-primary.svg · Primary CTA · 4 variants × 4 states</text>
+  <text x="1076" y="506" font-size="9" fill="#94a3b8" text-anchor="end" font-family="system-ui, -apple-system, sans-serif">Pura Pura Ponsel Dashboard</text>
+
+</svg>

@@ -96,7 +96,6 @@
                     profileMenuOpen.value = false;
                     activeTab.value = "profile";
                     profileForm.value.namaLengkap = currentUser.value?.nama || "";
-                    loadAuthUsers();
                     localStorage.setItem("ppp_active_tab", "profile");
                 };
 

@@ -1,0 +1,240 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="700" viewBox="0 0 1100 700">
+  <defs>
+    <filter id="shadow-sm">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000" flood-opacity="0.06"/>
+    </filter>
+    <filter id="shadow-md">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.08"/>
+    </filter>
+    <!-- Clip path to round top corners of header -->
+    <clipPath id="card-clip">
+      <rect x="24" y="76" width="1052" height="560" rx="24"/>
+    </clipPath>
+  </defs>
+
+  <!-- Artboard background -->
+  <rect width="1100" height="700" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="24" y="36" font-family="system-ui,-apple-system,sans-serif" font-size="16" font-weight="700" fill="#0f172a">TABLE SHELL — FULL ANATOMY</text>
+  <text x="24" y="56" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#94a3b8">admin-table-shell · section-card-shell · table-toolbar-shell</text>
+
+  <!-- ===================== OUTER CONTAINER ===================== -->
+  <g id="Component/AdminTableShell">
+    <!-- Card bg -->
+    <rect x="24" y="76" width="1052" height="560" rx="24" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow-sm)"/>
+
+    <!-- ===== TOOLBAR AREA ===== -->
+    <g id="Component/TableToolbarShell" clip-path="url(#card-clip)">
+      <rect x="24" y="76" width="1052" height="60" fill="#ffffff"/>
+      <!-- Toolbar border bottom -->
+      <line x1="24" y1="136" x2="1076" y2="136" stroke="#e2e8f0" stroke-width="1"/>
+
+      <!-- Search input -->
+      <rect x="36" y="88" width="220" height="36" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      <!-- Magnifier icon -->
+      <circle cx="55" cy="106" r="6" stroke="#94a3b8" stroke-width="1.5" fill="none"/>
+      <line x1="59" y1="110" x2="63" y2="114" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"/>
+      <text x="70" y="110" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#94a3b8">Cari data...</text>
+
+      <!-- Right side controls -->
+      <!-- Date button -->
+      <rect x="700" y="88" width="130" height="36" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="765" y="110" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155" text-anchor="middle">Jan 2026 ▾</text>
+
+      <!-- Export button -->
+      <rect x="840" y="88" width="72" height="36" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="876" y="110" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155" text-anchor="middle">Excel</text>
+
+      <!-- Filter button -->
+      <rect x="922" y="88" width="72" height="36" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="958" y="110" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155" text-anchor="middle">Filter ▾</text>
+
+      <!-- Add button -->
+      <rect x="1004" y="88" width="92" height="36" rx="16" fill="#4f63ff"/>
+      <text x="1050" y="110" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="#ffffff" text-anchor="middle">+ Tambah</text>
+    </g>
+
+    <!-- ===== TABLE HEADER ROW ===== -->
+    <g id="Component/TableHeader" clip-path="url(#card-clip)">
+      <rect x="24" y="136" width="1052" height="44" fill="#4f63ff"/>
+
+      <!-- Header cells -->
+      <!-- No -->
+      <text x="52" y="162" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">NO</text>
+
+      <!-- Nama Program -->
+      <text x="130" y="162" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" fill="#ffffff" letter-spacing="0.5">NAMA PROGRAM</text>
+      <!-- Sort icon -->
+      <text x="248" y="162" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#ffffff" fill-opacity="0.7">↕</text>
+
+      <!-- Platform -->
+      <text x="360" y="162" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" fill="#ffffff" letter-spacing="0.5">PLATFORM</text>
+
+      <!-- Views -->
+      <text x="574" y="162" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="end" letter-spacing="0.5">VIEWS</text>
+      <!-- Sort icon -->
+      <text x="580" y="162" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#ffffff" fill-opacity="0.7">↕</text>
+
+      <!-- Status -->
+      <text x="760" y="162" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">STATUS</text>
+
+      <!-- Aksi -->
+      <text x="1010" y="162" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle" letter-spacing="0.5">AKSI</text>
+    </g>
+
+    <!-- ===== TABLE ROWS ===== -->
+    <g id="Component/TableRows" clip-path="url(#card-clip)">
+
+      <!-- ROW 1 — Default -->
+      <rect x="24" y="180" width="1052" height="52" fill="#ffffff"/>
+      <line x1="24" y1="232" x2="1076" y2="232" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="52" y="210" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155" text-anchor="middle">1</text>
+      <text x="120" y="210" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155">Konten Ramadan 2026</text>
+      <!-- Platform badge -->
+      <rect x="352" y="198" width="66" height="20" rx="10" fill="#eff6ff"/>
+      <circle cx="364" cy="208" r="3" fill="#3b82f6"/>
+      <text x="390" y="212" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#1d4ed8" text-anchor="middle">Instagram</text>
+      <text x="574" y="210" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155" text-anchor="end">148.2K</text>
+      <!-- Status badge Aktif -->
+      <rect x="718" y="198" width="44" height="20" rx="10" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+      <text x="740" y="212" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#15803d" text-anchor="middle">Aktif</text>
+      <!-- Action buttons -->
+      <rect x="978" y="196" width="32" height="28" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="994" y="213" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#64748b" text-anchor="middle">✏</text>
+      <rect x="1018" y="196" width="32" height="28" rx="8" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
+      <text x="1034" y="213" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#b91c1c" text-anchor="middle">✕</text>
+
+      <!-- ROW 2 — Hover state -->
+      <rect x="24" y="232" width="1052" height="52" fill="#f8fafc"/>
+      <line x1="24" y1="284" x2="1076" y2="284" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="52" y="262" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155" text-anchor="middle">2</text>
+      <text x="120" y="262" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155">Tutorial Unboxing</text>
+      <rect x="352" y="250" width="52" height="20" rx="10" fill="#fef2f2"/>
+      <circle cx="364" cy="260" r="3" fill="#ef4444"/>
+      <text x="384" y="264" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#b91c1c" text-anchor="middle">TikTok</text>
+      <text x="574" y="262" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155" text-anchor="end">89.4K</text>
+      <rect x="718" y="250" width="44" height="20" rx="10" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
+      <text x="740" y="264" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#15803d" text-anchor="middle">Aktif</text>
+      <rect x="978" y="248" width="32" height="28" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="994" y="265" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#64748b" text-anchor="middle">✏</text>
+      <rect x="1018" y="248" width="32" height="28" rx="8" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
+      <text x="1034" y="265" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#b91c1c" text-anchor="middle">✕</text>
+      <!-- Hover label -->
+      <text x="28" y="246" font-family="system-ui,-apple-system,sans-serif" font-size="7" fill="#4f63ff">hover: bg=#f8fafc</text>
+
+      <!-- ROW 3 — Selected state -->
+      <rect x="24" y="284" width="1052" height="52" fill="#eef0ff"/>
+      <line x1="24" y1="336" x2="1076" y2="336" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="52" y="314" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155" text-anchor="middle">3</text>
+      <text x="120" y="314" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155">Flash Sale Preview</text>
+      <rect x="352" y="302" width="58" height="20" rx="10" fill="#fef2f2"/>
+      <circle cx="364" cy="312" r="3" fill="#ef4444"/>
+      <text x="387" y="316" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#b91c1c" text-anchor="middle">YouTube</text>
+      <text x="574" y="314" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155" text-anchor="end">52.1K</text>
+      <!-- Status badge Pending -->
+      <rect x="712" y="302" width="56" height="20" rx="10" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/>
+      <text x="740" y="316" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#c2410c" text-anchor="middle">Pending</text>
+      <rect x="978" y="300" width="32" height="28" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="994" y="317" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#64748b" text-anchor="middle">✏</text>
+      <rect x="1018" y="300" width="32" height="28" rx="8" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
+      <text x="1034" y="317" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#b91c1c" text-anchor="middle">✕</text>
+      <!-- Selected label -->
+      <text x="28" y="298" font-family="system-ui,-apple-system,sans-serif" font-size="7" fill="#4f63ff">selected: bg=#eef0ff</text>
+
+      <!-- ROW 4 — Default -->
+      <rect x="24" y="336" width="1052" height="52" fill="#ffffff"/>
+      <line x1="24" y1="388" x2="1076" y2="388" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="52" y="366" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155" text-anchor="middle">4</text>
+      <text x="120" y="366" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155">Review Produk</text>
+      <rect x="352" y="354" width="62" height="20" rx="10" fill="#eef0ff"/>
+      <circle cx="364" cy="364" r="3" fill="#4f63ff"/>
+      <text x="389" y="368" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#1d4ed8" text-anchor="middle">Facebook</text>
+      <text x="574" y="366" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155" text-anchor="end">31.8K</text>
+      <!-- Status badge Nonaktif -->
+      <rect x="707" y="354" width="66" height="20" rx="10" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
+      <text x="740" y="368" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#b91c1c" text-anchor="middle">Nonaktif</text>
+      <rect x="978" y="352" width="32" height="28" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="994" y="369" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#64748b" text-anchor="middle">✏</text>
+      <rect x="1018" y="352" width="32" height="28" rx="8" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
+      <text x="1034" y="369" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#b91c1c" text-anchor="middle">✕</text>
+
+      <!-- ROW 5 — Last row (no bottom border) -->
+      <rect x="24" y="388" width="1052" height="52" fill="#ffffff"/>
+      <text x="52" y="418" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155" text-anchor="middle">5</text>
+      <text x="120" y="418" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155">Kolaborasi Brand</text>
+      <rect x="352" y="406" width="52" height="20" rx="10" fill="#fff7ed"/>
+      <circle cx="364" cy="416" r="3" fill="#f97316"/>
+      <text x="384" y="420" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#c2410c" text-anchor="middle">Shopee</text>
+      <text x="574" y="418" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#334155" text-anchor="end">12.5K</text>
+      <!-- Status badge Proses -->
+      <rect x="712" y="406" width="56" height="20" rx="10" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="740" y="420" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#64748b" text-anchor="middle">Proses</text>
+      <rect x="978" y="404" width="32" height="28" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="994" y="421" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#64748b" text-anchor="middle">✏</text>
+      <rect x="1018" y="404" width="32" height="28" rx="8" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
+      <text x="1034" y="421" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#b91c1c" text-anchor="middle">✕</text>
+    </g>
+
+    <!-- ===== PAGINATION BAR ===== -->
+    <g id="Component/TablePagerBar" clip-path="url(#card-clip)">
+      <rect x="24" y="596" width="1052" height="40" fill="#ffffff"/>
+      <line x1="24" y1="596" x2="1076" y2="596" stroke="#e2e8f0" stroke-width="1"/>
+
+      <!-- Left: record info -->
+      <text x="44" y="620" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#64748b">Menampilkan 1–5 dari 128 data</text>
+
+      <!-- Right: pagination buttons -->
+      <!-- Prev -->
+      <rect x="800" y="606" width="28" height="28" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="814" y="623" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#64748b" text-anchor="middle">◀</text>
+
+      <!-- Page 1 (active) -->
+      <rect x="836" y="606" width="28" height="28" rx="8" fill="#4f63ff"/>
+      <text x="850" y="623" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#ffffff" text-anchor="middle" font-weight="700">1</text>
+
+      <!-- Page 2 -->
+      <rect x="872" y="606" width="28" height="28" rx="8" fill="none"/>
+      <text x="886" y="623" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#64748b" text-anchor="middle">2</text>
+
+      <!-- Page 3 -->
+      <rect x="908" y="606" width="28" height="28" rx="8" fill="none"/>
+      <text x="922" y="623" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#64748b" text-anchor="middle">3</text>
+
+      <!-- Ellipsis -->
+      <text x="944" y="623" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">...</text>
+
+      <!-- Page 26 -->
+      <rect x="960" y="606" width="28" height="28" rx="8" fill="none"/>
+      <text x="974" y="623" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#64748b" text-anchor="middle">26</text>
+
+      <!-- Next -->
+      <rect x="996" y="606" width="28" height="28" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+      <text x="1010" y="623" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#64748b" text-anchor="middle">▶</text>
+
+      <!-- Ellipsis filler row for empty space -->
+      <line x1="24" y1="440" x2="1076" y2="440" stroke="#e2e8f0" stroke-width="0.5" stroke-dasharray="4,4"/>
+      <rect x="24" y="440" width="1052" height="156" fill="#ffffff"/>
+      <text x="550" y="530" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#94a3b8" text-anchor="middle">· · · remaining rows · · ·</text>
+    </g>
+  </g>
+
+  <!-- ===================== ANNOTATIONS ===================== -->
+  <g id="Annotations">
+    <!-- table-toolbar-shell annotation -->
+    <line x1="310" y1="106" x1="310" y1="106" x2="280" y2="66" stroke="#4f63ff" stroke-width="0.75" stroke-dasharray="3,3"/>
+    <text x="0" y="64" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#4f63ff" transform="translate(284,60)">table-toolbar-shell</text>
+
+    <!-- thead annotation -->
+    <line x1="1076" y1="158" x2="1082" y2="158" stroke="#4f63ff" stroke-width="0.75"/>
+    <text x="1083" y="161" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#4f63ff">thead (bg=accent)</text>
+
+    <!-- outer container annotation -->
+    <line x1="1076" y1="76" x2="1082" y2="76" stroke="#4f63ff" stroke-width="0.75"/>
+    <text x="1083" y="79" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#4f63ff">admin-table-shell (rx=24)</text>
+
+    <!-- pagination annotation -->
+    <line x1="1076" y1="616" x2="1082" y2="616" stroke="#4f63ff" stroke-width="0.75"/>
+    <text x="1083" y="619" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#4f63ff">table-pager-bar</text>
+  </g>
+</svg>

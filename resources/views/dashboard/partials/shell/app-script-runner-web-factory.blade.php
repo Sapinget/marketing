@@ -251,6 +251,17 @@
                                 body: JSON.stringify(payload),
                             });
                         },
+                        updateAuthUser(id, payload) {
+                            return jsonApi(`/api/auth/users/${encodeURIComponent(id)}`, {
+                                method: 'PUT',
+                                body: JSON.stringify(payload),
+                            });
+                        },
+                        deleteAuthUser(id) {
+                            return jsonApi(`/api/auth/users/${encodeURIComponent(id)}`, {
+                                method: 'DELETE',
+                            });
+                        },
                         exportToExcel() {
                             return null;
                         },

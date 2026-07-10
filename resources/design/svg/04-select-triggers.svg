@@ -1,0 +1,211 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="580" viewBox="0 0 1000 580" font-family="system-ui, -apple-system, sans-serif">
+
+  <!-- Artboard background -->
+  <rect width="1000" height="580" fill="#f8fafc"/>
+  <rect width="1000" height="580" fill="none" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- ───────────────────────────────── -->
+  <!-- Page title                        -->
+  <!-- ───────────────────────────────── -->
+  <text x="24" y="36" font-size="16" fill="#0f172a" font-weight="700">SELECT TRIGGER VARIANTS</text>
+  <text x="24" y="56" font-size="11" fill="#94a3b8">Dropdown trigger buttons — 4 variants × 4 states</text>
+
+  <!-- ───────────────────────────────── -->
+  <!-- Column headers                    -->
+  <!-- ───────────────────────────────── -->
+  <!-- col centers: 24+90=114, 254+70=324, 484+60=544, 714+60=774 -->
+  <text x="114"  y="80" font-size="9" fill="#94a3b8" font-weight="600" text-anchor="middle" letter-spacing="0.5">STANDARD</text>
+  <text x="339"  y="80" font-size="9" fill="#94a3b8" font-weight="600" text-anchor="middle" letter-spacing="0.5">COMPACT</text>
+  <text x="564"  y="80" font-size="9" fill="#94a3b8" font-weight="600" text-anchor="middle" letter-spacing="0.5">FORM</text>
+  <text x="789"  y="80" font-size="9" fill="#94a3b8" font-weight="600" text-anchor="middle" letter-spacing="0.5">FORM TIGHT</text>
+
+  <!-- ───────────────────────────────── -->
+  <!-- Chevron symbol defs               -->
+  <!-- ───────────────────────────────── -->
+  <!-- Down chevron: ▾ drawn inline via path -->
+  <!-- Up chevron:   ▲ for open state   -->
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- ROW 1: DEFAULT STATE  (y=96)               -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <!-- STANDARD Default: h=36, rx=16, w=180, fill=#f8fafc, stroke=#e2e8f0 -->
+  <g id="Select/Standard/Default">
+    <rect x="24" y="96" width="180" height="36" rx="16" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="40" y="119" font-size="11" fill="#475569">Jan 2026</text>
+    <path d="M190 111 L195 117 L200 111" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="114" y="142" font-size="9" fill="#94a3b8" text-anchor="middle">Default</text>
+
+  <!-- COMPACT Default: h=36, rx=12, w=140 -->
+  <g id="Select/Compact/Default">
+    <rect x="249" y="96" width="140" height="36" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="263" y="119" font-size="11" fill="#475569">Jan 2026</text>
+    <path d="M375 111 L380 117 L385 111" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="319" y="142" font-size="9" fill="#94a3b8" text-anchor="middle">Default</text>
+
+  <!-- FORM Default: h=44, rx=12, w=180 -->
+  <g id="Select/Form/Default">
+    <rect x="474" y="96" width="180" height="44" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="490" y="122" font-size="11" fill="#475569">Jan 2026</text>
+    <path d="M640 115 L645 121 L650 115" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="564" y="150" font-size="9" fill="#94a3b8" text-anchor="middle">Default</text>
+
+  <!-- FORM TIGHT Default: h=44, rx=12, w=180 -->
+  <g id="Select/FormTight/Default">
+    <rect x="699" y="96" width="180" height="44" rx="12" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="711" y="122" font-size="11" fill="#475569">Jan 2026</text>
+    <path d="M865 115 L870 121 L875 115" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="789" y="150" font-size="9" fill="#94a3b8" text-anchor="middle">Default</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- ROW 2: HOVER STATE  (y=196)                -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <!-- STANDARD Hover: fill=#ffffff, stroke=#cbd5e1 -->
+  <g id="Select/Standard/Hover">
+    <rect x="24" y="196" width="180" height="36" rx="16" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+    <text x="40" y="219" font-size="11" fill="#475569">Jan 2026</text>
+    <path d="M190 211 L195 217 L200 211" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="114" y="242" font-size="9" fill="#94a3b8" text-anchor="middle">Hover</text>
+
+  <!-- COMPACT Hover -->
+  <g id="Select/Compact/Hover">
+    <rect x="249" y="196" width="140" height="36" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+    <text x="263" y="219" font-size="11" fill="#475569">Jan 2026</text>
+    <path d="M375 211 L380 217 L385 211" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="319" y="242" font-size="9" fill="#94a3b8" text-anchor="middle">Hover</text>
+
+  <!-- FORM Hover -->
+  <g id="Select/Form/Hover">
+    <rect x="474" y="196" width="180" height="44" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+    <text x="490" y="222" font-size="11" fill="#475569">Jan 2026</text>
+    <path d="M640 215 L645 221 L650 215" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="564" y="250" font-size="9" fill="#94a3b8" text-anchor="middle">Hover</text>
+
+  <!-- FORM TIGHT Hover -->
+  <g id="Select/FormTight/Hover">
+    <rect x="699" y="196" width="180" height="44" rx="12" fill="#ffffff" stroke="#cbd5e1" stroke-width="1"/>
+    <text x="711" y="222" font-size="11" fill="#475569">Jan 2026</text>
+    <path d="M865 215 L870 221 L875 215" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="789" y="250" font-size="9" fill="#94a3b8" text-anchor="middle">Hover</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- ROW 3: OPEN STATE  (y=296)                 -->
+  <!-- Chevron flipped 180° → ▲                   -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <!-- Shadow filter for open state -->
+  <defs>
+    <filter id="shadow-open" x="-10%" y="-20%" width="120%" height="160%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+  </defs>
+
+  <!-- STANDARD Open: stroke=#4f63ff 1.5px + shadow -->
+  <g id="Select/Standard/Open" filter="url(#shadow-open)">
+    <rect x="24" y="296" width="180" height="36" rx="16" fill="#ffffff" stroke="#4f63ff" stroke-width="1.5"/>
+    <text x="40" y="319" font-size="11" fill="#475569">Jan 2026</text>
+    <!-- Up chevron (open) -->
+    <path d="M190 323 L195 317 L200 323" fill="none" stroke="#4f63ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="114" y="342" font-size="9" fill="#94a3b8" text-anchor="middle">Open</text>
+
+  <!-- COMPACT Open -->
+  <g id="Select/Compact/Open" filter="url(#shadow-open)">
+    <rect x="249" y="296" width="140" height="36" rx="12" fill="#ffffff" stroke="#4f63ff" stroke-width="1.5"/>
+    <text x="263" y="319" font-size="11" fill="#475569">Jan 2026</text>
+    <path d="M375 323 L380 317 L385 323" fill="none" stroke="#4f63ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="319" y="342" font-size="9" fill="#94a3b8" text-anchor="middle">Open</text>
+
+  <!-- FORM Open -->
+  <g id="Select/Form/Open" filter="url(#shadow-open)">
+    <rect x="474" y="296" width="180" height="44" rx="12" fill="#ffffff" stroke="#4f63ff" stroke-width="1.5"/>
+    <text x="490" y="322" font-size="11" fill="#475569">Jan 2026</text>
+    <path d="M640 325 L645 319 L650 325" fill="none" stroke="#4f63ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="564" y="350" font-size="9" fill="#94a3b8" text-anchor="middle">Open</text>
+
+  <!-- FORM TIGHT Open -->
+  <g id="Select/FormTight/Open" filter="url(#shadow-open)">
+    <rect x="699" y="296" width="180" height="44" rx="12" fill="#ffffff" stroke="#4f63ff" stroke-width="1.5"/>
+    <text x="711" y="322" font-size="11" fill="#475569">Jan 2026</text>
+    <path d="M865 325 L870 319 L875 325" fill="none" stroke="#4f63ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="789" y="350" font-size="9" fill="#94a3b8" text-anchor="middle">Open</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- ROW 4: FOCUS/ACTIVE STATE  (y=396)         -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <!-- STANDARD Focus: stroke=#4f63ff 2px -->
+  <g id="Select/Standard/Focus">
+    <rect x="24" y="396" width="180" height="36" rx="16" fill="#ffffff" stroke="#4f63ff" stroke-width="2"/>
+    <text x="40" y="419" font-size="11" fill="#475569">Jan 2026</text>
+    <path d="M190 411 L195 417 L200 411" fill="none" stroke="#4f63ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="114" y="442" font-size="9" fill="#94a3b8" text-anchor="middle">Focus</text>
+
+  <!-- COMPACT Focus -->
+  <g id="Select/Compact/Focus">
+    <rect x="249" y="396" width="140" height="36" rx="12" fill="#ffffff" stroke="#4f63ff" stroke-width="2"/>
+    <text x="263" y="419" font-size="11" fill="#475569">Jan 2026</text>
+    <path d="M375 411 L380 417 L385 411" fill="none" stroke="#4f63ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="319" y="442" font-size="9" fill="#94a3b8" text-anchor="middle">Focus</text>
+
+  <!-- FORM Focus -->
+  <g id="Select/Form/Focus">
+    <rect x="474" y="396" width="180" height="44" rx="12" fill="#ffffff" stroke="#4f63ff" stroke-width="2"/>
+    <text x="490" y="422" font-size="11" fill="#475569">Jan 2026</text>
+    <path d="M640 415 L645 421 L650 415" fill="none" stroke="#4f63ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="564" y="450" font-size="9" fill="#94a3b8" text-anchor="middle">Focus</text>
+
+  <!-- FORM TIGHT Focus -->
+  <g id="Select/FormTight/Focus">
+    <rect x="699" y="396" width="180" height="44" rx="12" fill="#ffffff" stroke="#4f63ff" stroke-width="2"/>
+    <text x="711" y="422" font-size="11" fill="#475569">Jan 2026</text>
+    <path d="M865 415 L870 421 L875 415" fill="none" stroke="#4f63ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="789" y="450" font-size="9" fill="#94a3b8" text-anchor="middle">Focus</text>
+
+  <!-- ───────────────────────────────── -->
+  <!-- Spec annotations                  -->
+  <!-- ───────────────────────────────── -->
+  <g id="Spec/Annotations" font-size="9" fill="#94a3b8">
+    <!-- Standard specs -->
+    <text x="24" y="474">Standard: h=36 · px=12 · rx=16</text>
+    <!-- Compact specs -->
+    <text x="249" y="474">Compact: h=36 · px=10 · rx=12 · w=140</text>
+    <!-- Form specs -->
+    <text x="474" y="474">Form: h=44 · px=14 · rx=12</text>
+    <!-- Form Tight specs -->
+    <text x="699" y="474">Form Tight: h=44 · px=10 · rx=12</text>
+  </g>
+
+  <!-- Color key -->
+  <g id="Spec/ColorKey" font-size="9" fill="#94a3b8">
+    <text x="24" y="506">Default stroke: #e2e8f0 · Hover stroke: #cbd5e1 · Open/Focus stroke: #4f63ff · Text: #475569</text>
+  </g>
+
+  <!-- Row separators -->
+  <line x1="24" y1="156" x2="900" y2="156" stroke="#e2e8f0" stroke-width="0.5" stroke-dasharray="4,4"/>
+  <line x1="24" y1="256" x2="900" y2="256" stroke="#e2e8f0" stroke-width="0.5" stroke-dasharray="4,4"/>
+  <line x1="24" y1="360" x2="900" y2="360" stroke="#e2e8f0" stroke-width="0.5" stroke-dasharray="4,4"/>
+  <line x1="24" y1="460" x2="900" y2="460" stroke="#e2e8f0" stroke-width="0.5" stroke-dasharray="4,4"/>
+
+  <!-- Col separators -->
+  <line x1="230" y1="70" x2="230" y2="470" stroke="#e2e8f0" stroke-width="0.5" stroke-dasharray="4,4"/>
+  <line x1="455" y1="70" x2="455" y2="470" stroke="#e2e8f0" stroke-width="0.5" stroke-dasharray="4,4"/>
+  <line x1="680" y1="70" x2="680" y2="470" stroke="#e2e8f0" stroke-width="0.5" stroke-dasharray="4,4"/>
+
+</svg>

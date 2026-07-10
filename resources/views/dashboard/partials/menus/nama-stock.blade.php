@@ -24,7 +24,7 @@
                                 <div class="flex items-center gap-4">
                                     <div
                                         class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
-                                        <i class="fa-solid fa-list-check text-[11px]"></i>
+                                        <i class="fa-solid fa-list-check text-body"></i>
                                     </div>
                                     <div>
                                         <h2 class="type-body font-bold text-slate-900">Nama Stock</h2>
@@ -35,7 +35,7 @@
                                     <span class="summary-counter-pill">{{ namaStockRows.length }} baris</span>
                                     <button @click="openNamaStockFormModal('create')"
                                         class="secondary-cta-button secondary-cta-link active:scale-95">
-                                        <i class="fa-solid fa-plus text-[10px]"></i> Tambah
+                                        <i class="fa-solid fa-plus text-body-sm"></i> Tambah
                                     </button>
                                 </div>
                             </div>
@@ -58,13 +58,13 @@
                                             class="select-trigger-button select-trigger-button-compact">
                                             <span
                                                 :class="namaStockKategoriFilter ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ namaStockKategoriFilter || 'Filter Kategori' }}</span>
-                                            <i class="fa-solid fa-chevron-down text-[10px] text-slate-300"></i>
+                                            <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
                                         </button>
                                         <transition name="fade">
                                             <div v-if="searchSelectOpen === 'nama_stock_filter_kategori'" :style="popoverStyle"
                                                 class="search-select-popover">
                                                 <div class="relative mb-2">
-                                                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
+                                                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
                                                     <input id="nama-stock-filter-kategori-search" name="search_select_query" v-model="searchSelectQuery" type="text" placeholder="Cari kategori..." autocomplete="off" aria-label="Cari filter kategori nama stock"
                                                         class="form-input-popover" @click.stop />
                                                 </div>
@@ -80,7 +80,7 @@
                                                         {{ opt }}
                                                     </div>
                                                     <div v-if="namaStockFilterKategoriOptions.filter(o => !searchSelectQuery || String(o || '').toLowerCase().includes(String(searchSelectQuery || '').toLowerCase())).length === 0"
-                                                        class="px-3 py-4 text-center text-[10px] text-slate-400 uppercase tracking-widest">
+                                                        class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
                                                         Tidak ditemukan
                                                     </div>
                                                 </div>
@@ -93,13 +93,13 @@
                                             class="select-trigger-button select-trigger-button-compact">
                                             <span
                                                 :class="namaStockBrandFilter ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ namaStockBrandFilter || 'Filter Brand' }}</span>
-                                            <i class="fa-solid fa-chevron-down text-[10px] text-slate-300"></i>
+                                            <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
                                         </button>
                                         <transition name="fade">
                                             <div v-if="searchSelectOpen === 'nama_stock_filter_brand'" :style="popoverStyle"
                                                 class="search-select-popover">
                                                 <div class="relative mb-2">
-                                                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-[10px]"></i>
+                                                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
                                                     <input id="nama-stock-filter-brand-search" name="search_select_query" v-model="searchSelectQuery" type="text" placeholder="Cari brand..." autocomplete="off" aria-label="Cari filter brand nama stock"
                                                         class="form-input-popover" @click.stop />
                                                 </div>
@@ -115,7 +115,7 @@
                                                         {{ opt }}
                                                     </div>
                                                     <div v-if="namaStockFilterBrandOptions.filter(o => !searchSelectQuery || String(o || '').toLowerCase().includes(String(searchSelectQuery || '').toLowerCase())).length === 0"
-                                                        class="px-3 py-4 text-center text-[10px] text-slate-400 uppercase tracking-widest">
+                                                        class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
                                                         Tidak ditemukan
                                                     </div>
                                                 </div>
@@ -126,7 +126,7 @@
                             </div>
                             <div class="md:hidden space-y-3 p-3">
                                 <div v-if="namaStockFilteredRows.length === 0"
-                                    class="bg-white radius-card border border-slate-100 p-10 text-center text-[11px] text-slate-400">
+                                    class="bg-white radius-card border border-slate-100 p-10 text-center text-body text-slate-400">
                                     Tidak ada data nama stock
                                 </div>
                                 <div v-for="(row, idx) in pagedNamaStockRows" :key="'ns-mobile-' + row.ID"
@@ -134,37 +134,37 @@
                                     :style="getStaggerStyle(idx)">
                                     <div class="mobile-data-card__header">
                                         <span
-                                            class="px-2.5 py-1 rounded-full text-[9px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600">
+                                            class="px-2.5 py-1 rounded-full text-overline font-bold uppercase tracking-wider bg-slate-100 text-slate-600">
                                             {{ row.KATEGORI || '-' }}
                                         </span>
-                                        <span class="type-meta text-slate-400 font-bold uppercase tracking-widest">
+                                        <span class="type-body-sm text-slate-400 font-bold uppercase tracking-widest">
                                             Stock
                                         </span>
                                     </div>
                                     <div>
                                         <p class="mobile-data-card__title line-clamp-2">{{ row.BRAND ? row.BRAND + ' | ' + row.SERI : row.SERI || '-' }}</p>
-                                        <p class="type-meta text-slate-400 mt-2 line-clamp-1">{{ row.BRAND || '-' }}</p>
+                                        <p class="type-body-sm text-slate-400 mt-2 line-clamp-1">{{ row.BRAND || '-' }}</p>
                                     </div>
                                     <div class="mobile-data-card__summary">
                                         <div>
-                                            <div class="type-meta text-slate-400 uppercase">Kategori</div>
+                                            <div class="type-body-sm text-slate-400 uppercase">Kategori</div>
                                             <div class="type-body font-bold text-slate-700 line-clamp-1">{{ row.KATEGORI || '-' }}</div>
                                         </div>
                                         <div>
-                                            <div class="type-meta text-slate-400 uppercase">Seri</div>
+                                            <div class="type-body-sm text-slate-400 uppercase">Seri</div>
                                             <div class="type-body font-bold text-slate-700 line-clamp-1">{{ row.SERI || '-' }}</div>
                                         </div>
                                     </div>
                                     <div class="mobile-data-card__actions">
-                                        <div class="type-meta text-slate-400 line-clamp-1">{{ row.BRAND || '-' }}</div>
+                                        <div class="type-body-sm text-slate-400 line-clamp-1">{{ row.BRAND || '-' }}</div>
                                         <div class="flex items-center gap-2">
                                             <button @click="openNamaStockFormModal('edit', row)"
                                                 class="table-action-button table-action-compact">
-                                                <i class="fa-solid fa-pen text-[9px]"></i>
+                                                <i class="fa-solid fa-pen text-overline"></i>
                                             </button>
                                             <button @click="removeNamaStockRow(row.ID)"
                                                 class="table-action-button table-action-compact table-action-danger">
-                                                <i class="fa-solid fa-trash text-[9px]"></i>
+                                                <i class="fa-solid fa-trash text-overline"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -174,14 +174,14 @@
                                 class="md:hidden flex items-center justify-center gap-2 py-2 border-t border-slate-100">
                                 <button @click="namaStockPage--" :disabled="namaStockPage <= 1"
                                     aria-label="Halaman sebelumnya" class="icon-utility-button icon-utility-bordered"><i
-                                        class="fa-solid fa-chevron-left text-[10px]"></i></button>
-                                <span class="px-3 text-[10px] font-bold text-ppp-accent">{{ namaStockPage }} / {{ namaStockTotalPages }}</span>
+                                        class="fa-solid fa-chevron-left text-body-sm"></i></button>
+                                <span class="px-3 text-body-sm font-bold text-ppp-accent">{{ namaStockPage }} / {{ namaStockTotalPages }}</span>
                                 <button @click="namaStockPage++" :disabled="namaStockPage >= namaStockTotalPages"
                                     aria-label="Halaman berikutnya" class="icon-utility-button icon-utility-bordered"><i
-                                        class="fa-solid fa-chevron-right text-[10px]"></i></button>
+                                        class="fa-solid fa-chevron-right text-body-sm"></i></button>
                             </div>
                             <div class="hidden md:block overflow-auto">
-                                <table class="w-full text-[10.5px]">
+                                <table class="w-full text-body-sm">
                                     <thead class="bg-slate-50">
                                         <tr>
                                             <th class="px-4 py-2.5 text-center text-slate-500 font-semibold w-20">Aksi
@@ -193,7 +193,7 @@
                                     </thead>
                                     <tbody class="divide-y divide-slate-100">
                                         <tr v-if="namaStockFilteredRows.length === 0">
-                                            <td colspan="4" class="px-4 py-8 text-center text-slate-400 text-[11px]">
+                                            <td colspan="4" class="px-4 py-8 text-center text-slate-400 text-body">
                                                 Tidak ada data</td>
                                         </tr>
                                         <tr v-for="row in pagedNamaStockRows" :key="row.ID"
@@ -202,11 +202,11 @@
                                                 <div class="flex items-center justify-center gap-1">
                                                     <button @click="openNamaStockFormModal('edit', row)"
                                                         class="table-action-button table-action-compact">
-                                                        <i class="fa-solid fa-pen text-[9px]"></i>
+                                                        <i class="fa-solid fa-pen text-overline"></i>
                                                     </button>
                                                     <button @click="removeNamaStockRow(row.ID)"
                                                         class="table-action-button table-action-compact table-action-danger">
-                                                        <i class="fa-solid fa-trash text-[9px]"></i>
+                                                        <i class="fa-solid fa-trash text-overline"></i>
                                                     </button>
                                                 </div>
                                             </td>
@@ -220,18 +220,18 @@
                             </div>
                             <div
                                 class="px-4 py-3 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between">
-                                <div class="text-[10px] text-slate-400 font-medium">
+                                <div class="text-body-sm text-slate-400 font-medium">
                                     <template v-if="namaStockFilteredRows.length > 0">{{ (namaStockPage - 1) * 15 + 1 }}-{{ Math.min(namaStockPage * 15, namaStockFilteredRows.length) }} dari {{ namaStockFilteredRows.length }} data</template>
                                     <template v-else>0 data</template>
                                 </div>
                                 <div class="flex items-center gap-1">
                                     <button @click="namaStockPage--" :disabled="namaStockPage <= 1"
                                         class="icon-utility-button icon-utility-bordered"><i
-                                            class="fa-solid fa-chevron-left text-[10px]"></i></button>
-                                    <span class="px-3 text-[10px] font-bold text-ppp-accent">{{ namaStockPage }} / {{ namaStockTotalPages }}</span>
+                                            class="fa-solid fa-chevron-left text-body-sm"></i></button>
+                                    <span class="px-3 text-body-sm font-bold text-ppp-accent">{{ namaStockPage }} / {{ namaStockTotalPages }}</span>
                                     <button @click="namaStockPage++" :disabled="namaStockPage >= namaStockTotalPages"
                                         class="icon-utility-button icon-utility-bordered"><i
-                                            class="fa-solid fa-chevron-right text-[10px]"></i></button>
+                                            class="fa-solid fa-chevron-right text-body-sm"></i></button>
                                 </div>
                             </div>
                         </section>

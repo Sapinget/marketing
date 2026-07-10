@@ -19,6 +19,7 @@
                 const _metaSum = (d, f) => d.reduce((s, r) => s + (Number(r[f]) || 0), 0);
                 const metaStorySummary = computed(() => {
                     const d = filteredMetaStory.value; const sum = f => _metaSum(d, f);
+                    const topPostType = Object.entries(_sCnt(d, r => r.post_type)).sort((a, b) => b[1] - a[1])[0] || null;
                     return { cards: [
                         { label: 'Total Story', value: formatNumber(d.length), unit: 'Post', icon: 'fa-clapperboard', color: 'text-rose-500', unitColor: 'text-rose-400', subColor: 'text-rose-600', sub: 'Periode aktif' },
                         { label: 'Total Views', value: formatNumber(sum('views')), icon: 'fa-eye', color: 'text-blue-500', subColor: 'text-blue-600', sub: 'Tayangan' },
@@ -28,11 +29,13 @@
                         { label: 'Link Clicks', value: formatNumber(sum('link_clicks')), icon: 'fa-link', color: 'text-blue-500', subColor: 'text-blue-600', sub: 'Klik link' },
                         { label: 'Profile Visits', value: formatNumber(sum('profile_visits')), icon: 'fa-user', color: 'text-emerald-500', subColor: 'text-emerald-600', sub: 'Kunjungan profil' },
                         { label: 'Sticker Taps', value: formatNumber(sum('sticker_taps')), icon: 'fa-hand-pointer', color: 'text-rose-500', subColor: 'text-rose-600', sub: 'Tap stiker' },
-                    ], chips: _sChips(_sCnt(d, r => r.post_type)) };
+                        { label: 'Top Post Type', value: topPostType ? String(topPostType[0]).toUpperCase() : '-', icon: 'fa-clapperboard', color: 'text-rose-500', sub: formatNumber(topPostType ? topPostType[1] : 0) + ' post', subColor: 'text-rose-600' },
+                    ] };
                 });
                 const metaFeedSummary = computed(() => {
                     const d = filteredMetaFeed.value; const sum = f => _metaSum(d, f);
                     const reach = sum('reach'); const eng = sum('likes') + sum('comments') + sum('shares') + sum('saves');
+                    const topPostType = Object.entries(_sCnt(d, r => r.post_type)).sort((a, b) => b[1] - a[1])[0] || null;
                     return { cards: [
                         { label: 'Total Konten', value: formatNumber(d.length), unit: 'Post', icon: 'fa-photo-film', color: 'text-blue-500', unitColor: 'text-blue-400', subColor: 'text-blue-600', sub: 'Periode aktif' },
                         { label: 'Total Views', value: formatNumber(sum('views')), icon: 'fa-eye', color: 'text-violet-500', subColor: 'text-violet-600', sub: 'Tayangan' },
@@ -42,7 +45,8 @@
                         { label: 'Comments', value: formatNumber(sum('comments')), icon: 'fa-comment', color: 'text-blue-500', subColor: 'text-blue-600', sub: 'Total komentar' },
                         { label: 'Shares', value: formatNumber(sum('shares')), icon: 'fa-share', color: 'text-emerald-500', subColor: 'text-emerald-600', sub: 'Total bagikan' },
                         { label: 'Saves', value: formatNumber(sum('saves')), icon: 'fa-bookmark', color: 'text-amber-500', subColor: 'text-amber-600', sub: 'Total simpan' },
-                    ], chips: _sChips(_sCnt(d, r => r.post_type)) };
+                        { label: 'Top Post Type', value: topPostType ? String(topPostType[0]).toUpperCase() : '-', icon: 'fa-photo-film', color: 'text-blue-500', sub: formatNumber(topPostType ? topPostType[1] : 0) + ' post', subColor: 'text-blue-600' },
+                    ] };
                 });
                 const metaStoryPage = ref(1);
                 const metaStoryTotalPages = computed(() => Math.max(1, Math.ceil(filteredMetaStory.value.length / PAGE_SIZE)));

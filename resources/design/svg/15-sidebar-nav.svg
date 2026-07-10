@@ -1,0 +1,491 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="700" viewBox="0 0 900 700" font-family="system-ui,-apple-system,sans-serif">
+  <defs>
+    <filter id="shadow-sm">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000" flood-opacity="0.06"/>
+    </filter>
+    <filter id="shadow-md">
+      <feDropShadow dx="0" dy="4" stdDeviation="12" flood-color="#000" flood-opacity="0.12"/>
+    </filter>
+    <filter id="shadow-xl">
+      <feDropShadow dx="0" dy="16" stdDeviation="32" flood-color="#000" flood-opacity="0.18"/>
+    </filter>
+    <clipPath id="sidebar-clip">
+      <rect x="24" y="80" width="200" height="560"/>
+    </clipPath>
+    <clipPath id="collapsed-clip">
+      <rect x="264" y="80" width="48" height="560"/>
+    </clipPath>
+    <clipPath id="accordion-clip">
+      <rect x="352" y="80" width="200" height="560"/>
+    </clipPath>
+  </defs>
+
+  <!-- Artboard background -->
+  <rect width="900" height="700" fill="#f8fafc"/>
+
+  <!-- Page title -->
+  <text x="24" y="36" font-size="16" font-weight="700" fill="#0f172a" letter-spacing="1">SIDEBAR &amp; NAVIGATION</text>
+  <text x="24" y="52" font-size="10" fill="#94a3b8">App shell · sidebar states · nav item variants · accordion</text>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- STATE 1: SIDEBAR OPEN (FULL) -->
+  <!-- ════════════════════════════════════════════ -->
+  <g id="State/SidebarOpen">
+    <text x="24" y="72" font-size="9" font-weight="700" fill="#94a3b8" letter-spacing="1">SIDEBAR OPEN — 200px width</text>
+
+    <!-- Sidebar surface -->
+    <rect x="24" y="80" width="200" height="560" fill="#ffffff" filter="url(#shadow-sm)"/>
+    <!-- Right border -->
+    <line x1="224" y1="80" x2="224" y2="640" stroke="#e2e8f0" stroke-width="1"/>
+
+    <!-- ── Logo Area ── -->
+    <g id="Component/SidebarLogo">
+      <rect x="24" y="80" width="200" height="60" fill="#ffffff"/>
+      <line x1="24" y1="140" x2="224" y2="140" stroke="#e2e8f0" stroke-width="1"/>
+
+      <!-- Logo icon -->
+      <rect x="36" y="94" width="32" height="32" rx="8" fill="#4f63ff"/>
+      <text x="52" y="114" font-size="9" font-weight="700" fill="#ffffff" text-anchor="middle">PPP</text>
+
+      <!-- Company name -->
+      <text x="76" y="107" font-size="10" font-weight="700" fill="#0f172a">Pura Pura Ponsel</text>
+      <text x="76" y="120" font-size="8" fill="#94a3b8">Marketing Dashboard</text>
+
+      <!-- Collapse toggle -->
+      <rect x="200" y="100" width="20" height="20" rx="5" fill="#f1f5f9"/>
+      <text x="210" y="114" font-size="9" fill="#64748b" text-anchor="middle">‹</text>
+    </g>
+
+    <!-- ── Nav Section: MARKETING ── -->
+    <g id="Component/NavSectionMarketing">
+      <text x="36" y="160" font-size="8" font-weight="700" fill="#94a3b8" letter-spacing="1.5">MARKETING</text>
+
+      <!-- Active item: Analytics -->
+      <g id="Component/NavItem-Active">
+        <rect x="28" y="168" width="192" height="40" rx="10" fill="#eef0ff"/>
+        <!-- Icon box -->
+        <rect x="36" y="176" width="24" height="24" rx="6" fill="#c7d2fe"/>
+        <!-- Icon: bar chart -->
+        <rect x="40" y="183" width="4" height="11" rx="1" fill="#4f63ff"/>
+        <rect x="46" y="187" width="4" height="7" rx="1" fill="#4f63ff" opacity="0.6"/>
+        <rect x="52" y="185" width="4" height="9" rx="1" fill="#4f63ff" opacity="0.8"/>
+        <!-- Active indicator dot -->
+        <circle cx="28" cy="188" r="2.5" fill="#4f63ff"/>
+        <text x="68" y="192" font-size="11" font-weight="700" fill="#4f63ff">Analytics</text>
+      </g>
+
+      <!-- Hover item: Master Plan -->
+      <g id="Component/NavItem-Hover">
+        <rect x="28" y="212" width="192" height="40" rx="10" fill="#f8fafc"/>
+        <rect x="36" y="220" width="24" height="24" rx="6" fill="#f1f5f9"/>
+        <!-- Icon: calendar -->
+        <rect x="40" y="222" width="16" height="14" rx="2" fill="none" stroke="#64748b" stroke-width="1.2"/>
+        <line x1="40" y1="226" x2="56" y2="226" stroke="#64748b" stroke-width="1"/>
+        <rect x="43" y="219" width="2" height="4" rx="1" fill="#64748b"/>
+        <rect x="51" y="219" width="2" height="4" rx="1" fill="#64748b"/>
+        <text x="68" y="236" font-size="11" fill="#334155" font-weight="500">Master Plan</text>
+      </g>
+
+      <!-- Default: Distribution -->
+      <g id="Component/NavItem-Default-1">
+        <rect x="28" y="256" width="192" height="40" rx="10" fill="transparent"/>
+        <rect x="36" y="264" width="24" height="24" rx="6" fill="#f1f5f9"/>
+        <!-- Icon: truck/box -->
+        <rect x="39" y="268" width="14" height="10" rx="2" fill="none" stroke="#94a3b8" stroke-width="1.2"/>
+        <circle cx="42" cy="280" r="2" fill="#94a3b8"/>
+        <circle cx="50" cy="280" r="2" fill="#94a3b8"/>
+        <text x="68" y="280" font-size="11" fill="#64748b">Distribution</text>
+      </g>
+
+      <!-- Default: Story -->
+      <g id="Component/NavItem-Default-2">
+        <rect x="28" y="300" width="192" height="40" rx="10" fill="transparent"/>
+        <rect x="36" y="308" width="24" height="24" rx="6" fill="#f1f5f9"/>
+        <!-- Icon: book -->
+        <rect x="39" y="311" width="14" height="14" rx="2" fill="none" stroke="#94a3b8" stroke-width="1.2"/>
+        <line x1="46" y1="311" x2="46" y2="325" stroke="#94a3b8" stroke-width="1"/>
+        <text x="68" y="324" font-size="11" fill="#64748b">Story</text>
+      </g>
+
+      <!-- Default: Unboxing -->
+      <g id="Component/NavItem-Default-3">
+        <rect x="28" y="344" width="192" height="40" rx="10" fill="transparent"/>
+        <rect x="36" y="352" width="24" height="24" rx="6" fill="#f1f5f9"/>
+        <!-- Icon: box -->
+        <rect x="39" y="355" width="14" height="12" rx="2" fill="none" stroke="#94a3b8" stroke-width="1.2"/>
+        <line x1="39" y1="361" x2="53" y2="361" stroke="#94a3b8" stroke-width="1"/>
+        <text x="68" y="368" font-size="11" fill="#64748b">Unboxing</text>
+      </g>
+
+      <!-- Accordion parent: Content -->
+      <g id="Component/NavItem-Accordion-Parent">
+        <rect x="28" y="388" width="192" height="40" rx="10" fill="transparent"/>
+        <rect x="36" y="396" width="24" height="24" rx="6" fill="#f1f5f9"/>
+        <!-- Icon: layers -->
+        <rect x="39" y="399" width="14" height="4" rx="1" fill="#94a3b8"/>
+        <rect x="39" y="406" width="14" height="4" rx="1" fill="#94a3b8" opacity="0.6"/>
+        <rect x="39" y="413" width="14" height="4" rx="1" fill="#94a3b8" opacity="0.3"/>
+        <text x="68" y="412" font-size="11" fill="#64748b">Content</text>
+        <!-- Chevron right (collapsed) -->
+        <text x="207" y="413" font-size="9" fill="#94a3b8" text-anchor="middle">▶</text>
+      </g>
+
+      <!-- Default: Promo -->
+      <g id="Component/NavItem-Default-4">
+        <rect x="28" y="432" width="192" height="40" rx="10" fill="transparent"/>
+        <rect x="36" y="440" width="24" height="24" rx="6" fill="#f1f5f9"/>
+        <!-- Icon: tag -->
+        <rect x="39" y="443" width="14" height="14" rx="2" fill="none" stroke="#94a3b8" stroke-width="1.2"/>
+        <circle cx="44" cy="448" r="2" fill="#94a3b8"/>
+        <text x="68" y="456" font-size="11" fill="#64748b">Promo</text>
+      </g>
+    </g>
+
+    <!-- ── Nav Section: ADMIN ── -->
+    <g id="Component/NavSectionAdmin">
+      <line x1="36" y1="484" x2="208" y2="484" stroke="#f1f5f9" stroke-width="1"/>
+      <text x="36" y="500" font-size="8" font-weight="700" fill="#94a3b8" letter-spacing="1.5">ADMIN</text>
+
+      <!-- Auth Users -->
+      <g id="Component/NavItem-Admin-1">
+        <rect x="28" y="508" width="192" height="40" rx="10" fill="transparent"/>
+        <rect x="36" y="516" width="24" height="24" rx="6" fill="#f1f5f9"/>
+        <!-- Icon: users -->
+        <circle cx="44" cy="523" r="4" fill="none" stroke="#94a3b8" stroke-width="1.2"/>
+        <path d="M37,531 Q37,527 44,527 Q51,527 51,531" fill="none" stroke="#94a3b8" stroke-width="1.2"/>
+        <text x="68" y="532" font-size="11" fill="#64748b">Auth Users</text>
+      </g>
+
+      <!-- Activity Logs -->
+      <g id="Component/NavItem-Admin-2">
+        <rect x="28" y="552" width="192" height="40" rx="10" fill="transparent"/>
+        <rect x="36" y="560" width="24" height="24" rx="6" fill="#f1f5f9"/>
+        <!-- Icon: list -->
+        <line x1="40" y1="566" x2="52" y2="566" stroke="#94a3b8" stroke-width="1.2"/>
+        <line x1="40" y1="571" x2="52" y2="571" stroke="#94a3b8" stroke-width="1.2"/>
+        <line x1="40" y1="576" x2="48" y2="576" stroke="#94a3b8" stroke-width="1.2"/>
+        <text x="68" y="576" font-size="11" fill="#64748b">Activity Logs</text>
+      </g>
+    </g>
+
+    <!-- ── Bottom user area ── -->
+    <g id="Component/SidebarUserProfile">
+      <line x1="24" y1="604" x2="224" y2="604" stroke="#e2e8f0" stroke-width="1"/>
+      <rect x="36" y="612" width="28" height="28" rx="14" fill="#4f63ff"/>
+      <text x="50" y="630" font-size="9" font-weight="700" fill="#ffffff" text-anchor="middle">AG</text>
+      <text x="72" y="623" font-size="9" font-weight="600" fill="#0f172a">Agus Arya</text>
+      <text x="72" y="635" font-size="8" fill="#94a3b8">Admin</text>
+      <rect x="198" y="616" width="20" height="20" rx="5" fill="#f1f5f9"/>
+      <text x="208" y="630" font-size="9" fill="#64748b" text-anchor="middle">⚙</text>
+    </g>
+  </g>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- STATE 2: SIDEBAR COLLAPSED (icon strip) -->
+  <!-- ════════════════════════════════════════════ -->
+  <g id="State/SidebarCollapsed">
+    <text x="264" y="72" font-size="9" font-weight="700" fill="#94a3b8" letter-spacing="1">COLLAPSED — 48px icon strip</text>
+
+    <!-- Collapsed sidebar surface -->
+    <rect x="264" y="80" width="48" height="560" fill="#ffffff" filter="url(#shadow-sm)"/>
+    <line x1="312" y1="80" x2="312" y2="640" stroke="#e2e8f0" stroke-width="1"/>
+
+    <!-- Logo only (icon) -->
+    <rect x="272" y="94" width="32" height="32" rx="8" fill="#4f63ff"/>
+    <text x="288" y="114" font-size="9" font-weight="700" fill="#ffffff" text-anchor="middle">P</text>
+    <line x1="264" y1="140" x2="312" y2="140" stroke="#e2e8f0" stroke-width="1"/>
+
+    <!-- Expand toggle -->
+    <rect x="272" y="148" width="28" height="28" rx="8" fill="#f1f5f9"/>
+    <text x="286" y="166" font-size="10" fill="#64748b" text-anchor="middle">›</text>
+    <line x1="264" y1="184" x2="312" y2="184" stroke="#f1f5f9" stroke-width="1"/>
+
+    <!-- Icon-only nav items -->
+    <!-- Active icon -->
+    <rect x="268" y="192" width="36" height="36" rx="10" fill="#eef0ff"/>
+    <rect x="274" y="199" width="4" height="14" rx="1" fill="#4f63ff"/>
+    <rect x="280" y="203" width="4" height="10" rx="1" fill="#4f63ff" opacity="0.6"/>
+    <rect x="286" y="201" width="4" height="12" rx="1" fill="#4f63ff" opacity="0.8"/>
+    <circle cx="264" cy="210" r="2.5" fill="#4f63ff"/>
+
+    <rect x="268" y="232" width="36" height="36" rx="10" fill="#f8fafc"/>
+    <rect x="274" y="239" width="16" height="14" rx="2" fill="none" stroke="#64748b" stroke-width="1.2"/>
+    <line x1="274" y1="243" x2="290" y2="243" stroke="#64748b" stroke-width="1"/>
+
+    <rect x="268" y="272" width="36" height="36" rx="10" fill="transparent"/>
+    <rect x="274" y="279" width="14" height="10" rx="2" fill="none" stroke="#94a3b8" stroke-width="1.2"/>
+    <circle cx="277" cy="291" r="2" fill="#94a3b8"/>
+    <circle cx="285" cy="291" r="2" fill="#94a3b8"/>
+
+    <rect x="268" y="312" width="36" height="36" rx="10" fill="transparent"/>
+    <rect x="274" y="319" width="14" height="14" rx="2" fill="none" stroke="#94a3b8" stroke-width="1.2"/>
+    <line x1="281" y1="319" x2="281" y2="333" stroke="#94a3b8" stroke-width="1"/>
+
+    <rect x="268" y="352" width="36" height="36" rx="10" fill="transparent"/>
+    <rect x="274" y="359" width="14" height="12" rx="2" fill="none" stroke="#94a3b8" stroke-width="1.2"/>
+    <line x1="274" y1="365" x2="288" y2="365" stroke="#94a3b8" stroke-width="1"/>
+
+    <rect x="268" y="392" width="36" height="36" rx="10" fill="transparent"/>
+    <rect x="274" y="399" width="14" height="4" rx="1" fill="#94a3b8"/>
+    <rect x="274" y="406" width="14" height="4" rx="1" fill="#94a3b8" opacity="0.6"/>
+    <rect x="274" y="413" width="14" height="4" rx="1" fill="#94a3b8" opacity="0.3"/>
+
+    <!-- Line before admin -->
+    <line x1="272" y1="440" x2="304" y2="440" stroke="#f1f5f9" stroke-width="1"/>
+
+    <rect x="268" y="448" width="36" height="36" rx="10" fill="transparent"/>
+    <circle cx="281" cy="458" r="4" fill="none" stroke="#94a3b8" stroke-width="1.2"/>
+    <path d="M274,466 Q274,462 281,462 Q288,462 288,466" fill="none" stroke="#94a3b8" stroke-width="1.2"/>
+
+    <rect x="268" y="488" width="36" height="36" rx="10" fill="transparent"/>
+    <line x1="274" y1="499" x2="288" y2="499" stroke="#94a3b8" stroke-width="1.2"/>
+    <line x1="274" y1="504" x2="288" y2="504" stroke="#94a3b8" stroke-width="1.2"/>
+    <line x1="274" y1="509" x2="282" y2="509" stroke="#94a3b8" stroke-width="1.2"/>
+
+    <!-- User avatar -->
+    <line x1="264" y1="604" x2="312" y2="604" stroke="#e2e8f0" stroke-width="1"/>
+    <rect x="272" y="612" width="28" height="28" rx="14" fill="#4f63ff"/>
+    <text x="286" y="630" font-size="9" font-weight="700" fill="#ffffff" text-anchor="middle">AG</text>
+  </g>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- STATE 3: ACCORDION OPEN -->
+  <!-- ════════════════════════════════════════════ -->
+  <g id="State/AccordionOpen">
+    <text x="352" y="72" font-size="9" font-weight="700" fill="#94a3b8" letter-spacing="1">ACCORDION — OPEN · max-height 0→360px · 250ms ease</text>
+
+    <!-- Sidebar surface -->
+    <rect x="352" y="80" width="200" height="560" fill="#ffffff" filter="url(#shadow-sm)"/>
+    <line x1="552" y1="80" x2="552" y2="640" stroke="#e2e8f0" stroke-width="1"/>
+
+    <!-- Logo area -->
+    <rect x="352" y="80" width="200" height="60" fill="#ffffff"/>
+    <line x1="352" y1="140" x2="552" y2="140" stroke="#e2e8f0" stroke-width="1"/>
+    <rect x="364" y="94" width="32" height="32" rx="8" fill="#4f63ff"/>
+    <text x="380" y="114" font-size="9" font-weight="700" fill="#ffffff" text-anchor="middle">PPP</text>
+    <text x="404" y="107" font-size="10" font-weight="700" fill="#0f172a">Pura Pura Ponsel</text>
+    <text x="404" y="120" font-size="8" fill="#94a3b8">Marketing Dashboard</text>
+
+    <!-- Some default nav items before Content -->
+    <text x="364" y="160" font-size="8" font-weight="700" fill="#94a3b8" letter-spacing="1.5">MARKETING</text>
+
+    <!-- Analytics (default here) -->
+    <rect x="356" y="168" width="192" height="36" rx="10" fill="transparent"/>
+    <rect x="364" y="174" width="20" height="20" rx="5" fill="#f1f5f9"/>
+    <text x="392" y="188" font-size="10" fill="#64748b">Analytics</text>
+
+    <!-- Distribution -->
+    <rect x="356" y="208" width="192" height="36" rx="10" fill="transparent"/>
+    <rect x="364" y="214" width="20" height="20" rx="5" fill="#f1f5f9"/>
+    <text x="392" y="228" font-size="10" fill="#64748b">Distribution</text>
+
+    <!-- Story -->
+    <rect x="356" y="248" width="192" height="36" rx="10" fill="transparent"/>
+    <rect x="364" y="254" width="20" height="20" rx="5" fill="#f1f5f9"/>
+    <text x="392" y="268" font-size="10" fill="#64748b">Story</text>
+
+    <!-- ACCORDION PARENT: Content (OPEN) -->
+    <g id="Component/NavItem-Accordion-Open">
+      <rect x="356" y="288" width="192" height="40" rx="10" fill="#f8fafc"/>
+      <rect x="364" y="296" width="24" height="24" rx="6" fill="#eef0ff"/>
+      <!-- Layers icon -->
+      <rect x="367" y="299" width="14" height="4" rx="1" fill="#4f63ff"/>
+      <rect x="367" y="306" width="14" height="4" rx="1" fill="#4f63ff" opacity="0.6"/>
+      <rect x="367" y="313" width="14" height="4" rx="1" fill="#4f63ff" opacity="0.3"/>
+      <text x="396" y="312" font-size="11" font-weight="600" fill="#334155">Content</text>
+      <!-- Chevron DOWN (open) -->
+      <text x="535" y="313" font-size="9" fill="#4f63ff" text-anchor="middle">▼</text>
+    </g>
+
+    <!-- Accordion children (expanded) -->
+    <g id="Component/AccordionChildren">
+      <!-- Slide-down container -->
+      <rect x="356" y="328" width="192" height="112" rx="0" fill="#f8fafc"/>
+
+      <!-- Child 1: Analytics Content -->
+      <g id="Component/NavItem-AccordionChild-Active">
+        <rect x="368" y="332" width="176" height="32" rx="8" fill="#eef0ff"/>
+        <circle cx="378" cy="348" r="3" fill="#4f63ff"/>
+        <text x="388" y="352" font-size="10" font-weight="600" fill="#4f63ff">Analytics</text>
+      </g>
+
+      <!-- Child 2: Top Content -->
+      <g id="Component/NavItem-AccordionChild-2">
+        <rect x="368" y="368" width="176" height="32" rx="8" fill="transparent"/>
+        <circle cx="378" cy="384" r="3" fill="#cbd5e1"/>
+        <text x="388" y="388" font-size="10" fill="#64748b">Top Content</text>
+      </g>
+
+      <!-- Child 3: Low Content -->
+      <g id="Component/NavItem-AccordionChild-3">
+        <rect x="368" y="404" width="176" height="28" rx="8" fill="transparent"/>
+        <circle cx="378" cy="418" r="3" fill="#cbd5e1"/>
+        <text x="388" y="422" font-size="10" fill="#64748b">Low Content</text>
+      </g>
+
+      <!-- Transition indicator -->
+      <line x1="360" y1="336" x2="360" y2="428" stroke="#c7d2fe" stroke-width="2" stroke-dasharray="4,3"/>
+    </g>
+
+    <!-- More items after accordion -->
+    <rect x="356" y="444" width="192" height="36" rx="10" fill="transparent"/>
+    <rect x="364" y="450" width="20" height="20" rx="5" fill="#f1f5f9"/>
+    <text x="392" y="464" font-size="10" fill="#64748b">Promo</text>
+
+    <!-- Annotation: max-height transition -->
+    <rect x="556" y="288" width="160" height="44" rx="8" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
+    <text x="566" y="304" font-size="8" font-weight="700" fill="#1d4ed8">max-height: 0 → 360px</text>
+    <text x="566" y="316" font-size="8" fill="#1d4ed8">overflow: hidden</text>
+    <text x="566" y="328" font-size="8" fill="#1d4ed8">transition: 250ms ease</text>
+    <line x1="556" y1="308" x2="552" y2="308" stroke="#3b82f6" stroke-width="1" stroke-dasharray="3,2"/>
+    <circle cx="552" cy="308" r="2" fill="#3b82f6"/>
+
+    <!-- User area -->
+    <line x1="352" y1="604" x2="552" y2="604" stroke="#e2e8f0" stroke-width="1"/>
+    <rect x="364" y="612" width="28" height="28" rx="14" fill="#4f63ff"/>
+    <text x="378" y="630" font-size="9" font-weight="700" fill="#ffffff" text-anchor="middle">AG</text>
+    <text x="400" y="623" font-size="9" font-weight="600" fill="#0f172a">Agus Arya</text>
+    <text x="400" y="635" font-size="8" fill="#94a3b8">Admin</text>
+  </g>
+
+  <!-- ════════════════════════════════════════════ -->
+  <!-- STATE 4: NAV ITEM STATES -->
+  <!-- ════════════════════════════════════════════ -->
+  <g id="State/NavItemStates">
+    <text x="620" y="72" font-size="9" font-weight="700" fill="#94a3b8" letter-spacing="1">NAV ITEM STATES</text>
+
+    <!-- 1. Default -->
+    <g id="Component/NavItem-State-Default">
+      <rect x="620" y="80" width="192" height="40" rx="10" fill="transparent" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,3"/>
+      <rect x="628" y="88" width="24" height="24" rx="6" fill="#f1f5f9"/>
+      <rect x="633" y="93" width="14" height="4" rx="1" fill="#94a3b8"/>
+      <rect x="633" y="100" width="14" height="4" rx="1" fill="#94a3b8" opacity="0.6"/>
+      <rect x="633" y="107" width="10" height="4" rx="1" fill="#94a3b8" opacity="0.3"/>
+      <text x="660" y="104" font-size="11" fill="#64748b">Default state</text>
+      <text x="820" y="97" font-size="8" fill="#94a3b8" text-anchor="end">bg: transparent</text>
+      <text x="820" y="108" font-size="8" fill="#94a3b8" text-anchor="end">icon: #94a3b8</text>
+      <text x="820" y="119" font-size="8" fill="#94a3b8" text-anchor="end">text: #64748b</text>
+    </g>
+
+    <!-- 2. Hover -->
+    <g id="Component/NavItem-State-Hover">
+      <rect x="620" y="132" width="192" height="40" rx="10" fill="#f8fafc"/>
+      <rect x="628" y="140" width="24" height="24" rx="6" fill="#f1f5f9"/>
+      <rect x="633" y="145" width="14" height="4" rx="1" fill="#64748b"/>
+      <rect x="633" y="152" width="14" height="4" rx="1" fill="#64748b" opacity="0.6"/>
+      <rect x="633" y="159" width="10" height="4" rx="1" fill="#64748b" opacity="0.3"/>
+      <text x="660" y="156" font-size="11" fill="#334155" font-weight="500">Hover state</text>
+      <text x="820" y="149" font-size="8" fill="#94a3b8" text-anchor="end">bg: #f8fafc</text>
+      <text x="820" y="160" font-size="8" fill="#94a3b8" text-anchor="end">icon: #64748b</text>
+      <text x="820" y="171" font-size="8" fill="#94a3b8" text-anchor="end">text: #334155</text>
+    </g>
+
+    <!-- 3. Active -->
+    <g id="Component/NavItem-State-Active">
+      <rect x="620" y="184" width="192" height="40" rx="10" fill="#eef0ff"/>
+      <!-- Active left indicator -->
+      <circle cx="620" cy="204" r="3" fill="#4f63ff"/>
+      <rect x="628" y="192" width="24" height="24" rx="6" fill="#c7d2fe"/>
+      <rect x="633" y="197" width="14" height="4" rx="1" fill="#4f63ff"/>
+      <rect x="633" y="204" width="14" height="4" rx="1" fill="#4f63ff" opacity="0.6"/>
+      <rect x="633" y="211" width="10" height="4" rx="1" fill="#4f63ff" opacity="0.3"/>
+      <text x="660" y="208" font-size="11" fill="#4f63ff" font-weight="700">Active state</text>
+      <text x="820" y="201" font-size="8" fill="#94a3b8" text-anchor="end">bg: #eef0ff</text>
+      <text x="820" y="212" font-size="8" fill="#4f63ff" text-anchor="end">icon: #4f63ff</text>
+      <text x="820" y="223" font-size="8" fill="#4f63ff" text-anchor="end">text: #4f63ff fw-700</text>
+    </g>
+
+    <!-- 4. With badge -->
+    <g id="Component/NavItem-State-Badge">
+      <rect x="620" y="236" width="192" height="40" rx="10" fill="transparent" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,3"/>
+      <rect x="628" y="244" width="24" height="24" rx="6" fill="#f1f5f9"/>
+      <circle cx="635" cy="252" r="4" fill="none" stroke="#94a3b8" stroke-width="1.2"/>
+      <path d="M628,260 Q628,256 635,256 Q642,256 642,260" fill="none" stroke="#94a3b8" stroke-width="1.2"/>
+      <text x="660" y="260" font-size="11" fill="#64748b">Auth Users</text>
+      <!-- Badge -->
+      <rect x="787" y="244" width="22" height="16" rx="8" fill="#ef4444"/>
+      <text x="798" y="256" font-size="8" font-weight="700" fill="#ffffff" text-anchor="middle">3</text>
+      <text x="820" y="248" font-size="8" fill="#94a3b8" text-anchor="end"/>
+      <text x="820" y="260" font-size="8" fill="#ef4444" text-anchor="end">badge: #ef4444</text>
+      <text x="820" y="271" font-size="8" fill="#94a3b8" text-anchor="end">rx=99 px-6 py-2</text>
+    </g>
+
+    <!-- 5. Accordion parent -->
+    <g id="Component/NavItem-State-AccordionParent">
+      <rect x="620" y="288" width="192" height="40" rx="10" fill="transparent" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,3"/>
+      <rect x="628" y="296" width="24" height="24" rx="6" fill="#f1f5f9"/>
+      <rect x="633" y="299" width="14" height="4" rx="1" fill="#94a3b8"/>
+      <rect x="633" y="306" width="14" height="4" rx="1" fill="#94a3b8" opacity="0.6"/>
+      <rect x="633" y="313" width="14" height="4" rx="1" fill="#94a3b8" opacity="0.3"/>
+      <text x="660" y="312" font-size="11" fill="#64748b">Content</text>
+      <!-- Chevron right -->
+      <text x="803" y="313" font-size="9" fill="#94a3b8" text-anchor="middle">▶</text>
+      <text x="820" y="304" font-size="8" fill="#94a3b8" text-anchor="end">chevron: ▶</text>
+      <text x="820" y="315" font-size="8" fill="#94a3b8" text-anchor="end">rotates 90° open</text>
+      <text x="820" y="326" font-size="8" fill="#94a3b8" text-anchor="end">transition: 200ms</text>
+    </g>
+
+    <!-- Spacing tokens -->
+    <g id="Section/SidebarTokens">
+      <text x="620" y="352" font-size="9" font-weight="700" fill="#94a3b8" letter-spacing="1.5">SIDEBAR TOKENS</text>
+
+      <rect x="620" y="358" width="260" height="180" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+
+      <rect x="620" y="358" width="260" height="28" rx="10" fill="#f8fafc"/>
+      <rect x="620" y="372" width="260" height="14" fill="#f8fafc"/>
+      <text x="630" y="376" font-size="8" font-weight="700" fill="#64748b">Token</text>
+      <text x="770" y="376" font-size="8" font-weight="700" fill="#64748b">Value</text>
+      <line x1="620" y1="386" x2="880" y2="386" stroke="#e2e8f0" stroke-width="1"/>
+
+      <text x="630" y="400" font-size="8" fill="#0f172a">sidebar-width-open</text>
+      <text x="770" y="400" font-size="8" fill="#4f63ff">200px</text>
+      <line x1="620" y1="408" x2="880" y2="408" stroke="#f1f5f9" stroke-width="1"/>
+
+      <text x="630" y="422" font-size="8" fill="#0f172a">sidebar-width-collapsed</text>
+      <text x="770" y="422" font-size="8" fill="#4f63ff">48px</text>
+      <line x1="620" y1="430" x2="880" y2="430" stroke="#f1f5f9" stroke-width="1"/>
+
+      <text x="630" y="444" font-size="8" fill="#0f172a">nav-item-height</text>
+      <text x="770" y="444" font-size="8" fill="#4f63ff">40px</text>
+      <line x1="620" y1="452" x2="880" y2="452" stroke="#f1f5f9" stroke-width="1"/>
+
+      <text x="630" y="466" font-size="8" fill="#0f172a">nav-item-radius</text>
+      <text x="770" y="466" font-size="8" fill="#4f63ff">10px</text>
+      <line x1="620" y1="474" x2="880" y2="474" stroke="#f1f5f9" stroke-width="1"/>
+
+      <text x="630" y="488" font-size="8" fill="#0f172a">nav-item-px</text>
+      <text x="770" y="488" font-size="8" fill="#4f63ff">12px</text>
+      <line x1="620" y1="496" x2="880" y2="496" stroke="#f1f5f9" stroke-width="1"/>
+
+      <text x="630" y="510" font-size="8" fill="#0f172a">nav-icon-size</text>
+      <text x="770" y="510" font-size="8" fill="#4f63ff">16×16px</text>
+      <line x1="620" y1="518" x2="880" y2="518" stroke="#f1f5f9" stroke-width="1"/>
+
+      <text x="630" y="532" font-size="8" fill="#0f172a">sidebar-transition</text>
+      <text x="770" y="532" font-size="8" fill="#4f63ff">250ms ease</text>
+    </g>
+
+    <!-- App header bar -->
+    <g id="Component/AppHeaderBar">
+      <text x="620" y="560" font-size="9" font-weight="700" fill="#94a3b8" letter-spacing="1.5">APP HEADER BAR — h=56px</text>
+
+      <rect x="620" y="566" width="260" height="56" rx="10" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow-sm)"/>
+
+      <!-- Breadcrumb -->
+      <text x="632" y="588" font-size="8" fill="#94a3b8">Marketing</text>
+      <text x="676" y="588" font-size="8" fill="#94a3b8">/</text>
+      <text x="683" y="588" font-size="8" font-weight="600" fill="#0f172a">Analytics</text>
+
+      <!-- Page title -->
+      <text x="632" y="604" font-size="10" font-weight="700" fill="#0f172a">Analytics</text>
+
+      <!-- Header actions (right) -->
+      <rect x="816" y="573" width="56" height="28" rx="8" fill="#4f63ff"/>
+      <text x="844" y="591" font-size="8" font-weight="600" fill="#ffffff" text-anchor="middle">+ Tambah</text>
+
+      <!-- Search -->
+      <rect x="748" y="573" width="64" height="28" rx="8" fill="#f1f5f9"/>
+      <text x="759" y="591" font-size="8" fill="#94a3b8">🔍 Cari…</text>
+    </g>
+  </g>
+</svg>

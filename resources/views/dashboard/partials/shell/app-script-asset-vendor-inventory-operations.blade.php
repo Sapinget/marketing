@@ -27,13 +27,11 @@
                     const s = new Set(); aviData.value.forEach(r => { if (r.brand) s.add(r.brand); }); return s.size;
                 });
                 const aviTotalQuantity = computed(() => aviData.value.reduce((s, r) => s + (Number(r.quantity) || 0), 0));
-                const aviSummaryChips = computed(() => {
+                const aviTopVendor = computed(() => {
                     const m = {};
                     aviData.value.forEach(r => { const k = (r.vendor || '-').trim(); m[k] = (m[k] || 0) + 1; });
-                    return Object.entries(m).sort((a, b) => b[1] - a[1]).slice(0, 6).map(([label, n], i) => {
-                        const _SPAL = ['bg-blue-50 text-blue-700', 'bg-emerald-50 text-emerald-700', 'bg-amber-50 text-amber-700', 'bg-rose-50 text-rose-700', 'bg-violet-50 text-violet-700', 'bg-slate-100 text-slate-600'];
-                        return { label: String(label).toUpperCase(), n, cls: _SPAL[i % _SPAL.length] };
-                    });
+                    const topVendor = Object.entries(m).sort((a, b) => b[1] - a[1])[0] || null;
+                    return topVendor ? { label: String(topVendor[0]).toUpperCase(), n: topVendor[1] } : null;
                 });
                 const aviConditionOptions = ['New', 'Used', 'Refurbished', 'Display Unit', 'Broken', 'Others'];
                 watch(aviSearch, () => { aviPage.value = 1; });

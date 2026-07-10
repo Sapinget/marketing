@@ -10,17 +10,10 @@ class EnsureDashboardAccess
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->check()) {
-            return $next($request);
+        if (! auth()->check()) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
         }
 
-        $expectedSecret = trim((string) config('services.gas_proxy.secret', ''));
-        $providedSecret = trim((string) $request->header('X-GAS-PROXY-SECRET', ''));
-
-        if ($expectedSecret !== '' && hash_equals($expectedSecret, $providedSecret)) {
-            return $next($request);
-        }
-
-        return response()->json(['message' => 'Unauthenticated.'], 401);
+        return $next($request);
     }
 }

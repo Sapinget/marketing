@@ -6,37 +6,28 @@ use App\Support\MetaIgImportNormalizer;
 use Illuminate\Support\Facades\DB;
 use App\Support\MarketingDashboardShell;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\Rule;
 
 $nullableDate = fn ($value) => blank($value) ? null : $value;
 
-$actor = fn () => trim((string) (request()->header('X-App-User') ?? '')) ?: null;
+$actor = function (): ?string {
+    $user = auth()->user();
+
+    if ($user instanceof \App\Models\User) {
+        return $user->username ?: $user->email ?: $user->name;
+    }
+
+    return null;
+};
 $actorUserId = function () use ($actor): ?int {
     $authenticatedUserId = auth()->id();
     if (is_int($authenticatedUserId)) {
         return $authenticatedUserId;
     }
 
-    $actorValue = $actor();
-    if ($actorValue === null) {
-        return null;
-    }
-
-    $resolvedUserId = DB::table('users')
-        ->where(function ($query) use ($actorValue) {
-            $query->where('username', $actorValue)
-                ->orWhere('email', $actorValue)
-                ->orWhere('name', $actorValue);
-        })
-        ->value('id');
-
-    return is_numeric($resolvedUserId) ? (int) $resolvedUserId : null;
+    return null;
 };
 $actorLabel = function () use ($actor): ?string {
-    $user = auth()->user();
-    if ($user instanceof \App\Models\User) {
-        return $user->username ?: $user->name;
-    }
-
     return $actor();
 };
 $masterPlanIdBySourceId = function (?string $sourceId): ?int {
@@ -287,8 +278,6 @@ Route::post('/print-job', function () {
 ]);
 
 Route::get('/api/auth/session', function (DashboardAuth $dashboardAuth) {
-    $dashboardAuth->bootstrapConfiguredAdminSession();
-
     if (! auth()->check()) {
         return response()->json([
             'authenticated' => false,
@@ -333,27 +322,66 @@ Route::post('/api/auth/logout', function (DashboardAuth $dashboardAuth) {
 });
 
 Route::prefix('__db')->group(function (): void {
+    $schema = \Illuminate\Support\Facades\Schema::connection(DB::getDefaultConnection());
     $assertLocalRequest = static function (): void {
-        $isProxyAuthed = request()->header('X-GAS-PROXY-SECRET') === env('GAS_PROXY_SECRET');
-        abort_unless(app()->environment('local') || $isProxyAuthed, 404);
-        abort_unless(in_array(request()->ip(), ['127.0.0.1', '::1'], true) || $isProxyAuthed, 403);
+        abort_unless((string) config('app.env') === 'local', 404);
+        abort_unless(in_array(request()->ip(), ['127.0.0.1', '::1'], true), 403);
+    };
+    $sensitivePreviewTables = [
+        'users',
+        'sessions',
+        'password_reset_tokens',
+        'cache',
+        'cache_locks',
+        'jobs',
+        'failed_jobs',
+    ];
+    $logDbPreviewAccess = static function (string $action, string $recordKey, ?array $afterPayload = null): void {
+        if (! \Illuminate\Support\Facades\Schema::hasTable('activity_logs')) {
+            return;
+        }
+
+        DB::table('activity_logs')->insert([
+            'user_id' => auth()->id(),
+            'actor_label' => 'local-db-preview',
+            'table_name' => '__db',
+            'action' => $action,
+            'record_key' => $recordKey,
+            'record_id' => null,
+            'before_payload' => null,
+            'after_payload' => $afterPayload === null ? null : json_encode($afterPayload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            'created_at' => now(),
+        ]);
+    };
+    $tableListing = static function () use ($schema): \Illuminate\Support\Collection {
+        return collect($schema->getTableListing())
+            ->map(fn ($table): string => (string) $table)
+            ->sort()
+            ->values();
+    };
+    $columnListing = static function (string $table) use ($schema): \Illuminate\Support\Collection {
+        return collect($schema->getColumnListing($table))
+            ->map(fn ($column): string => (string) $column)
+            ->values();
     };
 
-    Route::get('/tables', function () use ($assertLocalRequest) {
+    Route::get('/tables', function () use ($assertLocalRequest, $logDbPreviewAccess, $tableListing) {
         $assertLocalRequest();
 
         $database = DB::getDatabaseName();
-        $tables = collect(DB::select('SHOW TABLES'))
-            ->map(function (object $row): array {
-                $table = (string) array_values((array) $row)[0];
-
+        $tables = $tableListing()
+            ->map(function (string $table): array {
                 return [
                     'name' => $table,
                     'count' => DB::table($table)->count(),
                 ];
             })
-            ->sortBy('name')
             ->values();
+
+        $logDbPreviewAccess('browse', 'tables', [
+            'database' => $database,
+            'table_count' => $tables->count(),
+        ]);
 
         return view('db.tables', [
             'database' => $database,
@@ -361,17 +389,19 @@ Route::prefix('__db')->group(function (): void {
         ]);
     });
 
-    Route::get('/tables/{table}', function (string $table) use ($assertLocalRequest) {
+    Route::get('/tables/{table}', function (string $table) use ($assertLocalRequest, $logDbPreviewAccess, $sensitivePreviewTables, $tableListing, $columnListing) {
         $assertLocalRequest();
 
-        $allowedTables = collect(DB::select('SHOW TABLES'))
-            ->map(fn (object $row): string => (string) array_values((array) $row)[0]);
+        $allowedTables = $tableListing();
 
         abort_unless($allowedTables->contains($table), 404);
+        abort_if(in_array($table, $sensitivePreviewTables, true), 403, 'Preview tabel sensitif tidak diizinkan.');
 
-        $columns = collect(DB::select("SHOW COLUMNS FROM `{$table}`"))
-            ->map(fn (object $column): string => (string) $column->Field)
-            ->values();
+        $columns = $columnListing($table);
+
+        $logDbPreviewAccess('preview', $table, [
+            'columns' => $columns->count(),
+        ]);
 
         return view('db.table-preview', [
             'table' => $table,
@@ -382,26 +412,6 @@ Route::prefix('__db')->group(function (): void {
     });
 });
 
-Route::middleware('gas.proxy')->group(function () use (
-    $actor,
-    $actorLabel,
-    $actorUserId,
-    $analyticsPayload,
-    $analyticsResponse,
-    $dedupeNamaStockRows,
-    $distributionPayload,
-    $distributionResponse,
-    $logCrudActivity,
-    $lpjkIdBySourceId,
-    $requireLpjkIdBySourceId,
-    $masterPlanPayload,
-    $masterPlanIdBySourceId,
-    $requireMasterPlanIdBySourceId,
-    $masterPlanResponse,
-    $masterPlanValidate,
-    $nullableDate,
-    $rowValue
-): void {
 Route::get('/', function (MarketingDashboardShell $dashboardShell) {
     $backendUrl = rtrim(url('/'), '/');
 
@@ -438,23 +448,62 @@ Route::middleware('dashboard.auth')->group(function () use (
     $nullableDate,
     $rowValue
 ): void {
-Route::get('/api/auth/users', function (DashboardAuth $dashboardAuth) {
+    $assertUserManagementAccess = static function (): void {
+        $user = auth()->user();
+
+        abort_unless($user instanceof \App\Models\User, 401);
+        abort_unless(app(DashboardAuth::class)->canManageUsers($user), 403, 'Forbidden');
+    };
+    $assertSensitiveLogAccess = static function (): void {
+        $user = auth()->user();
+
+        abort_unless($user instanceof \App\Models\User, 401);
+        abort_unless(app(DashboardAuth::class)->canAccessSensitiveLogs($user), 403, 'Forbidden');
+    };
+    $assertSettingsManagementAccess = static function (): void {
+        $user = auth()->user();
+
+        abort_unless($user instanceof \App\Models\User, 401);
+        abort_unless(app(DashboardAuth::class)->canManageSettings($user), 403, 'Forbidden');
+    };
+    $assertRawSheetManagementAccess = static function (): void {
+        $user = auth()->user();
+
+        abort_unless($user instanceof \App\Models\User, 401);
+        abort_unless(app(DashboardAuth::class)->canManageRawSheets($user), 403, 'Forbidden');
+    };
+    $assertAnalyticsImportAccess = static function (): void {
+        $user = auth()->user();
+
+        abort_unless($user instanceof \App\Models\User, 401);
+        abort_unless(app(DashboardAuth::class)->canImportAnalytics($user), 403, 'Forbidden');
+    };
+
+Route::get('/api/auth/users', function (DashboardAuth $dashboardAuth) use ($assertUserManagementAccess) {
+    $assertUserManagementAccess();
+
     return response()->json([
         'data' => $dashboardAuth->listUsers(),
     ]);
 });
 
-Route::post('/api/auth/users', function (DashboardAuth $dashboardAuth) use ($logCrudActivity) {
+Route::post('/api/auth/users', function (DashboardAuth $dashboardAuth) use ($assertUserManagementAccess, $logCrudActivity) {
+    $assertUserManagementAccess();
+
     $payload = request()->validate([
-        'username' => ['required', 'string', 'min:3', 'max:100'],
+        'username' => ['required', 'string', 'min:3', 'max:100', Rule::unique('users', 'username')],
         'nama' => ['required', 'string', 'max:255'],
-        'email' => ['nullable', 'email', 'max:255'],
+        'email' => ['nullable', 'email', 'max:255', Rule::unique('users', 'email')],
+        'role' => ['nullable', Rule::in($dashboardAuth->assignableRoles())],
         'pin' => ['required', 'string', 'min:6', 'max:100', 'confirmed'],
     ], [
         'username.required' => 'Username wajib diisi.',
         'username.min' => 'Username minimal 3 karakter.',
+        'username.unique' => 'Username sudah digunakan.',
         'nama.required' => 'Nama wajib diisi.',
         'email.email' => 'Format email tidak valid.',
+        'email.unique' => 'Email sudah digunakan.',
+        'role.in' => 'Role tidak valid.',
         'pin.required' => 'PIN wajib diisi.',
         'pin.min' => 'PIN minimal 6 karakter.',
         'pin.confirmed' => 'Konfirmasi PIN tidak cocok.',
@@ -468,15 +517,16 @@ Route::post('/api/auth/users', function (DashboardAuth $dashboardAuth) use ($log
             $payload['pin'],
             $payload['nama'],
             $payload['email'] ?? null,
+            $payload['role'] ?? null,
         );
 
         $logCrudActivity(
             'users',
-            $before === null ? 'create' : 'update',
+            'create',
             (string) $user->username,
             $user->getKey(),
-            $before?->only(['id', 'username', 'name', 'email']),
-            $user->only(['id', 'username', 'name', 'email'])
+            $before?->only(['id', 'username', 'name', 'email', 'role']),
+            $user->only(['id', 'username', 'name', 'email', 'role'])
         );
 
         return $user;
@@ -485,6 +535,77 @@ Route::post('/api/auth/users', function (DashboardAuth $dashboardAuth) use ($log
     return response()->json([
         'status' => 'success',
         'data' => $dashboardAuth->userPayload($user),
+    ]);
+});
+
+Route::put('/api/auth/users/{user}', function (\App\Models\User $user, DashboardAuth $dashboardAuth) use ($assertUserManagementAccess, $logCrudActivity) {
+    $assertUserManagementAccess();
+
+    $payload = request()->validate([
+        'username' => ['required', 'string', 'min:3', 'max:100', Rule::unique('users', 'username')->ignore($user->getKey())],
+        'nama' => ['required', 'string', 'max:255'],
+        'email' => ['nullable', 'email', 'max:255', Rule::unique('users', 'email')->ignore($user->getKey())],
+        'role' => ['nullable', Rule::in($dashboardAuth->assignableRoles())],
+        'pin' => ['nullable', 'string', 'min:6', 'max:100', 'confirmed'],
+    ], [
+        'username.required' => 'Username wajib diisi.',
+        'username.min' => 'Username minimal 3 karakter.',
+        'username.unique' => 'Username sudah digunakan.',
+        'nama.required' => 'Nama wajib diisi.',
+        'email.email' => 'Format email tidak valid.',
+        'email.unique' => 'Email sudah digunakan.',
+        'role.in' => 'Role tidak valid.',
+        'pin.min' => 'PIN minimal 6 karakter.',
+        'pin.confirmed' => 'Konfirmasi PIN tidak cocok.',
+    ]);
+
+    $before = $user->only(['id', 'username', 'name', 'email', 'role']);
+    $updatedUser = $dashboardAuth->updateUser(
+        $user,
+        $payload['username'],
+        $payload['pin'] ?? null,
+        $payload['nama'],
+        $payload['email'] ?? null,
+        $payload['role'] ?? null,
+    );
+
+    $logCrudActivity(
+        'users',
+        'update',
+        (string) $updatedUser->username,
+        $updatedUser->getKey(),
+        $before,
+        $updatedUser->only(['id', 'username', 'name', 'email', 'role'])
+    );
+
+    return response()->json([
+        'status' => 'success',
+        'data' => $dashboardAuth->userPayload($updatedUser),
+    ]);
+});
+
+Route::delete('/api/auth/users/{user}', function (\App\Models\User $user, DashboardAuth $dashboardAuth) use ($assertUserManagementAccess, $logCrudActivity) {
+    $assertUserManagementAccess();
+
+    abort_if(auth()->id() === $user->getKey(), 422, 'User yang sedang login tidak bisa dihapus.');
+
+    $before = $user->only(['id', 'username', 'name', 'email', 'role']);
+    $recordKey = (string) $user->username;
+    $recordId = $user->getKey();
+
+    $dashboardAuth->deleteUser($user);
+
+    $logCrudActivity(
+        'users',
+        'delete',
+        $recordKey,
+        $recordId,
+        $before,
+        null
+    );
+
+    return response()->json([
+        'status' => 'success',
     ]);
 });
 
@@ -534,7 +655,9 @@ Route::put('/api/auth/pin', function (DashboardAuth $dashboardAuth) use ($logCru
     ]);
 });
 
-Route::get('/api/activity-logs', function () {
+Route::get('/api/activity-logs', function () use ($assertSensitiveLogAccess) {
+    $assertSensitiveLogAccess();
+
     $query = DB::table('activity_logs')
         ->orderByDesc('created_at')
         ->orderByDesc('id');
@@ -650,7 +773,9 @@ Route::delete('/api/master-plans/{sourceId}', function (string $sourceId) use ($
     return response()->json(['status' => 'success']);
 });
 
-Route::get('/api/settings', function () {
+Route::get('/api/settings', function () use ($assertSettingsManagementAccess) {
+    $assertSettingsManagementAccess();
+
     $settings = DB::table('marketing_settings')
         ->orderBy('key')
         ->get(['key', 'values'])
@@ -663,7 +788,9 @@ Route::get('/api/settings', function () {
     return response()->json(['data' => $settings]);
 });
 
-Route::get('/api/raw-sheets/{sheetName}', function (string $sheetName) use ($dedupeNamaStockRows) {
+Route::get('/api/raw-sheets/{sheetName}', function (string $sheetName) use ($assertRawSheetManagementAccess, $dedupeNamaStockRows) {
+    $assertRawSheetManagementAccess();
+
     $sheetName = urldecode($sheetName);
     if ($sheetName === 'Nama_Stock') {
         $rows = DB::table('stock_names')
@@ -696,7 +823,9 @@ Route::get('/api/raw-sheets/{sheetName}', function (string $sheetName) use ($ded
     return response()->json(['data' => $rows]);
 });
 
-Route::put('/api/raw-sheets/{sheetName}', function (string $sheetName) use ($dedupeNamaStockRows, $logCrudActivity) {
+Route::put('/api/raw-sheets/{sheetName}', function (string $sheetName) use ($assertRawSheetManagementAccess, $dedupeNamaStockRows, $logCrudActivity) {
+    $assertRawSheetManagementAccess();
+
     $sheetName = urldecode($sheetName);
     $rows = request()->all('data')['data'] ?? request()->all();
     abort_unless(is_array($rows), 422, 'Data harus berupa array.');
@@ -842,7 +971,9 @@ Route::get('/api/meta-posts/{dataset}', function (string $dataset) {
     return response()->json(['data' => $rows]);
 });
 
-Route::post('/api/meta-posts/{dataset}/import', function (string $dataset) use ($inspectMetaPostDuplicates, $logCrudActivity, $upsertMetaPosts) {
+Route::post('/api/meta-posts/{dataset}/import', function (string $dataset) use ($assertAnalyticsImportAccess, $inspectMetaPostDuplicates, $logCrudActivity, $upsertMetaPosts) {
+    $assertAnalyticsImportAccess();
+
     abort_unless(in_array($dataset, ['story', 'feed'], true), 404);
 
     $rawRows = request()->input('rows', request()->input('data', []));
@@ -875,7 +1006,9 @@ Route::post('/api/meta-posts/{dataset}/import', function (string $dataset) use (
     return response()->json(['status' => 'success', ...$summary]);
 });
 
-Route::post('/api/meta-posts/{dataset}/import-folder', function (string $dataset) use ($inspectMetaPostDuplicates, $logCrudActivity, $upsertMetaPosts) {
+Route::post('/api/meta-posts/{dataset}/import-folder', function (string $dataset) use ($assertAnalyticsImportAccess, $inspectMetaPostDuplicates, $logCrudActivity, $upsertMetaPosts) {
+    $assertAnalyticsImportAccess();
+
     abort_unless(in_array($dataset, ['story', 'feed'], true), 404);
 
     $directory = (string) request()->input('directory', base_path('export-meta'));
@@ -916,7 +1049,9 @@ Route::post('/api/meta-posts/{dataset}/import-folder', function (string $dataset
     ]);
 });
 
-Route::delete('/api/meta-posts/{dataset}', function (string $dataset) use ($logCrudActivity) {
+Route::delete('/api/meta-posts/{dataset}', function (string $dataset) use ($assertAnalyticsImportAccess, $logCrudActivity) {
+    $assertAnalyticsImportAccess();
+
     $beforeCount = DB::table('meta_ig_posts')->where('dataset', $dataset)->count();
     DB::table('meta_ig_posts')->where('dataset', $dataset)->delete();
     $logCrudActivity('meta_ig_posts', 'delete', $dataset, null, [
@@ -927,7 +1062,9 @@ Route::delete('/api/meta-posts/{dataset}', function (string $dataset) use ($logC
     return response()->json(['status' => 'success']);
 });
 
-Route::put('/api/settings', function () use ($logCrudActivity) {
+Route::put('/api/settings', function () use ($assertSettingsManagementAccess, $logCrudActivity) {
+    $assertSettingsManagementAccess();
+
     $payload = request()->all();
     $settings = is_array($payload['data'] ?? null) ? $payload['data'] : $payload;
     $before = DB::table('marketing_settings')
@@ -1699,6 +1836,5 @@ Route::get('/api/all-data', function () use ($fromDb, $rowValue) {
         'bonusConfig'          => $bonusConfig,
         'budgetingConfig'      => $budgetingConfig,
     ]);
-});
 });
 });

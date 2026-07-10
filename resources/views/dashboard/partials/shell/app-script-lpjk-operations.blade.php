@@ -6,7 +6,7 @@
                     lpjkDetailGrouped,
                     lpjkDetailTotal,
                     openLpjkModal,
-                    saveLpjk,
+                    saveLpjk: saveLpjkOperation,
                     deleteLpjk,
                     openLpjkDetail,
                     closeLpjkDetail,
@@ -31,4 +31,7 @@
                     showNotification,
                     handleError,
                 });
+                const saveLpjk = () => {
+                    return saveLpjkOperation();
+                };
 @endverbatim

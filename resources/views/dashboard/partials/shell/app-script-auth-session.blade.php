@@ -31,6 +31,10 @@
                     const role = currentUser.value?.role || '';
                     return role.trim().toLowerCase() === 'teknisi';
                 });
+                const canManageUsers = computed(() => {
+                    const roleKey = String(currentUser.value?.role_key || '').trim().toLowerCase();
+                    return roleKey === 'super_admin';
+                });
                 const hasPermission = (tab, action) => {
                     if (isTeknisi.value && tab !== 'claim_garansi_asuransi') return false;
                     const permissions = currentUser.value?.permissions;

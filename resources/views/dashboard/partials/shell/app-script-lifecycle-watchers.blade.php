@@ -23,6 +23,8 @@
                     confirmModal.value.open
                 ));
 
+                let activityLogFilterDebounceId = null;
+
                 onMounted(async () => {
                     document.addEventListener("click", closeProfileMenu);
                     window.addEventListener("scroll", closeDropdownOnScroll, true);
@@ -72,6 +74,9 @@
                     window.removeEventListener("resize", handleResize);
                     window.removeEventListener("hashchange", handleHashChange);
                     tableSortObserver?.disconnect();
+                    if (activityLogFilterDebounceId) {
+                        window.clearTimeout(activityLogFilterDebounceId);
+                    }
                     setDocumentScrollLock(false);
                 });
 
@@ -91,6 +96,14 @@
 
                 // Tab Navigation & Data Loading
                 watch(() => activeTab.value, (newTab) => {
+                    if (newTab === 'auth_users' && currentUser.value && !canManageUsers.value) {
+                        activeTab.value = 'settings';
+                        localStorage.setItem("ppp_active_tab", 'settings');
+                        history.replaceState(null, '', '#settings');
+                        showNotification("Akses manajemen user hanya untuk Super Admin", "warning");
+                        return;
+                    }
+
                     const menuGroup = groupForTab(newTab);
                     if (menuGroup) {
                         openMenuGroup(menuGroup);
@@ -122,4 +135,31 @@
                         requestAnimationFrame(() => stabilizeActivePanelPosition());
                     });
                 }, { immediate: true });
+
+                watch(() => [
+                    activeTab.value,
+                    activityLogFilters.value.table_name,
+                    activityLogFilters.value.action,
+                    activityLogFilters.value.record_key,
+                ], ([tab]) => {
+                    if (tab !== 'activity_logs' || authBootstrapPending.value || !currentUser.value) {
+                        return;
+                    }
+                    activityLogPage.value = 1;
+                    if (activityLogFilterDebounceId) {
+                        window.clearTimeout(activityLogFilterDebounceId);
+                    }
+                    activityLogFilterDebounceId = window.setTimeout(() => {
+                        loadActivityLogs();
+                    }, 250);
+                });
+
+                watch([() => activityLogs.value.length, activityLogTotalPages], ([rowCount, totalPages]) => {
+                    if (!rowCount) {
+                        activityLogPage.value = 1;
+                        return;
+                    }
+                    if (activityLogPage.value > totalPages) activityLogPage.value = totalPages;
+                    if (activityLogPage.value < 1) activityLogPage.value = 1;
+                });
 @endverbatim

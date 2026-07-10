@@ -96,33 +96,63 @@
                 }
 
                 if (!window.MarketingDashboardRuntimeHelpers || !window.MarketingDashboardRuntimeHelpers.createAdminUserSettingsState) {
-                    window.MarketingDashboardRuntimeHelpers = {
-                        ...(window.MarketingDashboardRuntimeHelpers || {}),
-                        createAdminUserSettingsState: (makeRef) => ({
-                            profileForm: makeRef({ namaLengkap: "", oldPin: "", newPin: "", confirmPin: "" }),
-                            authUsers: makeRef([]),
-                            authUsersLoaded: makeRef(false),
-                            activityLogs: makeRef([]),
-                            activityLogsLoaded: makeRef(false),
-                            activityLogFilters: makeRef({ table_name: "", action: "", record_key: "" }),
-                            submittingAuthUser: makeRef(false),
-                            showAuthUserModal: makeRef(false),
-                            authUserForm: makeRef({ username: "", nama: "", email: "", pin: "", confirmPin: "" }),
+                        window.MarketingDashboardRuntimeHelpers = {
+                            ...(window.MarketingDashboardRuntimeHelpers || {}),
+                            createAdminUserSettingsState: (makeRef) => ({
+                                profileForm: makeRef({ namaLengkap: "", oldPin: "", newPin: "", confirmPin: "" }),
+                                authUsers: makeRef([]),
+                                authUsersLoaded: makeRef(false),
+                                authUserSearchQuery: makeRef(''),
+                                activityLogs: makeRef([]),
+                                activityLogsLoaded: makeRef(false),
+                                activityLogFilters: makeRef({ table_name: "", action: "", record_key: "" }),
+                                submittingAuthUser: makeRef(false),
+                                showAuthUserModal: makeRef(false),
+                                authUserFormMode: makeRef("create"),
+                                authUserForm: makeRef({ ID: null, username: "", nama: "", email: "", role: "operasional", pin: "", confirmPin: "" }),
                         }),
                     };
                 }
 
-                const {
-                    profileForm,
-                    authUsers,
-                    authUsersLoaded,
-                    activityLogs,
-                    activityLogsLoaded,
-                    activityLogFilters,
-                    submittingAuthUser,
-                    showAuthUserModal,
-                    authUserForm,
-                } = window.MarketingDashboardRuntimeHelpers.createAdminUserSettingsState(ref);
+                const adminUserSettingsState = window.MarketingDashboardRuntimeHelpers.createAdminUserSettingsState(ref);
+                const profileForm = adminUserSettingsState.profileForm || ref({ namaLengkap: "", oldPin: "", newPin: "", confirmPin: "" });
+                const authUsers = adminUserSettingsState.authUsers || ref([]);
+                const authUsersLoaded = adminUserSettingsState.authUsersLoaded || ref(false);
+                const authUserSearchQuery = adminUserSettingsState.authUserSearchQuery || ref('');
+                const activityLogs = adminUserSettingsState.activityLogs || ref([]);
+                const activityLogsLoaded = adminUserSettingsState.activityLogsLoaded || ref(false);
+                const activityLogFilters = adminUserSettingsState.activityLogFilters || ref({ table_name: "", action: "", record_key: "" });
+                const submittingAuthUser = adminUserSettingsState.submittingAuthUser || ref(false);
+                const showAuthUserModal = adminUserSettingsState.showAuthUserModal || ref(false);
+                const authUserFormMode = adminUserSettingsState.authUserFormMode || ref("create");
+                const authUserForm = adminUserSettingsState.authUserForm || ref({ ID: null, username: "", nama: "", email: "", role: "operasional", pin: "", confirmPin: "" });
+                const authUserRoleOptions = [
+                    { value: 'super_admin', label: 'Super Admin' },
+                    { value: 'admin', label: 'Admin' },
+                    { value: 'kasir', label: 'Kasir' },
+                    { value: 'operasional', label: 'Operasional' },
+                ];
+                const filteredAuthUsers = computed(() => {
+                    const q = String(authUserSearchQuery.value || '').trim().toLowerCase();
+                    return (Array.isArray(authUsers.value) ? authUsers.value : [])
+                        .filter(Boolean)
+                        .filter((user) => {
+                            if (!q) return true;
+                            return [user?.username, user?.nama, user?.email]
+                                .some((value) => String(value || '').toLowerCase().includes(q));
+                        });
+                });
+                const filteredAuthUserRoleOptions = computed(() => {
+                    const q = String(searchSelectQuery.value || '').trim().toLowerCase();
+                    return authUserRoleOptions.filter((option) => {
+                        return [option.value, option.label]
+                            .some((value) => String(value || '').toLowerCase().includes(q));
+                    });
+                });
+                const ACTIVITY_LOG_PAGE_SIZE = 15;
+                const activityLogPage = ref(1);
+                const activityLogTotalPages = computed(() => Math.max(1, Math.ceil(activityLogs.value.length / ACTIVITY_LOG_PAGE_SIZE)));
+                const pagedActivityLogs = computed(() => activityLogs.value.slice((activityLogPage.value - 1) * ACTIVITY_LOG_PAGE_SIZE, activityLogPage.value * ACTIVITY_LOG_PAGE_SIZE));
 
                 // Nama Stock State
                 if (!window.MarketingDashboardRuntimeHelpers || !window.MarketingDashboardRuntimeHelpers.createNamaStockState) {
@@ -163,6 +193,13 @@
                 const switchTab = (tab) => {
                     if (isTeknisi.value && !TEKNISI_TABS.has(tab)) {
                         showNotification("Akses dibatasi untuk role Teknisi", "warning");
+                        return;
+                    }
+                    if (tab === 'auth_users' && !canManageUsers.value) {
+                        showNotification("Akses manajemen user hanya untuk Super Admin", "warning");
+                        activeTab.value = 'settings';
+                        localStorage.setItem("ppp_active_tab", 'settings');
+                        history.replaceState(null, '', '#settings');
                         return;
                     }
                     activeTab.value = tab;

@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="500" viewBox="0 0 900 500" font-family="system-ui, -apple-system, sans-serif">
+
+  <!-- Artboard background -->
+  <rect width="900" height="500" fill="#f8fafc"/>
+  <rect width="900" height="500" fill="none" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- Page title -->
+  <text x="24" y="36" font-size="16" fill="#0f172a" font-weight="700">SEGMENTED CONTROL</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- SECTION A — STANDARD 3-TAB               -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <text x="24" y="72" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="0.5">STANDARD — 3 items</text>
+
+  <!-- ─── State 1: Tab 1 active (x=24, y=84) ─── -->
+  <g id="Segmented/Standard/Tab1Active">
+    <!-- Track -->
+    <rect x="24" y="84" width="260" height="40" rx="16" fill="#f1f5f9"/>
+    <!-- Active pill: tab 1 -->
+    <rect x="28" y="88" width="82" height="32" rx="12" fill="#ffffff" filter="url(#pill-shadow)"/>
+    <!-- Tab 1 label (active) -->
+    <text x="69"  y="109" font-size="12" fill="#0f172a" font-weight="600" text-anchor="middle">Semua</text>
+    <!-- Tab 2 label (inactive) -->
+    <text x="154" y="109" font-size="12" fill="#64748b" text-anchor="middle">Aktif</text>
+    <!-- Tab 3 label (inactive) -->
+    <text x="239" y="109" font-size="12" fill="#64748b" text-anchor="middle">Selesai</text>
+  </g>
+  <text x="154" y="136" font-size="9" fill="#94a3b8" text-anchor="middle">Tab 1 Active</text>
+
+  <!-- ─── State 2: Tab 2 active (x=320, y=84) ─── -->
+  <g id="Segmented/Standard/Tab2Active">
+    <rect x="320" y="84" width="260" height="40" rx="16" fill="#f1f5f9"/>
+    <!-- Active pill: tab 2 -->
+    <rect x="408" y="88" width="82" height="32" rx="12" fill="#ffffff" filter="url(#pill-shadow)"/>
+    <text x="365" y="109" font-size="12" fill="#64748b" text-anchor="middle">Semua</text>
+    <text x="449" y="109" font-size="12" fill="#0f172a" font-weight="600" text-anchor="middle">Aktif</text>
+    <text x="534" y="109" font-size="12" fill="#64748b" text-anchor="middle">Selesai</text>
+  </g>
+  <text x="450" y="136" font-size="9" fill="#94a3b8" text-anchor="middle">Tab 2 Active</text>
+
+  <!-- ─── State 3: Tab 3 active (x=616, y=84) ─── -->
+  <g id="Segmented/Standard/Tab3Active">
+    <rect x="616" y="84" width="260" height="40" rx="16" fill="#f1f5f9"/>
+    <!-- Active pill: tab 3 -->
+    <rect x="790" y="88" width="82" height="32" rx="12" fill="#ffffff" filter="url(#pill-shadow)"/>
+    <text x="661" y="109" font-size="12" fill="#64748b" text-anchor="middle">Semua</text>
+    <text x="746" y="109" font-size="12" fill="#64748b" text-anchor="middle">Aktif</text>
+    <text x="831" y="109" font-size="12" fill="#0f172a" font-weight="600" text-anchor="middle">Selesai</text>
+  </g>
+  <text x="746" y="136" font-size="9" fill="#94a3b8" text-anchor="middle">Tab 3 Active</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- SECTION B — iOS ANIMATED STYLE             -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <!-- Divider -->
+  <line x1="24" y1="156" x2="876" y2="156" stroke="#e2e8f0" stroke-width="1"/>
+
+  <text x="24" y="178" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="0.5">IOS ANIMATED — transition pill</text>
+
+  <!-- ─── iOS: Tab 1 active ─── -->
+  <g id="Segmented/iOS/Tab1Active">
+    <rect x="24" y="186" width="260" height="40" rx="16" fill="#f1f5f9"/>
+    <rect x="28" y="190" width="82" height="32" rx="12" fill="#ffffff" filter="url(#pill-shadow)"/>
+    <text x="69"  y="211" font-size="12" fill="#0f172a" font-weight="600" text-anchor="middle">Semua</text>
+    <text x="154" y="211" font-size="12" fill="#64748b" text-anchor="middle">Aktif</text>
+    <text x="239" y="211" font-size="12" fill="#64748b" text-anchor="middle">Selesai</text>
+  </g>
+  <text x="154" y="238" font-size="9" fill="#94a3b8" text-anchor="middle">Tab 1 Active</text>
+  <text x="154" y="249" font-size="8" fill="#4f63ff" text-anchor="middle">(smooth slide)</text>
+
+  <!-- ─── iOS: Tab 2 active ─── -->
+  <g id="Segmented/iOS/Tab2Active">
+    <rect x="320" y="186" width="260" height="40" rx="16" fill="#f1f5f9"/>
+    <rect x="408" y="190" width="82" height="32" rx="12" fill="#ffffff" filter="url(#pill-shadow)"/>
+    <text x="365" y="211" font-size="12" fill="#64748b" text-anchor="middle">Semua</text>
+    <text x="449" y="211" font-size="12" fill="#0f172a" font-weight="600" text-anchor="middle">Aktif</text>
+    <text x="534" y="211" font-size="12" fill="#64748b" text-anchor="middle">Selesai</text>
+  </g>
+  <text x="450" y="238" font-size="9" fill="#94a3b8" text-anchor="middle">Tab 2 Active</text>
+  <text x="450" y="249" font-size="8" fill="#4f63ff" text-anchor="middle">(smooth slide)</text>
+
+  <!-- ─── iOS: Tab 3 active ─── -->
+  <g id="Segmented/iOS/Tab3Active">
+    <rect x="616" y="186" width="260" height="40" rx="16" fill="#f1f5f9"/>
+    <rect x="790" y="190" width="82" height="32" rx="12" fill="#ffffff" filter="url(#pill-shadow)"/>
+    <text x="661" y="211" font-size="12" fill="#64748b" text-anchor="middle">Semua</text>
+    <text x="746" y="211" font-size="12" fill="#64748b" text-anchor="middle">Aktif</text>
+    <text x="831" y="211" font-size="12" fill="#0f172a" font-weight="600" text-anchor="middle">Selesai</text>
+  </g>
+  <text x="746" y="238" font-size="9" fill="#94a3b8" text-anchor="middle">Tab 3 Active</text>
+  <text x="746" y="249" font-size="8" fill="#4f63ff" text-anchor="middle">(smooth slide)</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- SECTION C — 2-TAB EQUAL                   -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <!-- Divider -->
+  <line x1="24" y1="268" x2="876" y2="268" stroke="#e2e8f0" stroke-width="1"/>
+
+  <text x="24" y="290" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="0.5">EQUAL 2-TAB</text>
+
+  <!-- ─── 2-Tab: Tab 1 active ─── -->
+  <g id="Segmented/TwoTab/Tab1Active">
+    <rect x="24" y="298" width="260" height="40" rx="16" fill="#f1f5f9"/>
+    <!-- Active pill: left half, width = (260-8)/2 = 126 -->
+    <rect x="28" y="302" width="126" height="32" rx="12" fill="#ffffff" filter="url(#pill-shadow)"/>
+    <text x="91"  y="323" font-size="12" fill="#0f172a" font-weight="600" text-anchor="middle">Mobile</text>
+    <text x="218" y="323" font-size="12" fill="#64748b" text-anchor="middle">Desktop</text>
+  </g>
+  <text x="154" y="350" font-size="9" fill="#94a3b8" text-anchor="middle">Tab 1 Active</text>
+
+  <!-- ─── 2-Tab: Tab 2 active ─── -->
+  <g id="Segmented/TwoTab/Tab2Active">
+    <rect x="320" y="298" width="260" height="40" rx="16" fill="#f1f5f9"/>
+    <!-- Active pill: right half -->
+    <rect x="450" y="302" width="126" height="32" rx="12" fill="#ffffff" filter="url(#pill-shadow)"/>
+    <text x="387" y="323" font-size="12" fill="#64748b" text-anchor="middle">Mobile</text>
+    <text x="514" y="323" font-size="12" fill="#0f172a" font-weight="600" text-anchor="middle">Desktop</text>
+  </g>
+  <text x="450" y="350" font-size="9" fill="#94a3b8" text-anchor="middle">Tab 2 Active</text>
+
+  <!-- ─── Hover state example ─── -->
+  <g id="Segmented/TwoTab/HoverState">
+    <rect x="616" y="298" width="260" height="40" rx="16" fill="#f1f5f9"/>
+    <!-- Active pill: left half (tab 1 active) -->
+    <rect x="620" y="302" width="126" height="32" rx="12" fill="#ffffff" filter="url(#pill-shadow)"/>
+    <!-- Hover on right tab: white 60% bg overlay -->
+    <rect x="750" y="302" width="122" height="32" rx="12" fill="rgba(255,255,255,0.6)"/>
+    <text x="683" y="323" font-size="12" fill="#0f172a" font-weight="600" text-anchor="middle">Mobile</text>
+    <text x="811" y="323" font-size="12" fill="#475569" text-anchor="middle">Desktop</text>
+  </g>
+  <text x="746" y="350" font-size="9" fill="#94a3b8" text-anchor="middle">Hover (non-active tab)</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- Spec annotations                           -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <!-- Divider before specs -->
+  <line x1="24" y1="368" x2="876" y2="368" stroke="#e2e8f0" stroke-width="1"/>
+
+  <g id="Spec/Annotations" font-size="9" fill="#94a3b8">
+    <text x="24"  y="388">Track: fill=#f1f5f9 · rx=16 · h=40 · padding=4px</text>
+    <text x="24"  y="404">Active pill: fill=#ffffff · rx=12 · shadow: 0 1px 3px rgba(0,0,0,0.12)</text>
+    <text x="24"  y="420">Active text: #0f172a · fw=600 · 12px</text>
+    <text x="24"  y="436">Inactive text: #64748b · fw=400 · 12px</text>
+    <text x="24"  y="452">Hover (inactive): pill fill=rgba(255,255,255,0.60) · text=#475569</text>
+    <text x="400" y="388">3-tab: each tab w=(260-8)/3 ≈ 84px</text>
+    <text x="400" y="404">2-tab: each tab w=(260-8)/2 = 126px</text>
+    <text x="400" y="420">iOS: same visuals + CSS transition on pill x-position</text>
+  </g>
+
+  <!-- Shadow filter definition -->
+  <defs>
+    <filter id="pill-shadow" x="-10%" y="-30%" width="120%" height="200%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="#0f172a" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+</svg>

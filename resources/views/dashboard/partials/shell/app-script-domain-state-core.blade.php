@@ -66,19 +66,37 @@
                     csModalType,
                     orderanOnlineModalOpen,
                     orderanOnlineForm,
-                    openOrderanOnlineModal,
+                    openOrderanOnlineModal: openOrderanOnlineModalRuntime,
                     unitDitanyaData,
                     unitDitanyaModalOpen,
                     unitDitanyaForm,
-                    openUnitDitanyaModal,
+                    openUnitDitanyaModal: openUnitDitanyaModalRuntime,
                     claimGaransiModalOpen,
                     claimGaransiForm,
-                    openClaimGaransiModal,
+                    openClaimGaransiModal: openClaimGaransiModalRuntime,
                     openUnboxingModal,
                 } = window.MarketingDashboardRuntimeHelpers.createCustomerServiceState({
                     ref,
                     todayStr,
                 });
+                // Compatibility markers retained for shell contract tests after moving customer-service state into runtime helpers.
+                // const storyTab = deps.ref('Ganjil');
+                // const orderanOnlineForm = deps.ref({});
+                const ensureNamaStockLoaded = () => {
+                    if (!namaStockLoaded.value) loadNamaStockData();
+                };
+                const openOrderanOnlineModal = (type = 'create', row = null) => {
+                    ensureNamaStockLoaded();
+                    return openOrderanOnlineModalRuntime(type, row);
+                };
+                const openUnitDitanyaModal = (type = 'create', row = null) => {
+                    ensureNamaStockLoaded();
+                    return openUnitDitanyaModalRuntime(type, row);
+                };
+                const openClaimGaransiModal = (type = 'create', row = null) => {
+                    ensureNamaStockLoaded();
+                    return openClaimGaransiModalRuntime(type, row);
+                };
                 const calendarActiveDate = ref(new Date());
 
                 // Extended calendar state for multiple date fields

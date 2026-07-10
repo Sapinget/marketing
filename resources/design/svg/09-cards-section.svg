@@ -1,0 +1,138 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600">
+  <defs>
+    <filter id="shadow-sm">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#000" flood-opacity="0.06"/>
+    </filter>
+    <filter id="shadow-md">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#000" flood-opacity="0.08"/>
+    </filter>
+  </defs>
+
+  <!-- Artboard background -->
+  <rect width="900" height="600" fill="#f8fafc"/>
+
+  <!-- Title -->
+  <text x="24" y="36" font-family="system-ui,-apple-system,sans-serif" font-size="16" font-weight="700" fill="#0f172a">SECTION CARDS &amp; SURFACES</text>
+
+  <!-- ===================== SECTION CARD WITH BODY ===================== -->
+  <g id="Component/SectionCardBody">
+    <text x="24" y="64" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="0.5">SECTION-CARD + SECTION-CARD-BODY (p=20px)</text>
+
+    <rect x="24" y="72" width="400" height="180" rx="24" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow-sm)"/>
+
+    <!-- Body content at p=20px -->
+    <text x="44" y="100" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="600" fill="#0f172a">Ringkasan Performa</text>
+    <text x="44" y="116" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#94a3b8">Periode Jan 2026</text>
+
+    <!-- Content divider -->
+    <line x1="44" y1="128" x2="404" y2="128" stroke="#e2e8f0" stroke-width="1"/>
+
+    <!-- Metric rows -->
+    <text x="44" y="148" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#64748b">Total Tayangan</text>
+    <text x="380" y="148" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" fill="#0f172a" text-anchor="end">148,200</text>
+
+    <text x="44" y="168" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#64748b">Engagement Rate</text>
+    <text x="380" y="168" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" fill="#0f172a" text-anchor="end">8.4%</text>
+
+    <text x="44" y="188" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#64748b">Total Komentar</text>
+    <text x="380" y="188" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" fill="#0f172a" text-anchor="end">2,847</text>
+
+    <text x="44" y="208" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#64748b">Konversi</text>
+    <text x="380" y="208" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" fill="#22c55e" text-anchor="end">3.8% ↑</text>
+
+    <text x="44" y="240" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#94a3b8">section-card · rx=24 · p=20px · border=1px #e2e8f0</text>
+  </g>
+
+  <!-- ===================== SECTION CARD SHELL ===================== -->
+  <g id="Component/SectionCardShell">
+    <text x="24" y="280" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="0.5">SECTION-CARD-SHELL (no padding, overflow hidden)</text>
+
+    <rect x="24" y="288" width="400" height="180" rx="24" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow-sm)"/>
+
+    <!-- Toolbar strip at top (p=12px 16px, border-bottom) -->
+    <rect x="24" y="288" width="400" height="44" rx="0" fill="#ffffff"/>
+    <!-- Round top corners to match card -->
+    <rect x="24" y="288" width="400" height="24" rx="0" fill="#ffffff"/>
+    <path d="M24,312 L24,288 Q24,288 48,288 L400,288 Q424,288 424,288 L424,312 Z" fill="#ffffff"/>
+    <text x="40" y="315" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="#0f172a">Aktivitas Terkini</text>
+    <text x="370" y="315" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#4f63ff" text-anchor="end">Lihat semua →</text>
+    <line x1="24" y1="332" x2="424" y2="332" stroke="#e2e8f0" stroke-width="1"/>
+
+    <!-- Table area with grid lines (shell body, no padding) -->
+    <!-- Row 1 -->
+    <text x="40" y="352" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#64748b" font-weight="600">KONTEN</text>
+    <text x="240" y="352" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#64748b" font-weight="600">VIEWS</text>
+    <text x="360" y="352" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#64748b" font-weight="600">STATUS</text>
+    <line x1="24" y1="358" x2="424" y2="358" stroke="#f1f5f9" stroke-width="1"/>
+
+    <text x="40" y="374" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#334155">Konten Ramadan</text>
+    <text x="240" y="374" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#334155">148.2K</text>
+    <rect x="350" y="363" width="42" height="16" rx="8" fill="#f0fdf4"/>
+    <text x="371" y="374" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#15803d" text-anchor="middle" font-weight="600">Aktif</text>
+    <line x1="24" y1="380" x2="424" y2="380" stroke="#f1f5f9" stroke-width="1"/>
+
+    <text x="40" y="396" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#334155">Tutorial Unboxing</text>
+    <text x="240" y="396" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#334155">89.4K</text>
+    <rect x="350" y="385" width="42" height="16" rx="8" fill="#f0fdf4"/>
+    <text x="371" y="396" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#15803d" text-anchor="middle" font-weight="600">Aktif</text>
+    <line x1="24" y1="402" x2="424" y2="402" stroke="#f1f5f9" stroke-width="1"/>
+
+    <text x="40" y="418" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#334155">Flash Sale Preview</text>
+    <text x="240" y="418" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#334155">52.1K</text>
+    <rect x="346" y="407" width="52" height="16" rx="8" fill="#fff7ed"/>
+    <text x="372" y="418" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#c2410c" text-anchor="middle" font-weight="600">Pending</text>
+
+    <text x="40" y="458" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#94a3b8">section-card-shell · no padding · overflow:hidden · rx=24</text>
+  </g>
+
+  <!-- ===================== STAT CARD — DEFAULT ===================== -->
+  <g id="Component/StatCardDefault">
+    <text x="480" y="64" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="0.5">STAT CARD</text>
+
+    <!-- Default state -->
+    <text x="480" y="78" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#94a3b8">Default</text>
+    <rect x="480" y="84" width="180" height="120" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow-sm)"/>
+    <text x="496" y="106" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8">Konversi</text>
+    <text x="496" y="132" font-family="system-ui,-apple-system,sans-serif" font-size="20" font-weight="700" fill="#0f172a">3.8%</text>
+    <text x="496" y="152" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8">vs 3.2% bulan lalu</text>
+    <text x="496" y="170" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#22c55e">↑ +0.6%</text>
+
+    <!-- Hover state -->
+    <text x="700" y="78" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#94a3b8">Hover</text>
+    <rect x="700" y="84" width="180" height="120" rx="16" fill="#ffffff" stroke="#4f63ff" stroke-width="1" stroke-opacity="0.3" filter="url(#shadow-md)"/>
+    <text x="716" y="106" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8">Konversi</text>
+    <text x="716" y="132" font-family="system-ui,-apple-system,sans-serif" font-size="20" font-weight="700" fill="#0f172a">3.8%</text>
+    <text x="716" y="152" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8">vs 3.2% bulan lalu</text>
+    <text x="716" y="170" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#22c55e">↑ +0.6%</text>
+    <text x="700" y="216" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#94a3b8">stroke=#4f63ff 30% · shadow-md</text>
+  </g>
+
+  <!-- ===================== SETTINGS PANEL CARD ===================== -->
+  <g id="Component/SettingsPanelCard">
+    <text x="480" y="260" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="0.5">SETTINGS PANEL CARD</text>
+
+    <rect x="480" y="268" width="380" height="220" rx="24" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" filter="url(#shadow-sm)"/>
+
+    <!-- Header -->
+    <text x="500" y="296" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="600" fill="#0f172a">Pengaturan Akun</text>
+    <line x1="480" y1="308" x2="860" y2="308" stroke="#e2e8f0" stroke-width="1"/>
+
+    <!-- Panel item 1: Ubah Password -->
+    <rect x="496" y="318" width="348" height="40" rx="12" fill="#f8fafc"/>
+    <text x="512" y="342" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#0f172a">Ubah Password</text>
+    <text x="836" y="342" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#94a3b8" text-anchor="end">▶</text>
+
+    <!-- Panel item 2: Verifikasi 2FA -->
+    <rect x="496" y="366" width="348" height="40" rx="12" fill="#f8fafc"/>
+    <text x="512" y="390" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#0f172a">Verifikasi 2FA</text>
+    <text x="836" y="390" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#94a3b8" text-anchor="end">▶</text>
+
+    <!-- Panel item 3: Sesi Aktif + badge -->
+    <rect x="496" y="414" width="348" height="40" rx="12" fill="#f8fafc"/>
+    <text x="512" y="438" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#0f172a">Sesi Aktif</text>
+    <!-- Badge "3" -->
+    <rect x="796" y="426" width="24" height="18" rx="9" fill="#eef0ff"/>
+    <text x="808" y="438" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#4f63ff" text-anchor="middle" font-weight="600">3</text>
+    <text x="836" y="438" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#94a3b8" text-anchor="end">▶</text>
+  </g>
+</svg>

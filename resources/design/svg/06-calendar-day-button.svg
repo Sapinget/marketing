@@ -1,0 +1,305 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="480" viewBox="0 0 900 480" font-family="system-ui, -apple-system, sans-serif">
+
+  <!-- Artboard background -->
+  <rect width="900" height="480" fill="#f8fafc"/>
+  <rect width="900" height="480" fill="none" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- Page title -->
+  <text x="24" y="36" font-size="16" fill="#0f172a" font-weight="700">CALENDAR DAY BUTTON</text>
+  <text x="24" y="56" font-size="11" fill="#94a3b8">All states for date picker calendar cells</text>
+
+  <!-- Shadow / filter defs -->
+  <defs>
+    <filter id="cell-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#4f63ff" flood-opacity="0.20"/>
+    </filter>
+  </defs>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- MINI CALENDAR CONTEXT (x=24, y=72)         -->
+  <!-- 7 cols × 5 rows, each cell 36×36, gap=4   -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <!-- Calendar card background -->
+  <rect x="16" y="64" width="356" height="290" rx="16" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- Calendar header -->
+  <text x="194" y="90" font-size="13" fill="#0f172a" font-weight="600" text-anchor="middle">January 2026</text>
+
+  <!-- Weekday headers -->
+  <g font-size="10" fill="#94a3b8" font-weight="600" text-anchor="middle">
+    <text x="44"  y="112">Su</text>
+    <text x="84"  y="112">Mo</text>
+    <text x="124" y="112">Tu</text>
+    <text x="164" y="112">We</text>
+    <text x="204" y="112">Th</text>
+    <text x="244" y="112">Fr</text>
+    <text x="284" y="112">Sa</text>
+  </g>
+
+  <!-- ─── Row 1: days 1–7 ─── -->
+  <!-- Day 1: default -->
+  <g id="Cal/Day/1/Default">
+    <rect x="26" y="120" width="36" height="36" rx="8" fill="transparent"/>
+    <text x="44" y="143" font-size="12" fill="#0f172a" text-anchor="middle">1</text>
+  </g>
+  <!-- Day 2: default -->
+  <g id="Cal/Day/2/Default">
+    <rect x="66" y="120" width="36" height="36" rx="8" fill="transparent"/>
+    <text x="84" y="143" font-size="12" fill="#0f172a" text-anchor="middle">2</text>
+  </g>
+  <!-- Day 3: default -->
+  <g id="Cal/Day/3/Default">
+    <rect x="106" y="120" width="36" height="36" rx="8" fill="transparent"/>
+    <text x="124" y="143" font-size="12" fill="#0f172a" text-anchor="middle">3</text>
+  </g>
+  <!-- Day 4: default -->
+  <g id="Cal/Day/4/Default">
+    <rect x="146" y="120" width="36" height="36" rx="8" fill="transparent"/>
+    <text x="164" y="143" font-size="12" fill="#0f172a" text-anchor="middle">4</text>
+  </g>
+  <!-- Day 5: default -->
+  <g id="Cal/Day/5/Default">
+    <rect x="186" y="120" width="36" height="36" rx="8" fill="transparent"/>
+    <text x="204" y="143" font-size="12" fill="#0f172a" text-anchor="middle">5</text>
+  </g>
+  <!-- Day 6: default -->
+  <g id="Cal/Day/6/Default">
+    <rect x="226" y="120" width="36" height="36" rx="8" fill="transparent"/>
+    <text x="244" y="143" font-size="12" fill="#0f172a" text-anchor="middle">6</text>
+  </g>
+  <!-- Day 7: default -->
+  <g id="Cal/Day/7/Default">
+    <rect x="266" y="120" width="36" height="36" rx="8" fill="transparent"/>
+    <text x="284" y="143" font-size="12" fill="#0f172a" text-anchor="middle">7</text>
+  </g>
+
+  <!-- ─── Row 2: days 8–14 ─── -->
+  <!-- Day 8: Today (accent border) -->
+  <g id="Cal/Day/8/Today">
+    <rect x="26" y="160" width="36" height="36" rx="8" fill="transparent" stroke="#4f63ff" stroke-width="2"/>
+    <text x="44" y="183" font-size="12" fill="#4f63ff" font-weight="600" text-anchor="middle">8</text>
+  </g>
+  <!-- Day 9: default -->
+  <g id="Cal/Day/9/Default">
+    <rect x="66" y="160" width="36" height="36" rx="8" fill="transparent"/>
+    <text x="84" y="183" font-size="12" fill="#0f172a" text-anchor="middle">9</text>
+  </g>
+  <!-- Day 10: Range Start -->
+  <g id="Cal/Day/10/RangeStart">
+    <!-- Left half clipped with rounded left only -->
+    <rect x="106" y="164" width="36" height="28" rx="8" fill="#4f63ff"/>
+    <!-- Right extension for range -->
+    <rect x="124" y="164" width="18" height="28" fill="#eef0ff"/>
+    <!-- Redraw left rounded portion on top -->
+    <rect x="106" y="164" width="22" height="28" rx="0" fill="#4f63ff"/>
+    <rect x="106" y="164" width="22" height="28" rx="8" fill="#4f63ff"/>
+    <text x="124" y="183" font-size="12" fill="#ffffff" font-weight="600" text-anchor="middle">10</text>
+  </g>
+  <!-- Day 11: Range In -->
+  <g id="Cal/Day/11/RangeIn">
+    <rect x="146" y="164" width="36" height="28" rx="0" fill="#eef0ff"/>
+    <text x="164" y="183" font-size="12" fill="#4f63ff" text-anchor="middle">11</text>
+  </g>
+  <!-- Day 12: Range In -->
+  <g id="Cal/Day/12/RangeIn">
+    <rect x="186" y="164" width="36" height="28" rx="0" fill="#eef0ff"/>
+    <text x="204" y="183" font-size="12" fill="#4f63ff" text-anchor="middle">12</text>
+  </g>
+  <!-- Day 13: Range In -->
+  <g id="Cal/Day/13/RangeIn">
+    <rect x="226" y="164" width="36" height="28" rx="0" fill="#eef0ff"/>
+    <text x="244" y="183" font-size="12" fill="#4f63ff" text-anchor="middle">13</text>
+  </g>
+  <!-- Day 14: Range End -->
+  <g id="Cal/Day/14/RangeEnd">
+    <rect x="266" y="164" width="36" height="28" rx="8" fill="#4f63ff"/>
+    <!-- Left extension for range -->
+    <rect x="266" y="164" width="18" height="28" fill="#eef0ff"/>
+    <!-- Redraw right rounded portion on top -->
+    <rect x="280" y="164" width="22" height="28" rx="8" fill="#4f63ff"/>
+    <text x="284" y="183" font-size="12" fill="#ffffff" font-weight="600" text-anchor="middle">14</text>
+  </g>
+
+  <!-- ─── Row 3: days 15–21 ─── -->
+  <!-- Day 15: Selected -->
+  <g id="Cal/Day/15/Selected">
+    <rect x="26" y="200" width="36" height="36" rx="12" fill="#4f63ff"/>
+    <text x="44" y="223" font-size="12" fill="#ffffff" font-weight="600" text-anchor="middle">15</text>
+  </g>
+  <!-- Days 16–21: default -->
+  <g id="Cal/Day/16/Default">
+    <rect x="66" y="200" width="36" height="36" rx="8" fill="transparent"/>
+    <text x="84" y="223" font-size="12" fill="#0f172a" text-anchor="middle">16</text>
+  </g>
+  <g id="Cal/Day/17/Default">
+    <rect x="106" y="200" width="36" height="36" rx="8" fill="transparent"/>
+    <text x="124" y="223" font-size="12" fill="#0f172a" text-anchor="middle">17</text>
+  </g>
+  <g id="Cal/Day/18/Default">
+    <rect x="146" y="200" width="36" height="36" rx="8" fill="transparent"/>
+    <text x="164" y="223" font-size="12" fill="#0f172a" text-anchor="middle">18</text>
+  </g>
+  <g id="Cal/Day/19/Default">
+    <rect x="186" y="200" width="36" height="36" rx="8" fill="transparent"/>
+    <text x="204" y="223" font-size="12" fill="#0f172a" text-anchor="middle">19</text>
+  </g>
+  <g id="Cal/Day/20/Default">
+    <rect x="226" y="200" width="36" height="36" rx="8" fill="transparent"/>
+    <text x="244" y="223" font-size="12" fill="#0f172a" text-anchor="middle">20</text>
+  </g>
+  <g id="Cal/Day/21/Default">
+    <rect x="266" y="200" width="36" height="36" rx="8" fill="transparent"/>
+    <text x="284" y="223" font-size="12" fill="#0f172a" text-anchor="middle">21</text>
+  </g>
+
+  <!-- ─── Row 4: days 22–28 ─── -->
+  <!-- Day 22: Disabled -->
+  <g id="Cal/Day/22/Disabled" opacity="0.4">
+    <rect x="26" y="240" width="36" height="36" rx="8" fill="transparent"/>
+    <text x="44" y="263" font-size="12" fill="#94a3b8" text-anchor="middle">22</text>
+  </g>
+  <!-- Days 23–28: default -->
+  <g id="Cal/Day/23/Default">
+    <rect x="66" y="240" width="36" height="36" rx="8" fill="transparent"/>
+    <text x="84" y="263" font-size="12" fill="#0f172a" text-anchor="middle">23</text>
+  </g>
+  <g id="Cal/Day/24/Default">
+    <rect x="106" y="240" width="36" height="36" rx="8" fill="transparent"/>
+    <text x="124" y="263" font-size="12" fill="#0f172a" text-anchor="middle">24</text>
+  </g>
+  <g id="Cal/Day/25/Default">
+    <rect x="146" y="240" width="36" height="36" rx="8" fill="transparent"/>
+    <text x="164" y="263" font-size="12" fill="#0f172a" text-anchor="middle">25</text>
+  </g>
+  <g id="Cal/Day/26/Default">
+    <rect x="186" y="240" width="36" height="36" rx="8" fill="transparent"/>
+    <text x="204" y="263" font-size="12" fill="#0f172a" text-anchor="middle">26</text>
+  </g>
+  <g id="Cal/Day/27/Default">
+    <rect x="226" y="240" width="36" height="36" rx="8" fill="transparent"/>
+    <text x="244" y="263" font-size="12" fill="#0f172a" text-anchor="middle">27</text>
+  </g>
+  <g id="Cal/Day/28/Default">
+    <rect x="266" y="240" width="36" height="36" rx="8" fill="transparent"/>
+    <text x="284" y="263" font-size="12" fill="#0f172a" text-anchor="middle">28</text>
+  </g>
+
+  <!-- ─── Row 5: days 29–30 ─── -->
+  <g id="Cal/Day/29/Default">
+    <rect x="26" y="280" width="36" height="36" rx="8" fill="transparent"/>
+    <text x="44" y="303" font-size="12" fill="#0f172a" text-anchor="middle">29</text>
+  </g>
+  <g id="Cal/Day/30/Default">
+    <rect x="66" y="280" width="36" height="36" rx="8" fill="transparent"/>
+    <text x="84" y="303" font-size="12" fill="#0f172a" text-anchor="middle">30</text>
+  </g>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- INDIVIDUAL STATE EXAMPLES (x=400, y=72)    -->
+  <!-- 7 states, 2 columns, 40×40 cells           -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <text x="400" y="72" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="0.5">INDIVIDUAL STATES — 40×40px · rx=8</text>
+
+  <!-- State cards background -->
+  <rect x="392" y="80" width="490" height="350" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- ─── COL A: left column (x=420) ─── -->
+
+  <!-- 1. Default -->
+  <g id="State/Default">
+    <rect x="420" y="100" width="40" height="40" rx="8" fill="transparent"/>
+    <text x="440" y="126" font-size="12" fill="#0f172a" text-anchor="middle">15</text>
+  </g>
+  <text x="440" y="152" font-size="9" fill="#94a3b8" text-anchor="middle">Default</text>
+  <text x="440" y="162" font-size="8" fill="#94a3b8" text-anchor="middle">transparent · #0f172a</text>
+
+  <!-- 2. Hover -->
+  <g id="State/Hover">
+    <rect x="420" y="178" width="40" height="40" rx="8" fill="#eef0ff"/>
+    <text x="440" y="204" font-size="12" fill="#4f63ff" text-anchor="middle">15</text>
+  </g>
+  <text x="440" y="230" font-size="9" fill="#94a3b8" text-anchor="middle">Hover</text>
+  <text x="440" y="240" font-size="8" fill="#94a3b8" text-anchor="middle">#eef0ff · #4f63ff</text>
+
+  <!-- 3. Selected -->
+  <g id="State/Selected">
+    <rect x="420" y="256" width="40" height="40" rx="12" fill="#4f63ff"/>
+    <text x="440" y="282" font-size="12" fill="#ffffff" font-weight="600" text-anchor="middle">15</text>
+  </g>
+  <text x="440" y="308" font-size="9" fill="#94a3b8" text-anchor="middle">Selected</text>
+  <text x="440" y="318" font-size="8" fill="#94a3b8" text-anchor="middle">#4f63ff · white · rx=12</text>
+
+  <!-- 4. Today -->
+  <g id="State/Today">
+    <rect x="420" y="334" width="40" height="40" rx="8" fill="transparent" stroke="#4f63ff" stroke-width="2"/>
+    <text x="440" y="360" font-size="12" fill="#4f63ff" font-weight="600" text-anchor="middle">15</text>
+  </g>
+  <text x="440" y="386" font-size="9" fill="#94a3b8" text-anchor="middle">Today</text>
+  <text x="440" y="396" font-size="8" fill="#94a3b8" text-anchor="middle">stroke 2px #4f63ff</text>
+
+  <!-- ─── COL B: right column (x=580) ─── -->
+
+  <!-- 5. Range In -->
+  <g id="State/RangeIn">
+    <rect x="580" y="100" width="40" height="40" rx="0" fill="#eef0ff"/>
+    <text x="600" y="126" font-size="12" fill="#4f63ff" text-anchor="middle">12</text>
+  </g>
+  <text x="600" y="152" font-size="9" fill="#94a3b8" text-anchor="middle">Range In</text>
+  <text x="600" y="162" font-size="8" fill="#94a3b8" text-anchor="middle">#eef0ff · #4f63ff · rx=0</text>
+
+  <!-- 6a. Range Start -->
+  <g id="State/RangeStart">
+    <!-- Accent left half + range right half -->
+    <rect x="580" y="178" width="40" height="40" rx="8" fill="#4f63ff"/>
+    <rect x="600" y="178" width="20" height="40" fill="#eef0ff"/>
+    <rect x="580" y="178" width="26" height="40" rx="0" fill="#4f63ff"/>
+    <rect x="580" y="178" width="26" height="40" rx="8" fill="#4f63ff"/>
+    <text x="596" y="204" font-size="12" fill="#ffffff" font-weight="600" text-anchor="middle">10</text>
+  </g>
+  <text x="600" y="230" font-size="9" fill="#94a3b8" text-anchor="middle">Range Start</text>
+  <text x="600" y="240" font-size="8" fill="#94a3b8" text-anchor="middle">#4f63ff → #eef0ff tail</text>
+
+  <!-- 6b. Range End -->
+  <g id="State/RangeEnd">
+    <!-- Range left half + accent right half -->
+    <rect x="580" y="256" width="40" height="40" rx="8" fill="#4f63ff"/>
+    <rect x="580" y="256" width="20" height="40" fill="#eef0ff"/>
+    <rect x="594" y="256" width="26" height="40" rx="8" fill="#4f63ff"/>
+    <text x="604" y="282" font-size="12" fill="#ffffff" font-weight="600" text-anchor="middle">14</text>
+  </g>
+  <text x="600" y="308" font-size="9" fill="#94a3b8" text-anchor="middle">Range End</text>
+  <text x="600" y="318" font-size="8" fill="#94a3b8" text-anchor="middle">#eef0ff → #4f63ff</text>
+
+  <!-- 7. Disabled -->
+  <g id="State/Disabled" opacity="0.4">
+    <rect x="580" y="334" width="40" height="40" rx="8" fill="transparent"/>
+    <text x="600" y="360" font-size="12" fill="#94a3b8" text-anchor="middle">22</text>
+  </g>
+  <text x="600" y="386" font-size="9" fill="#94a3b8" text-anchor="middle">Disabled</text>
+  <text x="600" y="396" font-size="8" fill="#94a3b8" text-anchor="middle">opacity=0.4 · #94a3b8</text>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- Legend / annotation panel                  -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <rect x="392" y="438" width="490" height="32" rx="8" fill="#f1f5f9"/>
+  <text x="408" y="458" font-size="9" fill="#64748b">Cell: 36–40px · rx=8 (selected rx=12) · text 12px centered · range track fill=#eef0ff (accent-10)</text>
+
+  <!-- Calendar context legend -->
+  <rect x="16" y="360" width="356" height="56" rx="8" fill="#f1f5f9"/>
+  <g font-size="9" fill="#64748b">
+    <rect x="28"  y="372" width="12" height="12" rx="3" fill="#4f63ff"/>
+    <text x="46" y="382">Selected (day 15)</text>
+    <rect x="140" y="372" width="12" height="12" rx="3" fill="transparent" stroke="#4f63ff" stroke-width="2"/>
+    <text x="158" y="382">Today (day 8)</text>
+    <rect x="252" y="372" width="12" height="12" rx="0" fill="#eef0ff"/>
+    <text x="270" y="382">Range In (10–14)</text>
+    <rect x="28"  y="392" width="12" height="12" rx="3" fill="transparent"/>
+    <text x="46" y="402" fill="#94a3b8">Default</text>
+    <rect x="140" y="394" width="12" height="12" rx="3" fill="transparent" opacity="0.4"/>
+    <text x="158" y="402" opacity="0.4">Disabled (22)</text>
+  </g>
+
+</svg>

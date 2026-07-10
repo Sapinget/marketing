@@ -1,0 +1,239 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="900" viewBox="0 0 1100 900" fill="none">
+  <defs>
+    <filter id="focus-glow" x="-20%" y="-50%" width="140%" height="200%">
+      <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#4f63ff" flood-opacity="0.20"/>
+    </filter>
+  </defs>
+
+  <!-- Artboard bg -->
+  <rect width="1100" height="900" fill="#f8fafc"/>
+
+  <!-- Page title -->
+  <text x="24" y="36" font-family="system-ui,-apple-system,sans-serif" font-size="16" font-weight="700" fill="#0f172a">FORM INPUTS</text>
+
+  <!-- ============================================================ -->
+  <!-- SECTION A — Base form-input variants                         -->
+  <!-- ============================================================ -->
+
+  <!-- ─── COL 1 ─── -->
+
+  <!-- 1. Base form-input -->
+  <g id="FormInput/Base">
+    <text x="24" y="72" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#94a3b8" letter-spacing="0.8">BASE FORM-INPUT</text>
+    <rect x="24" y="78" width="280" height="40" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="36" y="103" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#0f172a">Nama lengkap</text>
+  </g>
+
+  <!-- 2. Auth form-input (lock icon) -->
+  <g id="FormInput/Auth">
+    <text x="24" y="140" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#94a3b8" letter-spacing="0.8">AUTH FORM-INPUT</text>
+    <rect x="24" y="146" width="280" height="40" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+    <!-- Lock icon at x=36, vertically centered -->
+    <!-- Shackle -->
+    <path d="M36 161 Q36 156 41 156 Q46 156 46 161" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- Body -->
+    <rect x="33" y="161" width="16" height="11" rx="2" fill="#94a3b8"/>
+    <!-- Keyhole -->
+    <circle cx="41" cy="166" r="2" fill="white"/>
+    <rect x="40" y="167" width="2" height="3" rx="1" fill="white"/>
+    <text x="58" y="171" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#94a3b8">Password</text>
+  </g>
+
+  <!-- 3. Compact -->
+  <g id="FormInput/Compact">
+    <text x="24" y="208" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#94a3b8" letter-spacing="0.8">COMPACT</text>
+    <rect x="24" y="214" width="280" height="36" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="34" y="236" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#94a3b8">Ketik sesuatu...</text>
+  </g>
+
+  <!-- 4. Compact White -->
+  <g id="FormInput/CompactWhite">
+    <text x="24" y="272" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#94a3b8" letter-spacing="0.8">COMPACT WHITE</text>
+    <rect x="24" y="278" width="280" height="36" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="34" y="300" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#94a3b8">Ketik sesuatu...</text>
+  </g>
+
+  <!-- 5. Search -->
+  <g id="FormInput/Search">
+    <text x="24" y="336" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#94a3b8" letter-spacing="0.8">SEARCH</text>
+    <rect x="24" y="342" width="280" height="36" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+    <!-- Magnifier icon -->
+    <circle cx="42" cy="360" r="6" stroke="#94a3b8" stroke-width="1.5" fill="none"/>
+    <line x1="46.2" y1="364.2" x2="50" y2="368" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"/>
+    <text x="58" y="364" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#94a3b8">Cari sesuatu...</text>
+  </g>
+
+  <!-- 6. Popover -->
+  <g id="FormInput/Popover">
+    <text x="24" y="400" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#94a3b8" letter-spacing="0.8">POPOVER</text>
+    <rect x="24" y="406" width="280" height="36" rx="8" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="34" y="428" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#94a3b8">Cari opsi...</text>
+    <!-- Chevron -->
+    <polyline points="288,420 293,425 298,420" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- ─── COL 2 ─── -->
+
+  <!-- 7. Textarea — placed in col 2 at same y-level as item 1 -->
+  <g id="FormInput/Textarea">
+    <text x="340" y="72" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#94a3b8" letter-spacing="0.8">TEXTAREA</text>
+    <rect x="340" y="78" width="280" height="80" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="352" y="99" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#94a3b8">Tulis catatan di sini...</text>
+    <!-- Resize handle indicator (diagonal lines at bottom-right) -->
+    <line x1="603" y1="154" x2="615" y2="142" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+    <line x1="607" y1="157" x2="619" y2="145" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+    <line x1="611" y1="157" x2="619" y2="149" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+  </g>
+
+  <!-- Extra: show textarea filled state in col 2 row 2 -->
+  <g id="FormInput/TextareaFilled">
+    <text x="340" y="188" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#94a3b8" letter-spacing="0.8">TEXTAREA — FILLED</text>
+    <rect x="340" y="194" width="280" height="80" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="352" y="215" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#0f172a">Unit ini sudah kami cek dan kondisi</text>
+    <text x="352" y="231" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#0f172a">baik, siap kirim ke customer.</text>
+    <!-- Resize handle -->
+    <line x1="603" y1="270" x2="615" y2="258" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+    <line x1="607" y1="273" x2="619" y2="261" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+    <line x1="611" y1="273" x2="619" y2="265" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+  </g>
+
+  <!-- Extra: textarea focus state -->
+  <g id="FormInput/TextareaFocus">
+    <text x="340" y="304" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#94a3b8" letter-spacing="0.8">TEXTAREA — FOCUS</text>
+    <rect x="340" y="310" width="280" height="80" rx="8" fill="#ffffff" stroke="#4f63ff" stroke-width="2" filter="url(#focus-glow)"/>
+    <text x="352" y="331" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#0f172a">Unit ini sudah kami cek dan kondisi</text>
+    <!-- Cursor blink indicator -->
+    <line x1="352" y1="337" x2="352" y2="349" stroke="#4f63ff" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Resize handle -->
+    <line x1="603" y1="386" x2="615" y2="374" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+    <line x1="607" y1="389" x2="619" y2="377" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+    <line x1="611" y1="389" x2="619" y2="381" stroke="#cbd5e1" stroke-width="1" stroke-linecap="round"/>
+  </g>
+
+  <!-- col 2 extra: label above + input field combo -->
+  <g id="FormInput/WithLabel">
+    <text x="340" y="420" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#94a3b8" letter-spacing="0.8">WITH LABEL</text>
+    <text x="340" y="438" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="500" fill="#334155">Nama Lengkap</text>
+    <rect x="340" y="444" width="280" height="40" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="352" y="469" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#94a3b8">Masukkan nama lengkap</text>
+  </g>
+
+  <!-- Divider between A and B -->
+  <line x1="24" y1="470" x2="1076" y2="470" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- ============================================================ -->
+  <!-- SECTION B — Input States                                     -->
+  <!-- ============================================================ -->
+  <text x="24" y="498" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="#94a3b8" letter-spacing="0.5">INPUT STATES</text>
+
+  <!-- 1. Empty -->
+  <g id="FormInput/State/Empty">
+    <rect x="24" y="510" width="180" height="40" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="36" y="535" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#94a3b8" font-style="italic">Enter value...</text>
+    <text x="24" y="562" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#94a3b8" letter-spacing="0.8">EMPTY</text>
+  </g>
+
+  <!-- 2. Filled -->
+  <g id="FormInput/State/Filled">
+    <rect x="220" y="510" width="180" height="40" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="232" y="535" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#0f172a">Agus Arya</text>
+    <text x="220" y="562" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#94a3b8" letter-spacing="0.8">FILLED</text>
+  </g>
+
+  <!-- 3. Focus -->
+  <g id="FormInput/State/Focus">
+    <rect x="416" y="510" width="180" height="40" rx="8" fill="#ffffff" stroke="#4f63ff" stroke-width="2" filter="url(#focus-glow)"/>
+    <text x="428" y="535" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#0f172a">Agus Arya</text>
+    <!-- Cursor -->
+    <line x1="476" y1="521" x2="476" y2="537" stroke="#4f63ff" stroke-width="1.5" stroke-linecap="round"/>
+    <text x="416" y="562" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#4f63ff" letter-spacing="0.8">FOCUS</text>
+  </g>
+
+  <!-- 4. Placeholder -->
+  <g id="FormInput/State/Placeholder">
+    <rect x="612" y="510" width="180" height="40" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="624" y="535" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#94a3b8">Ketik nama...</text>
+    <text x="612" y="562" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#94a3b8" letter-spacing="0.8">PLACEHOLDER</text>
+  </g>
+
+  <!-- 5. Disabled -->
+  <g id="FormInput/State/Disabled">
+    <rect x="808" y="510" width="180" height="40" rx="8" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="820" y="535" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#94a3b8">Agus Arya</text>
+    <!-- slash/lock indicator -->
+    <circle cx="970" cy="530" r="7" fill="none" stroke="#cbd5e1" stroke-width="1.5"/>
+    <line x1="965" y1="535" x2="975" y2="525" stroke="#cbd5e1" stroke-width="1.5" stroke-linecap="round"/>
+    <text x="808" y="562" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#94a3b8" letter-spacing="0.8">DISABLED</text>
+  </g>
+
+  <!-- 6. Error — start new row -->
+  <g id="FormInput/State/Error">
+    <rect x="24" y="580" width="180" height="40" rx="8" fill="#ffffff" stroke="#ef4444" stroke-width="1.5"/>
+    <text x="36" y="605" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#0f172a">Nama wajib diisi</text>
+    <!-- Warning icon at right -->
+    <g transform="translate(176, 593)">
+      <circle cx="8" cy="7" r="7" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
+      <text x="8" y="11" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#ef4444" text-anchor="middle">!</text>
+    </g>
+    <text x="24" y="632" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#ef4444" letter-spacing="0.8">ERROR</text>
+    <!-- Helper text -->
+    <text x="24" y="645" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#ef4444">Nama tidak boleh kosong</text>
+  </g>
+
+  <!-- Divider between B and C/D -->
+  <line x1="24" y1="700" x2="1076" y2="700" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- ============================================================ -->
+  <!-- SECTION C — With Leading Icon                                -->
+  <!-- ============================================================ -->
+  <text x="24" y="724" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="#94a3b8" letter-spacing="0.5">WITH LEADING ICON</text>
+
+  <!-- Search input with magnifier -->
+  <g id="FormInput/LeadingIcon/Search">
+    <text x="24" y="742" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#94a3b8" letter-spacing="0.8">SEARCH ICON</text>
+    <rect x="24" y="748" width="280" height="40" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+    <!-- Magnifier icon -->
+    <circle cx="42" cy="768" r="6" stroke="#94a3b8" stroke-width="1.5" fill="none"/>
+    <line x1="46.2" y1="772.2" x2="50" y2="776" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"/>
+    <text x="58" y="772" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#94a3b8">Cari platform...</text>
+  </g>
+
+  <!-- Auth input with lock icon -->
+  <g id="FormInput/LeadingIcon/Lock">
+    <text x="340" y="742" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#94a3b8" letter-spacing="0.8">LOCK ICON</text>
+    <rect x="340" y="748" width="280" height="40" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+    <!-- Lock icon -->
+    <path d="M354 763 Q354 758 359 758 Q364 758 364 763" stroke="#94a3b8" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <rect x="351" y="763" width="16" height="11" rx="2" fill="#94a3b8"/>
+    <circle cx="359" cy="768" r="2" fill="white"/>
+    <rect x="358" y="769" width="2" height="3" rx="1" fill="white"/>
+    <text x="374" y="772" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#94a3b8">••••••••</text>
+  </g>
+
+  <!-- ============================================================ -->
+  <!-- SECTION D label — already shown above in col 2 rows 1-3     -->
+  <!-- ============================================================ -->
+  <text x="24" y="810" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="#94a3b8" letter-spacing="0.5">FORM TEXTAREA</text>
+  <text x="24" y="826" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8">Empty, Filled, and Focus states are shown above in column 2 (rows 1–3)</text>
+
+  <!-- Quick summary row of textarea states (mini) -->
+  <g id="FormTextarea/EmptyMini">
+    <text x="24" y="846" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#94a3b8" letter-spacing="0.8">EMPTY</text>
+    <rect x="24" y="852" width="240" height="36" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="36" y="874" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#94a3b8" font-style="italic">Tulis catatan...</text>
+  </g>
+
+  <g id="FormTextarea/FilledMini">
+    <text x="280" y="846" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#94a3b8" letter-spacing="0.8">FILLED</text>
+    <rect x="280" y="852" width="240" height="36" rx="8" fill="#f8fafc" stroke="#e2e8f0" stroke-width="1"/>
+    <text x="292" y="874" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#0f172a">Kondisi unit baik, siap kirim.</text>
+  </g>
+
+  <g id="FormTextarea/FocusMini">
+    <text x="536" y="846" font-family="system-ui,-apple-system,sans-serif" font-size="9" font-weight="600" fill="#4f63ff" letter-spacing="0.8">FOCUS</text>
+    <rect x="536" y="852" width="240" height="36" rx="8" fill="#ffffff" stroke="#4f63ff" stroke-width="2" filter="url(#focus-glow)"/>
+    <text x="548" y="874" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#0f172a">Kondisi unit</text>
+    <line x1="607" y1="863" x2="607" y2="876" stroke="#4f63ff" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+
+</svg>

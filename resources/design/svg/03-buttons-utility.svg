@@ -1,0 +1,274 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="560" viewBox="0 0 900 560" font-family="system-ui, -apple-system, sans-serif">
+
+  <!-- Artboard background -->
+  <rect width="900" height="560" fill="#f8fafc"/>
+  <rect width="900" height="560" fill="none" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- SECTION A: ICON UTILITY BUTTON             -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <text x="24" y="24" font-size="11" fill="#94a3b8" font-weight="600" letter-spacing="0.5">ICON UTILITY BUTTON — 32×32px · radius=8px</text>
+
+  <!-- Column headers -->
+  <text x="56"  y="56" font-size="9" fill="#94a3b8" text-anchor="middle">Default</text>
+  <text x="256" y="56" font-size="9" fill="#94a3b8" text-anchor="middle">Bordered</text>
+  <text x="456" y="56" font-size="9" fill="#94a3b8" text-anchor="middle">Round</text>
+  <text x="656" y="56" font-size="9" fill="#94a3b8" text-anchor="middle">Danger</text>
+
+  <!-- Row labels -->
+  <text x="8" y="82"  font-size="9" fill="#94a3b8" writing-mode="horizontal-tb">Default</text>
+  <text x="8" y="154" font-size="9" fill="#94a3b8">Hover</text>
+  <text x="8" y="226" font-size="9" fill="#94a3b8">Active</text>
+  <text x="8" y="298" font-size="9" fill="#94a3b8">Disabled</text>
+
+  <!-- ─── COL 1: Default (no border) ─── -->
+
+  <!-- Default / Default -->
+  <g id="IconBtn/Default/Default">
+    <rect x="40" y="64" width="32" height="32" rx="8" fill="transparent"/>
+    <rect x="55" y="78" width="2" height="12" fill="#64748b"/>
+    <rect x="49" y="84" width="12" height="2" fill="#64748b"/>
+  </g>
+  <text x="56" y="104" font-size="8" fill="#94a3b8" text-anchor="middle">Default</text>
+
+  <!-- Default / Hover -->
+  <g id="IconBtn/Default/Hover">
+    <rect x="40" y="136" width="32" height="32" rx="8" fill="#f1f5f9"/>
+    <rect x="55" y="150" width="2" height="12" fill="#334155"/>
+    <rect x="49" y="156" width="12" height="2" fill="#334155"/>
+  </g>
+  <text x="56" y="176" font-size="8" fill="#94a3b8" text-anchor="middle">Hover</text>
+
+  <!-- Default / Active -->
+  <g id="IconBtn/Default/Active">
+    <rect x="40" y="208" width="32" height="32" rx="8" fill="#e2e8f0"/>
+    <rect x="55" y="222" width="2" height="12" fill="#334155"/>
+    <rect x="49" y="228" width="12" height="2" fill="#334155"/>
+  </g>
+  <text x="56" y="248" font-size="8" fill="#94a3b8" text-anchor="middle">Active</text>
+
+  <!-- Default / Disabled -->
+  <g id="IconBtn/Default/Disabled" opacity="0.4">
+    <rect x="40" y="280" width="32" height="32" rx="8" fill="transparent"/>
+    <rect x="55" y="294" width="2" height="12" fill="#64748b"/>
+    <rect x="49" y="300" width="12" height="2" fill="#64748b"/>
+  </g>
+  <text x="56" y="320" font-size="8" fill="#94a3b8" text-anchor="middle" opacity="0.4">Disabled</text>
+
+  <!-- ─── COL 2: Bordered ─── -->
+
+  <!-- Bordered / Default -->
+  <g id="IconBtn/Bordered/Default">
+    <rect x="240" y="64" width="32" height="32" rx="8" fill="transparent" stroke="#e2e8f0" stroke-width="1"/>
+    <rect x="255" y="78" width="2" height="12" fill="#64748b"/>
+    <rect x="249" y="84" width="12" height="2" fill="#64748b"/>
+  </g>
+  <text x="256" y="104" font-size="8" fill="#94a3b8" text-anchor="middle">Default</text>
+
+  <!-- Bordered / Hover -->
+  <g id="IconBtn/Bordered/Hover">
+    <rect x="240" y="136" width="32" height="32" rx="8" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+    <rect x="255" y="150" width="2" height="12" fill="#334155"/>
+    <rect x="249" y="156" width="12" height="2" fill="#334155"/>
+  </g>
+  <text x="256" y="176" font-size="8" fill="#94a3b8" text-anchor="middle">Hover</text>
+
+  <!-- Bordered / Active -->
+  <g id="IconBtn/Bordered/Active">
+    <rect x="240" y="208" width="32" height="32" rx="8" fill="#e2e8f0" stroke="#e2e8f0" stroke-width="1"/>
+    <rect x="255" y="222" width="2" height="12" fill="#334155"/>
+    <rect x="249" y="228" width="12" height="2" fill="#334155"/>
+  </g>
+  <text x="256" y="248" font-size="8" fill="#94a3b8" text-anchor="middle">Active</text>
+
+  <!-- Bordered / Disabled -->
+  <g id="IconBtn/Bordered/Disabled" opacity="0.4">
+    <rect x="240" y="280" width="32" height="32" rx="8" fill="transparent" stroke="#e2e8f0" stroke-width="1"/>
+    <rect x="255" y="294" width="2" height="12" fill="#64748b"/>
+    <rect x="249" y="300" width="12" height="2" fill="#64748b"/>
+  </g>
+  <text x="256" y="320" font-size="8" fill="#94a3b8" text-anchor="middle" opacity="0.4">Disabled</text>
+
+  <!-- ─── COL 3: Round (rx=16) ─── -->
+
+  <!-- Round / Default -->
+  <g id="IconBtn/Round/Default">
+    <rect x="440" y="64" width="32" height="32" rx="16" fill="transparent"/>
+    <rect x="455" y="78" width="2" height="12" fill="#64748b"/>
+    <rect x="449" y="84" width="12" height="2" fill="#64748b"/>
+  </g>
+  <text x="456" y="104" font-size="8" fill="#94a3b8" text-anchor="middle">Default</text>
+
+  <!-- Round / Hover -->
+  <g id="IconBtn/Round/Hover">
+    <rect x="440" y="136" width="32" height="32" rx="16" fill="#f1f5f9"/>
+    <rect x="455" y="150" width="2" height="12" fill="#334155"/>
+    <rect x="449" y="156" width="12" height="2" fill="#334155"/>
+  </g>
+  <text x="456" y="176" font-size="8" fill="#94a3b8" text-anchor="middle">Hover</text>
+
+  <!-- Round / Active -->
+  <g id="IconBtn/Round/Active">
+    <rect x="440" y="208" width="32" height="32" rx="16" fill="#e2e8f0"/>
+    <rect x="455" y="222" width="2" height="12" fill="#334155"/>
+    <rect x="449" y="228" width="12" height="2" fill="#334155"/>
+  </g>
+  <text x="456" y="248" font-size="8" fill="#94a3b8" text-anchor="middle">Active</text>
+
+  <!-- Round / Disabled -->
+  <g id="IconBtn/Round/Disabled" opacity="0.4">
+    <rect x="440" y="280" width="32" height="32" rx="16" fill="transparent"/>
+    <rect x="455" y="294" width="2" height="12" fill="#64748b"/>
+    <rect x="449" y="300" width="12" height="2" fill="#64748b"/>
+  </g>
+  <text x="456" y="320" font-size="8" fill="#94a3b8" text-anchor="middle" opacity="0.4">Disabled</text>
+
+  <!-- ─── COL 4: Danger ─── -->
+
+  <!-- Danger / Default -->
+  <g id="IconBtn/Danger/Default">
+    <rect x="640" y="64" width="32" height="32" rx="8" fill="transparent"/>
+    <rect x="655" y="78" width="2" height="12" fill="#64748b"/>
+    <rect x="649" y="84" width="12" height="2" fill="#64748b"/>
+  </g>
+  <text x="656" y="104" font-size="8" fill="#94a3b8" text-anchor="middle">Default</text>
+
+  <!-- Danger / Hover -->
+  <g id="IconBtn/Danger/Hover">
+    <rect x="640" y="136" width="32" height="32" rx="8" fill="#fef2f2"/>
+    <rect x="655" y="150" width="2" height="12" fill="#ef4444"/>
+    <rect x="649" y="156" width="12" height="2" fill="#ef4444"/>
+  </g>
+  <text x="656" y="176" font-size="8" fill="#94a3b8" text-anchor="middle">Hover</text>
+
+  <!-- Danger / Active -->
+  <g id="IconBtn/Danger/Active">
+    <rect x="640" y="208" width="32" height="32" rx="8" fill="#fee2e2"/>
+    <rect x="655" y="222" width="2" height="12" fill="#ef4444"/>
+    <rect x="649" y="228" width="12" height="2" fill="#ef4444"/>
+  </g>
+  <text x="656" y="248" font-size="8" fill="#94a3b8" text-anchor="middle">Active</text>
+
+  <!-- Danger / Disabled -->
+  <g id="IconBtn/Danger/Disabled" opacity="0.4">
+    <rect x="640" y="280" width="32" height="32" rx="8" fill="transparent"/>
+    <rect x="655" y="294" width="2" height="12" fill="#64748b"/>
+    <rect x="649" y="300" width="12" height="2" fill="#64748b"/>
+  </g>
+  <text x="656" y="320" font-size="8" fill="#94a3b8" text-anchor="middle" opacity="0.4">Disabled</text>
+
+  <!-- Divider -->
+  <line x1="24" y1="336" x2="876" y2="336" stroke="#e2e8f0" stroke-width="1"/>
+
+  <!-- ═══════════════════════════════════════════ -->
+  <!-- SECTION B: TABLE ACTION BUTTON             -->
+  <!-- ═══════════════════════════════════════════ -->
+
+  <text x="24" y="356" font-size="11" fill="#94a3b8" font-weight="600" letter-spacing="0.5">TABLE ACTION BUTTON (COMPACT) — 32×32px · radius=8px</text>
+
+  <!-- Column headers -->
+  <text x="56"  y="382" font-size="9" fill="#94a3b8" text-anchor="middle">Default</text>
+  <text x="196" y="382" font-size="9" fill="#94a3b8" text-anchor="middle">Danger</text>
+  <text x="336" y="382" font-size="9" fill="#94a3b8" text-anchor="middle">Link</text>
+  <text x="476" y="382" font-size="9" fill="#94a3b8" text-anchor="middle">View</text>
+  <text x="628" y="382" font-size="9" fill="#94a3b8" text-anchor="middle">With Label</text>
+
+  <!-- Row labels -->
+  <text x="8" y="410" font-size="9" fill="#94a3b8">Default</text>
+  <text x="8" y="462" font-size="9" fill="#94a3b8">Hover</text>
+
+  <!-- ─── TABLE BTN: Default variant ─── -->
+  <g id="TableBtn/Default/Default">
+    <rect x="40" y="394" width="32" height="32" rx="8" fill="transparent"/>
+    <rect x="55" y="408" width="2" height="12" fill="#64748b"/>
+    <rect x="49" y="414" width="12" height="2" fill="#64748b"/>
+  </g>
+  <g id="TableBtn/Default/Hover">
+    <rect x="40" y="446" width="32" height="32" rx="8" fill="#f1f5f9"/>
+    <rect x="55" y="460" width="2" height="12" fill="#334155"/>
+    <rect x="49" y="466" width="12" height="2" fill="#334155"/>
+  </g>
+
+  <!-- ─── TABLE BTN: Danger variant ─── -->
+  <g id="TableBtn/Danger/Default">
+    <rect x="180" y="394" width="32" height="32" rx="8" fill="transparent"/>
+    <rect x="195" y="408" width="2" height="12" fill="#64748b"/>
+    <rect x="189" y="414" width="12" height="2" fill="#64748b"/>
+  </g>
+  <g id="TableBtn/Danger/Hover">
+    <rect x="180" y="446" width="32" height="32" rx="8" fill="#fef2f2"/>
+    <rect x="195" y="460" width="2" height="12" fill="#ef4444"/>
+    <rect x="189" y="466" width="12" height="2" fill="#ef4444"/>
+  </g>
+
+  <!-- ─── TABLE BTN: Link variant ─── -->
+  <g id="TableBtn/Link/Default">
+    <rect x="320" y="394" width="32" height="32" rx="8" fill="transparent"/>
+    <!-- Chain link icon approximation -->
+    <rect x="331" y="408" width="4" height="2" rx="1" fill="#4f63ff"/>
+    <rect x="337" y="408" width="4" height="2" rx="1" fill="#4f63ff"/>
+    <rect x="331" y="412" width="4" height="2" rx="1" fill="#4f63ff"/>
+    <rect x="337" y="412" width="4" height="2" rx="1" fill="#4f63ff"/>
+    <rect x="334" y="407" width="2" height="8" rx="1" fill="#4f63ff"/>
+  </g>
+  <g id="TableBtn/Link/Hover">
+    <rect x="320" y="446" width="32" height="32" rx="8" fill="#eef0ff"/>
+    <rect x="331" y="460" width="4" height="2" rx="1" fill="#4f63ff"/>
+    <rect x="337" y="460" width="4" height="2" rx="1" fill="#4f63ff"/>
+    <rect x="331" y="464" width="4" height="2" rx="1" fill="#4f63ff"/>
+    <rect x="337" y="464" width="4" height="2" rx="1" fill="#4f63ff"/>
+    <rect x="334" y="459" width="2" height="8" rx="1" fill="#4f63ff"/>
+  </g>
+
+  <!-- ─── TABLE BTN: View variant ─── -->
+  <g id="TableBtn/View/Default">
+    <rect x="460" y="394" width="32" height="32" rx="8" fill="transparent"/>
+    <!-- Eye icon approximation -->
+    <ellipse cx="476" cy="410" rx="6" ry="4" fill="none" stroke="#64748b" stroke-width="1.5"/>
+    <circle cx="476" cy="410" r="2" fill="#64748b"/>
+  </g>
+  <g id="TableBtn/View/Hover">
+    <rect x="460" y="446" width="32" height="32" rx="8" fill="#f1f5f9"/>
+    <ellipse cx="476" cy="462" rx="6" ry="4" fill="none" stroke="#4f63ff" stroke-width="1.5"/>
+    <circle cx="476" cy="462" r="2" fill="#4f63ff"/>
+  </g>
+
+  <!-- ─── TABLE BTN: With Label variant ─── -->
+  <g id="TableBtn/WithLabel/Default">
+    <rect x="592" y="394" width="72" height="32" rx="8" fill="transparent" stroke="#e2e8f0" stroke-width="1"/>
+    <!-- Pencil icon -->
+    <rect x="604" y="408" width="2" height="12" fill="#64748b" transform="rotate(-45 605 414)"/>
+    <text x="619" y="415" font-size="11" fill="#64748b" font-weight="500">Edit</text>
+  </g>
+  <g id="TableBtn/WithLabel/Hover">
+    <rect x="592" y="446" width="72" height="32" rx="8" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+    <rect x="604" y="460" width="2" height="12" fill="#334155" transform="rotate(-45 605 466)"/>
+    <text x="619" y="467" font-size="11" fill="#334155" font-weight="500">Edit</text>
+  </g>
+
+  <!-- State labels row -->
+  <text x="56"  y="434" font-size="8" fill="#94a3b8" text-anchor="middle">Default</text>
+  <text x="196" y="434" font-size="8" fill="#94a3b8" text-anchor="middle">Default</text>
+  <text x="336" y="434" font-size="8" fill="#94a3b8" text-anchor="middle">Default</text>
+  <text x="476" y="434" font-size="8" fill="#94a3b8" text-anchor="middle">Default</text>
+  <text x="628" y="434" font-size="8" fill="#94a3b8" text-anchor="middle">Default</text>
+
+  <text x="56"  y="486" font-size="8" fill="#94a3b8" text-anchor="middle">Hover</text>
+  <text x="196" y="486" font-size="8" fill="#94a3b8" text-anchor="middle">Hover</text>
+  <text x="336" y="486" font-size="8" fill="#94a3b8" text-anchor="middle">Hover</text>
+  <text x="476" y="486" font-size="8" fill="#94a3b8" text-anchor="middle">Hover</text>
+  <text x="628" y="486" font-size="8" fill="#94a3b8" text-anchor="middle">Hover</text>
+
+  <!-- Design token annotation -->
+  <g id="Annotations">
+    <text x="750" y="80" font-size="9" fill="#94a3b8">bg hover: #f1f5f9</text>
+    <text x="750" y="94" font-size="9" fill="#94a3b8">bg active: #e2e8f0</text>
+    <text x="750" y="108" font-size="9" fill="#94a3b8">danger hover: #fef2f2</text>
+    <text x="750" y="122" font-size="9" fill="#94a3b8">icon default: #64748b</text>
+    <text x="750" y="136" font-size="9" fill="#94a3b8">icon hover: #334155</text>
+    <text x="750" y="150" font-size="9" fill="#94a3b8">icon danger: #ef4444</text>
+    <text x="750" y="164" font-size="9" fill="#94a3b8">icon link: #4f63ff</text>
+  </g>
+
+</svg>

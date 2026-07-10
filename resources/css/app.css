@@ -19,9 +19,17 @@
     --color-ppp-card: #ffffff;
     --color-ppp-danger: #b91c1c;
     --color-ppp-danger-fill: #dc2626;
+
+    /* Breakpoints — Tailwind v4 responsive prefixes (sm: md: lg:) */
+    --breakpoint-sm: 640px;
+    --breakpoint-md: 768px;
+    --breakpoint-lg: 1080px;
+
+    /* font-size utilities → lihat dashboard-shell.css (.text-body, .text-overline, dll) */
 }
 
 :root {
+    /* ─── Colors ─────────────────────────────────────────── */
     --ppp-accent: #4f63ff;
     --ppp-accent-dark: #3d4fdb;
     --ppp-sidebar: #f8fafc;
@@ -37,6 +45,60 @@
     --ppp-card-rgb: 255 255 255;
     --ppp-nav-rgb: 80 102 235;
     --ppp-bg-rgb: 248 250 252;
+
+    /* ─── Typography — Golden Ratio Scale ────────────────── */
+    /* Display  */
+    --fs-display-lg:   1.625rem;    /* 26px — KPI value, hero h1 */
+    --fs-display-sm:   1.125rem;    /* 18px — topbar title, summary value */
+    /* Heading  */
+    --fs-heading-lg:   1rem;        /* 16px — panel header, badge strong */
+    --fs-heading-sm:   0.8125rem;   /* 13px — section title, table strong */
+    /* Body     */
+    --fs-body:         0.6875rem;   /* 11px — base: button, nav, form, body */
+    --fs-body-sm:      0.625rem;    /* 10px — meta label, badge, icon label */
+    /* Overline */
+    --fs-overline:     0.5625rem;   /* 9px  — eyebrow, micro label */
+    --fs-overline-xs:  0.5rem;      /* 8px  — sort arrow, counter pill */
+
+    /* ─── Spacing — 4pt Grid ─────────────────────────────── */
+    --space-1:   4px;
+    --space-2:   8px;
+    --space-3:   12px;
+    --space-4:   16px;
+    --space-5:   20px;
+    --space-6:   24px;
+    --space-7:   32px;
+    --space-8:   40px;
+    --space-9:   48px;
+    --space-10:  56px;
+
+    /* ─── Border Radius ──────────────────────────────────── */
+    --radius-sm:     8px;       /* dense cards */
+    --radius-md:     12px;      /* compact buttons, inputs, nav */
+    --radius-lg:     16px;      /* standard inputs, form buttons */
+    --radius-xl:     20px;      /* summary cards */
+    --radius-2xl:    24px;      /* empty states */
+    --radius-card:   28px;      /* outer = inner(12) + padding(16) */
+    --radius-module: 32px;      /* outer = inner(12) + padding(20) */
+    --radius-modal:  36px;      /* outer = inner(12) + padding(24) */
+    --radius-full:   9999px;    /* pills, chips */
+
+    /* ─── Iconography ────────────────────────────────────── */
+    --icon-sm:    16px;
+    --icon-md:    20px;
+    --icon-lg:    24px;
+    --icon-bg-sm: 32px;     /* 16 + 8×2  */
+    --icon-bg-md: 44px;     /* 20 + 12×2 */
+    --icon-bg-lg: 56px;     /* 24 + 16×2 */
+
+    /* ─── Z-Index ─────────────────────────────────────────── */
+    --z-base:     0;
+    --z-raised:   10;
+    --z-dropdown: 100;
+    --z-sidebar:  200;
+    --z-topbar:   300;
+    --z-modal:    400;
+    --z-toast:    500;
 }
 
 * {
@@ -115,7 +177,7 @@ button {
 .eyebrow {
     color: #475569;
     display: block;
-    font-size: 10px;
+    font-size: var(--fs-body-sm);
     font-weight: 600;
     letter-spacing: 0.18em;
     text-transform: uppercase;
@@ -125,9 +187,9 @@ button {
 .brand-subtitle {
     color: var(--ppp-muted);
     display: block;
-    font-size: 9px;
+    font-size: var(--fs-overline);
     letter-spacing: 0.12em;
-    margin-top: 6px;
+    margin-top: 8px;
     text-transform: uppercase;
 }
 
@@ -141,7 +203,7 @@ button {
     gap: 12px;
     left: 50%;
     max-width: 720px;
-    padding: 12px 14px;
+    padding: 12px 16px;
     position: fixed;
     top: 12px;
     transform: translateX(-50%);
@@ -154,7 +216,7 @@ button {
     background: #fee2e2;
     border-radius: 999px;
     display: flex;
-    font-size: 11px;
+    font-size: var(--fs-body);
     font-weight: 700;
     height: 22px;
     justify-content: center;
@@ -162,14 +224,14 @@ button {
 }
 
 .alert-title {
-    font-size: 10px;
+    font-size: var(--fs-body-sm);
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
 }
 
 .alert-message {
-    font-size: 11px;
+    font-size: var(--fs-body);
     line-height: 1.5;
     margin-top: 2px;
 }
@@ -185,7 +247,7 @@ button {
     border-radius: 16px;
     bottom: 24px;
     color: #fff;
-    font-size: 11px;
+    font-size: var(--fs-body);
     left: 50%;
     padding: 12px 20px;
     position: fixed;
@@ -216,7 +278,7 @@ button {
 
 .login-panel h1 {
     color: #0f172a;
-    font-size: 24px;
+    font-size: var(--fs-display-lg);
     font-weight: 600;
     line-height: 1.15;
     margin: 0 0 8px;
@@ -224,7 +286,7 @@ button {
 
 .login-panel p {
     color: var(--ppp-muted);
-    font-size: 11px;
+    font-size: var(--fs-body);
     letter-spacing: 0.18em;
     margin: 0 0 32px;
     text-transform: uppercase;
@@ -251,7 +313,7 @@ button {
 }
 
 .input-shell input {
-    font-size: 12px;
+    font-size: var(--fs-body);
     padding: 15px 16px 15px 40px;
 }
 
@@ -265,7 +327,7 @@ button {
     align-items: center;
     color: #cbd5e1;
     display: flex;
-    font-size: 10px;
+    font-size: var(--fs-body-sm);
     font-weight: 700;
     height: 100%;
     left: 16px;
@@ -283,7 +345,7 @@ button {
 
 .login-button {
     border-radius: 16px;
-    font-size: 11px;
+    font-size: var(--fs-body);
     font-weight: 600;
     letter-spacing: 0.18em;
     margin-top: 16px;
@@ -304,16 +366,20 @@ button {
 
 .sidebar {
     background: var(--ppp-sidebar);
-    border-right: 1px solid var(--ppp-line);
+    border-right: 1px solid rgba(226, 232, 240, 0.84);
     box-shadow: 0 28px 48px rgba(15, 23, 42, 0.08);
     display: flex;
     flex-direction: column;
     inset: 0 auto 0 0;
     position: fixed;
-    transform: translateX(0);
+    transform: translateX(calc(-100% - 18px));
     transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.42s ease;
     width: 240px;
     z-index: 80;
+}
+
+.sidebar.is-open {
+    transform: translateX(0);
 }
 
 .brand-row {
@@ -333,7 +399,7 @@ button {
     display: flex;
     height: 36px;
     justify-content: center;
-    padding: 6px;
+    padding: 8px;
     width: 36px;
 }
 
@@ -351,10 +417,10 @@ button {
     border: 0;
     color: #64748b;
     display: flex;
-    font-size: 11px;
+    font-size: var(--fs-body);
     font-weight: 600;
     gap: 12px;
-    min-height: 42px;
+    min-height: 44px;
     overflow: hidden;
     padding: 0 20px;
     position: relative;
@@ -376,7 +442,7 @@ button {
 .nav-icon {
     align-items: center;
     display: inline-flex;
-    font-size: 10px;
+    font-size: var(--fs-body-sm);
     font-weight: 800;
     height: 16px;
     justify-content: center;
@@ -386,13 +452,13 @@ button {
 .nav-subitem {
     gap: 12px;
     color: #94a3b8;
-    font-size: 10.5px;
+    font-size: var(--fs-body-sm);
     min-height: 34px;
     padding-left: 40px;
 }
 
 .nav-subitem i {
-    font-size: 11px;
+    font-size: var(--fs-body);
     text-align: center;
     width: 14px;
 }
@@ -425,7 +491,7 @@ button {
 }
 
 .chevron {
-    font-size: 10px;
+    font-size: var(--fs-body-sm);
     transition: transform 0.2s ease;
 }
 
@@ -433,8 +499,8 @@ button {
     align-items: center;
     border-top: 1px solid var(--ppp-line);
     display: flex;
-    gap: 10px;
-    padding: 14px 16px;
+    gap: 12px;
+    padding: 16px;
 }
 
 .avatar {
@@ -444,7 +510,7 @@ button {
     color: #fff;
     display: flex;
     flex: 0 0 36px;
-    font-size: 12px;
+    font-size: var(--fs-body);
     font-weight: 700;
     height: 36px;
     justify-content: center;
@@ -458,7 +524,7 @@ button {
 
 .user-meta div {
     color: #0f172a;
-    font-size: 11px;
+    font-size: var(--fs-body);
     font-weight: 700;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -468,14 +534,14 @@ button {
 .user-meta span {
     color: var(--ppp-muted);
     display: block;
-    font-size: 9px;
+    font-size: var(--fs-overline);
     letter-spacing: 0.12em;
     margin-top: 2px;
     text-transform: uppercase;
 }
 
 .main-panel {
-    margin-left: 240px;
+    margin-left: 0;
     min-height: 100dvh;
 }
 
@@ -484,9 +550,9 @@ button {
     background: rgba(255, 255, 255, 0.9);
     border-bottom: 1px solid var(--ppp-line);
     display: flex;
-    gap: 14px;
+    gap: 12px;
     height: 64px;
-    padding: 0 24px;
+    padding: 0 12px;
     position: sticky;
     top: 0;
     z-index: 50;
@@ -502,7 +568,7 @@ button {
 }
 
 .topbar h2 {
-    font-size: 18px;
+    font-size: var(--fs-display-sm);
 }
 
 .topbar-actions {
@@ -511,13 +577,17 @@ button {
     margin-left: auto;
 }
 
+.topbar-actions .ghost-button {
+    display: none;
+}
+
 .icon-button,
 .ghost-button,
 .dark-button,
 .small-button,
 .filter-pills button {
     border-radius: 12px;
-    font-size: 11px;
+    font-size: var(--fs-body);
     font-weight: 700;
     min-height: 34px;
     padding: 0 12px;
@@ -532,7 +602,8 @@ button {
     box-shadow:
         0 12px 24px rgba(15, 23, 42, 0.12),
         inset 0 1px 0 rgba(255, 255, 255, 0.82);
-    display: none;
+    display: inline-flex;
+    height: var(--icon-bg-md);
     justify-content: center;
     overflow: hidden;
     position: relative;
@@ -541,7 +612,7 @@ button {
         box-shadow 0.22s ease,
         border-color 0.22s ease,
         background 0.22s ease;
-    width: 36px;
+    width: var(--icon-bg-md);
 }
 
 .icon-button::before {
@@ -649,16 +720,17 @@ button {
 }
 
 .page-view {
-    padding: 24px;
+    padding: 12px;
 }
 
 .dashboard-hero,
 .module-header {
-    align-items: center;
+    align-items: stretch;
     background: #fff;
     border: 1px solid var(--ppp-line);
-    border-radius: 8px;
+    border-radius: var(--radius-module);
     display: flex;
+    flex-direction: column;
     gap: 24px;
     justify-content: space-between;
     margin-bottom: 16px;
@@ -667,14 +739,14 @@ button {
 
 .dashboard-hero h1,
 .module-header h1 {
-    font-size: 26px;
-    margin-top: 6px;
+    font-size: var(--fs-display-sm);
+    margin-top: 8px;
 }
 
 .dashboard-hero p,
 .module-header p {
     color: #64748b;
-    font-size: 12px;
+    font-size: var(--fs-body);
     line-height: 1.7;
     margin: 8px 0 0;
     max-width: 620px;
@@ -685,13 +757,13 @@ button {
     border: 1px solid #dbeafe;
     border-radius: 8px;
     padding: 12px 16px;
-    text-align: right;
+    text-align: left;
 }
 
 .hero-badge span {
     color: #64748b;
     display: block;
-    font-size: 10px;
+    font-size: var(--fs-body-sm);
     letter-spacing: 0.14em;
     text-transform: uppercase;
 }
@@ -699,14 +771,14 @@ button {
 .hero-badge strong {
     color: #1d4ed8;
     display: block;
-    font-size: 16px;
+    font-size: var(--fs-heading-lg);
     margin-top: 4px;
 }
 
 .kpi-grid {
     display: grid;
     gap: 12px;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: 1fr;
     margin-bottom: 16px;
 }
 
@@ -714,18 +786,22 @@ button {
 .panel {
     background: #fff;
     border: 1px solid var(--ppp-line);
-    border-radius: 8px;
 }
 
 .kpi-card {
+    border-radius: var(--radius-card);
     padding: 16px;
+}
+
+.panel {
+    border-radius: var(--radius-sm);
 }
 
 .kpi-card span,
 .kpi-card small {
     color: #64748b;
     display: block;
-    font-size: 10px;
+    font-size: var(--fs-body-sm);
     letter-spacing: 0.12em;
     text-transform: uppercase;
 }
@@ -733,14 +809,14 @@ button {
 .kpi-card strong {
     color: #0f172a;
     display: block;
-    font-size: 26px;
+    font-size: var(--fs-display-lg);
     margin: 8px 0 4px;
 }
 
 .content-grid {
     display: grid;
     gap: 16px;
-    grid-template-columns: 1.1fr 0.9fr;
+    grid-template-columns: 1fr;
 }
 
 .panel {
@@ -749,9 +825,10 @@ button {
 
 .panel-header,
 .table-toolbar {
-    align-items: center;
+    align-items: stretch;
     border-bottom: 1px solid var(--ppp-line);
     display: flex;
+    flex-direction: column;
     gap: 16px;
     justify-content: space-between;
     padding: 16px;
@@ -759,7 +836,7 @@ button {
 
 .panel-header h3 {
     color: #0f172a;
-    font-size: 16px;
+    font-size: var(--fs-heading-lg);
     font-weight: 700;
     margin: 4px 0 0;
 }
@@ -787,7 +864,7 @@ button {
 .status-list span,
 .mini-table span {
     color: #64748b;
-    font-size: 11px;
+    font-size: var(--fs-body);
     font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -796,7 +873,7 @@ button {
 .status-list strong,
 .mini-table strong {
     color: #0f172a;
-    font-size: 13px;
+    font-size: var(--fs-heading-sm);
 }
 
 .module-actions {
@@ -807,22 +884,22 @@ button {
 
 .search-shell {
     display: grid;
-    gap: 6px;
+    gap: 8px;
     max-width: 320px;
     width: 100%;
 }
 
 .search-shell span {
     color: #64748b;
-    font-size: 10px;
+    font-size: var(--fs-body-sm);
     font-weight: 700;
     letter-spacing: 0.12em;
     text-transform: uppercase;
 }
 
 .search-shell input {
-    font-size: 12px;
-    padding: 10px 12px;
+    font-size: var(--fs-body);
+    padding: 12px;
 }
 
 .filter-pills {
@@ -850,10 +927,10 @@ button {
 .data-table th {
     background: #f8fafc;
     color: #64748b;
-    font-size: 10px;
+    font-size: var(--fs-body-sm);
     font-weight: 800;
     letter-spacing: 0.12em;
-    padding: 12px 14px;
+    padding: var(--space-3) var(--space-4);
     text-align: left;
     text-transform: uppercase;
 }
@@ -861,14 +938,14 @@ button {
 .data-table td {
     border-top: 1px solid #f1f5f9;
     color: #334155;
-    font-size: 12px;
-    padding: 13px 14px;
+    font-size: var(--fs-body);
+    padding: var(--space-3) var(--space-4);
 }
 
 .badge {
     border-radius: 999px;
     display: inline-flex;
-    font-size: 10px;
+    font-size: var(--fs-body-sm);
     font-weight: 800;
     letter-spacing: 0.08em;
     padding: 5px 9px;
@@ -903,6 +980,7 @@ button {
 }
 
 .sidebar-backdrop.is-open {
+    display: block;
     opacity: 1;
 }
 
@@ -916,72 +994,68 @@ button {
     }
 }
 
-@media (max-width: 1080px) {
-    .kpi-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .content-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 768px) {
+@media (min-width: 768px) {
     .sidebar {
-        border-right-color: rgba(226, 232, 240, 0.84);
-        transform: translateX(calc(-100% - 18px));
-    }
-
-    .sidebar.is-open {
+        border-right-color: var(--ppp-line);
         transform: translateX(0);
     }
 
     .sidebar-backdrop.is-open {
-        display: block;
-    }
-
-    .main-panel {
-        margin-left: 0;
-    }
-
-    .icon-button {
-        display: inline-flex;
-    }
-
-    .topbar {
-        padding: 0 14px;
-    }
-
-    .topbar-actions {
-        gap: 6px;
-    }
-
-    .topbar-actions .ghost-button {
         display: none;
     }
 
+    .main-panel {
+        margin-left: 240px;
+    }
+
+    .icon-button {
+        display: none;
+    }
+
+    .topbar {
+        padding: 0 24px;
+    }
+
+    .topbar-actions {
+        gap: 8px;
+    }
+
+    .topbar-actions .ghost-button {
+        display: inline-flex;
+    }
+
     .page-view {
-        padding: 14px;
+        padding: 24px;
     }
 
     .dashboard-hero,
     .module-header,
     .table-toolbar {
-        align-items: stretch;
-        flex-direction: column;
+        align-items: center;
+        flex-direction: row;
     }
 
     .dashboard-hero h1,
     .module-header h1 {
-        font-size: 22px;
+        font-size: var(--fs-display-lg);
     }
 
     .hero-badge {
-        text-align: left;
+        text-align: right;
     }
 
     .kpi-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .content-grid {
+        grid-template-columns: 1.1fr 0.9fr;
+    }
+}
+
+@media (min-width: 1080px) {
+    .kpi-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 }
 

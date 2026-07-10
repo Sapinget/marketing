@@ -12,18 +12,19 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Artisan::command('marketing:user-create {username} {pin} {--name=} {--email=}', function (DashboardAuth $dashboardAuth): int {
+Artisan::command('marketing:user-create {username} {pin} {--name=} {--email=} {--role=operasional}', function (DashboardAuth $dashboardAuth): int {
     $user = $dashboardAuth->createUser(
         (string) $this->argument('username'),
         (string) $this->argument('pin'),
         $this->option('name') ? (string) $this->option('name') : null,
         $this->option('email') ? (string) $this->option('email') : null,
+        $this->option('role') ? (string) $this->option('role') : null,
     );
 
     $this->info(sprintf('User %s is ready to login.', $user->username));
 
     return self::SUCCESS;
-})->purpose('Create or update a dashboard login user');
+})->purpose('Create a dashboard login user');
 
 Artisan::command('marketing:import-master-plan {path} {--sheet=Master_Plan} {--truncate}', function (XlsxSheetReader $reader): int {
     $path = (string) $this->argument('path');
