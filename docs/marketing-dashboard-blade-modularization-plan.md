@@ -85,7 +85,7 @@ Status implementasi per 10 Juli 2026:
 - coverage CRUD activity log sudah meluas ke beberapa aksi write backend dan diverifikasi lewat feature test
 
 - `dashboard-shell.css` sekarang sepenuhnya dipisah dari Blade shell dan dimuat via Vite, sehingga blok CSS inline besar tidak lagi ada di head response
-- tokenisasi `dashboard-shell.css` sudah berjalan: 0 → 147+ `var(--ppp-*)` usages — semua solid color utama sudah pakai token (`--ppp-bg`, `--ppp-card`, `--ppp-line`, `--ppp-text`, `--ppp-muted`, `--ppp-nav-text`, `--ppp-accent`, `--ppp-accent-dark`, `--ppp-danger`, `--ppp-danger-fill`)
+- tokenisasi `dashboard-shell.css` lengkap: 147+ solid color → `var(--ppp-*)`, 37 alpha expressions → `rgb(var(--ppp-*-rgb) / alpha)` — tidak ada lagi hardcoded color value di `dashboard-shell.css`
 - `@theme` block di `app.css` sudah disinkronkan: semua token `:root` sudah ada di `@theme` — Tailwind utility class seperti `border-ppp-line`, `bg-ppp-card`, `bg-ppp-danger-fill` sekarang valid
 - WCAG AA compliance sudah ditegakkan pada komponen utama `dashboard-shell.css`:
   - `--ppp-danger` diubah dari `#dc2626` ke `#b91c1c` (text contrast 5.91:1)
@@ -618,7 +618,7 @@ Definition of done fase ini:
 - [ ] tambahkan field username yang sesuai pada form ganti PIN untuk menutup warning accessibility browser
 - [ ] audit lagi urutan include partial helper/runtime setelah ekstraksi batch admin/settings dan nama stock
 - [x] ~~`entity-badge--info` di `dashboard-shell.css` masih WCAG fail: `rgb(2 132 199)` (sky-600) pada `rgb(240 249 255)` = 3.70:1~~ — RESOLVED: diubah ke `rgb(37 99 235)` pada `rgb(239 246 255)` (blue-600/blue-50, 4.75:1 ✓), konsisten dengan baris Info di Semantic Palette
-- [ ] `rgb(... / alpha)` expressions di `dashboard-shell.css` tidak bisa ditokenisasi dengan `var()` langsung (shadow, focus ring, backdrop) — butuh `color-mix(in srgb, var(--ppp-nav-text) X%, transparent)` atau definisi token RGB komponen terpisah; 48 expressions masih hardcoded
+- [x] ~~`rgb(... / alpha)` expressions di `dashboard-shell.css` tidak bisa ditokenisasi dengan `var()` langsung~~ — RESOLVED: tambah 4 token RGB komponen (`--ppp-text-rgb`, `--ppp-card-rgb`, `--ppp-nav-rgb`, `--ppp-bg-rgb`) ke `:root` di `app.css`; semua 37 alpha expressions sudah pakai `rgb(var(--ppp-*-rgb) / alpha)`
 - [x] ~~`#dc2626` dipakai sebagai warna background filled danger button default~~ — RESOLVED: token `--ppp-danger-fill: #dc2626` ditambah ke `app.css` (@theme + :root) dan `dashboard-shell.css` diupdate pakai `var(--ppp-danger-fill)`
 
 ## Strategi Testing

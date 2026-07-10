@@ -23,6 +23,7 @@ Sumber utama token saat ini:
 |---|---|---|
 | `@theme {}` | `--color-ppp-*` | Tailwind utility classes: `bg-ppp-accent`, `text-ppp-text` |
 | `:root {}` | `--ppp-*` | Raw CSS: `var(--ppp-accent)`, dipakai di `dashboard-shell.css` dan inline style |
+| `:root {}` | `--ppp-*-rgb` | RGB components untuk alpha expressions: `rgb(var(--ppp-text-rgb) / 0.08)` — tidak bisa pakai `var()` langsung karena CSS tidak support `var() / alpha` di luar konteks rgb() |
 
 > **Penting:** Token di `@theme` dan `:root` **tidak otomatis sinkron**. Kalau tambah token baru, tambah di **keduanya**.
 > Semua token `:root` sudah disinkron ke `@theme` — tidak ada yang tertinggal.
@@ -56,6 +57,11 @@ Sumber utama token saat ini:
   --ppp-card: #ffffff;
   --ppp-danger: #b91c1c;
   --ppp-danger-fill: #dc2626;
+  /* RGB component tokens — hanya untuk alpha expressions: rgb(var(--ppp-text-rgb) / 0.08) */
+  --ppp-text-rgb: 15 23 42;
+  --ppp-card-rgb: 255 255 255;
+  --ppp-nav-rgb: 80 102 235;
+  --ppp-bg-rgb: 248 250 252;
 }
 ```
 
@@ -167,13 +173,14 @@ Lihat definisi di [resources/css/dashboard-shell.css](../resources/css/dashboard
 
 Area yang masih layak dirapikan ke token global:
 
-- `dashboard-shell.css` — **0 token dipakai**, semua hardcoded hex → ganti ke `var(--ppp-*)`
-- `app.css` — 61 hardcoded hex di luar blok token, banyak duplikat nilai token yang sudah ada
-- `@theme` block — tambah `--color-ppp-line`, `--color-ppp-bg`, `--color-ppp-card`, `--color-ppp-danger` agar bisa jadi Tailwind class
+- `app.css` — hardcoded hex di luar blok token, duplikat nilai token yang sudah ada
 - utility `text-slate-*` yang berulang di blade — kandidat token atau Tailwind class
 - badge semantik yang masih hardcoded per-menu
-- gradient/header accent yang belum pakai token nama
-- overlay opacity variants jika mau dibuat token class
+
+**Sudah selesai:**
+- `dashboard-shell.css` — 147+ solid color diganti `var(--ppp-*)`, 37 alpha expressions diganti `rgb(var(--ppp-*-rgb) / alpha)`
+- `@theme` block sudah sinkron dengan semua token di `:root`
+- gradient/header accent di menu partials sudah dihapus, semua pakai indigo token
 
 ## Referensi
 

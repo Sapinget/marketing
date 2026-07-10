@@ -245,7 +245,7 @@
             gap: 12px;
             padding: 16px 24px;
             border-top: 1px solid rgb(241 245 249);
-            background: rgb(248 250 252 / 0.95);
+            background: rgb(var(--ppp-bg-rgb) / 0.95);
             backdrop-filter: blur(10px);
         }
 
@@ -508,8 +508,8 @@
             background: var(--ppp-card);
             border-color: var(--ppp-nav-text);
             box-shadow:
-                0 0 0 3px rgb(80 102 235 / 0.08),
-                0 10px 24px rgb(15 23 42 / 0.08);
+                0 0 0 3px rgb(var(--ppp-nav-rgb) / 0.08),
+                0 10px 24px rgb(var(--ppp-text-rgb) / 0.08);
         }
 
         .filter-trigger-button:focus-visible,
@@ -554,8 +554,8 @@
             background: var(--ppp-card);
             border-color: var(--ppp-nav-text);
             box-shadow:
-                0 0 0 3px rgb(80 102 235 / 0.08),
-                0 10px 24px rgb(15 23 42 / 0.08);
+                0 0 0 3px rgb(var(--ppp-nav-rgb) / 0.08),
+                0 10px 24px rgb(var(--ppp-text-rgb) / 0.08);
         }
 
         .toolbar-select-shell__icon {
@@ -618,8 +618,8 @@
             outline: none;
             border-color: var(--ppp-nav-text);
             box-shadow:
-                0 0 0 3px rgb(80 102 235 / 0.08),
-                0 10px 24px rgb(15 23 42 / 0.08);
+                0 0 0 3px rgb(var(--ppp-nav-rgb) / 0.08),
+                0 10px 24px rgb(var(--ppp-text-rgb) / 0.08);
         }
 
         .search-select-popover {
@@ -628,7 +628,7 @@
             border-radius: 16px;
             overflow: hidden;
             padding: 8px;
-            box-shadow: 0 25px 50px -12px rgb(15 23 42 / 0.18);
+            box-shadow: 0 25px 50px -12px rgb(var(--ppp-text-rgb) / 0.18);
             transform-origin: top center;
         }
 
@@ -648,7 +648,7 @@
             background: var(--ppp-card);
             padding-top: 8px;
             border-top: 1px solid var(--ppp-line);
-            box-shadow: 0 -10px 24px -18px rgb(15 23 42 / 0.22);
+            box-shadow: 0 -10px 24px -18px rgb(var(--ppp-text-rgb) / 0.22);
         }
 
         .search-select-popover--flip-up .search-select-popover__options {
@@ -672,12 +672,12 @@
 
         .primary-cta-button:active:not(:disabled),
         .secondary-cta-button:active:not(:disabled) {
-            box-shadow: 0 6px 18px rgb(15 23 42 / 0.10);
+            box-shadow: 0 6px 18px rgb(var(--ppp-text-rgb) / 0.10);
         }
 
         .table-action-button:active:not(:disabled),
         .icon-utility-button:active:not(:disabled) {
-            box-shadow: 0 4px 12px rgb(15 23 42 / 0.10);
+            box-shadow: 0 4px 12px rgb(var(--ppp-text-rgb) / 0.10);
         }
 
         .compact-period-toolbar {
@@ -958,7 +958,7 @@
             border-radius: 24px;
             border: 1px solid rgb(241 245 249);
             background: var(--ppp-card);
-            box-shadow: 0 18px 50px -38px rgb(15 23 42 / 0.45);
+            box-shadow: 0 18px 50px -38px rgb(var(--ppp-text-rgb) / 0.45);
         }
 
         .info-panel-soft {
@@ -993,7 +993,7 @@
         }
 
         .settings-surface {
-            background: rgb(248 250 252 / 0.6);
+            background: rgb(var(--ppp-bg-rgb) / 0.6);
         }
 
         .settings-panel-card {
@@ -1119,8 +1119,8 @@
             border-radius: 16px;
             background: rgb(241 245 249);
             box-shadow:
-                inset 0 1px 0 rgb(255 255 255 / 0.95),
-                inset 0 0 0 1px rgb(255 255 255 / 0.35);
+                inset 0 1px 0 rgb(var(--ppp-card-rgb) / 0.95),
+                inset 0 0 0 1px rgb(var(--ppp-card-rgb) / 0.35);
         }
 
         .segmented-control__item {
@@ -1146,8 +1146,8 @@
             background: var(--ppp-card);
             color: var(--ppp-text);
             box-shadow:
-                0 1px 2px rgb(15 23 42 / 0.06),
-                0 4px 10px rgb(15 23 42 / 0.05);
+                0 1px 2px rgb(var(--ppp-text-rgb) / 0.06),
+                0 4px 10px rgb(var(--ppp-text-rgb) / 0.05);
         }
 
         .segmented-control__item:active {
@@ -1163,8 +1163,8 @@
             border-color: var(--ppp-line);
             background: rgb(241 245 249);
             box-shadow:
-                inset 0 1px 0 rgb(255 255 255 / 0.95),
-                inset 0 0 0 1px rgb(255 255 255 / 0.35);
+                inset 0 1px 0 rgb(var(--ppp-card-rgb) / 0.95),
+                inset 0 0 0 1px rgb(var(--ppp-card-rgb) / 0.35);
         }
 
         .segmented-control--ios::before {
@@ -1177,8 +1177,8 @@
             border-radius: 12px;
             background: var(--ppp-card);
             box-shadow:
-                0 2px 6px rgb(15 23 42 / 0.08),
-                inset 0 1px 0 rgb(255 255 255 / 0.92);
+                0 2px 6px rgb(var(--ppp-text-rgb) / 0.08),
+                inset 0 1px 0 rgb(var(--ppp-card-rgb) / 0.92);
             transform: translateX(0);
             transition:
                 transform 0.34s cubic-bezier(0.22, 1, 0.36, 1),
@@ -1191,8 +1191,8 @@
             transform: translateX(100%);
             background: var(--ppp-card);
             box-shadow:
-                0 2px 6px rgb(15 23 42 / 0.08),
-                inset 0 1px 0 rgb(255 255 255 / 0.92);
+                0 2px 6px rgb(var(--ppp-text-rgb) / 0.08),
+                inset 0 1px 0 rgb(var(--ppp-card-rgb) / 0.92);
         }
 
         .segmented-control--ios .segmented-control__item {
@@ -1325,7 +1325,7 @@
 
         .table-pager-bar {
             padding: 1rem 1.5rem;
-            background: rgb(248 250 252 / 0.5);
+            background: rgb(var(--ppp-bg-rgb) / 0.5);
             border-top: 1px solid var(--ppp-bg);
             display: flex;
             align-items: center;
@@ -1397,7 +1397,7 @@
         }
 
         .modal-primary-button:active:not(:disabled) {
-            box-shadow: 0 8px 18px rgb(15 23 42 / 0.12);
+            box-shadow: 0 8px 18px rgb(var(--ppp-text-rgb) / 0.12);
         }
 
         @media (max-width: 767px) {
@@ -1464,8 +1464,8 @@
         }
 
         .stat-card:hover {
-            border-color: rgb(80 102 235 / 0.2);
-            box-shadow: 0 8px 20px -18px rgb(15 23 42 / 0.24);
+            border-color: rgb(var(--ppp-nav-rgb) / 0.2);
+            box-shadow: 0 8px 20px -18px rgb(var(--ppp-text-rgb) / 0.24);
         }
 
         .mobile-record-card {
@@ -1488,7 +1488,7 @@
         .overlay-dialog-surface {
             background: var(--ppp-card);
             border: 1px solid var(--ppp-line);
-            box-shadow: 0 25px 50px -12px rgb(15 23 42 / 0.18);
+            box-shadow: 0 25px 50px -12px rgb(var(--ppp-text-rgb) / 0.18);
         }
 
         .modal-sheet-surface {
@@ -1642,7 +1642,7 @@
         .form-input:focus {
             border-color: var(--ppp-nav-text);
             background: var(--ppp-card);
-            box-shadow: 0 0 0 3px rgb(80 102 235 / 0.08);
+            box-shadow: 0 0 0 3px rgb(var(--ppp-nav-rgb) / 0.08);
         }
 
         .form-input-leading-icon {
@@ -1664,7 +1664,7 @@
         .form-input-auth:focus {
             border-color: var(--ppp-nav-text);
             background: var(--ppp-card);
-            box-shadow: 0 0 0 3px rgb(80 102 235 / 0.08);
+            box-shadow: 0 0 0 3px rgb(var(--ppp-nav-rgb) / 0.08);
         }
 
         .form-input-compact {
@@ -1682,7 +1682,7 @@
         .form-input-compact:focus {
             border-color: var(--ppp-nav-text);
             background: var(--ppp-card);
-            box-shadow: 0 0 0 3px rgb(80 102 235 / 0.08);
+            box-shadow: 0 0 0 3px rgb(var(--ppp-nav-rgb) / 0.08);
         }
 
         .form-input-compact-white {
@@ -1699,7 +1699,7 @@
 
         .form-input-compact-white:focus {
             border-color: var(--ppp-nav-text);
-            box-shadow: 0 0 0 2px rgb(80 102 235 / 0.1);
+            box-shadow: 0 0 0 2px rgb(var(--ppp-nav-rgb) / 0.1);
         }
 
         .form-input-search {
@@ -1717,7 +1717,7 @@
         .form-input-search:focus {
             border-color: var(--ppp-nav-text);
             background: var(--ppp-card);
-            box-shadow: 0 0 0 3px rgb(80 102 235 / 0.08);
+            box-shadow: 0 0 0 3px rgb(var(--ppp-nav-rgb) / 0.08);
         }
 
         .form-textarea {
@@ -1735,7 +1735,7 @@
 
         .form-textarea:focus {
             border-color: var(--ppp-nav-text);
-            box-shadow: 0 0 0 3px rgb(80 102 235 / 0.08);
+            box-shadow: 0 0 0 3px rgb(var(--ppp-nav-rgb) / 0.08);
         }
 
         .form-input-popover {
@@ -1963,7 +1963,7 @@
             background: linear-gradient(180deg, var(--ppp-bg), var(--ppp-card));
             border-radius: 20px;
             padding: 16px;
-            box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.9);
+            box-shadow: inset 0 1px 0 rgb(var(--ppp-card-rgb) / 0.9);
         }
 
         .form-section-title {
@@ -2032,7 +2032,7 @@
         }
 
         #app table thead tr {
-            background: rgb(248 250 252 / 0.72) !important;
+            background: rgb(var(--ppp-bg-rgb) / 0.72) !important;
         }
 
         #app table th {
@@ -2051,7 +2051,7 @@
         }
 
         #app table tbody tr:nth-child(even) {
-            background: rgb(248 250 252 / 0.5);
+            background: rgb(var(--ppp-bg-rgb) / 0.5);
         }
 
         .table-sortable {

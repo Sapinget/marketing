@@ -33,6 +33,10 @@
     --ppp-card: #ffffff;
     --ppp-danger: #b91c1c;
     --ppp-danger-fill: #dc2626;
+    --ppp-text-rgb: 15 23 42;
+    --ppp-card-rgb: 255 255 255;
+    --ppp-nav-rgb: 80 102 235;
+    --ppp-bg-rgb: 248 250 252;
 }
 
 * {
