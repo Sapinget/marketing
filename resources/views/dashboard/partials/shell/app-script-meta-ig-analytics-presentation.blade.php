@@ -21,15 +21,15 @@
                     const d = filteredMetaStory.value; const sum = f => _metaSum(d, f);
                     const topPostType = Object.entries(_sCnt(d, r => r.post_type)).sort((a, b) => b[1] - a[1])[0] || null;
                     return { cards: [
-                        { label: 'Total Story', value: formatNumber(d.length), unit: 'Post', icon: 'fa-clapperboard', color: 'text-rose-500', unitColor: 'text-rose-400', subColor: 'text-rose-600', sub: 'Periode aktif' },
-                        { label: 'Total Views', value: formatNumber(sum('views')), icon: 'fa-eye', color: 'text-blue-500', subColor: 'text-blue-600', sub: 'Tayangan' },
-                        { label: 'Total Reach', value: formatNumber(sum('reach')), icon: 'fa-bullhorn', color: 'text-emerald-500', subColor: 'text-emerald-600', sub: 'Jangkauan' },
-                        { label: 'Follows', value: formatNumber(sum('follows')), icon: 'fa-user-plus', color: 'text-violet-500', subColor: 'text-violet-600', sub: 'Dari story' },
-                        { label: 'Navigation', value: formatNumber(sum('navigation')), icon: 'fa-arrows-left-right', color: 'text-amber-500', subColor: 'text-amber-600', sub: 'Geser story' },
-                        { label: 'Link Clicks', value: formatNumber(sum('link_clicks')), icon: 'fa-link', color: 'text-blue-500', subColor: 'text-blue-600', sub: 'Klik link' },
-                        { label: 'Profile Visits', value: formatNumber(sum('profile_visits')), icon: 'fa-user', color: 'text-emerald-500', subColor: 'text-emerald-600', sub: 'Kunjungan profil' },
-                        { label: 'Sticker Taps', value: formatNumber(sum('sticker_taps')), icon: 'fa-hand-pointer', color: 'text-rose-500', subColor: 'text-rose-600', sub: 'Tap stiker' },
-                        { label: 'Top Post Type', value: topPostType ? String(topPostType[0]).toUpperCase() : '-', icon: 'fa-clapperboard', color: 'text-rose-500', sub: formatNumber(topPostType ? topPostType[1] : 0) + ' post', subColor: 'text-rose-600' },
+                        { label: 'Total Story', value: formatNumber(d.length), unit: 'Post', icon: 'fa-clapperboard', color: 'text-danger', unitColor: 'text-danger', subColor: 'text-danger', sub: 'Periode aktif' },
+                        { label: 'Total Views', value: formatNumber(sum('views')), icon: 'fa-eye', color: 'text-amber', subColor: 'text-amber', sub: 'Tayangan' },
+                        { label: 'Total Reach', value: formatNumber(sum('reach')), icon: 'fa-bullhorn', color: 'text-success', subColor: 'text-success', sub: 'Jangkauan' },
+                        { label: 'Follows', value: formatNumber(sum('follows')), icon: 'fa-user-plus', color: 'text-slate-500', subColor: 'text-slate-600', sub: 'Dari story' },
+                        { label: 'Navigation', value: formatNumber(sum('navigation')), icon: 'fa-arrows-left-right', color: 'text-amber', subColor: 'text-amber', sub: 'Geser story' },
+                        { label: 'Link Clicks', value: formatNumber(sum('link_clicks')), icon: 'fa-link', color: 'text-amber', subColor: 'text-amber', sub: 'Klik link' },
+                        { label: 'Profile Visits', value: formatNumber(sum('profile_visits')), icon: 'fa-user', color: 'text-success', subColor: 'text-success', sub: 'Kunjungan profil' },
+                        { label: 'Sticker Taps', value: formatNumber(sum('sticker_taps')), icon: 'fa-hand-pointer', color: 'text-danger', subColor: 'text-danger', sub: 'Tap stiker' },
+                        { label: 'Top Post Type', value: topPostType ? String(topPostType[0]).toUpperCase() : '-', icon: 'fa-clapperboard', color: 'text-danger', sub: formatNumber(topPostType ? topPostType[1] : 0) + ' post', subColor: 'text-danger' },
                     ] };
                 });
                 const metaFeedSummary = computed(() => {
@@ -37,15 +37,15 @@
                     const reach = sum('reach'); const eng = sum('likes') + sum('comments') + sum('shares') + sum('saves');
                     const topPostType = Object.entries(_sCnt(d, r => r.post_type)).sort((a, b) => b[1] - a[1])[0] || null;
                     return { cards: [
-                        { label: 'Total Konten', value: formatNumber(d.length), unit: 'Post', icon: 'fa-photo-film', color: 'text-blue-500', unitColor: 'text-blue-400', subColor: 'text-blue-600', sub: 'Periode aktif' },
-                        { label: 'Total Views', value: formatNumber(sum('views')), icon: 'fa-eye', color: 'text-violet-500', subColor: 'text-violet-600', sub: 'Tayangan' },
-                        { label: 'Total Reach', value: formatNumber(reach), icon: 'fa-bullhorn', color: 'text-emerald-500', subColor: 'text-emerald-600', sub: 'Jangkauan' },
-                        { label: 'Engagement Rate', value: (reach ? (eng / reach * 100).toFixed(1) : '0') + '%', icon: 'fa-fire', color: 'text-rose-500', subColor: 'text-rose-600', sub: '(L+C+S+Sv)/Reach' },
-                        { label: 'Likes', value: formatNumber(sum('likes')), icon: 'fa-heart', color: 'text-rose-500', subColor: 'text-rose-600', sub: 'Total suka' },
-                        { label: 'Comments', value: formatNumber(sum('comments')), icon: 'fa-comment', color: 'text-blue-500', subColor: 'text-blue-600', sub: 'Total komentar' },
-                        { label: 'Shares', value: formatNumber(sum('shares')), icon: 'fa-share', color: 'text-emerald-500', subColor: 'text-emerald-600', sub: 'Total bagikan' },
-                        { label: 'Saves', value: formatNumber(sum('saves')), icon: 'fa-bookmark', color: 'text-amber-500', subColor: 'text-amber-600', sub: 'Total simpan' },
-                        { label: 'Top Post Type', value: topPostType ? String(topPostType[0]).toUpperCase() : '-', icon: 'fa-photo-film', color: 'text-blue-500', sub: formatNumber(topPostType ? topPostType[1] : 0) + ' post', subColor: 'text-blue-600' },
+                        { label: 'Total Konten', value: formatNumber(d.length), unit: 'Post', icon: 'fa-photo-film', color: 'text-amber', unitColor: 'text-amber', subColor: 'text-amber', sub: 'Periode aktif' },
+                        { label: 'Total Views', value: formatNumber(sum('views')), icon: 'fa-eye', color: 'text-slate-500', subColor: 'text-slate-600', sub: 'Tayangan' },
+                        { label: 'Total Reach', value: formatNumber(reach), icon: 'fa-bullhorn', color: 'text-success', subColor: 'text-success', sub: 'Jangkauan' },
+                        { label: 'Engagement Rate', value: (reach ? (eng / reach * 100).toFixed(1) : '0') + '%', icon: 'fa-fire', color: 'text-danger', subColor: 'text-danger', sub: '(L+C+S+Sv)/Reach' },
+                        { label: 'Likes', value: formatNumber(sum('likes')), icon: 'fa-heart', color: 'text-danger', subColor: 'text-danger', sub: 'Total suka' },
+                        { label: 'Comments', value: formatNumber(sum('comments')), icon: 'fa-comment', color: 'text-amber', subColor: 'text-amber', sub: 'Total komentar' },
+                        { label: 'Shares', value: formatNumber(sum('shares')), icon: 'fa-share', color: 'text-success', subColor: 'text-success', sub: 'Total bagikan' },
+                        { label: 'Saves', value: formatNumber(sum('saves')), icon: 'fa-bookmark', color: 'text-amber', subColor: 'text-amber', sub: 'Total simpan' },
+                        { label: 'Top Post Type', value: topPostType ? String(topPostType[0]).toUpperCase() : '-', icon: 'fa-photo-film', color: 'text-amber', sub: formatNumber(topPostType ? topPostType[1] : 0) + ' post', subColor: 'text-amber' },
                     ] };
                 });
                 const metaStoryPage = ref(1);

@@ -3,9 +3,12 @@
 use App\Support\MasterPlanDistributionSync;
 use App\Support\DashboardAuth;
 use App\Support\MetaIgImportNormalizer;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Support\MarketingDashboardShell;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
+use App\Support\MarketingDashboardShell;
 use Illuminate\Validation\Rule;
 
 $nullableDate = fn ($value) => blank($value) ? null : $value;
@@ -195,10 +198,22 @@ $dedupeNamaStockRows = function (array $rows) use ($normalizeNamaStockRow): arra
     return array_values($seen);
 };
 
+$syncFromMetaIg = function (array &$row): void {
+    $idPost = $row['id_post'] ?? null;
+    if (blank($idPost)) return;
+    $post = DB::table('meta_ig_posts')->where('post_id', $idPost)->first();
+    if ($post === null) return;
+    $row['views'] = max(0, (int) ($post->views ?? 0));
+    $row['likes'] = max(0, (int) ($post->likes ?? 0));
+    $row['comments'] = max(0, (int) ($post->comments ?? 0));
+    $row['shares'] = max(0, (int) ($post->shares ?? 0));
+};
+
 $analyticsPayload = fn (array $payload) => [
     'master_id' => trim((string) ($payload['Master_ID'] ?? '')),
     'title' => $stripTags($payload['Judul'] ?? null),
     'platform' => $stripTags((string) ($payload['Platform'] ?? '')),
+    'id_post' => $stripTags($payload['ID_Post'] ?? null),
     'tanggal_publish' => $nullableDate($payload['Tanggal_Publish'] ?? null),
     'views' => max(0, (int) ($payload['Views'] ?? 0)),
     'likes' => max(0, (int) ($payload['Likes'] ?? 0)),
@@ -214,6 +229,7 @@ $analyticsResponse = fn ($row) => [
     'Master_ID' => $row->master_id,
     'Judul' => $row->title,
     'Platform' => $row->platform,
+    'ID_Post' => $rowValue($row, 'id_post'),
     'Tanggal_Publish' => $row->tanggal_publish,
     'Views' => $row->views,
     'Likes' => $row->likes,
@@ -251,6 +267,21 @@ Route::get('/health', fn () => response()->json([
     'app' => 'marketing-dashboard',
     'timestamp' => now()->toIso8601String(),
 ]))->withoutMiddleware([
+    \App\Http\Middleware\VerifyCsrfToken::class,
+    \Illuminate\Session\Middleware\StartSession::class,
+    \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+]);
+
+Route::get('/api/auth/avatar/{filename}', function (string $filename) {
+    abort_unless(preg_match('/^[A-Za-z0-9._-]+$/', $filename) === 1, 404);
+
+    $path = storage_path('app/public/avatars/' . $filename);
+    abort_unless(File::exists($path), 404);
+
+    return response()->file($path, [
+        'Cache-Control' => 'public, max-age=86400',
+    ]);
+})->withoutMiddleware([
     \App\Http\Middleware\VerifyCsrfToken::class,
     \Illuminate\Session\Middleware\StartSession::class,
     \Illuminate\View\Middleware\ShareErrorsFromSession::class,
@@ -446,7 +477,8 @@ Route::middleware('dashboard.auth')->group(function () use (
     $masterPlanResponse,
     $masterPlanValidate,
     $nullableDate,
-    $rowValue
+    $rowValue,
+    $syncFromMetaIg
 ): void {
     $assertUserManagementAccess = static function (): void {
         $user = auth()->user();
@@ -616,9 +648,54 @@ Route::put('/api/auth/profile', function (DashboardAuth $dashboardAuth) use ($lo
 
     $user = auth()->user();
     abort_unless($user instanceof \App\Models\User, 401);
-    $before = $user->only(['id', 'username', 'name', 'email']);
+    $before = $user->only(['id', 'username', 'name', 'email', 'avatar']);
     $updatedUser = $dashboardAuth->updateProfileName($user, $payload['nama']);
-    $logCrudActivity('users', 'update', (string) $updatedUser->username, $updatedUser->getKey(), $before, $updatedUser->only(['id', 'username', 'name', 'email']));
+    $logCrudActivity('users', 'update', (string) $updatedUser->username, $updatedUser->getKey(), $before, $updatedUser->only(['id', 'username', 'name', 'email', 'avatar']));
+
+    return response()->json([
+        'status' => 'success',
+        'user' => $dashboardAuth->userPayload($updatedUser),
+    ]);
+});
+
+Route::post('/api/auth/avatar', function (Request $request, DashboardAuth $dashboardAuth) use ($logCrudActivity) {
+    $payload = $request->validate([
+        'avatar' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+        'user_id' => ['nullable', 'integer', 'exists:users,id'],
+    ]);
+
+    $authUser = auth()->user();
+    abort_unless($authUser instanceof \App\Models\User, 401);
+
+    $targetUserId = (int) ($payload['user_id'] ?? $authUser->getKey());
+    $isAdminEdit = $targetUserId !== $authUser->getKey();
+
+    if ($isAdminEdit && ! $dashboardAuth->canManageUsers($authUser)) {
+        abort(403, 'Hanya super admin yang bisa mengubah foto user lain.');
+    }
+
+    $user = $targetUserId === $authUser->getKey() ? $authUser : \App\Models\User::query()->findOrFail($targetUserId);
+
+    $before = $user->only(['id', 'username', 'name', 'email', 'avatar']);
+    $extension = strtolower((string) $payload['avatar']->getClientOriginalExtension());
+    $filename = 'user-' . $user->getKey() . '-' . Str::lower(Str::random(12)) . '.' . $extension;
+    $directory = storage_path('app/public/avatars');
+
+    if (! File::isDirectory($directory)) {
+        File::ensureDirectoryExists($directory);
+    }
+
+    $payload['avatar']->move($directory, $filename);
+
+    if (filled($user->avatar)) {
+        $oldPath = $directory . DIRECTORY_SEPARATOR . $user->avatar;
+        if (File::exists($oldPath)) {
+            File::delete($oldPath);
+        }
+    }
+
+    $updatedUser = $dashboardAuth->updateUserAvatar($user, $filename);
+    $logCrudActivity('users', 'update', (string) $updatedUser->username, $updatedUser->getKey(), $before, $updatedUser->only(['id', 'username', 'name', 'email', 'avatar']));
 
     return response()->json([
         'status' => 'success',
@@ -1163,8 +1240,8 @@ Route::delete('/api/distributions/{id}', function (int $id) use ($logCrudActivit
 Route::get('/api/analytics', function () {
     $rows = DB::table('analytics')
         ->leftJoin('master_plans', 'master_plans.id', '=', 'analytics.master_plan_id')
-        ->whereNotIn('platform', ['contentType'])
-        ->orderByDesc('tanggal_publish')
+        ->whereNotIn('analytics.platform', ['contentType'])
+        ->orderByDesc('analytics.tanggal_publish')
         ->orderByRaw("COALESCE(NULLIF(analytics.master_id, ''), master_plans.source_id, '')")
         ->get([
             'analytics.*',
@@ -1175,6 +1252,7 @@ Route::get('/api/analytics', function () {
             'Master_ID' => $row->resolved_master_id,
             'Judul' => $row->title,
             'Platform' => $row->platform,
+            'ID_Post' => $row->id_post,
             'Tanggal_Publish' => $row->tanggal_publish,
             'Views' => $row->views,
             'Likes' => $row->likes,
@@ -1185,13 +1263,14 @@ Route::get('/api/analytics', function () {
     return response()->json(['data' => $rows]);
 });
 
-Route::post('/api/analytics', function () use ($actorUserId, $analyticsPayload, $analyticsResponse, $logCrudActivity, $requireMasterPlanIdBySourceId) {
+Route::post('/api/analytics', function () use ($actorUserId, $analyticsPayload, $analyticsResponse, $logCrudActivity, $requireMasterPlanIdBySourceId, $syncFromMetaIg) {
     $row = $analyticsPayload(request()->all());
     abort_if(blank($row['master_id']) || blank($row['platform']), 422, 'Master_ID dan Platform wajib diisi.');
     $row['created_at'] = now();
     $row['master_plan_id'] = $requireMasterPlanIdBySourceId($row['master_id']);
     $row['created_by_user_id'] = $actorUserId();
     $row['updated_by_user_id'] = $actorUserId();
+    $syncFromMetaIg($row);
 
     DB::table('analytics')->insert($row);
     $stored = DB::table('analytics')->where('id', DB::getPdo()->lastInsertId())->first();
@@ -1200,7 +1279,7 @@ Route::post('/api/analytics', function () use ($actorUserId, $analyticsPayload, 
     return response()->json(['status' => 'success', 'data' => $analyticsResponse($stored)], 201);
 });
 
-Route::put('/api/analytics/{id}', function (int $id) use ($actorUserId, $analyticsPayload, $analyticsResponse, $logCrudActivity, $requireMasterPlanIdBySourceId) {
+Route::put('/api/analytics/{id}', function (int $id) use ($actorUserId, $analyticsPayload, $analyticsResponse, $logCrudActivity, $requireMasterPlanIdBySourceId, $syncFromMetaIg) {
     abort_unless(DB::table('analytics')->where('id', $id)->exists(), 404);
     $before = DB::table('analytics')->where('id', $id)->first();
 
@@ -1208,6 +1287,7 @@ Route::put('/api/analytics/{id}', function (int $id) use ($actorUserId, $analyti
     abort_if(blank($row['master_id']) || blank($row['platform']), 422, 'Master_ID dan Platform wajib diisi.');
     $row['master_plan_id'] = $requireMasterPlanIdBySourceId($row['master_id']);
     $row['updated_by_user_id'] = $actorUserId();
+    $syncFromMetaIg($row);
     DB::table('analytics')->where('id', $id)->update($row);
 
     $stored = DB::table('analytics')->where('id', $id)->first();
@@ -1427,6 +1507,13 @@ Route::delete('/api/ads-performance/{sourceId}', $genericDelete('ads_performance
 Route::get('/api/harga-kompetitor', function () use ($fromDb) {
     return response()->json(['data' => DB::table('harga_kompetitor')->orderByDesc('tanggal_cek')->get()->map(fn ($r) => $fromDb($r, [
         'Nama_Produk'        => $r->nama_produk,
+        'KATEGORI'           => $r->kategori ?? null,
+        'BRAND'              => $r->brand ?? null,
+        'SERI'               => $r->seri ?? null,
+        'RAM'                => $r->ram ?? null,
+        'INTERNAL'           => $r->internal ?? null,
+        'SIZE'               => $r->size ?? null,
+        'WARNA'              => $r->warna ?? null,
         'Harga_Distributor_1'=> $r->harga_distributor_1,
         'Harga_Distributor_2'=> $r->harga_distributor_2,
         'Harga_Kompetitor'   => $r->harga_kompetitor,
@@ -1437,10 +1524,10 @@ Route::get('/api/harga-kompetitor', function () use ($fromDb) {
     ]))]);
 });
 Route::post('/api/harga-kompetitor', $genericUpsert('harga_kompetitor', function (array $p) use ($encodePayload, $makeSourceId, $nullableDate) {
-    return ['source_id' => $makeSourceId('HK', $p['ID'] ?? null), 'nama_produk' => $p['Nama_Produk'] ?? null, 'harga_distributor_1' => (int) ($p['Harga_Distributor_1'] ?? 0), 'harga_distributor_2' => (int) ($p['Harga_Distributor_2'] ?? 0), 'harga_kompetitor' => (int) ($p['Harga_Kompetitor'] ?? 0), 'margin_profit' => (int) ($p['Margin_Profit'] ?? 0), 'harga_rencana_jual' => (int) ($p['Harga_Rencana_Jual'] ?? 0), 'tanggal_cek' => $nullableDate($p['Tanggal_Cek'] ?? null), 'catatan' => $p['Catatan'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'updated_at' => now()];
+    return ['source_id' => $makeSourceId('HK', $p['ID'] ?? null), 'nama_produk' => $p['Nama_Produk'] ?? null, 'kategori' => $p['KATEGORI'] ?? null, 'brand' => $p['BRAND'] ?? null, 'seri' => $p['SERI'] ?? null, 'ram' => $p['RAM'] ?? null, 'internal' => $p['INTERNAL'] ?? null, 'size' => $p['SIZE'] ?? null, 'warna' => $p['WARNA'] ?? null, 'harga_distributor_1' => (int) ($p['Harga_Distributor_1'] ?? 0), 'harga_distributor_2' => (int) ($p['Harga_Distributor_2'] ?? 0), 'harga_kompetitor' => (int) ($p['Harga_Kompetitor'] ?? 0), 'margin_profit' => (int) ($p['Margin_Profit'] ?? 0), 'harga_rencana_jual' => (int) ($p['Harga_Rencana_Jual'] ?? 0), 'tanggal_cek' => $nullableDate($p['Tanggal_Cek'] ?? null), 'catatan' => $p['Catatan'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'updated_at' => now()];
 }));
 Route::put('/api/harga-kompetitor/{sourceId}', $genericUpdate('harga_kompetitor', function (array $p) use ($encodePayload, $nullableDate) {
-    return ['nama_produk' => $p['Nama_Produk'] ?? null, 'harga_distributor_1' => (int) ($p['Harga_Distributor_1'] ?? 0), 'harga_distributor_2' => (int) ($p['Harga_Distributor_2'] ?? 0), 'harga_kompetitor' => (int) ($p['Harga_Kompetitor'] ?? 0), 'margin_profit' => (int) ($p['Margin_Profit'] ?? 0), 'harga_rencana_jual' => (int) ($p['Harga_Rencana_Jual'] ?? 0), 'tanggal_cek' => $nullableDate($p['Tanggal_Cek'] ?? null), 'catatan' => $p['Catatan'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()];
+    return ['nama_produk' => $p['Nama_Produk'] ?? null, 'kategori' => $p['KATEGORI'] ?? null, 'brand' => $p['BRAND'] ?? null, 'seri' => $p['SERI'] ?? null, 'ram' => $p['RAM'] ?? null, 'internal' => $p['INTERNAL'] ?? null, 'size' => $p['SIZE'] ?? null, 'warna' => $p['WARNA'] ?? null, 'harga_distributor_1' => (int) ($p['Harga_Distributor_1'] ?? 0), 'harga_distributor_2' => (int) ($p['Harga_Distributor_2'] ?? 0), 'harga_kompetitor' => (int) ($p['Harga_Kompetitor'] ?? 0), 'margin_profit' => (int) ($p['Margin_Profit'] ?? 0), 'harga_rencana_jual' => (int) ($p['Harga_Rencana_Jual'] ?? 0), 'tanggal_cek' => $nullableDate($p['Tanggal_Cek'] ?? null), 'catatan' => $p['Catatan'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()];
 }));
 Route::delete('/api/harga-kompetitor/{sourceId}', $genericDelete('harga_kompetitor'));
 
@@ -1737,7 +1824,7 @@ Route::get('/api/all-data', function () use ($fromDb, $rowValue) {
             'analytics.*',
             DB::raw("COALESCE(NULLIF(analytics.master_id, ''), master_plans.source_id) as resolved_master_id"),
         ])
-        ->map(fn ($r) => ['ID' => $r->id, 'Master_ID' => $r->resolved_master_id, 'Judul' => $r->title, 'Platform' => $r->platform, 'Tanggal_Publish' => $r->tanggal_publish, 'Views' => $r->views, 'Likes' => $r->likes, 'Comments' => $r->comments, 'Shares' => $r->shares]);
+        ->map(fn ($r) => ['ID' => $r->id, 'Master_ID' => $r->resolved_master_id, 'Judul' => $r->title, 'Platform' => $r->platform, 'ID_Post' => $r->id_post, 'Tanggal_Publish' => $r->tanggal_publish, 'Views' => $r->views, 'Likes' => $r->likes, 'Comments' => $r->comments, 'Shares' => $r->shares]);
 
     $distribution = DB::table('distributions')
         ->leftJoin('master_plans', 'master_plans.id', '=', 'distributions.master_plan_id')
@@ -1768,7 +1855,7 @@ Route::get('/api/all-data', function () use ($fromDb, $rowValue) {
         ->map(fn ($r) => $fromDb($r, ['Nama' => $r->nama, 'ID_Ads' => $r->id_ads, 'Tanggal' => $r->tanggal, 'Biaya' => $r->biaya, 'Sisa_Saldo' => $r->sisa_saldo, 'Kategori' => $r->kategori, 'Platform' => $r->platform, 'Jangkauan' => $r->jangkauan, 'Suka' => $r->suka, 'Komentar' => $r->komentar, 'Share' => $r->share]));
 
     $hargaKompetitor = DB::table('harga_kompetitor')->orderByDesc('tanggal_cek')->get()
-        ->map(fn ($r) => $fromDb($r, ['Nama_Produk' => $r->nama_produk, 'Harga_Distributor_1' => $r->harga_distributor_1, 'Harga_Distributor_2' => $r->harga_distributor_2, 'Harga_Kompetitor' => $r->harga_kompetitor, 'Margin_Profit' => $r->margin_profit, 'Harga_Rencana_Jual' => $r->harga_rencana_jual, 'Tanggal_Cek' => $r->tanggal_cek, 'Catatan' => $r->catatan]));
+        ->map(fn ($r) => $fromDb($r, ['Nama_Produk' => $r->nama_produk, 'KATEGORI' => $r->kategori ?? null, 'BRAND' => $r->brand ?? null, 'SERI' => $r->seri ?? null, 'RAM' => $r->ram ?? null, 'INTERNAL' => $r->internal ?? null, 'SIZE' => $r->size ?? null, 'WARNA' => $r->warna ?? null, 'Harga_Distributor_1' => $r->harga_distributor_1, 'Harga_Distributor_2' => $r->harga_distributor_2, 'Harga_Kompetitor' => $r->harga_kompetitor, 'Margin_Profit' => $r->margin_profit, 'Harga_Rencana_Jual' => $r->harga_rencana_jual, 'Tanggal_Cek' => $r->tanggal_cek, 'Catatan' => $r->catatan]));
 
     $orderanOnline = DB::table('orderan_online')->orderByDesc('tanggal')->get()
         ->map(function ($r) use ($fromDb) {

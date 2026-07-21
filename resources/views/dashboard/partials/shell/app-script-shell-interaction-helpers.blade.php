@@ -7,6 +7,106 @@
                     isSidebarOpen.value = false;
                 };
 
+                let horizontalPanStart = null;
+
+                const getBoundedTableScroller = (target) => {
+                    const element = target instanceof Element ? target : null;
+                    const scroller = element?.closest?.('.section-card-shell .overflow-x-auto');
+                    if (!(scroller instanceof HTMLElement)) return null;
+                    if (!scroller.querySelector('.table-freeze-index, .table-freeze-action')) return null;
+                    return scroller;
+                };
+
+                const clampTableScroller = (scroller) => {
+                    if (!(scroller instanceof HTMLElement)) return;
+                    const maxScrollLeft = Math.max(0, scroller.scrollWidth - scroller.clientWidth);
+                    if (scroller.scrollLeft < 0) {
+                        scroller.scrollLeft = 0;
+                        return;
+                    }
+                    if (scroller.scrollLeft > maxScrollLeft) {
+                        scroller.scrollLeft = maxScrollLeft;
+                    }
+                };
+
+                const clampTableScrollBounds = (event) => {
+                    const scroller = getBoundedTableScroller(event.target);
+                    if (!scroller) return;
+                    clampTableScroller(scroller);
+                    requestAnimationFrame(() => clampTableScroller(scroller));
+                };
+
+                const containTableHorizontalWheel = (event) => {
+                    const scroller = getBoundedTableScroller(event.target);
+                    if (!scroller) return;
+                    const horizontalDelta = Math.abs(event.deltaX) >= Math.abs(event.deltaY) ? event.deltaX : 0;
+                    if (!horizontalDelta) return;
+                    const maxScrollLeft = Math.max(0, scroller.scrollWidth - scroller.clientWidth);
+                    const atStart = scroller.scrollLeft <= 0;
+                    const atEnd = scroller.scrollLeft >= maxScrollLeft;
+                    if ((horizontalDelta < 0 && atStart) || (horizontalDelta > 0 && atEnd)) {
+                        event.preventDefault();
+                        scroller.scrollLeft = horizontalDelta < 0 ? 0 : maxScrollLeft;
+                    }
+                };
+
+                const clampRootHorizontalScroll = () => {
+                    if (window.scrollX !== 0) {
+                        window.scrollTo({ left: 0, top: window.scrollY, behavior: 'auto' });
+                    }
+                    if (document.documentElement && document.documentElement.scrollLeft !== 0) {
+                        document.documentElement.scrollLeft = 0;
+                    }
+                    if (document.body && document.body.scrollLeft !== 0) {
+                        document.body.scrollLeft = 0;
+                    }
+                };
+
+                const containRootHorizontalWheel = (event) => {
+                    if (getBoundedTableScroller(event.target)) return;
+                    const horizontalDelta = Math.abs(event.deltaX) >= Math.abs(event.deltaY) ? event.deltaX : 0;
+                    if (!horizontalDelta) return;
+                    event.preventDefault();
+                    clampRootHorizontalScroll();
+                };
+
+                const rememberHorizontalPanStart = (event) => {
+                    const point = event.touches?.[0];
+                    if (!point) return;
+                    horizontalPanStart = {
+                        x: point.clientX,
+                        y: point.clientY,
+                        scroller: getBoundedTableScroller(event.target),
+                    };
+                };
+
+                const containHorizontalTouchPan = (event) => {
+                    const point = event.touches?.[0];
+                    if (!point || !horizontalPanStart) return;
+                    const deltaX = point.clientX - horizontalPanStart.x;
+                    const deltaY = point.clientY - horizontalPanStart.y;
+                    if (Math.abs(deltaX) <= Math.abs(deltaY)) return;
+
+                    const scroller = horizontalPanStart.scroller;
+                    if (scroller) {
+                        const maxScrollLeft = Math.max(0, scroller.scrollWidth - scroller.clientWidth);
+                        const atStart = scroller.scrollLeft <= 0;
+                        const atEnd = scroller.scrollLeft >= maxScrollLeft;
+                        if ((deltaX > 0 && atStart) || (deltaX < 0 && atEnd)) {
+                            event.preventDefault();
+                            scroller.scrollLeft = deltaX > 0 ? 0 : maxScrollLeft;
+                        }
+                        return;
+                    }
+
+                    event.preventDefault();
+                    clampRootHorizontalScroll();
+                };
+
+                const clearHorizontalPanStart = () => {
+                    horizontalPanStart = null;
+                };
+
                 const clearPopoverTriggerState = () => {
                     document.querySelectorAll('[data-popover-open="true"]').forEach((element) => {
                         element.removeAttribute('data-popover-open');
@@ -45,7 +145,7 @@
                             }
 
                             const panelTop = activePanel.getBoundingClientRect().top;
-                            if (panelTop > 140 || window.scrollY > 16) {
+                            if (panelTop > 140) {
                                 scrollActivePanelToTop();
                             }
                         }, delay);
@@ -62,7 +162,7 @@
                         }
 
                         const panelTop = activePanel.getBoundingClientRect().top;
-                        if (panelTop > 140 || window.scrollY > 16) {
+                        if (panelTop > 140) {
                             scrollActivePanelToTop();
                         }
                     }, 180);

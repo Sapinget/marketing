@@ -63,7 +63,7 @@
                 const hargaKompetitorPage = ref(1);
                 const hargaKompetitorModalOpen = ref(false);
                 const hargaKompetitorModalType = ref('create');
-                const hargaKompetitorForm = ref({ ID: null, Nama_Produk: '', Tanggal_Cek: '', Harga_Distributor_1: 0, Harga_Distributor_2: 0, Harga_Kompetitor: 0, Harga_Rencana_Jual: 0, Margin_Profit: 0, Selisih: 0 });
+                const hargaKompetitorForm = ref({ ID: null, Nama_Produk: '', KATEGORI: '', BRAND: '', SERI: '', RAM: '', INTERNAL: '', SIZE: '', WARNA: '', Tanggal_Cek: '', Harga_Distributor_1: 0, Harga_Distributor_2: 0, Harga_Kompetitor: 0, Harga_Rencana_Jual: 0, Margin_Profit: 0, Selisih: 0 });
 
                 // Ads Log
                 const adsData = ref([]);

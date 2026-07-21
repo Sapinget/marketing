@@ -29,13 +29,13 @@
                         class="space-y-6 animate-fadeIn pb-10">
                         <!-- Summary cards -->
                         <div class="space-y-3">
-                            <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                                <div v-for="c in orderanSummary.cards" :key="c.label" class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                                    <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i :class="['fa-solid', c.icon, 'text-[120px]']"></i></div>
-                                    <p :class="['text-overline font-bold uppercase tracking-widest mb-3', c.color]">{{ c.label }}</p>
+                            <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
+                                <div v-for="c in orderanSummary.cards.slice(0, 5)" :key="c.label" class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
+                                    <div class="absolute -right-4 -bottom-4 opacity-5"><i :class="['fa-solid', c.icon, 'text-[120px]']"></i></div>
+                                    <p class="dashboard-summary-title">{{ c.label }}</p>
                                     <div class="flex items-baseline gap-2">
                                         <span class="dashboard-summary-value">{{ c.value }}</span>
-                                        <span v-if="c.unit" :class="['dashboard-summary-unit', c.unitColor]">{{ c.unit }}</span>
+                                        <span v-if="c.unit" class="dashboard-summary-unit">{{ c.unit }}</span>
                                     </div>
                                     <p :class="['text-body-sm font-bold mt-3', c.subColor]">{{ c.sub }}</p>
                                 </div>
@@ -56,14 +56,14 @@
                                             <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
                                             <template v-if="orderanOnlineDateRange.start">{{ formatShortDate(orderanOnlineDateRange.start) }}<span v-if="orderanOnlineDateRange.end"> - {{ formatShortDate(orderanOnlineDateRange.end) }}</span></template>
                                             <template v-else>Semua Tanggal</template>
-                                            <i v-if="orderanOnlineDateRange.start" @click.stop="orderanOnlineDateRange = { start: '', end: '' }" class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-red-500"></i>
+                                            <i v-if="orderanOnlineDateRange.start" @click.stop="orderanOnlineDateRange = { start: '', end: '' }" class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-danger"></i>
                                         </button>
                                     </div>
                                     <div class="toolbar-actions">
-                                        <button @click="exportExcel" class="secondary-cta-button secondary-cta-success active:scale-95"><i class="fa-solid fa-file-excel"></i><span class="ml-1">Excel</span></button>
-                                        <button @click="exportPdf" class="secondary-cta-button secondary-cta-danger active:scale-95"><i class="fa-solid fa-file-pdf"></i><span class="ml-1">PDF</span></button>
+                                        <button @click="exportExcel" class="primary-cta-button primary-cta-button--success active:scale-95"><i class="fa-solid fa-file-excel"></i><span class="ml-1">Excel</span></button>
+                                        <button @click="exportPdf" class="primary-cta-button primary-cta-button--danger active:scale-95"><i class="fa-solid fa-file-pdf"></i><span class="ml-1">PDF</span></button>
                                         <button @click="openOrderanOnlineModal('create')" class="primary-cta-button primary-cta-button--accent active:scale-95"><i class="fa-solid fa-plus mr-2"></i>Tambah</button>
-                                        <button @click="orderanOnlineSearch='';orderanOnlineDateRange = getDefaultDateRange()" class="secondary-cta-button secondary-cta-neutral" title="Reset"><i class="fa-solid fa-rotate-left text-body-sm"></i><span>Reset</span></button>
+                                        <button @click="orderanOnlineSearch='';orderanOnlineDateRange = getDefaultDateRange()" class="primary-cta-button primary-cta-button--neutral" title="Reset"><i class="fa-solid fa-rotate-left text-body-sm"></i><span>Reset</span></button>
                                     </div>
                                 </div>
                             </div>
@@ -88,11 +88,11 @@
                                         <p class="mobile-data-card__title line-clamp-2">{{ row.NAMA || row['TYPE UNIT'] || '-' }}</p>
                                         <div class="mobile-data-card__meta mt-2">
                                             <span
-                                                class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-overline font-bold uppercase">
+                                                class="px-2.5 py-1 rounded-lg bg-secondary text-light text-overline font-bold uppercase">
                                                 {{ row.ECOMMERCE || '-' }}
                                             </span>
                                             <span
-                                                class="px-2.5 py-1 rounded-lg bg-cyan-50 text-cyan-700 text-overline font-bold uppercase">
+                                                class="px-2.5 py-1 rounded-lg bg-info text-light text-overline font-bold uppercase">
                                                 {{ row.PENGIRIMAN || '-' }}
                                             </span>
                                         </div>
@@ -107,7 +107,7 @@
                                         </div>
                                         <div>
                                             <div class="type-body-sm text-slate-400 uppercase">Cair</div>
-                                            <div class="type-body font-bold text-emerald-600">{{ formatNumber(row['NOMINAL CAIR'] || row.NOMINAL_CAIR || 0) }}</div>
+                                            <div class="type-body font-bold text-success">{{ formatNumber(row['NOMINAL CAIR'] || row.NOMINAL_CAIR || 0) }}</div>
                                         </div>
                                     </div>
                                     <div class="mobile-data-card__actions">
@@ -117,11 +117,11 @@
                                         <div class="flex items-center gap-2">
                                             <button @click="openOrderanOnlineModal('edit', row)"
                                                 class="table-action-button table-action-compact" title="Edit"
-                                                aria-label="Edit"><i class="fa-solid fa-pen text-body-sm"></i></button>
+                                                aria-label="Edit"><i class="fa-solid fa-pen-to-square text-body-sm"></i></button>
                                             <button @click="deleteOrderanOnline(row.ID)"
                                                 class="table-action-button table-action-compact table-action-danger"
                                                 title="Hapus" aria-label="Hapus"><i
-                                                    class="fa-solid fa-trash text-body-sm"></i></button>
+                                                    class="fa-solid fa-trash-can text-body-sm"></i></button>
                                         </div>
                                     </div>
                                 </div>
@@ -160,16 +160,16 @@
                                             <template v-else>Semua Tanggal</template>
                                             <i v-if="orderanOnlineDateRange.start"
                                                 @click.stop="orderanOnlineDateRange = { start: '', end: '' }"
-                                                class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-red-500"></i>
+                                                class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-danger"></i>
                                         </button>
                                     </div>
                                     <div class="toolbar-actions">
                                         <button @click="exportExcel"
-                                            class="secondary-cta-button secondary-cta-success active:scale-95"><i
+                                            class="primary-cta-button primary-cta-button--success active:scale-95"><i
                                                 class="fa-solid fa-file-excel"></i><span
                                                 class="ml-1">Excel</span></button>
                                         <button @click="exportPdf"
-                                            class="secondary-cta-button secondary-cta-danger active:scale-95"><i
+                                            class="primary-cta-button primary-cta-button--danger active:scale-95"><i
                                                 class="fa-solid fa-file-pdf"></i><span
                                                 class="ml-1">PDF</span></button>
                                         <button @click="openOrderanOnlineModal('create')"
@@ -178,7 +178,7 @@
                                         </button>
                                         <button
                                             @click="orderanOnlineSearch='';orderanOnlineDateRange = getDefaultDateRange()"
-                                            class="secondary-cta-button secondary-cta-neutral" title="Reset">
+                                            class="primary-cta-button primary-cta-button--neutral" title="Reset">
                                             <i class="fa-solid fa-rotate-left text-body-sm"></i><span>Reset</span>
                                         </button>
                                     </div>
@@ -187,44 +187,43 @@
                             <div class="overflow-x-auto">
                                 <table class="w-full min-w-[1960px] table-fixed text-body-sm text-left border-collapse">
                                     <thead>
-                                        <tr
-                                            class="border-b border-slate-100 text-body-sm font-bold uppercase tracking-widest text-slate-400">
-                                            <th class="px-4 py-3 text-left w-[96px]">Aksi</th>
-                                            <th class="px-4 py-3 text-left w-[56px]">No</th>
-                                            <th class="px-4 py-3 text-left w-[110px]">Tanggal</th>
-                                            <th class="px-4 py-3 text-left w-[120px]">Ecommerce</th>
-                                            <th class="px-4 py-3 text-left w-[110px]">Handle</th>
-                                            <th class="px-4 py-3 text-left w-[15%]">Nama</th>
-                                            <th class="px-4 py-3 text-left w-[120px]">No HP</th>
-                                            <th class="px-4 py-3 text-left w-[120px]">Username</th>
-                                            <th class="px-4 py-3 text-left w-[150px]">No Pesanan</th>
-                                            <th class="px-4 py-3 text-left w-[120px]">Pengiriman</th>
-                                            <th class="px-4 py-3 text-left w-[150px]">No Resi</th>
-                                            <th class="px-4 py-3 text-left w-[14%]">Type Unit</th>
-                                            <th class="px-4 py-3 text-left w-[140px]">IMEI/SN</th>
-                                            <th class="px-4 py-3 text-right w-[120px]">Harga Online</th>
-                                            <th class="px-4 py-3 text-right w-[120px]">Nominal Cair</th>
-                                            <th class="px-4 py-3 text-right w-[90px]">Admin%</th>
-                                            <th class="px-4 py-3 text-left w-[110px]">No Nota</th>
-                                            <th class="px-4 py-3 text-center w-[110px]">Status</th>
+                                        <tr class="table-header-row">
+                                            <th class="table-header-cell table-header-index table-freeze-index">No</th>
+                                            <th class="table-header-cell table-header-action table-freeze-action">Aksi</th>
+                                            <th class="table-header-cell text-left w-[110px]">Tanggal</th>
+                                            <th class="table-header-cell text-left w-[120px]">Ecommerce</th>
+                                            <th class="table-header-cell text-left w-[110px]">Handle</th>
+                                            <th class="table-header-cell text-left w-[15%]">Nama</th>
+                                            <th class="table-header-cell text-left w-[120px]">No HP</th>
+                                            <th class="table-header-cell text-left w-[120px]">Username</th>
+                                            <th class="table-header-cell text-left w-[150px]">No Pesanan</th>
+                                            <th class="table-header-cell text-left w-[120px]">Pengiriman</th>
+                                            <th class="table-header-cell text-left w-[150px]">No Resi</th>
+                                            <th class="table-header-cell text-left w-[14%]">Type Unit</th>
+                                            <th class="table-header-cell text-left w-[140px]">IMEI/SN</th>
+                                            <th class="table-header-cell text-right w-[120px]">Harga Online</th>
+                                            <th class="table-header-cell text-right w-[120px]">Nominal Cair</th>
+                                            <th class="table-header-cell text-right w-[90px]">Admin%</th>
+                                            <th class="table-header-cell text-left w-[110px]">No Nota</th>
+                                            <th class="table-header-cell text-center w-[110px]">Status</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-for="(row, idx) in pagedOrderanOnlineData" :key="row.ID || idx"
                                             class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                                            <td class="px-4 py-3 text-left">
+                                            <td class="px-4 py-3 type-body text-slate-500 table-freeze-index">{{ (orderanPage - 1) * 15 + idx + 1 }}</td>
+                                            <td class="px-4 py-3 text-left table-freeze-action">
                                                 <div class="flex items-center gap-1.5">
                                                     <button @click="openOrderanOnlineModal('edit', row)"
                                                         class="table-action-button table-action-compact" title="Edit"
                                                         aria-label="Edit"><i
-                                                            class="fa-solid fa-pen text-body-sm"></i></button>
+                                                            class="fa-solid fa-pen-to-square text-body-sm"></i></button>
                                                     <button @click="deleteOrderanOnline(row.ID)"
                                                         class="table-action-button table-action-compact table-action-danger"
                                                         title="Hapus" aria-label="Hapus"><i
-                                                            class="fa-solid fa-trash text-body-sm"></i></button>
+                                                            class="fa-solid fa-trash-can text-body-sm"></i></button>
                                                 </div>
                                             </td>
-                                            <td class="px-4 py-3 type-body text-slate-500">{{ (orderanPage - 1) * 15 + idx + 1 }}</td>
                                             <td class="px-4 py-3 text-left text-body text-slate-600 whitespace-nowrap">{{ row.TANGGAL || '-' }}
                                             </td>
                                             <td class="px-4 py-3 text-left text-body font-semibold text-slate-800 break-words">{{ row.ECOMMERCE || '-' }}</td>
@@ -242,7 +241,7 @@
                                             <td class="px-4 py-3 text-left text-body text-slate-600 break-words">{{ row['IMEI/SN'] || row.IMEI_SN || '-' }}</td>
                                             <td class="px-4 py-3 text-body text-right font-semibold text-ppp-accent">
                                                 {{ formatNumber(row['HARGA ONLINE'] || row.HARGA_ONLINE || 0) }}</td>
-                                            <td class="px-4 py-3 text-body text-right font-semibold text-emerald-600">
+                                            <td class="px-4 py-3 text-body text-right font-semibold text-success">
                                                 {{ formatNumber(row['NOMINAL CAIR'] || row.NOMINAL_CAIR || 0) }}</td>
                                             <td class="px-4 py-3 text-body text-right text-slate-600">{{ calcAdminPct(row) }}</td>
                                             <td class="px-4 py-3 text-left text-body text-slate-600">{{ row['NO NOTA'] || row.NO_NOTA || '-' }}</td>

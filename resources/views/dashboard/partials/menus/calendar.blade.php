@@ -4,7 +4,7 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
             <div class="flex items-center gap-4">
                 <div
-                    class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
+                    class="w-12 h-12 rounded-2xl bg-amber text-light flex items-center justify-center border border-amber">
                     <i class="fa-solid fa-calendar-days text-lg"></i>
                 </div>
                 <div>
@@ -34,19 +34,19 @@
                 <div @click="getCalendarItems(day).length > 0 && openCalendarDayModal(day)"
                     :class="['flex items-center gap-3 p-2.5 rounded-xl border transition-all', isTodayCalendar(day) ? 'bg-ppp-accent/5 border-ppp-accent/30' : 'bg-white border-slate-100', getCalendarItems(day).length > 0 ? 'cursor-pointer active:scale-[0.99]' : 'opacity-55']">
                     <div
-                        :class="['flex flex-col items-center justify-center w-11 h-11 rounded-xl shrink-0', isTodayCalendar(day) ? 'bg-ppp-accent text-white' : 'bg-slate-50 text-slate-600']">
+                        :class="['flex flex-col items-center justify-center w-11 h-11 rounded-xl shrink-0', isTodayCalendar(day) ? 'bg-ppp-accent text-white' : 'bg-secondary text-light']">
                         <span class="text-heading-sm font-bold leading-none">{{ day }}</span>
                         <span class="text-overline-xs font-bold uppercase tracking-wider opacity-70">{{ ['Min','Sen','Sel','Rab','Kam','Jum','Sab'][new Date(calendarActiveDate.getFullYear(), calendarActiveDate.getMonth(), day).getDay()] }}</span>
                     </div>
                     <div class="flex-1 min-w-0 flex flex-wrap items-center gap-1.5">
                         <span v-if="getCalendarItems(day).filter(i => i.TYPE === 'content').length > 0"
-                            class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-blue-50 text-blue-700 text-overline font-bold"><i
+                            class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-amber text-light text-overline font-bold"><i
                                 class="fa-solid fa-photo-film text-overline-xs"></i> Konten {{ getCalendarItems(day).filter(i => i.TYPE === 'content').length }}</span>
                         <span v-if="getCalendarItems(day).filter(i => i.TYPE === 'story').length > 0"
-                            class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-rose-50 text-rose-700 text-overline font-bold"><i
+                            class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-danger text-light text-overline font-bold"><i
                                 class="fa-solid fa-clapperboard text-overline-xs"></i> Story {{ getCalendarItems(day).filter(i => i.TYPE === 'story').length }}</span>
                         <span v-if="getCalendarItems(day).filter(i => i.TYPE === 'event').length > 0"
-                            class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-amber-50 text-amber-700 text-overline font-bold"><i
+                            class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-amber text-light text-overline font-bold"><i
                                 class="fa-solid fa-star text-overline-xs"></i> Event {{ getCalendarItems(day).filter(i => i.TYPE === 'event').length }}</span>
                         <span v-if="getCalendarItems(day).length === 0"
                             class="text-body-sm text-slate-300 italic">Tidak ada jadwal</span>
@@ -79,31 +79,31 @@
                     <div class="space-y-1.5">
                         <div v-for="item in getCalendarItems(day).filter(i => i.TYPE === 'content')"
                             :key="item.ID" @click.stop="openEditModal(item)"
-                            class="px-2 py-1 rounded-lg bg-blue-50 border border-blue-100 flex items-center gap-1.5 cursor-pointer hover:bg-blue-500 hover:border-blue-500 transition-all group/item">
+                            class="px-2 py-1 rounded-lg bg-slate-50 border border-slate-100 flex items-center gap-2 cursor-pointer hover:bg-slate-50 hover:border-slate-100 transition-all group/item">
                             <i
-                                :class="[getPlatformIcon(item.Platform || (item.Platforms || '').split(',')[0]), 'text-overline-xs text-blue-400 group-hover/item:text-white']"></i>
+                                :class="getPlatformIcon(item.Platform || (item.Platforms || '').split(',')[0]) + ' text-body text-slate-400'"></i>
                             <div
-                                class="text-overline-xs font-bold text-blue-700 truncate group-hover/item:text-white">
+                                class="text-body font-bold text-slate-700 truncate">
                                 {{ item.Judul }}</div>
                         </div>
 
                         <div v-for="story in getCalendarItems(day).filter(i => i.TYPE === 'story')"
                             :key="'story-'+story.ID" @click.stop="openEditStoryModal(story)"
-                            class="px-2 py-1 rounded-lg bg-rose-50 border border-rose-100 flex items-center gap-1.5 cursor-pointer hover:bg-rose-500 hover:border-rose-500 transition-all group/story">
+                            class="px-2 py-1 rounded-lg bg-danger border border-danger flex items-center gap-1.5 cursor-pointer hover:bg-danger hover:border-danger transition-all group/story">
                             <i
-                                class="fa-solid fa-clapperboard text-overline-xs text-rose-400 group-hover/story:text-white"></i>
+                                class="fa-solid fa-clapperboard text-overline-xs text-danger group-hover/story:text-white"></i>
                             <div
-                                class="text-overline-xs font-bold text-rose-600 truncate group-hover/story:text-white">
+                                class="text-overline-xs font-bold text-danger truncate group-hover/story:text-white">
                                 {{ story.Jam ? `${story.Jam} | ` : '' }}{{ story.Story_Schedule || story.Story }}
                             </div>
                         </div>
 
                         <div v-for="event in getCalendarItems(day).filter(i => i.TYPE === 'event')"
                             :key="'event-'+event.ID"
-                            class="px-2 py-1 rounded-lg border border-amber-100 bg-amber-50 flex items-center gap-1.5 text-amber-700">
-                            <i class="fa-solid fa-star text-overline-xs text-amber-500"></i>
+                            class="px-2 py-1 rounded-lg border border-amber bg-amber flex items-center gap-1.5 text-light">
+                            <i class="fa-solid fa-star text-overline-xs text-amber"></i>
                             <div
-                                class="text-overline-xs font-black truncate uppercase tracking-tighter text-amber-700">
+                                class="text-overline-xs font-black truncate uppercase tracking-tighter text-amber">
                                 {{ event.Nama_Event }}</div>
                         </div>
                     </div>

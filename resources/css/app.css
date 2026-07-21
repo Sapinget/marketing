@@ -8,17 +8,31 @@
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
-    --color-ppp-accent: #4f63ff;
-    --color-ppp-accent-dark: #3d4fdb;
-    --color-ppp-sidebar: #f8fafc;
+    --color-ppp-accent: #FAA500;
+    --color-ppp-sidebar: #FFF2D9;
     --color-ppp-text: #0f172a;
     --color-ppp-muted: #94a3b8;
-    --color-ppp-nav-text: #5066eb;
+    --color-ppp-nav-text: #FAA500;
     --color-ppp-line: #e2e8f0;
     --color-ppp-bg: #f8fafc;
     --color-ppp-card: #ffffff;
-    --color-ppp-danger: #b91c1c;
-    --color-ppp-danger-fill: #dc2626;
+    --color-ppp-danger: #DC2626;
+    --color-ppp-secondary: #475569;
+    --color-ppp-success: #16A34A;
+    --color-ppp-info: #0EA5E9;
+    --color-ppp-warning: #EAB308;
+    --color-ppp-light: #F8FAFC;
+    --color-ppp-dark: #0F172A;
+
+    /* Semantic shorthand — bg-amber, text-light, bg-success, dll */
+    --color-amber:     #FAA500;
+    --color-success:   #16A34A;
+    --color-info:      #0EA5E9;
+    --color-warning:   #EAB308;
+    --color-danger:    #DC2626;
+    --color-secondary: #475569;
+    --color-light:     #F8FAFC;
+    --color-dark:      #0F172A;
 
     /* Breakpoints — Tailwind v4 responsive prefixes (sm: md: lg:) */
     --breakpoint-sm: 640px;
@@ -30,20 +44,35 @@
 
 :root {
     /* ─── Colors ─────────────────────────────────────────── */
-    --ppp-accent: #4f63ff;
-    --ppp-accent-dark: #3d4fdb;
-    --ppp-sidebar: #f8fafc;
+    --ppp-accent: #FAA500;
+    --ppp-sidebar: #FFF2D9;
     --ppp-text: #0f172a;
     --ppp-muted: #94a3b8;
-    --ppp-nav-text: #5066eb;
+    --ppp-nav-text: #FAA500;
     --ppp-line: #e2e8f0;
     --ppp-bg: #f8fafc;
     --ppp-card: #ffffff;
-    --ppp-danger: #b91c1c;
-    --ppp-danger-fill: #dc2626;
+    --ppp-danger: #DC2626;
+    --ppp-secondary: #475569;
+    --ppp-success: #16A34A;
+    --ppp-info: #0EA5E9;
+    --ppp-warning: #EAB308;
+    --ppp-light: #F8FAFC;
+    --ppp-dark: #0F172A;
+    --ppp-table-action-edit-hover: var(--ppp-accent);
+    --ppp-table-action-delete-hover: var(--ppp-danger);
+    --ppp-table-action-link-hover: var(--ppp-accent);
+    --ppp-table-action-view-hover: #7C3AED;
+    --ppp-table-action-view-border-hover: #A78BFA;
+    --ppp-table-freeze-index-width: 56px;
+    --ppp-table-freeze-action-width: 96px;
+    --ppp-table-freeze-bg: var(--ppp-card);
+    --ppp-table-freeze-header-bg: var(--ppp-card);
+    --ppp-table-row-hover-bg: rgb(255 251 242);
+    --ppp-table-freeze-hover-bg: var(--ppp-table-row-hover-bg);
     --ppp-text-rgb: 15 23 42;
     --ppp-card-rgb: 255 255 255;
-    --ppp-nav-rgb: 80 102 235;
+    --ppp-nav-rgb: 250 165 0;
     --ppp-bg-rgb: 248 250 252;
 
     /* ─── Typography — Golden Ratio Scale ────────────────── */
@@ -198,7 +227,7 @@ button {
     background: #fef2f2;
     border: 1px solid #fecaca;
     border-radius: 16px;
-    color: #b91c1c;
+    color: var(--ppp-danger);
     display: flex;
     gap: 12px;
     left: 50%;
@@ -308,7 +337,7 @@ button {
     border-radius: 16px;
     color: #0f172a;
     outline: none;
-    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    transition: border-color 0.18s ease;
     width: 100%;
 }
 
@@ -320,7 +349,6 @@ button {
 .input-shell input:focus,
 .search-shell input:focus {
     border-color: var(--ppp-accent);
-    box-shadow: 0 0 0 3px rgba(79, 99, 255, 0.08);
 }
 
 .input-icon {
@@ -367,13 +395,12 @@ button {
 .sidebar {
     background: var(--ppp-sidebar);
     border-right: 1px solid rgba(226, 232, 240, 0.84);
-    box-shadow: 0 28px 48px rgba(15, 23, 42, 0.08);
     display: flex;
     flex-direction: column;
     inset: 0 auto 0 0;
     position: fixed;
     transform: translateX(calc(-100% - 18px));
-    transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.42s ease;
+    transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
     width: 240px;
     z-index: 80;
 }
@@ -415,7 +442,7 @@ button {
     align-items: center;
     background: transparent;
     border: 0;
-    color: #64748b;
+    color: #9CA3AF;
     display: flex;
     font-size: var(--fs-body);
     font-weight: 600;
@@ -451,7 +478,7 @@ button {
 
 .nav-subitem {
     gap: 12px;
-    color: #94a3b8;
+    color: #9CA3AF;
     font-size: var(--fs-body-sm);
     min-height: 34px;
     padding-left: 40px;
@@ -466,13 +493,13 @@ button {
 .nav-item:hover,
 .nav-group-toggle:hover,
 .nav-subitem:hover {
-    background: #f1f5f9;
-    color: #475569;
+    background: rgba(230, 149, 0, 0.08);
+    color: #E69500;
 }
 
 .nav-item.is-active,
 .nav-subitem.is-active {
-    background: linear-gradient(90deg, var(--ppp-accent), var(--ppp-accent-dark));
+    background: var(--ppp-accent);
     color: #fff;
 }
 
@@ -488,6 +515,32 @@ button {
 
 .nav-group.is-open .chevron {
     transform: rotate(180deg);
+}
+
+/* Sidebar accordion header — has active child */
+.nav-accordion-active,
+.nav-accordion-active .type-body,
+.nav-accordion-active .type-body-sm {
+    color: var(--ppp-nav-text);
+    font-weight: 400;
+}
+.nav-accordion-active {
+    background: rgb(var(--ppp-nav-rgb) / 0.06);
+}
+
+/* Sidebar blade-nav idle state — replaces inline slate classes */
+.nav-idle,
+.nav-idle .type-body,
+.nav-idle .type-body-sm {
+    color: var(--ppp-muted);
+}
+.nav-idle:hover {
+    background: rgb(var(--ppp-nav-rgb) / 0.08);
+}
+.nav-idle:hover,
+.nav-idle:hover .type-body,
+.nav-idle:hover .type-body-sm {
+    color: var(--ppp-nav-text);
 }
 
 .chevron {
@@ -595,13 +648,8 @@ button {
 
 .icon-button {
     align-items: center;
-    background:
-        radial-gradient(circle at top, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.78)),
-        linear-gradient(180deg, rgba(248, 250, 252, 0.98), rgba(226, 232, 240, 0.98));
+    background: var(--ppp-light);
     border: 1px solid rgba(148, 163, 184, 0.28);
-    box-shadow:
-        0 12px 24px rgba(15, 23, 42, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.82);
     display: inline-flex;
     height: var(--icon-bg-md);
     justify-content: center;
@@ -609,43 +657,23 @@ button {
     position: relative;
     transition:
         transform 0.22s ease,
-        box-shadow 0.22s ease,
         border-color 0.22s ease,
         background 0.22s ease;
     width: var(--icon-bg-md);
 }
 
-.icon-button::before {
-    background: radial-gradient(circle, rgba(79, 99, 255, 0.2) 0%, rgba(79, 99, 255, 0) 70%);
-    content: '';
-    inset: -45%;
-    opacity: 0;
-    position: absolute;
-    transform: scale(0.45);
-    transition: transform 0.32s ease, opacity 0.28s ease;
-}
-
 .icon-button:hover {
-    border-color: rgba(79, 99, 255, 0.28);
-    box-shadow:
-        0 16px 30px rgba(15, 23, 42, 0.16),
-        inset 0 1px 0 rgba(255, 255, 255, 0.88);
+    border-color: rgba(250, 165, 0, 0.28);
     transform: translateY(-1px);
 }
 
 .icon-button:focus-visible {
     outline: 0;
-    box-shadow:
-        0 0 0 3px rgba(79, 99, 255, 0.12),
-        0 16px 30px rgba(15, 23, 42, 0.16),
-        inset 0 1px 0 rgba(255, 255, 255, 0.88);
+    border-color: var(--ppp-accent);
 }
 
 .icon-button.is-pressed,
 .icon-button:active {
-    box-shadow:
-        0 5px 14px rgba(15, 23, 42, 0.18),
-        inset 0 2px 4px rgba(148, 163, 184, 0.26);
     transform: translateY(1px) scale(0.96);
 }
 
@@ -690,7 +718,7 @@ button {
 }
 
 .menu-toggle.is-open .menu-toggle-lines span {
-    background: var(--ppp-accent-dark);
+    background: var(--ppp-accent);
 }
 
 .menu-toggle.is-open .menu-toggle-lines span:nth-child(1) {
@@ -953,18 +981,18 @@ button {
 }
 
 .badge.progress {
-    background: #eff6ff;
-    color: #2563eb;
+    background: rgb(37 99 235);
+    color: #fff;
 }
 
 .badge.done {
-    background: #ecfdf5;
-    color: #059669;
+    background: rgb(4 120 87);
+    color: #fff;
 }
 
 .badge.draft {
-    background: #f8fafc;
-    color: #64748b;
+    background: rgb(100 116 139);
+    color: #fff;
 }
 
 .sidebar-backdrop {

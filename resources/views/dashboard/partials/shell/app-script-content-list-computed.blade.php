@@ -41,6 +41,73 @@
                     }).sort((a, b) => (b.Tanggal_Rencana || "").localeCompare(a.Tanggal_Rencana || ""));
                 });
 
+                const userLookupAliases = {
+                    '@ogohogohdenpasar': 'ogoh-ogoh-denpasar',
+                    'at-ogohogohdenpasar': 'ogoh-ogoh-denpasar',
+                    '@arthadashing_': 'artha',
+                    'at-arthadashing': 'artha',
+                    '@depraz_': 'depraz',
+                    'at-depraz': 'depraz',
+                    '@sibliwira': 'wira',
+                    'at-sibliwira': 'wira',
+                };
+                const normalizeUserLookupKey = (value) => {
+                    const key = String(value || '').trim().toLowerCase();
+
+                    return userLookupAliases[key] || key;
+                };
+                const userAvatarFailedKeys = ref(new Set());
+                const userAvatarByLookupKey = computed(() => {
+                    const lookup = new Map();
+                    (Array.isArray(authUsers.value) ? authUsers.value : []).forEach((user) => {
+                        const avatarUrl = user?.avatar_url || '';
+                        if (!avatarUrl) return;
+                        [
+                            user?.username,
+                            user?.nama,
+                            user?.name,
+                            user?.email,
+                        ].forEach((value) => {
+                            const key = normalizeUserLookupKey(value);
+                            if (key && !lookup.has(key)) lookup.set(key, avatarUrl);
+                        });
+                    });
+
+                    return lookup;
+                });
+                const resolveUserAvatarUrl = (value) => {
+                    const key = normalizeUserLookupKey(value);
+                    if (!key || userAvatarFailedKeys.value.has(key)) return '';
+
+                    return userAvatarByLookupKey.value.get(key) || '';
+                };
+                const markMasterPlanEditorAvatarFailed = (value) => {
+                    const key = normalizeUserLookupKey(value);
+                    if (!key) return;
+                    userAvatarFailedKeys.value = new Set([...userAvatarFailedKeys.value, key]);
+                };
+                const masterPersonInitials = (value) => {
+                    const parts = String(value || '')
+                        .trim()
+                        .split(/\s+/)
+                        .filter(Boolean);
+
+                    if (!parts.length) return 'U';
+                    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+
+                    return `${parts[0][0] || ''}${parts[parts.length - 1][0] || ''}`.toUpperCase();
+                };
+                const personDisplayName = (value) => {
+                    const trimmed = String(value || '').trim();
+
+                    return trimmed || '-';
+                };
+                const platformDisplayName = (value) => {
+                    const trimmed = String(value || '').trim();
+
+                    return trimmed || '-';
+                };
+
                 const kanbanBuckets = computed(() => {
                     const list = filteredMasterPlanData.value || [];
                     const ide = [];
@@ -276,18 +343,18 @@
                 watch(() => [keepBarangSearch.value, keepBarangStatusFilter.value, keepBarangHandleByFilter.value], () => { keepBarangPage.value = 1; });
 
                 const keepBarangStatusClass = (status) => {
-                    if (status === 'PENDING') return 'bg-amber-100 text-amber-700';
-                    if (status === 'DONE') return 'bg-emerald-100 text-emerald-700';
-                    if (status === 'CANCEL') return 'bg-red-100 text-red-700';
-                    return 'bg-slate-100 text-slate-600';
+                    if (status === 'PENDING') return 'bg-amber text-light';
+                    if (status === 'DONE') return 'bg-success text-light';
+                    if (status === 'CANCEL') return 'bg-danger text-light';
+                    return 'bg-secondary text-light';
                 };
 
                 const keepBarangSisaHariClass = (val) => {
                     if (!val || val === '-') return 'text-slate-400';
                     const n = parseInt(val);
                     if (isNaN(n)) return 'text-slate-500';
-                    if (n <= 0) return 'text-red-600 font-bold';
-                    if (n <= 3) return 'text-amber-600 font-bold';
+                    if (n <= 0) return 'text-danger font-bold';
+                    if (n <= 3) return 'text-amber font-bold';
                     return 'text-slate-600';
                 };
 

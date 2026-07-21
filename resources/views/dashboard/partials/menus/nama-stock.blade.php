@@ -23,7 +23,7 @@
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
                                 <div class="flex items-center gap-4">
                                     <div
-                                        class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
+                                        class="w-12 h-12 rounded-2xl bg-amber text-light flex items-center justify-center border border-amber">
                                         <i class="fa-solid fa-list-check text-body"></i>
                                     </div>
                                     <div>
@@ -34,7 +34,7 @@
                                 <div class="flex items-center gap-2">
                                     <span class="summary-counter-pill">{{ namaStockRows.length }} baris</span>
                                     <button @click="openNamaStockFormModal('create')"
-                                        class="secondary-cta-button secondary-cta-link active:scale-95">
+                                        class="primary-cta-button primary-cta-button--link active:scale-95">
                                         <i class="fa-solid fa-plus text-body-sm"></i> Tambah
                                     </button>
                                 </div>
@@ -134,7 +134,7 @@
                                     :style="getStaggerStyle(idx)">
                                     <div class="mobile-data-card__header">
                                         <span
-                                            class="px-2.5 py-1 rounded-full text-overline font-bold uppercase tracking-wider bg-slate-100 text-slate-600">
+                                            class="px-2.5 py-1 rounded-full text-overline font-bold uppercase tracking-wider bg-secondary text-light">
                                             {{ row.KATEGORI || '-' }}
                                         </span>
                                         <span class="type-body-sm text-slate-400 font-bold uppercase tracking-widest">
@@ -159,12 +159,12 @@
                                         <div class="type-body-sm text-slate-400 line-clamp-1">{{ row.BRAND || '-' }}</div>
                                         <div class="flex items-center gap-2">
                                             <button @click="openNamaStockFormModal('edit', row)"
-                                                class="table-action-button table-action-compact">
-                                                <i class="fa-solid fa-pen text-overline"></i>
+                                                class="table-action-button table-action-compact" title="Edit" aria-label="Edit">
+                                                <i class="fa-solid fa-pen-to-square text-overline"></i>
                                             </button>
                                             <button @click="removeNamaStockRow(row.ID)"
-                                                class="table-action-button table-action-compact table-action-danger">
-                                                <i class="fa-solid fa-trash text-overline"></i>
+                                                class="table-action-button table-action-compact table-action-danger" title="Hapus" aria-label="Hapus">
+                                                <i class="fa-solid fa-trash-can text-overline"></i>
                                             </button>
                                         </div>
                                     </div>
@@ -183,12 +183,12 @@
                             <div class="hidden md:block overflow-auto">
                                 <table class="w-full text-body-sm">
                                     <thead class="bg-slate-50">
-                                        <tr>
-                                            <th class="px-4 py-2.5 text-center text-slate-500 font-semibold w-20">Aksi
+                                        <tr class="table-header-row">
+                                            <th class="table-header-cell text-center w-20">Aksi
                                             </th>
-                                            <th class="px-4 py-2.5 text-left text-slate-500 font-semibold">Kategori</th>
-                                            <th class="px-4 py-2.5 text-left text-slate-500 font-semibold">Brand</th>
-                                            <th class="px-4 py-2.5 text-left text-slate-500 font-semibold">Seri</th>
+                                            <th class="table-header-cell text-left">Kategori</th>
+                                            <th class="table-header-cell text-left">Brand</th>
+                                            <th class="table-header-cell text-left">Seri</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-slate-100">
@@ -201,12 +201,12 @@
                                             <td class="px-3 py-2 text-center">
                                                 <div class="flex items-center justify-center gap-1">
                                                     <button @click="openNamaStockFormModal('edit', row)"
-                                                        class="table-action-button table-action-compact">
-                                                        <i class="fa-solid fa-pen text-overline"></i>
+                                                        class="table-action-button table-action-compact" title="Edit" aria-label="Edit">
+                                                        <i class="fa-solid fa-pen-to-square text-overline"></i>
                                                     </button>
                                                     <button @click="removeNamaStockRow(row.ID)"
-                                                        class="table-action-button table-action-compact table-action-danger">
-                                                        <i class="fa-solid fa-trash text-overline"></i>
+                                                        class="table-action-button table-action-compact table-action-danger" title="Hapus" aria-label="Hapus">
+                                                        <i class="fa-solid fa-trash-can text-overline"></i>
                                                     </button>
                                                 </div>
                                             </td>

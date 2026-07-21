@@ -30,7 +30,7 @@
                                             v-for="filter in settingsFilterOptions"
                                             :key="filter.value"
                                             @click="settingsFilterMode = filter.value"
-                                            :class="settingsFilterMode === filter.value ? 'bg-ppp-accent text-white border-ppp-accent' : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'"
+                                            :class="settingsFilterMode === filter.value ? 'bg-ppp-accent text-white border-ppp-accent' : 'bg-secondary text-light border-slate-200 hover:bg-slate-100'"
                                             class="segmented-filter-button active:scale-[0.98]">
                                             {{ filter.label }}
                                         </button>
@@ -43,7 +43,7 @@
                                         </div>
                                         <div class="metric-chip-card metric-chip-card--align-end">
                                             <div class="type-body-sm uppercase tracking-[0.2em]">Belum Disimpan</div>
-                                            <div class="mt-1 text-body font-bold" :class="settingsDirtyTabCount ? 'text-amber-600' : 'text-slate-500'">{{ settingsDirtyTabCount }}</div>
+                                            <div class="mt-1 text-body font-bold" :class="settingsDirtyTabCount ? 'text-amber' : 'text-slate-500'">{{ settingsDirtyTabCount }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -61,21 +61,21 @@
                                             :class="activeSettingTab === key ? 'bg-ppp-accent text-white border-ppp-accent' : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50'"
                                             class="w-full text-left rounded-2xl border px-3 py-3 transition-all active:scale-[0.985]">
                                             <div class="flex items-start gap-3">
-                                                <div :class="activeSettingTab === key ? 'bg-white/12 text-white' : 'bg-slate-100 text-slate-500'" class="mt-0.5 h-8 w-8 flex-shrink-0 rounded-xl flex items-center justify-center">
+                                                <div :class="activeSettingTab === key ? 'bg-white/12 text-white' : 'bg-secondary text-light'" class="mt-0.5 h-8 w-8 flex-shrink-0 rounded-xl flex items-center justify-center">
                                                     <i class="fa-solid fa-tag text-body-sm"></i>
                                                 </div>
                                                 <div class="min-w-0 flex-1">
                                                     <div class="flex items-center gap-2">
                                                         <span class="text-body font-bold leading-snug break-words">{{ getSettingTabLabel(key) }}</span>
-                                                        <span v-if="isSettingTabDirty(key)" :class="activeSettingTab === key ? 'bg-amber-400/20 text-amber-100' : 'bg-amber-100 text-amber-700'" class="inline-flex items-center rounded-full px-2 py-0.5 text-overline-xs font-bold uppercase tracking-[0.16em]">Edit</span>
+                                                        <span v-if="isSettingTabDirty(key)" :class="activeSettingTab === key ? 'bg-amber/20 text-light' : 'bg-amber text-light'" class="inline-flex items-center rounded-full px-2 py-0.5 text-overline-xs font-bold uppercase tracking-[0.16em]">Edit</span>
                                                     </div>
                                                     <div class="mt-1 flex items-center gap-2 type-body">
                                                         <span :class="activeSettingTab === key ? 'text-white/80' : 'text-slate-500'">{{ getSettingFilledCount(key) }} isi</span>
                                                         <span :class="activeSettingTab === key ? 'text-white/40' : 'text-slate-300'">&bull;</span>
-                                                        <span :class="getSettingEmptyCount(key) ? (activeSettingTab === key ? 'text-amber-100' : 'text-amber-600') : (activeSettingTab === key ? 'text-white/80' : 'text-slate-500')">{{ getSettingEmptyCount(key) }} kosong</span>
+                                                        <span :class="getSettingEmptyCount(key) ? (activeSettingTab === key ? 'text-amber' : 'text-amber') : (activeSettingTab === key ? 'text-white/80' : 'text-slate-500')">{{ getSettingEmptyCount(key) }} kosong</span>
                                                     </div>
                                                 </div>
-                                                <span :class="activeSettingTab === key ? 'bg-white/12 text-white' : 'bg-slate-100 text-slate-500'" class="rounded-xl px-2 py-1 text-overline font-bold">{{ getSettingTabCount(key) }}</span>
+                                                <span :class="activeSettingTab === key ? 'bg-white/12 text-white' : 'bg-secondary text-light'" class="rounded-xl px-2 py-1 text-overline font-bold">{{ getSettingTabCount(key) }}</span>
                                             </div>
                                         </button>
                                     </div>
@@ -103,19 +103,19 @@
                                                 <button v-if="!isSettingTabObject(activeSettingTab)" @click="addSettingOption(activeSettingTab)" class="primary-cta-button primary-cta-button--accent active:scale-95">
                                                     <i class="fa-solid fa-plus text-body-sm"></i> Tambah
                                                 </button>
-                                                <button v-if="!isSettingTabObject(activeSettingTab)" @click="toggleSettingsBulkAdd" :class="showSettingsBulkAdd ? 'bg-slate-900 text-white border-slate-900 hover:bg-black hover:border-black' : 'secondary-cta-neutral'" class="secondary-cta-button active:scale-95">
+                                                <button v-if="!isSettingTabObject(activeSettingTab)" @click="toggleSettingsBulkAdd" :class="showSettingsBulkAdd ? 'bg-slate-900 text-white border-slate-900 hover:bg-black hover:border-black' : 'primary-cta-button--neutral'" class="primary-cta-button active:scale-95">
                                                     <i class="fa-solid fa-layer-group text-body-sm"></i> Tambah Banyak
                                                 </button>
-                                                <button v-if="!isSettingTabObject(activeSettingTab)" @click="sortSettingOptions(activeSettingTab)" class="secondary-cta-button secondary-cta-neutral active:scale-95">
+                                                <button v-if="!isSettingTabObject(activeSettingTab)" @click="sortSettingOptions(activeSettingTab)" class="primary-cta-button primary-cta-button--neutral active:scale-95">
                                                     <i class="fa-solid fa-arrow-down-a-z text-body-sm"></i> Urutkan
                                                 </button>
-                                                <button v-if="!isSettingTabObject(activeSettingTab)" @click="clearEmptySettingOptions(activeSettingTab)" class="secondary-cta-button secondary-cta-danger active:scale-95">
+                                                <button v-if="!isSettingTabObject(activeSettingTab)" @click="clearEmptySettingOptions(activeSettingTab)" class="primary-cta-button primary-cta-button--danger active:scale-95">
                                                     <i class="fa-solid fa-eraser text-body-sm"></i> Hapus Kosong
                                                 </button>
-                                                <button v-if="activeSettingTab === 'BONUS_CONFIG'" @click="activeTab = 'bonus_report'" class="secondary-cta-button secondary-cta-link active:scale-95">
+                                                <button v-if="activeSettingTab === 'BONUS_CONFIG'" @click="activeTab = 'bonus_report'" class="primary-cta-button primary-cta-button--link active:scale-95">
                                                     <i class="fa-solid fa-arrow-up-right-from-square text-body-sm"></i> Buka Bonus
                                                 </button>
-                                                <button v-if="activeSettingTab === 'BUDGET_CONFIG'" @click="activeTab = 'budgeting'" class="secondary-cta-button secondary-cta-link active:scale-95">
+                                                <button v-if="activeSettingTab === 'BUDGET_CONFIG'" @click="activeTab = 'budgeting'" class="primary-cta-button primary-cta-button--link active:scale-95">
                                                     <i class="fa-solid fa-arrow-up-right-from-square text-body-sm"></i> Buka Budget
                                                 </button>
                                             </div>
@@ -144,11 +144,11 @@
                                                 </span>
                                                 <span class="mini-stat-chip">
                                                     <span class="text-body-sm font-semibold uppercase tracking-wider text-slate-500">Kosong</span>
-                                                    <span class="text-body font-bold text-amber-600">{{ getSettingEmptyCount(activeSettingTab) }}</span>
+                                                    <span class="text-body font-bold text-amber">{{ getSettingEmptyCount(activeSettingTab) }}</span>
                                                 </span>
                                                 <span class="mini-stat-chip">
                                                     <span class="text-body-sm font-semibold uppercase tracking-wider text-slate-500">Edit</span>
-                                                    <span class="text-body font-bold" :class="isSettingTabDirty(activeSettingTab) ? 'text-amber-600' : 'text-slate-500'">{{ isSettingTabDirty(activeSettingTab) ? 'Yes' : 'No' }}</span>
+                                                    <span class="text-body font-bold" :class="isSettingTabDirty(activeSettingTab) ? 'text-amber' : 'text-slate-500'">{{ isSettingTabDirty(activeSettingTab) ? 'Yes' : 'No' }}</span>
                                                 </span>
                                             </div>
                                         </div>
@@ -173,8 +173,8 @@
                                                 placeholder="contoh&#10;DRAFT&#10;PENDING&#10;DONE"
                                                 class="mt-3 form-textarea"></textarea>
                                             <div class="mt-3 flex flex-wrap justify-end gap-2">
-                                                <button @click="settingsBulkAddText = ''" class="secondary-cta-button secondary-cta-neutral active:scale-95">Kosongkan</button>
-                                                <button @click="applySettingsBulkAdd(activeSettingTab)" class="secondary-cta-button secondary-cta-link active:scale-95">
+                                                <button @click="settingsBulkAddText = ''" class="primary-cta-button primary-cta-button--neutral active:scale-95">Kosongkan</button>
+                                                <button @click="applySettingsBulkAdd(activeSettingTab)" class="primary-cta-button primary-cta-button--link active:scale-95">
                                                     <i class="fa-solid fa-check text-body-sm"></i> Masukkan
                                                 </button>
                                             </div>
@@ -214,7 +214,7 @@
                                                         {{ entry.idx + 1 }}
                                                     </div>
                                                     <div class="min-w-0 flex-1 space-y-2">
-                                                        <span v-if="!String(entry.value || '').trim()" class="rounded-full bg-amber-100 px-2 py-0.5 text-overline-xs font-bold uppercase tracking-[0.15em] text-amber-700">Kosong</span>
+                                                        <span v-if="!String(entry.value || '').trim()" class="rounded-full bg-amber px-2 py-0.5 text-overline-xs font-bold uppercase tracking-[0.15em] text-light">Kosong</span>
                                                         <input
                                                             :id="`settings-option-${activeSettingTab}-${entry.idx}`"
                                                             :name="`settings_option_${activeSettingTab}_${entry.idx}`"
@@ -226,7 +226,7 @@
                                                             class="form-input-compact-white font-bold uppercase" />
                                                     </div>
                                                     <button @click="askSettingAction('delete', activeSettingTab, entry.idx)" class="icon-utility-button icon-utility-bordered icon-utility-danger shrink-0 self-center">
-                                                        <i class="fa-solid fa-trash text-body-sm"></i>
+                                                        <i class="fa-solid fa-trash-can text-body-sm"></i>
                                                     </button>
                                                 </div>
                                             </div>
@@ -243,15 +243,15 @@
                                     <div class="shrink-0 border-t border-slate-100 bg-white/95 px-4 py-3 backdrop-blur md:px-5">
                                         <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                                             <div>
-                                                <div class="text-body-sm font-bold uppercase tracking-[0.18em]" :class="settingsDirty ? 'text-amber-600' : 'text-slate-400'">{{ settingsDirty ? 'Perubahan Belum Disimpan' : 'Semua Perubahan Aman' }}</div>
+                                                <div class="text-body-sm font-bold uppercase tracking-[0.18em]" :class="settingsDirty ? 'text-amber' : 'text-slate-400'">{{ settingsDirty ? 'Perubahan Belum Disimpan' : 'Semua Perubahan Aman' }}</div>
                                                 <p class="mt-1 text-body text-slate-500">{{ settingsDirty ? settingsDirtyTabCount + ' kategori berubah, ' + settingsDirtyValueCount + ' nilai berbeda dari data tersimpan.' : 'Belum ada perubahan pada settings.' }}</p>
                                             </div>
                                             <div class="grid grid-cols-2 gap-2 md:flex">
-                                                <button v-if="settingsDirty" @click="resetSettingsDraft" class="secondary-cta-button secondary-cta-neutral active:scale-95">
+                                                <button v-if="settingsDirty" @click="resetSettingsDraft" class="primary-cta-button primary-cta-button--neutral active:scale-95">
                                                     <i class="fa-solid fa-rotate-left text-body-sm"></i> Reset
                                                 </button>
                                                 <button @click="saveSettingsBackend" :disabled="savingSettings || !settingsDirty" class="primary-cta-button primary-cta-button--accent active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed">
-                                                    <i v-if="!savingSettings" class="fa-solid fa-floppy-disk text-xs text-blue-400"></i>
+                                                    <i v-if="!savingSettings" class="fa-solid fa-floppy-disk text-xs text-amber"></i>
                                                     <i v-else class="fa-solid fa-circle-notch fa-spin text-xs"></i>
                                                     {{ savingSettings ? 'Menyimpan...' : 'Simpan Perubahan' }}
                                                 </button>
@@ -277,7 +277,7 @@
                                 <div class="mobile-sheet relative w-full bg-white radius-sheet flex flex-col max-h-[90dvh] animate-fadeIn">
                                     <div class="modal-header-bar radius-sheet-top items-start">
                                         <div class="modal-header-copy items-start">
-                                            <div class="modal-header-icon bg-slate-100 text-slate-600 border border-slate-200">
+                                            <div class="modal-header-icon bg-secondary text-light border border-slate-200">
                                                 <i class="fa-solid fa-sliders text-body"></i>
                                             </div>
                                             <div>
@@ -294,19 +294,19 @@
                                             <button v-if="!isSettingTabObject(activeSettingTab)" @click="addSettingOption(activeSettingTab)" class="primary-cta-button primary-cta-button--accent active:scale-95">
                                                 <i class="fa-solid fa-plus text-body-sm"></i> Tambah
                                             </button>
-                                            <button v-if="!isSettingTabObject(activeSettingTab)" @click="toggleSettingsBulkAdd" :class="showSettingsBulkAdd ? 'bg-slate-900 text-white border-slate-900 hover:bg-black hover:border-black' : 'secondary-cta-neutral'" class="secondary-cta-button active:scale-95">
+                                            <button v-if="!isSettingTabObject(activeSettingTab)" @click="toggleSettingsBulkAdd" :class="showSettingsBulkAdd ? 'bg-slate-900 text-white border-slate-900 hover:bg-black hover:border-black' : 'primary-cta-button--neutral'" class="primary-cta-button active:scale-95">
                                                 <i class="fa-solid fa-layer-group text-body-sm"></i> Banyak
                                             </button>
-                                            <button v-if="!isSettingTabObject(activeSettingTab)" @click="sortSettingOptions(activeSettingTab)" class="secondary-cta-button secondary-cta-neutral active:scale-95">
+                                            <button v-if="!isSettingTabObject(activeSettingTab)" @click="sortSettingOptions(activeSettingTab)" class="primary-cta-button primary-cta-button--neutral active:scale-95">
                                                 <i class="fa-solid fa-arrow-down-a-z text-body-sm"></i> Urutkan
                                             </button>
-                                            <button v-if="!isSettingTabObject(activeSettingTab)" @click="clearEmptySettingOptions(activeSettingTab)" class="secondary-cta-button secondary-cta-danger active:scale-95">
+                                            <button v-if="!isSettingTabObject(activeSettingTab)" @click="clearEmptySettingOptions(activeSettingTab)" class="primary-cta-button primary-cta-button--danger active:scale-95">
                                                 <i class="fa-solid fa-eraser text-body-sm"></i> Hapus
                                             </button>
-                                            <button v-if="activeSettingTab === 'BONUS_CONFIG'" @click="closeSettingsDetailModal(); activeTab = 'bonus_report'" class="secondary-cta-button secondary-cta-link active:scale-95 col-span-2">
+                                            <button v-if="activeSettingTab === 'BONUS_CONFIG'" @click="closeSettingsDetailModal(); activeTab = 'bonus_report'" class="primary-cta-button primary-cta-button--link active:scale-95 col-span-2">
                                                 <i class="fa-solid fa-arrow-up-right-from-square text-body-sm"></i> Buka Bonus Editor
                                             </button>
-                                            <button v-if="activeSettingTab === 'BUDGET_CONFIG'" @click="closeSettingsDetailModal(); activeTab = 'budgeting'" class="secondary-cta-button secondary-cta-link active:scale-95 col-span-2">
+                                            <button v-if="activeSettingTab === 'BUDGET_CONFIG'" @click="closeSettingsDetailModal(); activeTab = 'budgeting'" class="primary-cta-button primary-cta-button--link active:scale-95 col-span-2">
                                                 <i class="fa-solid fa-arrow-up-right-from-square text-body-sm"></i> Buka Budget Editor
                                             </button>
                                         </div>
@@ -318,11 +318,11 @@
                                             </span>
                                             <span class="mini-stat-chip mini-stat-chip--outlined">
                                                 <span class="text-body-sm font-semibold uppercase tracking-wider text-slate-500">Kosong</span>
-                                                <span class="text-body font-bold text-amber-600">{{ getSettingEmptyCount(activeSettingTab) }}</span>
+                                                <span class="text-body font-bold text-amber">{{ getSettingEmptyCount(activeSettingTab) }}</span>
                                             </span>
                                             <span class="mini-stat-chip mini-stat-chip--outlined">
                                                 <span class="text-body-sm font-semibold uppercase tracking-wider text-slate-500">Edit</span>
-                                                <span class="text-body font-bold" :class="isSettingTabDirty(activeSettingTab) ? 'text-amber-600' : 'text-slate-500'">{{ isSettingTabDirty(activeSettingTab) ? 'Yes' : 'No' }}</span>
+                                                <span class="text-body font-bold" :class="isSettingTabDirty(activeSettingTab) ? 'text-amber' : 'text-slate-500'">{{ isSettingTabDirty(activeSettingTab) ? 'Yes' : 'No' }}</span>
                                             </span>
                                         </div>
 
@@ -359,8 +359,8 @@
                                                 placeholder="contoh&#10;DRAFT&#10;PENDING&#10;DONE"
                                                 class="mt-3 form-textarea"></textarea>
                                             <div class="mt-3 flex flex-wrap justify-end gap-2">
-                                                <button @click="settingsBulkAddText = ''" class="secondary-cta-button secondary-cta-neutral active:scale-95">Kosongkan</button>
-                                                <button @click="applySettingsBulkAdd(activeSettingTab)" class="secondary-cta-button secondary-cta-link active:scale-95">
+                                                <button @click="settingsBulkAddText = ''" class="primary-cta-button primary-cta-button--neutral active:scale-95">Kosongkan</button>
+                                                <button @click="applySettingsBulkAdd(activeSettingTab)" class="primary-cta-button primary-cta-button--link active:scale-95">
                                                     <i class="fa-solid fa-check text-body-sm"></i> Masukkan
                                                 </button>
                                             </div>
@@ -390,7 +390,7 @@
                                                 <div class="flex items-center gap-3">
                                                     <div class="h-8 w-8 shrink-0 rounded-2xl bg-slate-100 flex items-center justify-center text-body-sm font-bold text-slate-500 self-start">{{ entry.idx + 1 }}</div>
                                                     <div class="min-w-0 flex-1 space-y-2">
-                                                        <span v-if="!String(entry.value || '').trim()" class="rounded-full bg-amber-100 px-2 py-0.5 text-overline-xs font-bold uppercase tracking-[0.15em] text-amber-700">Kosong</span>
+                                                        <span v-if="!String(entry.value || '').trim()" class="rounded-full bg-amber px-2 py-0.5 text-overline-xs font-bold uppercase tracking-[0.15em] text-light">Kosong</span>
                                                         <input
                                                             :id="`settings-option-mobile-${activeSettingTab}-${entry.idx}`"
                                                             :name="`settings_option_mobile_${activeSettingTab}_${entry.idx}`"
@@ -402,7 +402,7 @@
                                                             class="form-input-compact-white font-bold uppercase" />
                                                     </div>
                                                     <button @click="askSettingAction('delete', activeSettingTab, entry.idx)" class="icon-utility-button icon-utility-bordered icon-utility-danger shrink-0 self-center">
-                                                        <i class="fa-solid fa-trash text-body-sm"></i>
+                                                        <i class="fa-solid fa-trash-can text-body-sm"></i>
                                                     </button>
                                                 </div>
                                             </div>
@@ -419,11 +419,11 @@
                                     <div class="modal-footer-bar radius-sheet-bottom">
                                         <div class="flex items-center justify-between gap-3">
                                             <div class="min-w-0">
-                                                <div class="text-body-sm font-bold uppercase tracking-[0.18em]" :class="settingsDirty ? 'text-amber-600' : 'text-slate-400'">{{ settingsDirty ? 'Perubahan Belum Disimpan' : 'Semua Perubahan Aman' }}</div>
+                                                <div class="text-body-sm font-bold uppercase tracking-[0.18em]" :class="settingsDirty ? 'text-amber' : 'text-slate-400'">{{ settingsDirty ? 'Perubahan Belum Disimpan' : 'Semua Perubahan Aman' }}</div>
                                                 <p class="mt-1 text-body text-slate-500 line-clamp-2">{{ settingsDirty ? settingsDirtyTabCount + ' kategori berubah, ' + settingsDirtyValueCount + ' nilai berbeda.' : 'Belum ada perubahan pada settings.' }}</p>
                                             </div>
                                             <div class="flex items-center gap-2">
-                                                <button @click="closeSettingsDetailModal" class="secondary-cta-button secondary-cta-neutral">Tutup</button>
+                                                <button @click="closeSettingsDetailModal" class="primary-cta-button primary-cta-button--neutral">Tutup</button>
                                                 <button @click="saveSettingsBackend" :disabled="savingSettings || !settingsDirty" class="primary-cta-button">
                                                     <i v-if="!savingSettings" class="fa-solid fa-floppy-disk text-xs"></i>
                                                     <i v-else class="fa-solid fa-circle-notch fa-spin text-xs"></i>

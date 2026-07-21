@@ -128,6 +128,7 @@
                         getKeepBarangData() { return fetchJson_('/api/keep-barang').then(r => r.data || []); },
                         getPromoData() { return fetchJson_('/api/program-promo').then(r => r.data || []); },
                         getSellOutTargetData() { return fetchJson_('/api/sell-out-targets').then(r => r.data || []); },
+                        getHargaKompetitorData() { return fetchJson_('/api/harga-kompetitor').then(r => r.data || []); },
                         saveStory(data) {
                             const id = data.ID; const url = id ? `/api/story-schedules/${encodeURIComponent(id)}` : '/api/story-schedules';
                             return jsonApi(url, { method: id ? 'PUT' : 'POST', body: JSON.stringify(data) });
@@ -160,6 +161,10 @@
                             const id = data.ID; const url = id ? `/api/sell-out-targets/${encodeURIComponent(id)}` : '/api/sell-out-targets';
                             return jsonApi(url, { method: id ? 'PUT' : 'POST', body: JSON.stringify(data) });
                         },
+                        saveHargaKompetitor(data) {
+                            const id = data.ID; const url = id ? `/api/harga-kompetitor/${encodeURIComponent(id)}` : '/api/harga-kompetitor';
+                            return jsonApi(url, { method: id ? 'PUT' : 'POST', body: JSON.stringify(data) });
+                        },
                         saveAds(data) {
                             const id = data.ID; const url = id ? `/api/ads-performance/${encodeURIComponent(id)}` : '/api/ads-performance';
                             return jsonApi(url, { method: id ? 'PUT' : 'POST', body: JSON.stringify(data) });
@@ -176,6 +181,7 @@
                         deleteKeepBarang(id) { return jsonApi(`/api/keep-barang/${encodeURIComponent(id)}`, { method: 'DELETE' }); },
                         deletePromo(id) { return jsonApi(`/api/program-promo/${encodeURIComponent(id)}`, { method: 'DELETE' }); },
                         deleteSellOutTarget(id) { return jsonApi(`/api/sell-out-targets/${encodeURIComponent(id)}`, { method: 'DELETE' }); },
+                        deleteHargaKompetitor(id) { return jsonApi(`/api/harga-kompetitor/${encodeURIComponent(id)}`, { method: 'DELETE' }); },
                         deleteAds(id) { return jsonApi(`/api/ads-performance/${encodeURIComponent(id)}`, { method: 'DELETE' }); },
                         deleteMasterPlan(id) { return jsonApi(`/api/master-plans/${encodeURIComponent(id)}`, { method: 'DELETE' }); },
                         getLpjkDetailData(masterId) {
@@ -223,6 +229,35 @@
                                 method: 'PUT',
                                 body: JSON.stringify({ nama }),
                             });
+                        },
+                        uploadAvatar(file) {
+                            const formData = new FormData();
+                            formData.append('avatar', file);
+                            const cookie = document.cookie.split('; ').find((row) => row.startsWith('XSRF-TOKEN='));
+                            const token = cookie ? decodeURIComponent(cookie.split('=')[1]) : '';
+                            return fetch(resolveAppUrl('/api/auth/avatar'), {
+                                method: 'POST',
+                                headers: {
+                                    'Accept': 'application/json',
+                                    ...(token ? { 'X-XSRF-TOKEN': token } : {}),
+                                },
+                                body: formData,
+                            }).then(r => { if (!r.ok) return r.json().then(e => { throw e; }); return r.json(); });
+                        },
+                        uploadAuthUserAvatar(file, userId) {
+                            const formData = new FormData();
+                            formData.append('avatar', file);
+                            formData.append('user_id', String(userId));
+                            const cookie = document.cookie.split('; ').find((row) => row.startsWith('XSRF-TOKEN='));
+                            const token = cookie ? decodeURIComponent(cookie.split('=')[1]) : '';
+                            return fetch(resolveAppUrl('/api/auth/avatar'), {
+                                method: 'POST',
+                                headers: {
+                                    'Accept': 'application/json',
+                                    ...(token ? { 'X-XSRF-TOKEN': token } : {}),
+                                },
+                                body: formData,
+                            }).then(r => { if (!r.ok) return r.json().then(e => { throw e; }); return r.json(); });
                         },
                         changePin(username, oldPin, newPin) {
                             return jsonApi('/api/auth/pin', {

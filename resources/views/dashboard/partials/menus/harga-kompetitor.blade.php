@@ -27,13 +27,13 @@
                 class="space-y-6 animate-fadeIn pb-10">
                 <!-- Summary cards -->
                 <div class="space-y-3">
-                    <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                        <div v-for="c in hargaSummary.cards" :key="c.label" class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                            <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i :class="['fa-solid', c.icon, 'text-[120px]']"></i></div>
-                            <p :class="['text-overline font-bold uppercase tracking-widest mb-3', c.color]">{{ c.label }}</p>
+                    <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
+                        <div v-for="c in hargaSummary.cards.slice(0, 5)" :key="c.label" class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
+                            <div class="absolute -right-4 -bottom-4 opacity-5"><i :class="['fa-solid', c.icon, 'text-[120px]']"></i></div>
+                            <p class="dashboard-summary-title">{{ c.label }}</p>
                             <div class="flex items-baseline gap-2">
                                 <span class="dashboard-summary-value">{{ c.value }}</span>
-                                <span v-if="c.unit" :class="['dashboard-summary-unit', c.unitColor]">{{ c.unit }}</span>
+                                <span v-if="c.unit" class="dashboard-summary-unit">{{ c.unit }}</span>
                             </div>
                             <p :class="['text-body-sm font-bold mt-3', c.subColor]">{{ c.sub }}</p>
                         </div>
@@ -52,7 +52,7 @@
                             :style="getStaggerStyle(idx)">
                             <div class="mobile-data-card__header">
                                 <span
-                                    class="px-2.5 py-1 rounded-full text-overline font-bold uppercase tracking-wider bg-blue-50 text-blue-700">
+                                    class="px-2.5 py-1 rounded-full text-overline font-bold uppercase tracking-wider bg-amber text-light">
                                     {{ row.Tanggal_Cek ? formatShortDate(row.Tanggal_Cek) : '-' }}
                                 </span>
                                 <span class="type-body-sm text-slate-400 font-bold uppercase tracking-widest">
@@ -60,14 +60,15 @@
                                 </span>
                             </div>
                             <div>
-                                <p class="mobile-data-card__title line-clamp-2">{{ row.Nama_Produk || '-' }}</p>
+                                <p class="mobile-data-card__title line-clamp-2">{{ row.SERI || row.Nama_Produk || '-' }}</p>
+                                <p class="text-overline font-bold text-slate-400 uppercase mt-0.5">{{ [row.BRAND, row.RAM, row.INTERNAL, row.SIZE, row.WARNA].filter(Boolean).join(' / ') || row.KATEGORI || '-' }}</p>
                                 <div class="mobile-data-card__meta mt-2">
                                     <span
-                                        class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-overline font-bold uppercase">
+                                        class="px-2.5 py-1 rounded-lg bg-secondary text-light text-overline font-bold uppercase">
                                         Kompetitor
                                     </span>
                                     <span
-                                        class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-700 text-overline font-bold uppercase">
+                                        class="px-2.5 py-1 rounded-lg bg-success text-light text-overline font-bold uppercase">
                                         Jual
                                     </span>
                                 </div>
@@ -79,22 +80,22 @@
                                 </div>
                                 <div>
                                     <div class="type-body-sm text-slate-400 uppercase">Rencana</div>
-                                    <div class="type-body font-bold text-blue-600">{{ formatCurrency(row.Harga_Rencana_Jual) }}</div>
+                                    <div class="type-body font-bold text-amber">{{ formatCurrency(row.Harga_Rencana_Jual) }}</div>
                                 </div>
                             </div>
                             <div class="mobile-data-card__actions">
                                 <div class="type-body-sm font-bold"
-                                    :class="(row.Selisih || 0) >= 0 ? 'text-emerald-600' : 'text-rose-500'">
+                                    :class="(row.Selisih || 0) >= 0 ? 'text-success' : 'text-danger'">
                                     {{ formatCurrency(row.Selisih) }}
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <button @click="openHargaKompetitorModal('edit', row)"
                                         class="table-action-button table-action-compact" title="Edit"
-                                        aria-label="Edit"><i class="fa-solid fa-pen text-body-sm"></i></button>
+                                        aria-label="Edit"><i class="fa-solid fa-pen-to-square text-body-sm"></i></button>
                                     <button @click="deleteHargaKompetitor(row.ID)"
                                         class="table-action-button table-action-compact table-action-danger"
                                         title="Hapus" aria-label="Hapus"><i
-                                            class="fa-solid fa-trash text-body-sm"></i></button>
+                                            class="fa-solid fa-trash-can text-body-sm"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -140,7 +141,7 @@
                                     <template v-else>Semua Tanggal</template>
                                     <i v-if="hargaKompetitorDateFilter.start"
                                         @click.stop="hargaKompetitorDateFilter = {start:'',end:''}"
-                                        class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-red-500"></i>
+                                        class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-danger"></i>
                                 </button>
                             </div>
                             <div class="toolbar-actions">
@@ -148,58 +149,67 @@
                                     class="primary-cta-button primary-cta-button--accent active:scale-95"><i
                                         class="fa-solid fa-plus"></i> Tambah</button>
                                 <button @click="exportPriceComparisonToPDF"
-                                    class="secondary-cta-button secondary-cta-danger active:scale-95"><i
+                                    class="primary-cta-button primary-cta-button--danger active:scale-95"><i
                                         class="fa-solid fa-file-pdf"></i><span
                                         class="ml-1">PDF</span></button>
                             </div>
                         </div>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-body-sm text-left border-collapse min-w-[1000px]">
+                        <table class="w-full text-body-sm text-left border-collapse min-w-[1180px]">
                             <thead>
-                                <tr
-                                    class="border-b border-slate-100 text-body-sm font-bold uppercase tracking-widest text-slate-400">
-                                    <th class="px-4 py-3 text-center w-12">#</th>
-                                    <th class="px-4 py-3">Produk</th>
-                                    <th class="px-4 py-3 text-center w-28">Tanggal Cek</th>
-                                    <th class="px-4 py-3 text-center w-28">Dist 1</th>
-                                    <th class="px-4 py-3 text-center w-28">Dist 2</th>
-                                    <th class="px-4 py-3 text-center w-28">Kompetitor</th>
-                                    <th class="px-4 py-3 text-center w-28">Rencana Jual</th>
-                                    <th class="px-4 py-3 text-center w-24">Margin</th>
-                                    <th class="px-4 py-3 text-center w-24">Selisih</th>
-                                    <th class="px-4 py-3 text-right w-24">Aksi</th>
+                                <tr class="table-header-row">
+                                    <th class="table-header-cell table-header-index table-freeze-index">#</th>
+                                    <th class="table-header-cell table-header-action table-freeze-action">Aksi</th>
+                                    <th class="table-header-cell">Produk</th>
+                                    <th class="table-header-cell text-center w-28">Brand</th>
+                                    <th class="table-header-cell text-center w-40">Spesifikasi</th>
+                                    <th class="table-header-cell text-center w-28">Tanggal Cek</th>
+                                    <th class="table-header-cell text-center w-28">Dist 1</th>
+                                    <th class="table-header-cell text-center w-28">Dist 2</th>
+                                    <th class="table-header-cell text-center w-28">Kompetitor</th>
+                                    <th class="table-header-cell text-center w-28">Rencana Jual</th>
+                                    <th class="table-header-cell text-center w-24">Margin</th>
+                                    <th class="table-header-cell text-center w-24">Selisih</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-if="pagedHargaKompetitorData.length === 0">
-                                    <td colspan="10" class="px-4 py-12 text-center text-body text-slate-400">
+                                    <td colspan="12" class="px-4 py-12 text-center text-body text-slate-400">
                                         Belum ada data harga</td>
                                 </tr>
                                 <tr v-for="(row, idx) in pagedHargaKompetitorData" :key="row.ID"
                                     class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                                    <td class="px-4 py-3 text-center text-body text-slate-400">{{ (hargaKompetitorPage - 1) * 20 + idx + 1 }}</td>
-                                    <td class="px-4 py-3 font-semibold text-slate-800 uppercase text-body">{{ row.Nama_Produk }}</td>
+                                    <td class="px-4 py-3 text-center text-body text-slate-400 table-freeze-index">{{ (hargaKompetitorPage - 1) * 20 + idx + 1 }}</td>
+                                    <td class="px-4 py-3 table-freeze-action">
+                                        <div class="flex items-center gap-1.5">
+                                            <button @click="openHargaKompetitorModal('edit', row)"
+                                                class="table-action-button table-action-compact" title="Edit"
+                                                aria-label="Edit"><i class="fa-solid fa-pen-to-square text-body-sm"></i></button>
+                                            <button @click="deleteHargaKompetitor(row.ID)"
+                                                class="table-action-button table-action-compact table-action-danger"
+                                                title="Hapus" aria-label="Hapus"><i
+                                                    class="fa-solid fa-trash-can text-body-sm"></i></button>
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <div class="font-semibold text-slate-800 uppercase text-body">{{ row.SERI || row.Nama_Produk }}</div>
+                                        <div class="type-body-sm text-slate-400 mt-0.5">{{ row.KATEGORI || '-' }}</div>
+                                    </td>
+                                    <td class="px-4 py-3 text-center text-body font-bold text-slate-600">{{ row.BRAND || '-' }}</td>
+                                    <td class="px-4 py-3 text-center text-body text-slate-500">
+                                        <div class="font-semibold text-slate-700">{{ [row.RAM, row.INTERNAL, row.SIZE].filter(Boolean).join(' / ') || '-' }}</div>
+                                        <div v-if="row.WARNA" class="type-body-sm text-slate-400 mt-0.5">{{ row.WARNA }}</div>
+                                    </td>
                                     <td class="px-4 py-3 text-center text-body text-slate-500">{{ formatShortDate(row.Tanggal_Cek) }}</td>
                                     <td class="px-4 py-3 text-center text-body font-bold text-slate-600">{{ formatCurrency(row.Harga_Distributor_1) }}</td>
                                     <td class="px-4 py-3 text-center text-body font-bold text-slate-600">{{ formatCurrency(row.Harga_Distributor_2) }}</td>
                                     <td class="px-4 py-3 text-center text-body font-bold text-slate-600">{{ formatCurrency(row.Harga_Kompetitor) }}</td>
-                                    <td class="px-4 py-3 text-center text-body font-bold text-blue-600">{{ formatCurrency(row.Harga_Rencana_Jual) }}</td>
+                                    <td class="px-4 py-3 text-center text-body font-bold text-amber">{{ formatCurrency(row.Harga_Rencana_Jual) }}</td>
                                     <td class="px-4 py-3 text-center text-body font-bold text-slate-600">{{ formatCurrency(row.Margin_Profit) }}</td>
                                     <td class="px-4 py-3 text-center text-body font-bold"
-                                        :class="(row.Selisih || 0) >= 0 ? 'text-emerald-600' : 'text-rose-500'">
+                                        :class="(row.Selisih || 0) >= 0 ? 'text-success' : 'text-danger'">
                                         {{ formatCurrency(row.Selisih) }}</td>
-                                    <td class="px-4 py-3 text-right">
-                                        <div class="flex items-center justify-end gap-1.5">
-                                            <button @click="openHargaKompetitorModal('edit', row)"
-                                                class="table-action-button table-action-compact" title="Edit"
-                                                aria-label="Edit"><i class="fa-solid fa-pen text-body-sm"></i></button>
-                                            <button @click="deleteHargaKompetitor(row.ID)"
-                                                class="table-action-button table-action-compact table-action-danger"
-                                                title="Hapus" aria-label="Hapus"><i
-                                                    class="fa-solid fa-trash text-body-sm"></i></button>
-                                        </div>
-                                    </td>
                                 </tr>
                             </tbody>
                         </table>

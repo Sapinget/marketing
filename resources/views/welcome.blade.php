@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Pura Pura Ponsel</title>
     <link rel="icon" href="{{ asset('asset/images/favicon.ico') }}">
-    <link rel="stylesheet" href="{{ asset('vendor/dashboard/fontawesome/css/all.min.css') }}">
+    @php($fontAwesomeCssPath = public_path('vendor/dashboard/fontawesome/css/all.min.css'))
+    <link rel="stylesheet" href="{{ asset('vendor/dashboard/fontawesome/css/all.min.css') }}?v={{ file_exists($fontAwesomeCssPath) ? filemtime($fontAwesomeCssPath) : time() }}">
     <style>
         body {
             margin: 0;

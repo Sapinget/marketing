@@ -240,7 +240,15 @@
                         },
                         updateUserNama(username, nama) {
                             mockState.nama = nama;
-                            return { status: 'success' };
+                            return { status: 'success', user: { ...(mockState.user || {}), nama: mockState.nama || 'User', avatar_url: mockState.avatar_url || null } };
+                        },
+                        uploadAvatar(file) {
+                            mockState.avatar_url = file ? URL.createObjectURL(file) : null;
+                            return { status: 'success', user: { ...(mockState.user || {}), nama: mockState.nama || 'User', avatar_url: mockState.avatar_url || null } };
+                        },
+                        uploadAuthUserAvatar(file, userId) {
+                            const avatarUrl = file ? URL.createObjectURL(file) : null;
+                            return { status: 'success', user: { ID: userId, avatar_url: avatarUrl } };
                         },
                         changePin(username, oldPin, newPin) {
                             if (oldPin !== mockState.pin) throw new Error('PIN saat ini salah.');

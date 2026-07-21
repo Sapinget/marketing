@@ -115,22 +115,39 @@ class CrudApiTest extends TestCase
         ]);
         $userId = auth()->id();
 
+        DB::table('meta_ig_posts')->insert([
+            'post_id' => '17912380476180805',
+            'dataset' => 'feed',
+            'views' => 321,
+            'likes' => 45,
+            'comments' => 6,
+            'shares' => 7,
+            'imported_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
         $id = $this->postJson('/api/analytics', [
             'Master_ID' => 'CRUD-MASTER-003',
             'Judul' => 'Analytics CRUD',
             'Platform' => 'Youtube',
+            'ID_Post' => '17912380476180805',
             'Tanggal_Publish' => '2026-06-26',
             'Views' => 10,
             'Likes' => 2,
             'Comments' => 1,
             'Shares' => 0,
-        ])->assertCreated()->json('data.ID');
+        ])->assertCreated()->assertJsonPath('data.ID_Post', '17912380476180805')->assertJsonPath('data.Views', 321)->json('data.ID');
 
         $this->assertDatabaseHas('analytics', [
             'id' => $id,
             'master_id' => 'CRUD-MASTER-003',
             'master_plan_id' => $masterPlanId,
-            'views' => 10,
+            'id_post' => '17912380476180805',
+            'views' => 321,
+            'likes' => 45,
+            'comments' => 6,
+            'shares' => 7,
             'created_by_user_id' => $userId,
             'updated_by_user_id' => $userId,
         ]);
@@ -220,6 +237,56 @@ class CrudApiTest extends TestCase
             ->assertOk()
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.Platform', 'Instagram');
+    }
+
+    public function test_analytics_id_post_syncs_metrics_from_meta_ig(): void
+    {
+        DB::table('master_plans')->insert([
+            'source_id' => 'SYNC-MASTER-001',
+            'title' => 'Sync Test',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        DB::table('meta_ig_posts')->insert([
+            'post_id' => 'POST-SYNC-001',
+            'dataset' => 'feed',
+            'views' => 999,
+            'likes' => 88,
+            'comments' => 77,
+            'shares' => 66,
+            'imported_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        $id = $this->postJson('/api/analytics', [
+            'Master_ID' => 'SYNC-MASTER-001',
+            'Judul' => 'Sync Test',
+            'Platform' => 'Instagram',
+            'ID_Post' => 'POST-SYNC-001',
+            'Tanggal_Publish' => '2026-07-01',
+            'Views' => 1,
+            'Likes' => 2,
+            'Comments' => 3,
+            'Shares' => 4,
+        ])->assertCreated()->json('data.ID');
+
+        $this->assertDatabaseHas('analytics', [
+            'id' => $id,
+            'id_post' => 'POST-SYNC-001',
+            'views' => 999,
+            'likes' => 88,
+            'comments' => 77,
+            'shares' => 66,
+        ]);
+
+        $this->getJson('/api/analytics')
+            ->assertOk()
+            ->assertJsonPath('data.0.ID_Post', 'POST-SYNC-001')
+            ->assertJsonPath('data.0.Views', 999);
+
+        $this->deleteJson("/api/analytics/{$id}")->assertOk();
     }
 
     public function test_settings_crud_api_works(): void
@@ -481,5 +548,61 @@ class CrudApiTest extends TestCase
             ->assertOk()
             ->assertJsonCount(1, 'data')
             ->assertJsonPath('data.0.table_name', 'analytics');
+    }
+
+    public function test_harga_kompetitor_api_persists_product_detail_fields(): void
+    {
+        $this->postJson('/api/harga-kompetitor', [
+            'ID' => 'HK-DETAIL-001',
+            'Nama_Produk' => 'Samsung S25 12GB 256GB Garansi TAM',
+            'KATEGORI' => 'SMARTPHONE',
+            'BRAND' => 'Samsung',
+            'SERI' => 'S25',
+            'RAM' => '12GB',
+            'INTERNAL' => '256GB',
+            'SIZE' => 'Garansi TAM',
+            'WARNA' => 'Navy',
+            'Harga_Distributor_1' => 12000000,
+            'Harga_Distributor_2' => 12100000,
+            'Harga_Kompetitor' => 12500000,
+            'Margin_Profit' => 400000,
+            'Harga_Rencana_Jual' => 12400000,
+            'Tanggal_Cek' => '2026-07-21',
+        ])->assertCreated();
+
+        $this->assertDatabaseHas('harga_kompetitor', [
+            'source_id' => 'HK-DETAIL-001',
+            'kategori' => 'SMARTPHONE',
+            'brand' => 'Samsung',
+            'seri' => 'S25',
+            'ram' => '12GB',
+            'internal' => '256GB',
+            'size' => 'Garansi TAM',
+            'warna' => 'Navy',
+        ]);
+
+        $this->putJson('/api/harga-kompetitor/HK-DETAIL-001', [
+            'Nama_Produk' => 'Samsung S25 Ultra 12GB 512GB Garansi TAM',
+            'KATEGORI' => 'SMARTPHONE',
+            'BRAND' => 'Samsung',
+            'SERI' => 'S25 Ultra',
+            'RAM' => '12GB',
+            'INTERNAL' => '512GB',
+            'SIZE' => 'Garansi TAM',
+            'WARNA' => 'Silver',
+            'Harga_Distributor_1' => 15000000,
+            'Harga_Distributor_2' => 15100000,
+            'Harga_Kompetitor' => 15600000,
+            'Margin_Profit' => 400000,
+            'Harga_Rencana_Jual' => 15500000,
+            'Tanggal_Cek' => '2026-07-21',
+        ])->assertOk();
+
+        $this->getJson('/api/harga-kompetitor')
+            ->assertOk()
+            ->assertJsonPath('data.0.ID', 'HK-DETAIL-001')
+            ->assertJsonPath('data.0.SERI', 'S25 Ultra')
+            ->assertJsonPath('data.0.INTERNAL', '512GB')
+            ->assertJsonPath('data.0.WARNA', 'Silver');
     }
 }

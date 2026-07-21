@@ -43,17 +43,17 @@ export const formatMonthLabel = (val) => {
 export const getStatusColor = (status) => {
     const s = status?.toUpperCase();
     if (s === "NOT STARTED") return "bg-slate-100 text-slate-600 border border-slate-200";
-    if (s === "PENDING") return "bg-amber-100 text-amber-600 border border-amber-200";
-    if (s === "PROCESED" || s === "PROCESSED") return "bg-indigo-100 text-indigo-600 border border-indigo-200";
-    if (s === "CLAIM") return "bg-emerald-100 text-emerald-600 border border-emerald-200";
+    if (s === "PENDING") return "bg-amber text-light border border-amber";
+    if (s === "PROCESED" || s === "PROCESSED") return "bg-amber text-light border border-amber";
+    if (s === "CLAIM") return "bg-success text-light border border-success";
     if (s === "DRAFT") return "bg-slate-100 text-slate-500";
-    if (s === "ONGOING") return "bg-amber-100 text-amber-700";
-    if (s === "SELESAI") return "bg-emerald-100 text-emerald-700";
-    if (s === "CANCEL") return "bg-rose-100 text-rose-500";
+    if (s === "ONGOING") return "bg-amber text-light";
+    if (s === "SELESAI") return "bg-success text-light";
+    if (s === "CANCEL") return "bg-danger text-light";
     const sl = s?.toLowerCase();
-    if (sl === "editing" || sl === "progres") return "bg-blue-100 text-blue-600";
-    if (sl === "shooting") return "bg-amber-100 text-amber-600";
+    if (sl === "editing" || sl === "progres") return "bg-amber text-light";
+    if (sl === "shooting") return "bg-amber text-light";
     if (sl === "ide") return "bg-slate-100 text-slate-600";
-    if (sl === "done" || sl === "published") return "bg-emerald-100 text-emerald-600";
+    if (sl === "done" || sl === "published") return "bg-success text-light";
     return "bg-slate-100 text-slate-600";
 };

@@ -152,6 +152,31 @@ class DashboardUserManagementTest extends TestCase
         ]);
     }
 
+    public function test_authenticated_user_can_create_brand_ambasador_and_talent_roles(): void
+    {
+        foreach ([
+            ['username' => 'brand-ambasador', 'role' => 'brand_ambasador', 'label' => 'Brand Ambasador'],
+            ['username' => 'talent-role', 'role' => 'talent', 'label' => 'Talent'],
+        ] as $index => $case) {
+            $this->postJson('/api/auth/users', [
+                'username' => $case['username'],
+                'nama' => $case['label'],
+                'email' => "{$case['username']}@example.com",
+                'role' => $case['role'],
+                'pin' => '987654',
+                'pin_confirmation' => '987654',
+            ])->assertOk()
+                ->assertJsonPath('data.username', $case['username'])
+                ->assertJsonPath('data.role', $case['label'])
+                ->assertJsonPath('data.role_key', $case['role']);
+
+            $this->assertDatabaseHas('users', [
+                'username' => $case['username'],
+                'role' => $case['role'],
+            ]);
+        }
+    }
+
     public function test_non_super_admin_cannot_create_dashboard_user_from_api(): void
     {
         $this->actingAsDashboardUser([

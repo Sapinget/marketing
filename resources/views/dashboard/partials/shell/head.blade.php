@@ -4,7 +4,8 @@
     <title>Marketing Dashboard | Pura Pura Ponsel</title>
     <link rel="icon" type="image/x-icon" href="{{ asset('asset/images/favicon.ico') }}">
 
-    <link rel="stylesheet" href="{{ asset('vendor/dashboard/fontawesome/css/all.min.css') }}" />
+    @php($fontAwesomeCssPath = public_path('vendor/dashboard/fontawesome/css/all.min.css'))
+    <link rel="stylesheet" href="{{ asset('vendor/dashboard/fontawesome/css/all.min.css') }}?v={{ file_exists($fontAwesomeCssPath) ? filemtime($fontAwesomeCssPath) : time() }}" />
     <script src="{{ asset('vendor/dashboard/vue/vue.global.prod.js') }}"></script>
     <script src="{{ asset('vendor/dashboard/papaparse/papaparse.min.js') }}"></script>
     <script src="{{ asset('vendor/dashboard/apexcharts/apexcharts.min.js') }}"></script>
@@ -12,6 +13,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <script>
     window.MARKETING_BACKEND_URL=@json($backendUrl);
+    window.DASHBOARD_FONTAWESOME_URL=@json(asset('vendor/dashboard/fontawesome/css/all.min.css') . '?v=' . (file_exists($fontAwesomeCssPath) ? filemtime($fontAwesomeCssPath) : time()));
     </script>
 
     @vite([

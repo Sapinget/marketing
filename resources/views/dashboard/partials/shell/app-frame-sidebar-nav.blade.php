@@ -1,5 +1,5 @@
 @verbatim
-            <div class="py-2 space-y-1 flex-1 overflow-y-auto">
+            <div class="dashboard-sidebar-nav py-2 flex-1 overflow-y-auto">
 @endverbatim
                 @include('dashboard.partials.shell.app-frame-sidebar-nav-dashboard-content')
                 @include('dashboard.partials.shell.app-frame-sidebar-nav-marketing')

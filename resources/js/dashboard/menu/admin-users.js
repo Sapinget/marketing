@@ -6,6 +6,7 @@ export function createAdminUserSettingsState(ref) {
             newPin: '',
             confirmPin: '',
         }),
+        submittingAvatar: ref(false),
         authUsers: ref([]),
         authUsersLoaded: ref(false),
         authUserSearchQuery: ref(''),
@@ -17,6 +18,7 @@ export function createAdminUserSettingsState(ref) {
             record_key: '',
         }),
         submittingAuthUser: ref(false),
+        submittingAuthUserAvatar: ref(false),
         showAuthUserModal: ref(false),
         authUserFormMode: ref('create'),
         authUserForm: ref({
@@ -27,6 +29,7 @@ export function createAdminUserSettingsState(ref) {
             role: 'operasional',
             pin: '',
             confirmPin: '',
+            avatar_url: null,
         }),
     };
 }
@@ -39,8 +42,10 @@ export function createAdminUserSettingsActions(deps) {
         showNotification,
         submittingInfo,
         submittingPin,
+        submittingAvatar,
         profileForm,
         submittingAuthUser,
+        submittingAuthUserAvatar,
         showAuthUserModal,
         authUserFormMode,
         authUsers,
@@ -61,7 +66,30 @@ export function createAdminUserSettingsActions(deps) {
         role: 'operasional',
         pin: '',
         confirmPin: '',
+        avatar_url: null,
     });
+
+    const resolveAvatarUrl = (value) => {
+        const rawValue = String(value || '').trim();
+        if (!rawValue) return '';
+        if (rawValue.startsWith('/api/auth/avatar/')) return rawValue;
+
+        try {
+            const url = new URL(rawValue, window.location.origin);
+            if (url.pathname.startsWith('/api/auth/avatar/')) {
+                return `${url.pathname}${url.search || ''}`;
+            }
+        } catch (error) {
+            return rawValue;
+        }
+
+        return rawValue;
+    };
+
+    const markAuthUserAvatarFailed = (user) => {
+        if (!user || typeof user !== 'object') return;
+        user.avatar_url = null;
+    };
 
     const openAuthUserModal = (mode = 'create', user = null) => {
         authUserFormMode.value = mode === 'edit' ? 'edit' : 'create';
@@ -74,6 +102,7 @@ export function createAdminUserSettingsActions(deps) {
                 role: String(user.role_key || 'operasional'),
                 pin: '',
                 confirmPin: '',
+                avatar_url: user.avatar_url || null,
             }
             : buildEmptyAuthUserForm();
         showAuthUserModal.value = true;
@@ -137,8 +166,11 @@ export function createAdminUserSettingsActions(deps) {
 
         submittingInfo.value = true;
         ensureRunApi()
-            .withSuccessHandler(() => {
-                if (currentUser.value) {
+            .withSuccessHandler((result) => {
+                if (result?.user) {
+                    currentUser.value = result.user;
+                    localStorage.setItem('ppp_user', JSON.stringify(result.user));
+                } else if (currentUser.value) {
                     currentUser.value.nama = profileForm.value.namaLengkap;
                     localStorage.setItem('ppp_user', JSON.stringify(currentUser.value));
                 }
@@ -150,6 +182,34 @@ export function createAdminUserSettingsActions(deps) {
                 notifyError('Gagal menyimpan', err, 'Informasi profil belum berhasil diperbarui.');
             })
             .updateUserNama(currentUser.value?.username, profileForm.value.namaLengkap);
+    };
+
+    const uploadProfileAvatar = (event) => {
+        const file = event?.target?.files?.[0];
+        if (!file) return;
+
+        const previewUrl = URL.createObjectURL(file);
+        if (currentUser.value) {
+            currentUser.value = { ...currentUser.value, avatar_url: previewUrl };
+        }
+
+        submittingAvatar.value = true;
+        ensureRunApi()
+            .withSuccessHandler((result) => {
+                if (result?.user) {
+                    currentUser.value = result.user;
+                    localStorage.setItem('ppp_user', JSON.stringify(result.user));
+                }
+                submittingAvatar.value = false;
+                event.target.value = '';
+                showNotification('Foto profil berhasil diupdate!');
+            })
+            .withFailureHandler((err) => {
+                submittingAvatar.value = false;
+                event.target.value = '';
+                notifyError('Gagal upload foto', err, 'Foto profil belum berhasil diunggah.');
+            })
+            .uploadAvatar(file);
     };
 
     const saveProfileSetting = () => {
@@ -286,14 +346,46 @@ export function createAdminUserSettingsActions(deps) {
         );
     };
 
+    const uploadAuthUserAvatar = (event) => {
+        const file = event?.target?.files?.[0];
+        if (!file) return;
+
+        const userId = authUserForm.value?.ID ?? null;
+        if (!userId) {
+            showNotification('Simpan user terlebih dahulu sebelum upload foto.');
+            return;
+        }
+
+        authUserForm.value.avatar_url = URL.createObjectURL(file);
+        submittingAuthUserAvatar.value = true;
+        ensureRunApi()
+            .withSuccessHandler((result) => {
+                authUserForm.value.avatar_url = result?.user?.avatar_url || null;
+                loadAuthUsers();
+                submittingAuthUserAvatar.value = false;
+                event.target.value = '';
+                showNotification('Foto user berhasil diupdate!');
+            })
+            .withFailureHandler((err) => {
+                submittingAuthUserAvatar.value = false;
+                event.target.value = '';
+                notifyError('Gagal upload foto user', err, 'Foto user belum berhasil diunggah.');
+            })
+            .uploadAuthUserAvatar(file, userId);
+    };
+
     return {
         loadAuthUsers,
         loadActivityLogs,
         saveProfileInfo,
+        uploadProfileAvatar,
         saveProfileSetting,
         openAuthUserModal,
         closeAuthUserModal,
         submitAuthUserForm,
         removeAuthUser,
+        uploadAuthUserAvatar,
+        resolveAvatarUrl,
+        markAuthUserAvatarFailed,
     };
 }

@@ -48,50 +48,50 @@
                 class="space-y-6 animate-fadeIn pb-10">
                 <!-- Summary cards -->
                 <div class="space-y-3">
-                    <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                    <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
                         <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                            <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-cubes text-[120px]"></i></div>
-                            <p class="text-overline font-bold uppercase tracking-widest mb-3 text-blue-500">Total Asset</p>
+                            <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-cubes text-[120px]"></i></div>
+                            <p class="dashboard-summary-title">Total Asset</p>
                             <div class="flex items-baseline gap-2">
                                 <span class="dashboard-summary-value">{{ formatNumber(aviData.length) }}</span>
-                                <span class="dashboard-summary-unit text-blue-400">Item</span>
+                                <span class="dashboard-summary-unit">Item</span>
                             </div>
-                            <p class="text-body-sm font-bold mt-3 text-blue-600">Semua data inventory</p>
+                            <p class="text-body-sm font-bold mt-3 text-amber">Semua data inventory</p>
                         </div>
                         <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                            <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-tag text-[120px]"></i></div>
-                            <p class="text-overline font-bold uppercase tracking-widest mb-3 text-violet-500">Unique Vendor</p>
+                            <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-tag text-[120px]"></i></div>
+                            <p class="dashboard-summary-title">Unique Vendor</p>
                             <div class="flex items-baseline gap-2">
                                 <span class="dashboard-summary-value">{{ formatNumber(aviUniqueVendors) }}</span>
-                                <span class="dashboard-summary-unit text-violet-400">Vendor</span>
+                                <span class="dashboard-summary-unit">Vendor</span>
                             </div>
-                            <p class="text-body-sm font-bold mt-3 text-violet-600">Supplier</p>
+                            <p class="text-body-sm font-bold mt-3 text-slate-600">Supplier</p>
                         </div>
                         <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                            <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-mobile-screen text-[120px]"></i></div>
-                            <p class="text-overline font-bold uppercase tracking-widest mb-3 text-emerald-500">Vendor Brand</p>
+                            <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-mobile-screen text-[120px]"></i></div>
+                            <p class="dashboard-summary-title">Vendor Brand</p>
                             <div class="flex items-baseline gap-2">
                                 <span class="dashboard-summary-value">{{ formatNumber(aviUniqueBrands) }}</span>
-                                <span class="dashboard-summary-unit text-emerald-400">Brand</span>
+                                <span class="dashboard-summary-unit">Brand</span>
                             </div>
-                            <p class="text-body-sm font-bold mt-3 text-emerald-600">Unique brand</p>
+                            <p class="text-body-sm font-bold mt-3 text-success">Unique brand</p>
                         </div>
                         <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                            <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-boxes-stacked text-[120px]"></i></div>
-                            <p class="text-overline font-bold uppercase tracking-widest mb-3 text-amber-500">Total Quantity</p>
+                            <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-boxes-stacked text-[120px]"></i></div>
+                            <p class="dashboard-summary-title">Total Quantity</p>
                             <div class="flex items-baseline gap-2">
                                 <span class="dashboard-summary-value">{{ formatNumber(aviTotalQuantity) }}</span>
-                                <span class="dashboard-summary-unit text-amber-400">Unit</span>
+                                <span class="dashboard-summary-unit">Unit</span>
                             </div>
-                            <p class="text-body-sm font-bold mt-3 text-amber-600">Akumulasi</p>
+                            <p class="text-body-sm font-bold mt-3 text-amber">Akumulasi</p>
                         </div>
                         <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                            <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-store text-[120px]"></i></div>
-                            <p class="text-overline font-bold uppercase tracking-widest mb-3 text-rose-500">Top Vendor</p>
+                            <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-store text-[120px]"></i></div>
+                            <p class="dashboard-summary-title">Top Vendor</p>
                             <div class="flex items-baseline gap-2">
                                 <span class="dashboard-summary-value">{{ aviTopVendor?.label || '-' }}</span>
                             </div>
-                            <p class="text-body-sm font-bold mt-3 text-rose-600">{{ formatNumber(aviTopVendor?.n || 0) }} asset</p>
+                            <p class="text-body-sm font-bold mt-3 text-danger">{{ formatNumber(aviTopVendor?.n || 0) }} asset</p>
                         </div>
                     </div>
                 </div>
@@ -99,7 +99,7 @@
                 <section class="section-card section-card-body">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
                         <div class="modal-header-copy">
-                            <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
+                            <div class="w-12 h-12 rounded-2xl bg-amber text-light flex items-center justify-center border border-amber">
                                 <i class="fa-solid fa-cubes text-heading-lg"></i>
                             </div>
                             <div>
@@ -133,7 +133,7 @@
                             class="stat-card mobile-record-card mobile-data-card motion-stagger-item"
                             :style="getStaggerStyle(idx)">
                             <div class="mobile-data-card__header">
-                                <span class="px-2.5 py-1 rounded-full text-overline font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700">
+                                <span class="px-2.5 py-1 rounded-full text-overline font-bold uppercase tracking-wider bg-success text-light">
                                     {{ row.vendor || '-' }}
                                 </span>
                                 <span class="type-body-sm text-slate-400 font-bold uppercase tracking-widest">
@@ -143,10 +143,10 @@
                             <div>
                                 <p class="mobile-data-card__title line-clamp-2">{{ row.seri || '-' }}</p>
                                 <div class="mobile-data-card__meta mt-2">
-                                    <span v-if="row.imei" class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-overline font-bold uppercase">
+                                    <span v-if="row.imei" class="px-2.5 py-1 rounded-lg bg-secondary text-light text-overline font-bold uppercase">
                                         {{ row.imei }}
                                     </span>
-                                    <span class="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 text-overline font-bold uppercase">
+                                    <span class="px-2.5 py-1 rounded-lg bg-amber text-light text-overline font-bold uppercase">
                                         {{ row.quantity || 0 }}x
                                     </span>
                                 </div>
@@ -167,11 +167,11 @@
                                 <div class="flex items-center gap-2">
                                     <button @click="openAviModal('edit', row)"
                                         class="table-action-button table-action-compact" title="Edit"
-                                        aria-label="Edit"><i class="fa-solid fa-pen text-body-sm"></i></button>
+                                        aria-label="Edit"><i class="fa-solid fa-pen-to-square text-body-sm"></i></button>
                                     <button @click="deleteAvi(row.ID)"
                                         class="table-action-button table-action-compact table-action-danger"
                                         title="Hapus" aria-label="Hapus"><i
-                                            class="fa-solid fa-trash text-body-sm"></i></button>
+                                            class="fa-solid fa-trash-can text-body-sm"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -199,45 +199,44 @@
                     <div class="overflow-x-auto">
                         <table class="w-full text-body-sm text-left border-collapse min-w-[900px]">
                             <thead>
-                                <tr
-                                    class="border-b border-slate-100 text-body-sm font-bold uppercase tracking-widest text-slate-400">
-                                    <th class="px-4 py-3 text-center w-12">#</th>
-                                    <th class="px-4 py-3">Vendor</th>
-                                    <th class="px-4 py-3">Brand</th>
-                                    <th class="px-4 py-3">Seri</th>
-                                    <th class="px-4 py-3">IMEI</th>
-                                    <th class="px-4 py-3 text-center w-20">Qty</th>
-                                    <th class="px-4 py-3 text-center w-24">Kondisi</th>
-                                    <th class="px-4 py-3 text-center w-24">Tgl Beli</th>
-                                    <th class="px-4 py-3 text-center w-20">Aksi</th>
+                                <tr class="table-header-row">
+                                    <th class="table-header-cell table-header-index table-freeze-index">#</th>
+                                    <th class="table-header-cell table-header-action table-freeze-action">Aksi</th>
+                                    <th class="table-header-cell">Vendor</th>
+                                    <th class="table-header-cell">Brand</th>
+                                    <th class="table-header-cell">Seri</th>
+                                    <th class="table-header-cell">IMEI</th>
+                                    <th class="table-header-cell text-center w-20">Qty</th>
+                                    <th class="table-header-cell text-center w-24">Kondisi</th>
+                                    <th class="table-header-cell text-center w-24">Tgl Beli</th>
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-50">
                                 <tr v-for="(row, idx) in pagedAviData" :key="'avi-' + (row.ID || idx)"
                                     class="hover:bg-slate-50/50 transition-colors duration-150">
-                                    <td class="px-4 py-3 text-center text-slate-400 font-mono text-body-sm">{{ (aviPage - 1) * 20 + idx + 1 }}</td>
+                                    <td class="px-4 py-3 text-center text-slate-400 font-mono text-body-sm table-freeze-index">{{ (aviPage - 1) * 20 + idx + 1 }}</td>
+                                    <td class="px-4 py-3 table-freeze-action">
+                                        <div class="flex items-center gap-1">
+                                            <button @click="openAviModal('edit', row)"
+                                                class="table-action-button table-action-compact" title="Edit"
+                                                aria-label="Edit"><i class="fa-solid fa-pen-to-square text-body-sm"></i></button>
+                                            <button @click="deleteAvi(row.ID)"
+                                                class="table-action-button table-action-compact table-action-danger"
+                                                title="Hapus" aria-label="Hapus"><i
+                                                    class="fa-solid fa-trash-can text-body-sm"></i></button>
+                                        </div>
+                                    </td>
                                     <td class="px-4 py-3 font-medium text-slate-700">{{ row.vendor || '-' }}</td>
                                     <td class="px-4 py-3 text-slate-600">{{ row.brand || '-' }}</td>
                                     <td class="px-4 py-3 text-slate-600">{{ row.seri || '-' }}</td>
                                     <td class="px-4 py-3 font-mono text-body-sm text-slate-500">{{ row.imei || '-' }}</td>
                                     <td class="px-4 py-3 text-center font-bold text-slate-700">{{ row.quantity || 0 }}</td>
                                     <td class="px-4 py-3 text-center">
-                                        <span :class="['px-2 py-0.5 rounded-full text-overline font-bold uppercase', row.condition === 'New' ? 'bg-emerald-50 text-emerald-700' : row.condition === 'Used' ? 'bg-amber-50 text-amber-700' : 'bg-slate-100 text-slate-500']">
+                                        <span :class="['px-2 py-0.5 rounded-full text-overline font-bold uppercase', row.condition === 'New' ? 'bg-success text-light' : row.condition === 'Used' ? 'bg-amber text-light' : 'bg-secondary text-light']">
                                             {{ row.condition || '-' }}
                                         </span>
                                     </td>
                                     <td class="px-4 py-3 text-center text-slate-500">{{ row.purchase_date ? formatShortDate(row.purchase_date) : '-' }}</td>
-                                    <td class="px-4 py-3">
-                                        <div class="flex items-center justify-center gap-1">
-                                            <button @click="openAviModal('edit', row)"
-                                                class="table-action-button table-action-compact" title="Edit"
-                                                aria-label="Edit"><i class="fa-solid fa-pen text-body-sm"></i></button>
-                                            <button @click="deleteAvi(row.ID)"
-                                                class="table-action-button table-action-compact table-action-danger"
-                                                title="Hapus" aria-label="Hapus"><i
-                                                    class="fa-solid fa-trash text-body-sm"></i></button>
-                                        </div>
-                                    </td>
                                 </tr>
                             </tbody>
                         </table>
@@ -273,7 +272,7 @@
                                 <div class="modal-header-bar radius-sheet-top">
                                     <div class="modal-header-copy">
                                         <div
-                                            class="modal-header-icon bg-emerald-50 text-emerald-600">
+                                            class="modal-header-icon bg-success text-light">
                                             <i class="fa-solid fa-cubes"></i>
                                         </div>
                                         <div>
@@ -345,7 +344,7 @@
                                     </div>
                                 </div>
                                 <div class="modal-footer-bar modal-footer-actions">
-                                    <button @click="aviModalOpen = false" class="secondary-cta-button secondary-cta-neutral">Batal</button>
+                                    <button @click="aviModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
                                     <button @click="saveAvi" :disabled="submitting" class="primary-cta-button">
                                         <i v-if="submitting" class="fa-solid fa-circle-notch fa-spin"></i>
                                         {{ submitting ? 'Menyimpan...' : 'Simpan' }}

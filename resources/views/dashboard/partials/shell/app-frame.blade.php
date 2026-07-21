@@ -5,7 +5,7 @@
         <div v-if="appLoading"
             class="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center gap-6">
             <div
-                class="loading-logo w-20 h-20 bg-white flex items-center justify-center p-3 border border-blue-50 radius-panel">
+                class="loading-logo w-20 h-20 bg-white flex items-center justify-center p-3 border border-amber radius-panel">
                 <img src="/asset/images/logo.png"
                     class="w-full h-full object-contain" alt="Logo" />
             </div>
@@ -18,14 +18,14 @@
     </transition>
 
     <div v-if="runtimeError"
-        class="fixed top-3 left-1/2 -translate-x-1/2 z-[10000] w-[94%] max-w-3xl bg-red-50 border border-red-200 text-red-700 rounded-2xl px-4 py-3">
+        class="fixed top-3 left-1/2 -translate-x-1/2 z-[10000] w-[94%] max-w-3xl bg-danger border border-danger text-light rounded-2xl px-4 py-3">
         <div class="flex items-start gap-3">
             <i class="fa-solid fa-triangle-exclamation mt-0.5"></i>
             <div class="min-w-0 flex-1">
                 <div class="text-body-sm font-medium uppercase tracking-widest">Sistem Error</div>
                 <div class="text-body leading-relaxed break-words mt-0.5">{{ runtimeError }}</div>
             </div>
-            <button @click="runtimeError = null" class="text-red-400 hover:text-red-600">
+            <button @click="runtimeError = null" class="text-danger hover:text-danger">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
@@ -33,9 +33,9 @@
 
     <transition name="toast">
         <div v-if="notification && notification.open"
-            :class="['fixed bottom-6 left-1/2 -translate-x-1/2 z-[10000] px-5 py-3 rounded-2xl text-body border shadow-xl flex items-center gap-3 min-w-[220px] max-w-[92vw]', notification.type === 'error' ? 'bg-rose-50 text-rose-700 border-rose-200' : notification.type === 'warning' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200']">
+            :class="['fixed bottom-6 left-1/2 -translate-x-1/2 z-[10000] px-5 py-3 rounded-2xl text-body border flex items-center gap-3 min-w-[220px] max-w-[92vw]', notification.type === 'error' ? 'bg-danger text-light border-danger' : notification.type === 'warning' ? 'bg-amber text-light border-amber' : 'bg-success text-light border-success']">
             <div
-                :class="['w-8 h-8 rounded-xl flex items-center justify-center shrink-0', notification.type === 'error' ? 'bg-rose-100 text-rose-500' : notification.type === 'warning' ? 'bg-amber-100 text-amber-500' : 'bg-emerald-100 text-emerald-500']">
+                :class="['w-8 h-8 rounded-xl flex items-center justify-center shrink-0', notification.type === 'error' ? 'bg-danger text-light' : notification.type === 'warning' ? 'bg-amber text-light' : 'bg-success text-light']">
                 <i :class="['fa-solid text-[12px]', notification.icon]"></i>
             </div>
             <div class="min-w-0">
@@ -90,7 +90,7 @@
         @include('dashboard.partials.shell.app-frame-sidebar')
 @verbatim
         <div
-            class="dashboard-main-shell min-h-[100dvh] transform-gpu"
+            class="dashboard-main-shell min-h-[100dvh]"
             :style="isMobileViewport ? null : { paddingLeft: isSidebarOpen ? '15rem' : '0px' }">
 @endverbatim
             @include('dashboard.partials.shell.app-frame-header')

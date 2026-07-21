@@ -26,87 +26,89 @@
                             </div>
                         </div>
 
-                        <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                        <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
                             <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                                <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-layer-group text-[120px]"></i></div>
-                                <p class="text-overline font-bold uppercase tracking-widest text-indigo-500 mb-3">Total Plan</p>
+                                <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-layer-group text-[120px]"></i></div>
+                                <p class="dashboard-summary-title">Total Plan</p>
                                 <div class="flex items-baseline gap-2">
                                     <span class="dashboard-summary-value">{{ masterPlanData.length }}</span>
                                 </div>
-                                <p class="text-body-sm font-bold text-indigo-600 mt-3">Master Plan</p>
+                                <p class="text-body-sm font-bold text-amber mt-3">Master Plan</p>
                             </div>
                             <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                                <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-circle-check text-[120px]"></i></div>
-                                <p class="text-overline font-bold uppercase tracking-widest text-emerald-500 mb-3">Published</p>
+                                <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-circle-check text-[120px]"></i></div>
+                                <p class="dashboard-summary-title">Published</p>
                                 <div class="flex items-baseline gap-2">
                                     <span class="dashboard-summary-value">{{ masterPlanData.filter(i => i.Status === 'PUBLISHED').length }}</span>
                                 </div>
-                                <p class="text-body-sm font-bold text-emerald-600 mt-3">Konten terpublish</p>
+                                <p class="text-body-sm font-bold text-success mt-3">Konten terpublish</p>
                             </div>
                             <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                                <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-pen-nib text-[120px]"></i></div>
-                                <p class="text-overline font-bold uppercase tracking-widest text-amber-500 mb-3">On Progress</p>
+                                <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-pen-nib text-[120px]"></i></div>
+                                <p class="dashboard-summary-title">On Progress</p>
                                 <div class="flex items-baseline gap-2">
                                     <span class="dashboard-summary-value">{{ masterPlanData.filter(i => ['SHOOTING','EDITING'].includes(i.Status)).length }}</span>
                                 </div>
-                                <p class="text-body-sm font-bold text-amber-600 mt-3">Sedang dikerjakan</p>
+                                <p class="text-body-sm font-bold text-amber mt-3">Sedang dikerjakan</p>
                             </div>
                             <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                                <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-clapperboard text-[120px]"></i></div>
-                                <p class="text-overline font-bold uppercase tracking-widest text-violet-500 mb-3">Jadwal Story</p>
+                                <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-clapperboard text-[120px]"></i></div>
+                                <p class="dashboard-summary-title">Jadwal Story</p>
                                 <div class="flex items-baseline gap-2">
                                     <span class="dashboard-summary-value">{{ storyData.length }}</span>
                                 </div>
-                                <p class="text-body-sm font-bold text-violet-600 mt-3">Story terjadwal</p>
+                                <p class="text-body-sm font-bold text-slate-600 mt-3">Story terjadwal</p>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 xl:grid-cols-3 gap-4">
-                            <section class="section-card section-card-body xl:col-span-2">
-                                <div class="flex items-center justify-between mb-5">
+                            <section class="section-card section-card-body dashboard-latest-content xl:col-span-2">
+                                <div class="dashboard-panel-heading flex items-center justify-between mb-5">
                                     <div>
                                         <div class="type-body-sm uppercase tracking-[0.2em] text-slate-400">Master Plan
                                         </div>
                                         <h3 class="text-sm font-semibold text-slate-900 mt-1">Konten Terbaru</h3>
                                     </div>
                                 </div>
-                                <div class="space-y-3">
+                                <div class="space-y-2">
                                     <div v-if="masterPlanData.length === 0"
                                         class="py-10 text-center text-body text-slate-400">Belum ada data master plan.
                                     </div>
                                     <div v-for="item in masterPlanData.slice(0, 5)" :key="item.ID"
-                                        class="p-4 rounded-2xl bg-slate-50 flex items-center justify-between gap-3">
+                                        class="dashboard-latest-content__item rounded-2xl bg-slate-50 flex items-center justify-between gap-3">
                                         <div class="min-w-0">
                                             <div class="type-title font-semibold text-slate-800 truncate">{{ item.Judul }}</div>
                                             <div class="type-body-sm text-slate-400 mt-0.5">{{ item.Format_Konten }} | {{ item.Editor }}<span v-if="item.TalentList && item.TalentList.length"> | Talent: {{ item.TalentList.join(', ') }}</span></div>
                                         </div>
                                         <span
-                                            :class="['inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold whitespace-nowrap', item.Status === 'PUBLISHED' ? 'bg-emerald-50 text-emerald-600' : item.Status === 'EDITING' ? 'bg-amber-50 text-amber-600' : 'bg-indigo-50 text-indigo-500']">{{ item.Status }}</span>
+                                            :class="['inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold whitespace-nowrap', item.Status === 'PUBLISHED' ? 'bg-success text-light' : item.Status === 'EDITING' ? 'bg-amber text-light' : 'bg-amber text-light']">{{ item.Status }}</span>
                                     </div>
                                 </div>
                             </section>
 
-                            <section class="section-card section-card-body">
-                                <div class="text-body-sm uppercase tracking-[0.2em] text-slate-400 mb-1">Status Akun
+                            <section class="section-card section-card-body dashboard-info-panel">
+                                <div class="dashboard-panel-heading mb-5">
+                                    <div class="type-body-sm uppercase tracking-[0.2em] text-slate-400">Status Akun
+                                    </div>
+                                    <h3 class="text-sm font-semibold text-slate-900 mt-1">Info Dashboard</h3>
                                 </div>
-                                <h3 class="text-sm font-semibold text-slate-900 mb-5">Info Dashboard</h3>
-                                <div class="space-y-3">
-                                    <div class="p-4 rounded-2xl bg-slate-50 flex items-center justify-between gap-3">
+                                <div class="space-y-2">
+                                    <div class="dashboard-info-panel__item rounded-2xl bg-slate-50 flex items-center justify-between gap-3">
                                         <span class="type-body text-slate-500">User</span>
                                         <span class="text-body font-semibold text-slate-900">{{ currentUser?.username }}</span>
                                     </div>
-                                    <div class="p-4 rounded-2xl bg-slate-50 flex items-center justify-between gap-3">
+                                    <div class="dashboard-info-panel__item rounded-2xl bg-slate-50 flex items-center justify-between gap-3">
                                         <span class="type-body text-slate-500">Role</span>
                                         <span class="text-body font-semibold text-slate-900">{{ currentUser?.role }}</span>
                                     </div>
-                                    <div class="p-4 rounded-2xl bg-slate-50 flex items-center justify-between gap-3">
+                                    <div class="dashboard-info-panel__item rounded-2xl bg-slate-50 flex items-center justify-between gap-3">
                                         <span class="type-body text-slate-500">Total Analytics</span>
                                         <span class="text-body font-semibold text-slate-900">{{ analyticsData.length }} Data</span>
                                     </div>
-                                    <div class="p-4 rounded-2xl bg-slate-50 flex items-center justify-between gap-3">
+                                    <div class="dashboard-info-panel__item rounded-2xl bg-slate-50 flex items-center justify-between gap-3">
                                         <span class="type-body text-slate-500">Status</span>
                                         <span
-                                            class="text-overline font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full uppercase tracking-widest">Aktif</span>
+                                            class="text-overline font-bold text-light bg-success px-2.5 py-1 rounded-full uppercase tracking-widest">Aktif</span>
                                     </div>
                                 </div>
                             </section>

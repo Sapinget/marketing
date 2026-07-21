@@ -18,7 +18,6 @@
                     showColabListModal.value ||
                     showNamaStockFormModal.value ||
                     settingsDetailModalOpen.value ||
-                    calendarOpen.value ||
                     calendarDayModalOpen.value ||
                     confirmModal.value.open
                 ));
@@ -27,8 +26,19 @@
 
                 onMounted(async () => {
                     document.addEventListener("click", closeProfileMenu);
+                    document.addEventListener("click", closeCalendarOnOutsideClick);
                     window.addEventListener("scroll", closeDropdownOnScroll, true);
+                    window.addEventListener("scroll", updateCalendarAnchorPosition, true);
+                    window.addEventListener("scroll", clampRootHorizontalScroll, true);
+                    window.addEventListener("scroll", clampTableScrollBounds, true);
+                    window.addEventListener("wheel", containTableHorizontalWheel, { passive: false, capture: true });
+                    window.addEventListener("wheel", containRootHorizontalWheel, { passive: false, capture: true });
+                    window.addEventListener("touchstart", rememberHorizontalPanStart, { passive: true, capture: true });
+                    window.addEventListener("touchmove", containHorizontalTouchPan, { passive: false, capture: true });
+                    window.addEventListener("touchend", clearHorizontalPanStart, true);
+                    window.addEventListener("touchcancel", clearHorizontalPanStart, true);
                     window.addEventListener("resize", handleResize);
+                    window.addEventListener("resize", updateCalendarAnchorPosition);
                     window.addEventListener("hashchange", handleHashChange);
                     tableSortObserver = new MutationObserver(() => {
                         hydrateSortableTableHeaders();
@@ -70,8 +80,19 @@
 
                 onBeforeUnmount(() => {
                     document.removeEventListener("click", closeProfileMenu);
+                    document.removeEventListener("click", closeCalendarOnOutsideClick);
                     window.removeEventListener("scroll", closeDropdownOnScroll, true);
+                    window.removeEventListener("scroll", updateCalendarAnchorPosition, true);
+                    window.removeEventListener("scroll", clampRootHorizontalScroll, true);
+                    window.removeEventListener("scroll", clampTableScrollBounds, true);
+                    window.removeEventListener("wheel", containTableHorizontalWheel, true);
+                    window.removeEventListener("wheel", containRootHorizontalWheel, true);
+                    window.removeEventListener("touchstart", rememberHorizontalPanStart, true);
+                    window.removeEventListener("touchmove", containHorizontalTouchPan, true);
+                    window.removeEventListener("touchend", clearHorizontalPanStart, true);
+                    window.removeEventListener("touchcancel", clearHorizontalPanStart, true);
                     window.removeEventListener("resize", handleResize);
+                    window.removeEventListener("resize", updateCalendarAnchorPosition);
                     window.removeEventListener("hashchange", handleHashChange);
                     tableSortObserver?.disconnect();
                     if (activityLogFilterDebounceId) {

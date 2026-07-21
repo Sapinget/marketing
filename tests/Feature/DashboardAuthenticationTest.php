@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Support\DashboardAuth;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
 class DashboardAuthenticationTest extends TestCase
@@ -126,5 +128,46 @@ class DashboardAuthenticationTest extends TestCase
             'user_id' => $user->id,
             'actor_label' => 'real-user',
         ]);
+    }
+
+    public function test_avatar_upload_returns_loadable_same_origin_url(): void
+    {
+        config()->set('app.url', 'http://configured-app-url.test');
+
+        $user = $this->actingAsDashboardUser([
+            'username' => 'avatar-user',
+            'name' => 'Avatar User',
+            'role' => 'super_admin',
+        ]);
+
+        $avatarDirectory = storage_path('app/public/avatars');
+        File::ensureDirectoryExists($avatarDirectory);
+        $existingAvatars = collect(File::files($avatarDirectory))
+            ->map(fn (\SplFileInfo $file): string => $file->getFilename())
+            ->all();
+
+        $response = $this->post('/api/auth/avatar', [
+            'avatar' => UploadedFile::fake()->image('avatar.png', 96, 96),
+        ]);
+
+        $response->assertOk()
+            ->assertJsonPath('status', 'success');
+
+        $avatarUrl = $response->json('user.avatar_url');
+
+        $this->assertIsString($avatarUrl);
+        $this->assertStringStartsWith('/api/auth/avatar/', $avatarUrl);
+        $this->assertStringNotContainsString('configured-app-url.test', $avatarUrl);
+
+        $user->refresh();
+
+        $this->assertNotNull($user->avatar);
+        $this->assertFileExists($avatarDirectory . DIRECTORY_SEPARATOR . $user->avatar);
+
+        $this->get($avatarUrl)->assertOk();
+
+        collect(File::files($avatarDirectory))
+            ->reject(fn (\SplFileInfo $file): bool => in_array($file->getFilename(), $existingAvatars, true))
+            ->each(fn (\SplFileInfo $file): bool => File::delete($file->getPathname()));
     }
 }

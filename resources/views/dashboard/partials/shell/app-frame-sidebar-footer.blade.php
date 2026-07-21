@@ -11,6 +11,6 @@
                         </div>
                     </div>
                 </div>
-                <button @click="logout" class="secondary-cta-button secondary-cta-danger w-full">Logout</button>
+                <button @click="logout" class="primary-cta-button primary-cta-button--danger w-full">Logout</button>
             </div>
 @endverbatim

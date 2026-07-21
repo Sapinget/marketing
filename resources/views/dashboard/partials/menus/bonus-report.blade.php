@@ -3,7 +3,7 @@
                     <div v-if="activeTab === 'bonus_report'" class="space-y-6 animate-fadeIn pb-10">
                         <template v-if="!bonusConfigLoaded">
                         <div class="space-y-6 animate-pulse">
-                        <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                        <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
                             <div v-for="i in 4" :key="'sk-br-st'+i"
                                 class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
                                 <div class="w-10 h-10 rounded-2xl bg-slate-200 mb-4"></div>
@@ -49,41 +49,41 @@
                         <template v-else>
 
                         <!-- Summary Cards (dipisah dari header, diletakkan di atas) -->
-                        <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                        <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
                             <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                                <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-coins text-[120px]"></i></div>
-                                <p class="text-overline font-bold uppercase tracking-widest text-amber-500 mb-3">Total Bonus</p>
+                                <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-coins text-[120px]"></i></div>
+                                <p class="dashboard-summary-title">Total Bonus</p>
                                 <div class="flex items-baseline gap-2">
                                     <span class="dashboard-summary-value">{{ formatCurrency(bonusTotal.totalMoney) }}</span>
                                 </div>
-                                <p class="text-body-sm font-bold text-amber-600 mt-3">{{ bonusTotal.count }} konten</p>
+                                <p class="text-body-sm font-bold text-amber mt-3">{{ bonusTotal.count }} konten</p>
                             </div>
                             <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                                <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-eye text-[120px]"></i></div>
-                                <p class="text-overline font-bold uppercase tracking-widest text-blue-500 mb-3">Views</p>
+                                <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-eye text-[120px]"></i></div>
+                                <p class="dashboard-summary-title">Views</p>
                                 <div class="flex items-baseline gap-2">
                                     <span class="dashboard-summary-value">{{ formatNumber(bonusTotal.views) }}</span>
-                                    <span class="dashboard-summary-unit text-blue-400">Tayangan</span>
+                                    <span class="dashboard-summary-unit">Tayangan</span>
                                 </div>
-                                <p class="text-body-sm font-bold text-blue-600 mt-3">Dalam periode aktif</p>
+                                <p class="text-body-sm font-bold text-amber mt-3">Dalam periode aktif</p>
                             </div>
                             <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                                <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-heart text-[120px]"></i></div>
-                                <p class="text-overline font-bold uppercase tracking-widest text-rose-500 mb-3">Likes</p>
+                                <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-heart text-[120px]"></i></div>
+                                <p class="dashboard-summary-title">Likes</p>
                                 <div class="flex items-baseline gap-2">
                                     <span class="dashboard-summary-value">{{ formatNumber(bonusTotal.likes) }}</span>
-                                    <span class="dashboard-summary-unit text-rose-400">Suka</span>
+                                    <span class="dashboard-summary-unit">Suka</span>
                                 </div>
-                                <p class="text-body-sm font-bold text-rose-600 mt-3">Dalam periode aktif</p>
+                                <p class="text-body-sm font-bold text-danger mt-3">Dalam periode aktif</p>
                             </div>
                             <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                                <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-comment text-[120px]"></i></div>
-                                <p class="text-overline font-bold uppercase tracking-widest text-emerald-500 mb-3">Komentar</p>
+                                <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-comment text-[120px]"></i></div>
+                                <p class="dashboard-summary-title">Komentar</p>
                                 <div class="flex items-baseline gap-2">
                                     <span class="dashboard-summary-value">{{ formatNumber(bonusTotal.comments) }}</span>
-                                    <span class="dashboard-summary-unit text-emerald-400">Komen</span>
+                                    <span class="dashboard-summary-unit">Komen</span>
                                 </div>
-                                <p class="text-body-sm font-bold text-emerald-600 mt-3">Dalam periode aktif</p>
+                                <p class="text-body-sm font-bold text-success mt-3">Dalam periode aktif</p>
                             </div>
                         </div>
 
@@ -92,7 +92,7 @@
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
                                 <div class="flex items-center gap-3">
                                     <div
-                                        class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
+                                        class="w-12 h-12 rounded-2xl bg-amber text-light flex items-center justify-center border border-amber">
                                         <i class="fa-solid fa-coins text-heading-lg"></i>
                                     </div>
                                     <div>
@@ -139,15 +139,15 @@
                                         </div>
                                         <div class="toolbar-actions">
                                             <button @click="exportBonusToExcel"
-                                                class="secondary-cta-button secondary-cta-success active:scale-95">
+                                                class="primary-cta-button primary-cta-button--success active:scale-95">
                                                 <i class="fa-solid fa-file-excel"></i> Excel
                                             </button>
                                             <button @click="exportBonusToPDF"
-                                                class="secondary-cta-button secondary-cta-danger active:scale-95">
+                                                class="primary-cta-button primary-cta-button--danger active:scale-95">
                                                 <i class="fa-solid fa-file-pdf"></i> PDF
                                             </button>
                                             <button @click="showBonusSettings = !showBonusSettings"
-                                                :class="['secondary-cta-button active:scale-95', showBonusSettings ? 'bg-slate-900 text-white border-slate-900 hover:bg-black' : 'secondary-cta-neutral']">
+                                                :class="['primary-cta-button active:scale-95', showBonusSettings ? 'bg-slate-900 text-white border-slate-900 hover:bg-black' : 'primary-cta-button--neutral']">
                                                 <i class="fa-solid fa-sliders text-body-sm"></i> Matrix
                                             </button>
                                         </div>
@@ -167,7 +167,7 @@
                                 <!-- Non-Colab -->
                                 <div>
                                     <p class="text-overline font-bold text-slate-400 uppercase tracking-widest mb-3"><i
-                                            class="fa-solid fa-video text-blue-400 mr-1"></i> Views Non-Colab</p>
+                                            class="fa-solid fa-video text-amber mr-1"></i> Views Non-Colab</p>
                                     <div class="space-y-2">
                                         <div v-for="(tier, idx) in bonusConfig.reelsNonColab" :key="'nc'+idx"
                                             class="bg-slate-50 border border-slate-100 rounded-xl p-2.5 flex items-center justify-between gap-3">
@@ -203,7 +203,7 @@
                                                 <p class="text-overline-xs text-slate-400 font-bold uppercase">Bonus (Rp)</p>
                                                 <label :for="`bonus-reels-colab-amount-${idx}`" class="sr-only">Bonus colab {{ idx + 1 }}</label>
                                                 <input :id="`bonus-reels-colab-amount-${idx}`" :name="`bonus_reels_colab_amount_${idx}`" type="number" v-model.number="tier.amount"
-                                                    class="w-24 text-body font-bold text-emerald-600 bg-transparent outline-none text-right" />
+                                                    class="w-24 text-body font-bold text-success bg-transparent outline-none text-right" />
                                             </div>
                                         </div>
                                     </div>
@@ -211,7 +211,7 @@
                                 <!-- Engagement -->
                                 <div>
                                     <p class="text-overline font-bold text-slate-400 uppercase tracking-widest mb-3"><i
-                                            class="fa-solid fa-medal text-amber-400 mr-1"></i> Engagement Fixed</p>
+                                            class="fa-solid fa-medal text-amber mr-1"></i> Engagement Fixed</p>
                                     <div class="space-y-2">
                                         <div class="bg-slate-50 border border-slate-100 rounded-xl p-2.5">
                                             <p class="text-overline-xs text-slate-400 font-bold uppercase mb-1">Instagram
@@ -268,7 +268,7 @@
                             </div>
                             <div class="flex justify-end mt-5">
                                 <button @click="saveBonusConfig"
-                                    class="px-6 py-2.5 bg-ppp-accent text-white rounded-xl text-body-sm font-bold uppercase tracking-widest hover:bg-ppp-accent-dark transition-all active:scale-95">
+                                    class="px-6 py-2.5 bg-ppp-accent text-white rounded-xl text-body-sm font-bold uppercase tracking-widest hover:bg-amber transition-all active:scale-95">
                                     <i class="fa-solid fa-floppy-disk mr-1.5"></i> Simpan Matrix
                                 </button>
                             </div>
@@ -279,37 +279,27 @@
                         <div class="overflow-x-auto">
                             <table class="w-full text-body-sm text-left border-collapse min-w-[900px]">
                                 <thead class="bg-slate-50">
-                                    <tr>
-                                        <th
-                                            class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100 w-8">
+                                    <tr class="table-header-row">
+                                        <th class="table-header-cell table-header-index table-freeze-index">
                                             #</th>
-                                        <th
-                                            class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100">
-                                            Judul Konten</th>
-                                        <th
-                                            class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100">
-                                            Platform</th>
-                                        <th
-                                            class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100">
-                                            Editor</th>
-                                        <th
-                                            class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100 text-center">
-                                            Tipe</th>
-                                        <th
-                                            class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100 text-right">
-                                            Views</th>
-                                        <th
-                                            class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100 text-right">
-                                            Likes</th>
-                                        <th
-                                            class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100 text-right">
-                                            Komen</th>
-                                        <th
-                                            class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100 text-right">
-                                            Total Bonus</th>
-                                        <th
-                                            class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100 text-center">
+                                        <th class="table-header-cell table-header-action table-freeze-action">
                                             Aksi</th>
+                                        <th class="table-header-cell">
+                                            Judul Konten</th>
+                                        <th class="table-header-cell">
+                                            Platform</th>
+                                        <th class="table-header-cell">
+                                            Editor</th>
+                                        <th class="table-header-cell text-center">
+                                            Tipe</th>
+                                        <th class="table-header-cell text-right">
+                                            Views</th>
+                                        <th class="table-header-cell text-right">
+                                            Likes</th>
+                                        <th class="table-header-cell text-right">
+                                            Komen</th>
+                                        <th class="table-header-cell text-right">
+                                            Total Bonus</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -321,17 +311,43 @@
                                     </tr>
                                     <tr v-for="(row, idx) in pagedBonusRows" :key="row.id || idx"
                                         class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                                        <td class="px-5 py-3.5 text-body-sm text-slate-400">{{ (bonusPage - 1) * 15 + idx + 1 }}</td>
+                                        <td class="px-5 py-3.5 text-body-sm text-slate-400 table-freeze-index">{{ (bonusPage - 1) * 15 + idx + 1 }}</td>
+                                        <td class="px-5 py-3.5 text-center table-freeze-action">
+                                            <button v-if="row.masterPlan && row.masterPlan.ID"
+                                                @click.stop="openEditModal(row.masterPlan)"
+                                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-ppp-accent/10 text-ppp-accent hover:bg-ppp-accent hover:text-white transition-all text-body-sm font-semibold">
+                                                <i class="fa-solid fa-pen-to-square text-overline"></i>
+                                                Edit
+                                            </button>
+                                        </td>
                                         <td class="px-5 py-3.5">
                                             <div class="text-body font-semibold text-slate-800 leading-tight">{{ row.Judul || '-' }}</div>
                                             <div class="text-overline text-slate-400 mt-0.5">{{ formatShortDate(row.date) }}</div>
                                         </td>
-                                        <td class="px-5 py-3.5 text-body text-slate-600">{{ row.Platform || '-' }}
+                                        <td class="px-6 py-5 text-left">
+                                            <div class="flex items-center gap-2">
+                                                <i :class="getPlatformIcon(row.Platform) + ' text-body text-slate-400'"></i>
+                                                <span class="text-body font-bold text-slate-700">{{ platformDisplayName(row.Platform) }}</span>
+                                            </div>
                                         </td>
-                                        <td class="px-5 py-3.5 text-body font-semibold text-slate-700">{{ row.Editor || '-' }}</td>
+                                        <td class="px-5 py-3.5 text-left">
+                                            <div class="flex items-center gap-2">
+                                                <div
+                                                    class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-overline font-bold text-slate-600 flex-shrink-0 overflow-hidden">
+                                                    <img v-if="resolveUserAvatarUrl(row.Editor)"
+                                                        :src="resolveAvatarUrl(resolveUserAvatarUrl(row.Editor))"
+                                                        class="w-full h-full object-cover" alt="Foto Editor"
+                                                        @error="markMasterPlanEditorAvatarFailed(row.Editor)" />
+                                                    <span v-else>{{ masterPersonInitials(row.Editor) }}</span>
+                                                </div>
+                                                <div
+                                                    class="text-body text-slate-700 font-semibold truncate max-w-[80px]">
+                                                    {{ personDisplayName(row.Editor) }}</div>
+                                            </div>
+                                        </td>
                                         <td class="px-5 py-3.5 text-center">
                                             <span
-                                                :class="['inline-flex px-2 py-0.5 rounded-lg text-overline font-bold border uppercase', row.contentType === 'Ad' ? 'bg-amber-50 text-amber-600 border-amber-100' : row.contentType === 'Colab' ? 'bg-purple-50 text-purple-600 border-purple-100' : 'bg-slate-50 text-slate-500 border-slate-100']">{{ row.contentType || 'Regular' }}</span>
+                                                :class="['inline-flex px-2 py-0.5 rounded-lg text-overline font-bold border uppercase', row.contentType === 'Ad' ? 'bg-amber text-light border-amber' : row.contentType === 'Colab' ? 'bg-secondary text-light border-slate-100' : 'bg-secondary text-light border-slate-100']">{{ row.contentType || 'Regular' }}</span>
                                         </td>
                                         <td class="px-5 py-3.5 text-right">
                                             <div class="text-body font-bold text-slate-700">{{ formatNumber(row.Views || 0) }}</div>
@@ -340,23 +356,15 @@
                                         </td>
                                         <td class="px-5 py-3.5 text-right">
                                             <div class="text-body font-bold text-slate-700">{{ formatNumber(row.Likes || 0) }}</div>
-                                            <div v-if="row.likeBonus > 0" class="text-overline text-rose-500 font-bold">+{{ formatCurrency(row.likeBonus) }}</div>
+                                            <div v-if="row.likeBonus > 0" class="text-overline text-danger font-bold">+{{ formatCurrency(row.likeBonus) }}</div>
                                         </td>
                                         <td class="px-5 py-3.5 text-right">
                                             <div class="text-body font-bold text-slate-700">{{ formatNumber(row.Comments || 0) }}</div>
                                             <div v-if="row.commentBonus > 0"
-                                                class="text-overline text-emerald-500 font-bold">+{{ formatCurrency(row.commentBonus) }}</div>
+                                                class="text-overline text-success font-bold">+{{ formatCurrency(row.commentBonus) }}</div>
                                         </td>
                                         <td class="px-5 py-3.5 text-right">
                                             <span class="text-heading-sm font-extrabold text-slate-900">{{ formatCurrency(row.calculatedBonus || 0) }}</span>
-                                        </td>
-                                        <td class="px-5 py-3.5 text-center">
-                                            <button v-if="row.masterPlan && row.masterPlan.ID"
-                                                @click.stop="openEditModal(row.masterPlan)"
-                                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-ppp-accent/10 text-ppp-accent hover:bg-ppp-accent hover:text-white transition-all text-body-sm font-semibold">
-                                                <i class="fa-solid fa-pen-to-square text-overline"></i>
-                                                Edit
-                                            </button>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -391,10 +399,29 @@
                             <div class="mobile-data-card__header">
                                 <div>
                                     <p class="mobile-data-card__title">{{ row.Judul || '-' }}</p>
-                                    <p class="text-overline text-slate-400 mt-0.5">{{ row.Platform }} | {{ row.Editor }} | {{ formatShortDate(row.date) }}</p>
+                                    <div class="mt-1.5 flex items-center gap-2">
+                                        <div class="flex items-center gap-2">
+                                            <i :class="getPlatformIcon(row.Platform) + ' text-body text-slate-400'"></i>
+                                            <span class="text-body font-bold text-slate-700">{{ platformDisplayName(row.Platform) }}</span>
+                                        </div>
+                                        <span class="text-overline text-slate-300">|</span>
+                                        <div class="flex items-center gap-2">
+                                            <div
+                                                class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-overline font-bold text-slate-600 flex-shrink-0 overflow-hidden">
+                                                <img v-if="resolveUserAvatarUrl(row.Editor)"
+                                                    :src="resolveAvatarUrl(resolveUserAvatarUrl(row.Editor))"
+                                                    class="w-full h-full object-cover" alt="Foto Editor"
+                                                    @error="markMasterPlanEditorAvatarFailed(row.Editor)" />
+                                                <span v-else>{{ masterPersonInitials(row.Editor) }}</span>
+                                            </div>
+                                            <div class="text-body text-slate-700 font-semibold truncate max-w-[80px]">{{ personDisplayName(row.Editor) }}</div>
+                                        </div>
+                                        <span class="text-overline text-slate-300">|</span>
+                                        <span class="text-overline text-slate-400">{{ formatShortDate(row.date) }}</span>
+                                    </div>
                                 </div>
                                 <span
-                                    :class="['inline-flex px-2 py-0.5 rounded-lg text-overline-xs font-bold border uppercase whitespace-nowrap', row.contentType === 'Ad' ? 'bg-amber-50 text-amber-600 border-amber-100' : row.contentType === 'Colab' ? 'bg-purple-50 text-purple-600 border-purple-100' : 'bg-slate-50 text-slate-500 border-slate-100']">{{ row.contentType || 'Regular' }}</span>
+                                    :class="['inline-flex px-2 py-0.5 rounded-lg text-overline-xs font-bold border uppercase whitespace-nowrap', row.contentType === 'Ad' ? 'bg-amber text-light border-amber' : row.contentType === 'Colab' ? 'bg-secondary text-light border-slate-100' : 'bg-secondary text-light border-slate-100']">{{ row.contentType || 'Regular' }}</span>
                             </div>
                             <div class="mobile-data-card__summary">
                                 <div>
@@ -410,7 +437,7 @@
                             <div v-if="row.masterPlan && row.masterPlan.ID" class="mobile-data-card__actions">
                                 <div class="type-body-sm text-slate-400">Aksi terkait</div>
                                 <button @click.stop="openEditModal(row.masterPlan)"
-                                    class="secondary-cta-button secondary-cta-link">
+                                    class="primary-cta-button primary-cta-button--link">
                                     <i class="fa-solid fa-pen-to-square text-overline"></i>
                                     Edit Master Plan
                                 </button>

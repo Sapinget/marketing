@@ -99,11 +99,11 @@ Menu baru harus bisa dibuat **hanya dari HTML + class** yang ada di sini. Zero C
 | `primary-cta-button` | — | Default blue primary |
 | `primary-cta-button` | `primary-cta-button--accent` | Accent color variant |
 | `primary-cta-button` | `primary-cta-button--info` | Info/teal variant |
-| `secondary-cta-button` | — | Default outline secondary |
-| `secondary-cta-button` | `secondary-cta-success` | Green outline |
-| `secondary-cta-button` | `secondary-cta-danger` | Red outline |
-| `secondary-cta-button` | `secondary-cta-neutral` | Slate outline |
-| `secondary-cta-button` | `secondary-cta-link` | Link-style |
+| `primary-cta-button` | — | Default outline secondary |
+| `primary-cta-button` | `primary-cta-button--success` | Green outline |
+| `primary-cta-button` | `primary-cta-button--danger` | Red outline |
+| `primary-cta-button` | `primary-cta-button--neutral` | Slate outline |
+| `primary-cta-button` | `primary-cta-button--link` | Link-style |
 | `small-button` | — | Compact text button |
 | `dark-button` | — | Dark/black CTA (login) |
 
@@ -111,12 +111,12 @@ Menu baru harus bisa dibuat **hanya dari HTML + class** yang ada di sini. Zero C
 <button class="primary-cta-button primary-cta-button--accent active:scale-95">
   <i class="fa-solid fa-plus"></i> Tambah
 </button>
-<button class="secondary-cta-button secondary-cta-danger active:scale-95">
+<button class="primary-cta-button primary-cta-button--danger active:scale-95">
   <i class="fa-solid fa-file-pdf"></i> PDF
 </button>
 ```
 
-> F4 note: `secondary-cta-success/danger/neutral` should ideally be `secondary-cta-button--success` etc. Deferred rename (wide blade usage).
+> F4 note: `primary-cta-button--success/danger/neutral` should ideally be `primary-cta-button--success` etc. Deferred rename (wide blade usage).
 
 ---
 
@@ -241,7 +241,7 @@ Menu baru harus bisa dibuat **hanya dari HTML + class** yang ada di sini. Zero C
   </div>
   <div class="toolbar-actions">
     <button class="primary-cta-button primary-cta-button--accent">Tambah</button>
-    <button class="secondary-cta-button secondary-cta-danger">PDF</button>
+    <button class="primary-cta-button primary-cta-button--danger">PDF</button>
   </div>
 </div>
 ```
@@ -530,10 +530,10 @@ Pattern target: `[komponen]-[elemen]--[modifier]`
 
 | Current | Should be | Status |
 |---------|-----------|--------|
-| `secondary-cta-success` | `secondary-cta-button--success` | Deferred |
-| `secondary-cta-danger` | `secondary-cta-button--danger` | Deferred |
-| `secondary-cta-neutral` | `secondary-cta-button--neutral` | Deferred |
-| `secondary-cta-link` | `secondary-cta-button--link` | Deferred |
+| `primary-cta-button--success` | `primary-cta-button--success` | Deferred |
+| `primary-cta-button--danger` | `primary-cta-button--danger` | Deferred |
+| `primary-cta-button--neutral` | `primary-cta-button--neutral` | Deferred |
+| `primary-cta-button--link` | `primary-cta-button--link` | Deferred |
 | `table-action-compact` | `table-action-button--compact` | Deferred |
 | `table-action-danger` | `table-action-button--danger` | Deferred |
 | `table-action-link` | `table-action-button--link` | Deferred |

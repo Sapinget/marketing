@@ -272,7 +272,7 @@ Perlu tambah token untuk hasil rumus umum:
 | Class | min-height | padding | border-radius | font-size | gap |
 |-------|-----------|---------|---------------|-----------|-----|
 | `primary-cta-button` | 40px | 0 16px | --radius-md | --fs-sm (11px) | 8px |
-| `secondary-cta-button` | 40px | 0 14px | --radius-md | --fs-xs (10px) | 8px |
+| `primary-cta-button` | 40px | 0 14px | --radius-md | --fs-xs (10px) | 8px |
 | `small-button` | 34px | 0 12px | --radius-md | --fs-sm (11px) | 6px |
 | `ghost-button` | 34px | 0 12px | --radius-md | --fs-sm (11px) | 6px |
 | `icon-button` | 36px | — | --radius-md | — | — |
@@ -387,7 +387,7 @@ Perlu tambah token untuk hasil rumus umum:
 | I1 | `modal-primary/secondary-button` tinggi berbeda dari default | 42px | 40px |
 | I2 | `kpi-card` border-radius berbeda dari `module-header` padahal konteks sama | 8px ✓ | keduanya --radius-sm |
 | I3 | `nav-subitem` font-size tanggung | 10.5px | --fs-xs (10px) |
-| I4 | `secondary-cta-button` font-size berbeda dari primary | 10px | --fs-sm (11px) |
+| I4 | `primary-cta-button` font-size berbeda dari primary | 10px | --fs-sm (11px) |
 | I5 | Tidak ada spacing token — semua angka hardcode | — | Tambah --space-* |
 | I6 | `dashboard-summary-card-compact` pakai rem campur | 5.5rem, 1rem 1.1rem | konversi ke px via token |
 | I7 | `nav-item` min-height di bawah touch target | 42px | 44px |
@@ -399,7 +399,7 @@ Perlu tambah token untuk hasil rumus umum:
 | I13 | `dashboard-summary-card-compact` padding `1rem 1.1rem` — axis tidak simetris, bukan 4pt | 16px 17.6px | 16px (equal) |
 | I14 | `select-trigger-button-form-tight` gap 6px — bukan 4pt | 6px | 8px |
 | I15 | `filter-trigger-button` padding Y 10px — bukan 4pt | 10px 16px | 12px 16px |
-| I16 | `secondary-cta-button` padding X 14px — bukan 4pt | 0 14px | 0 16px |
+| I16 | `primary-cta-button` padding X 14px — bukan 4pt | 0 14px | 0 16px |
 | I17 | `reset-filter-button` padding X 14px — bukan 4pt | 0 14px | 0 16px |
 
 ---

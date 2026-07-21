@@ -4,7 +4,26 @@
                         ...(window.MarketingDashboardRuntimeHelpers || {}),
                         createAdminUserSettingsActions: (deps) => {
                             const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || "").trim());
-                            const buildEmptyAuthUserForm = () => ({ ID: null, username: "", nama: "", email: "", role: "operasional", pin: "", confirmPin: "" });
+                            const buildEmptyAuthUserForm = () => ({ ID: null, username: "", nama: "", email: "", role: "operasional", pin: "", confirmPin: "", avatar_url: null });
+                            const resolveAvatarUrl = (value) => {
+                                const rawValue = String(value || "").trim();
+                                if (!rawValue) return "";
+                                if (rawValue.startsWith("/api/auth/avatar/")) return rawValue;
+                                try {
+                                    const url = new URL(rawValue, window.location.origin);
+                                    if (url.pathname.startsWith("/api/auth/avatar/")) {
+                                        return `${url.pathname}${url.search || ""}`;
+                                    }
+                                } catch (error) {
+                                    return rawValue;
+                                }
+
+                                return rawValue;
+                            };
+                            const markAuthUserAvatarFailed = (user) => {
+                                if (!user || typeof user !== "object") return;
+                                user.avatar_url = null;
+                            };
                             const loadAuthUsers = () => {
                                 const runner = deps.ensureRunApi();
                                 if (runner.isWebProxy && !deps.currentUser.value) {
@@ -52,6 +71,7 @@
                                         role: String(user.role_key || "operasional"),
                                         pin: "",
                                         confirmPin: "",
+                                        avatar_url: user.avatar_url || null,
                                     }
                                     : buildEmptyAuthUserForm();
                                 deps.showAuthUserModal.value = true;
@@ -65,8 +85,11 @@
                                     return;
                                 }
                                 deps.submittingInfo.value = true;
-                                deps.ensureRunApi().withSuccessHandler(() => {
-                                    if (deps.currentUser.value) {
+                                deps.ensureRunApi().withSuccessHandler((result) => {
+                                    if (result?.user) {
+                                        deps.currentUser.value = result.user;
+                                        localStorage.setItem("ppp_user", JSON.stringify(result.user));
+                                    } else if (deps.currentUser.value) {
                                         deps.currentUser.value.nama = deps.profileForm.value.namaLengkap;
                                         localStorage.setItem("ppp_user", JSON.stringify(deps.currentUser.value));
                                     }
@@ -76,6 +99,28 @@
                                     deps.submittingInfo.value = false;
                                     deps.notifyError('Gagal menyimpan', err, 'Informasi profil belum berhasil diperbarui.');
                                 }).updateUserNama(deps.currentUser.value?.username, deps.profileForm.value.namaLengkap);
+                            };
+                            const uploadProfileAvatar = (event) => {
+                                const file = event?.target?.files?.[0];
+                                if (!file) return;
+                                const previewUrl = URL.createObjectURL(file);
+                                if (deps.currentUser.value) {
+                                    deps.currentUser.value = { ...deps.currentUser.value, avatar_url: previewUrl };
+                                }
+                                deps.submittingAvatar.value = true;
+                                deps.ensureRunApi().withSuccessHandler((result) => {
+                                    if (result?.user) {
+                                        deps.currentUser.value = result.user;
+                                        localStorage.setItem("ppp_user", JSON.stringify(result.user));
+                                    }
+                                    deps.submittingAvatar.value = false;
+                                    event.target.value = '';
+                                    deps.showNotification("Foto profil berhasil diupdate!");
+                                }).withFailureHandler((err) => {
+                                    deps.submittingAvatar.value = false;
+                                    event.target.value = '';
+                                    deps.notifyError('Gagal upload foto', err, 'Foto profil belum berhasil diunggah.');
+                                }).uploadAvatar(file);
                             };
                             const saveProfileSetting = () => {
                                 if (!deps.profileForm.value.oldPin || !deps.profileForm.value.newPin || !deps.profileForm.value.confirmPin) {
@@ -199,7 +244,26 @@
                                     }
                                 );
                             };
-                            return { loadAuthUsers, loadActivityLogs, openAuthUserModal, closeAuthUserModal, saveProfileInfo, saveProfileSetting, submitAuthUserForm, removeAuthUser };
+                            const uploadAuthUserAvatar = (event) => {
+                                const file = event?.target?.files?.[0];
+                                if (!file) return;
+                                const userId = deps.authUserForm.value?.ID ?? null;
+                                if (!userId) { deps.showNotification("Simpan user terlebih dahulu sebelum upload foto."); return; }
+                                deps.authUserForm.value.avatar_url = URL.createObjectURL(file);
+                                deps.submittingAuthUserAvatar.value = true;
+                                deps.ensureRunApi().withSuccessHandler((result) => {
+                                    deps.authUserForm.value.avatar_url = result?.user?.avatar_url || null;
+                                    loadAuthUsers();
+                                    deps.submittingAuthUserAvatar.value = false;
+                                    event.target.value = '';
+                                    deps.showNotification("Foto user berhasil diupdate!");
+                                }).withFailureHandler((err) => {
+                                    deps.submittingAuthUserAvatar.value = false;
+                                    event.target.value = '';
+                                    deps.notifyError('Gagal upload foto user', err, 'Foto user belum berhasil diunggah.');
+                                }).uploadAuthUserAvatar(file, userId);
+                            };
+                            return { loadAuthUsers, loadActivityLogs, openAuthUserModal, closeAuthUserModal, saveProfileInfo, uploadProfileAvatar, saveProfileSetting, submitAuthUserForm, removeAuthUser, uploadAuthUserAvatar, resolveAvatarUrl, markAuthUserAvatarFailed };
                         },
                     };
                 }
@@ -210,9 +274,13 @@
                     openAuthUserModal,
                     closeAuthUserModal,
                     saveProfileInfo,
+                    uploadProfileAvatar,
+                    uploadAuthUserAvatar,
                     saveProfileSetting,
                     submitAuthUserForm,
                     removeAuthUser,
+                    resolveAvatarUrl,
+                    markAuthUserAvatarFailed,
                 } = window.MarketingDashboardRuntimeHelpers.createAdminUserSettingsActions({
                     ensureRunApi,
                     currentUser,
@@ -220,8 +288,10 @@
                     showNotification,
                     submittingInfo,
                     submittingPin,
+                    submittingAvatar,
                     profileForm,
                     submittingAuthUser,
+                    submittingAuthUserAvatar,
                     showAuthUserModal,
                     authUserFormMode,
                     authUsers,

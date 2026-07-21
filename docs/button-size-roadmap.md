@@ -13,7 +13,7 @@ Target: **12 class → 7 class**. Konsolidasi dulu, resize setelah.
 | # | Class | h | px | Dipakai di |
 |---|-------|---|----|-----------|
 | 1 | `.primary-cta-button` | 40px | 16px | semua toolbar "Tambah" |
-| 2 | `.secondary-cta-button` | 40px | 16px | toolbar Excel/PDF/Reload |
+| 2 | `.primary-cta-button` | 40px | 16px | toolbar Excel/PDF/Reload |
 | 3 | `.modal-primary-button` | 40px | **20px** | budgeting(32×), settings, profile, auth-users, avi |
 | 4 | `.modal-secondary-button` | 40px | **20px** | budgeting(32×), settings, auth-users, avi |
 | 5 | `.reset-filter-button` | 40px | 16px | unit-ditanya, order-online, keep-barang, claim-garansi, dll |
@@ -35,7 +35,7 @@ Target: **12 class → 7 class**. Konsolidasi dulu, resize setelah.
 | # | Class | h target | Menggantikan |
 |---|-------|---------|-------------|
 | 1 | `.primary-cta-button` | **36px** | 1 + **3** (`modal-primary-button`) |
-| 2 | `.secondary-cta-button` | **36px** | 2 + **4** (`modal-secondary-button`) + **5** (`reset-filter-button`) |
+| 2 | `.primary-cta-button` | **36px** | 2 + **4** (`modal-secondary-button`) + **5** (`reset-filter-button`) |
 | 3 | `.select-trigger-button` | **36px** | 6 + 7 (`filter-trigger-button` alias) |
 | 4 | `.select-trigger-button-compact` | 36px ✓ | 8 + **9+10** (`date-trigger-button[-compact]`) |
 | 5 | `.select-trigger-button-form` | **44px** | 11 |
@@ -62,21 +62,21 @@ CSS: hapus `.modal-primary-button` rule setelah selesai.
 
 ---
 
-### Fase K2 — Hapus `modal-secondary-button` → ganti `secondary-cta-button`
+### Fase K2 — Hapus `modal-secondary-button` → ganti `primary-cta-button`
 
 Blade yang berubah: sama dengan K1 (budgeting, settings, auth-users, avi).
 
-Pengganti default: `secondary-cta-button` (abu-abu, styling paling netral). Jika ada yang perlu warna spesifik, tambahkan modifier:
-- Cancel/Tutup → `secondary-cta-button` (default)
-- Danger action → `secondary-cta-button secondary-cta-danger`
+Pengganti default: `primary-cta-button` (abu-abu, styling paling netral). Jika ada yang perlu warna spesifik, tambahkan modifier:
+- Cancel/Tutup → `primary-cta-button` (default)
+- Danger action → `primary-cta-button primary-cta-button--danger`
 
 CSS: hapus `.modal-secondary-button` rule.
 
 ---
 
-### Fase K3 — Hapus `reset-filter-button` → ganti `secondary-cta-button secondary-cta-neutral`
+### Fase K3 — Hapus `reset-filter-button` → ganti `primary-cta-button primary-cta-button--neutral`
 
-**Analisis**: `reset-filter-button` = background slate, warna muted, uppercase, font sama. Identik dengan `secondary-cta-button secondary-cta-neutral`.
+**Analisis**: `reset-filter-button` = background slate, warna muted, uppercase, font sama. Identik dengan `primary-cta-button primary-cta-button--neutral`.
 
 Blade yang berubah:
 - `unit-ditanya.blade.php` (2)
@@ -141,7 +141,7 @@ Setelah konsolidasi selesai, semua ukuran difix di 1 tempat.
 
 ```
 32px — table-action-compact, icon-utility-button
-36px — primary-cta-button, secondary-cta-button, select-trigger-button, select-trigger-button-compact
+36px — primary-cta-button, primary-cta-button, select-trigger-button, select-trigger-button-compact
 44px — select-trigger-button-form, select-trigger-button-form-tight
 ```
 
@@ -152,7 +152,7 @@ Setelah konsolidasi selesai, semua ukuran difix di 1 tempat.
 min-height: 40px → 36px
 padding: 0 16px → 0 14px
 
-/* secondary-cta-button */
+/* primary-cta-button */
 min-height: 40px → 36px
 padding: 0 16px → 0 12px
 font-size: 11px → var(--fs-body)   /* normalize literal */
@@ -193,8 +193,8 @@ grid-template-columns: repeat(auto-fit, minmax(88px, 1fr))
 ### Konsolidasi (blade + CSS)
 
 - [x] **K1** — `modal-primary-button` → `primary-cta-button` (budgeting×16, profile×4, auth-users×2, settings×1, avi×1 + CSS rules dihapus, --success/--danger ditambah ke primary)
-- [x] **K2** — `modal-secondary-button` → `secondary-cta-button secondary-cta-neutral` (budgeting×16, auth-users×1, settings×1, avi×1 · total 19×)
-- [x] **K3** — `reset-filter-button` → `secondary-cta-button secondary-cta-neutral` (unit-ditanya×2, claim-garansi×2, keep-barang×2, order-online×2, budgeting×1 · total 9×)
+- [x] **K2** — `modal-secondary-button` → `primary-cta-button primary-cta-button--neutral` (budgeting×16, auth-users×1, settings×1, avi×1 · total 19×)
+- [x] **K3** — `reset-filter-button` → `primary-cta-button primary-cta-button--neutral` (unit-ditanya×2, claim-garansi×2, keep-barang×2, order-online×2, budgeting×1 · total 9×)
 - [x] **K4** — `date-trigger-button[-compact]` → `select-trigger-button-compact` (14 file, 21×) + `date-trigger-button toolbar-trigger-field` → `select-trigger-button-form toolbar-trigger-field-form` (budgeting×19, avi×1)
 - [x] **K5** — `filter-trigger-button` blade = 0 usage; CSS alias dihapus dari semua selectors
 - [x] **K6** — `.table-action-button` base 44px → 36px; compact 32px tetap; orphan `.date-trigger-button` CSS rules dihapus (5 lokasi)

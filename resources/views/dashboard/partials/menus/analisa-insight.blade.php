@@ -6,7 +6,7 @@
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
                                 <div class="flex items-center gap-4">
                                     <div
-                                        class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
+                                        class="w-12 h-12 rounded-2xl bg-amber text-light flex items-center justify-center border border-amber">
                                         <i class="fa-solid fa-microscope text-white text-heading-lg"></i>
                                     </div>
                                     <div>
@@ -26,7 +26,7 @@
                                         <template v-else>Semua Tanggal</template>
                                         <i v-if="insightDateFilter.start"
                                             @click.stop="insightDateFilter = { start: '', end: '' }"
-                                            class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-red-500"></i>
+                                            class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-danger"></i>
                                     </button>
                                     <div class="segmented-control segmented-control--ios segmented-control--equal w-full md:w-auto" :data-index="analisaInsightTab === 'sales' ? 1 : 0">
                                         <button @click="analisaInsightTab = 'konten'"
@@ -53,10 +53,10 @@
                                     class="text-center py-8 text-body text-slate-400">Belum ada data analytics</div>
                                 <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <!-- Colab card -->
-                                    <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-4">
+                                    <div class="bg-success border border-success rounded-2xl p-4">
                                         <div class="flex items-center gap-2 mb-3">
                                             <span
-                                                class="px-2 py-0.5 bg-emerald-500 text-white rounded-lg text-overline font-bold uppercase tracking-widest">Colab</span>
+                                                class="px-2 py-0.5 bg-success text-white rounded-lg text-overline font-bold uppercase tracking-widest">Colab</span>
                                             <span class="type-body text-slate-500">{{ colabVsNonColabStats.colab.count }} konten</span>
                                         </div>
                                         <div class="space-y-2">
@@ -70,9 +70,9 @@
                                                     class="text-slate-500">Avg Comments</span><span
                                                     class="font-bold text-slate-800">{{ (colabVsNonColabStats.colab.avgComments || 0).toLocaleString('id-ID') }}</span></div>
                                             <div
-                                                class="flex justify-between text-body border-t border-emerald-200 pt-2 mt-2">
+                                                class="flex justify-between text-body border-t border-success pt-2 mt-2">
                                                 <span class="text-slate-600 font-semibold">Engagement Score</span><span
-                                                    class="font-bold text-emerald-600 text-heading-sm">{{ (colabVsNonColabStats.colab.avgScore || 0).toLocaleString('id-ID') }}</span></div>
+                                                    class="font-bold text-success text-heading-sm">{{ (colabVsNonColabStats.colab.avgScore || 0).toLocaleString('id-ID') }}</span></div>
                                         </div>
                                     </div>
                                     <!-- Non-Colab card -->
@@ -108,7 +108,7 @@
                                                 <div class="flex justify-between text-body-sm text-slate-500 mb-1">
                                                     <span>Colab</span><span>{{ (colabVsNonColabStats.colab.avgViews || 0).toLocaleString('id-ID') }}</span></div>
                                                 <div class="w-full bg-slate-200 rounded-full h-2">
-                                                    <div class="bg-emerald-400 h-2 rounded-full"
+                                                    <div class="bg-success h-2 rounded-full"
                                                         :style="'width:' + (Math.max(colabVsNonColabStats.colab.avgViews, colabVsNonColabStats.nonColab.avgViews) > 0 ? Math.round(colabVsNonColabStats.colab.avgViews / Math.max(colabVsNonColabStats.colab.avgViews, colabVsNonColabStats.nonColab.avgViews) * 100) : 0) + '%'">
                                                     </div>
                                                 </div>
@@ -143,7 +143,7 @@
                                         <span
                                             class="w-20 text-body-sm font-bold text-slate-500 text-right uppercase tracking-wide shrink-0">{{ item.stage }}</span>
                                         <div class="flex-1 bg-slate-100 rounded-full h-3 overflow-hidden">
-                                            <div class="h-3 rounded-full bg-gradient-to-r from-ppp-accent to-[#3D4FDB] transition-all duration-500"
+                                            <div class="h-3 rounded-full bg-ppp-accent transition-all duration-500"
                                                 :style="'width:' + item.pct + '%'"></div>
                                         </div>
                                         <span class="w-20 text-body-sm font-bold text-slate-700 text-right shrink-0">{{ item.count }} <span class="text-slate-400 font-normal">({{ item.pct }}%)</span></span>
@@ -163,7 +163,7 @@
                                         <div v-for="m in monthlyTrendData" :key="m.ym"
                                             class="flex-1 flex flex-col items-center gap-1 group cursor-default">
                                             <div class="relative w-full flex items-end justify-center h-24">
-                                                <div class="w-full rounded-t-lg bg-gradient-to-t from-ppp-accent to-[#3D4FDB] transition-all duration-500 group-hover:opacity-80 relative"
+                                                <div class="w-full rounded-t-lg bg-gradient-to-t from-ppp-accent to-amber-700 transition-all duration-500 group-hover:opacity-80 relative"
                                                     :style="'height:' + (monthlyTrendData.reduce((mx,x)=>Math.max(mx,x.views),1)>0 ? Math.max(4, Math.round(m.views/monthlyTrendData.reduce((mx,x)=>Math.max(mx,x.views),1)*96)) : 4) + 'px'">
                                                     <div
                                                         class="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-overline-xs px-1.5 py-0.5 rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-10">
@@ -232,9 +232,9 @@
                                         </div>
                                         <div class="col-span-3 flex justify-end gap-1 flex-wrap">
                                             <span v-if="p.available"
-                                                class="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 text-overline-xs font-bold rounded">{{ p.available }} Ada</span>
+                                                class="px-1.5 py-0.5 bg-success text-light text-overline-xs font-bold rounded">{{ p.available }} Ada</span>
                                             <span v-if="p.notAvailable"
-                                                class="px-1.5 py-0.5 bg-rose-100 text-rose-600 text-overline-xs font-bold rounded">{{ p.notAvailable }} Tdk</span>
+                                                class="px-1.5 py-0.5 bg-danger text-light text-overline-xs font-bold rounded">{{ p.notAvailable }} Tdk</span>
                                         </div>
                                     </div>
                                 </div>
@@ -294,8 +294,8 @@
                                     </div>
                                     <!-- Avg resolution -->
                                     <div v-if="claimGaransiStats.avgDays"
-                                        class="bg-amber-50 border border-amber-100 rounded-xl p-3 flex items-center gap-3">
-                                        <i class="fa-solid fa-clock text-amber-500"></i>
+                                        class="bg-amber border border-amber rounded-xl p-3 flex items-center gap-3">
+                                        <i class="fa-solid fa-clock text-amber"></i>
                                         <div>
                                             <p class="text-body font-bold text-slate-800">{{ claimGaransiStats.avgDays }} hari</p>
                                             <p class="text-body-sm text-slate-500">Rata-rata waktu penyelesaian klaim</p>
@@ -311,7 +311,7 @@
                                                 <span class="text-body-sm font-bold text-slate-300 w-4">{{ idx+1 }}</span>
                                                 <div
                                                     class="flex-1 bg-slate-100 rounded-full h-4 relative overflow-hidden">
-                                                    <div class="h-4 bg-rose-400 rounded-full"
+                                                    <div class="h-4 bg-danger rounded-full"
                                                         :style="'width:' + Math.round(p.count/claimGaransiStats.topProduk[0].count*100) + '%'">
                                                     </div>
                                                     <span

@@ -14,6 +14,8 @@ class DashboardAuth
     public const ROLE_ADMIN = 'admin';
     public const ROLE_KASIR = 'kasir';
     public const ROLE_OPERASIONAL = 'operasional';
+    public const ROLE_BRAND_AMBASADOR = 'brand_ambasador';
+    public const ROLE_TALENT = 'talent';
 
     protected function allowsConfiguredAdminBootstrap(): bool
     {
@@ -27,6 +29,8 @@ class DashboardAuth
             self::ROLE_ADMIN,
             self::ROLE_KASIR,
             self::ROLE_OPERASIONAL,
+            self::ROLE_BRAND_AMBASADOR,
+            self::ROLE_TALENT,
         ];
     }
 
@@ -65,6 +69,8 @@ class DashboardAuth
             self::ROLE_ADMIN => 'Admin',
             self::ROLE_KASIR => 'Kasir',
             self::ROLE_OPERASIONAL => 'Operasional',
+            self::ROLE_BRAND_AMBASADOR => 'Brand Ambasador',
+            self::ROLE_TALENT => 'Talent',
             default => 'Operasional',
         };
     }
@@ -259,6 +265,30 @@ class DashboardAuth
         return true;
     }
 
+    public function avatarUrl(?User $user): ?string
+    {
+        if (! $user instanceof User || blank($user->avatar)) {
+            return null;
+        }
+
+        $storagePath = storage_path('app/public/avatars/' . $user->avatar);
+
+        if (! file_exists($storagePath)) {
+            return null;
+        }
+
+        return '/api/auth/avatar/' . rawurlencode($user->avatar);
+    }
+
+    public function updateUserAvatar(User $user, string $filename): User
+    {
+        $user->forceFill([
+            'avatar' => $filename,
+        ])->save();
+
+        return $user->refresh();
+    }
+
     public function userPayload(User $user): array
     {
         $username = (string) ($user->username ?: $user->email ?: $user->name ?: 'user');
@@ -271,6 +301,7 @@ class DashboardAuth
             'email' => (string) $user->email,
             'role' => $this->roleLabel($user->role),
             'role_key' => (string) $user->role,
+            'avatar_url' => $this->avatarUrl($user),
             'outlet_id' => 'LOCAL-WEB',
         ];
     }

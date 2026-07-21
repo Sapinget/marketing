@@ -24,42 +24,42 @@
                         </div>
                     </div>
                     <div v-if="activeTab === 'keep_barang' && keepBarangLoaded" class="space-y-6 animate-fadeIn pb-10">
-                        <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                        <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
                                 <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                                    <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-boxes-stacked text-[120px]"></i></div>
-                                    <p class="text-overline font-bold uppercase tracking-widest mb-3 text-slate-500">Total</p>
+                                    <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-boxes-stacked text-[120px]"></i></div>
+                                    <p class="dashboard-summary-title">Total</p>
                                     <div class="flex items-baseline gap-2">
                                         <span class="dashboard-summary-value">{{ formatNumber(keepBarangSummary.total) }}</span>
-                                        <span class="dashboard-summary-unit text-slate-400">Item</span>
+                                        <span class="dashboard-summary-unit">Item</span>
                                     </div>
                                     <p class="text-body-sm font-bold mt-3 text-slate-600">Semua keep barang</p>
                                 </div>
                                 <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                                    <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-hourglass-half text-[120px]"></i></div>
-                                    <p class="text-overline font-bold uppercase tracking-widest mb-3 text-amber-500">Pending</p>
+                                    <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-hourglass-half text-[120px]"></i></div>
+                                    <p class="dashboard-summary-title">Pending</p>
                                     <div class="flex items-baseline gap-2">
                                         <span class="dashboard-summary-value">{{ formatNumber(keepBarangSummary.pending) }}</span>
-                                        <span class="dashboard-summary-unit text-amber-400">Item</span>
+                                        <span class="dashboard-summary-unit">Item</span>
                                     </div>
-                                    <p class="text-body-sm font-bold mt-3 text-amber-600">Menunggu pengambilan</p>
+                                    <p class="text-body-sm font-bold mt-3 text-amber">Menunggu pengambilan</p>
                                 </div>
                                 <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                                    <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-circle-check text-[120px]"></i></div>
-                                    <p class="text-overline font-bold uppercase tracking-widest mb-3 text-emerald-500">Done</p>
+                                    <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-circle-check text-[120px]"></i></div>
+                                    <p class="dashboard-summary-title">Done</p>
                                     <div class="flex items-baseline gap-2">
                                         <span class="dashboard-summary-value">{{ formatNumber(keepBarangSummary.done) }}</span>
-                                        <span class="dashboard-summary-unit text-emerald-400">Item</span>
+                                        <span class="dashboard-summary-unit">Item</span>
                                     </div>
-                                    <p class="text-body-sm font-bold mt-3 text-emerald-600">Sudah selesai</p>
+                                    <p class="text-body-sm font-bold mt-3 text-success">Sudah selesai</p>
                                 </div>
                                 <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                                    <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-circle-xmark text-[120px]"></i></div>
-                                    <p class="text-overline font-bold uppercase tracking-widest mb-3 text-rose-500">Cancel</p>
+                                    <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-circle-xmark text-[120px]"></i></div>
+                                    <p class="dashboard-summary-title">Cancel</p>
                                     <div class="flex items-baseline gap-2">
                                         <span class="dashboard-summary-value">{{ formatNumber(keepBarangSummary.cancel) }}</span>
-                                        <span class="dashboard-summary-unit text-rose-400">Item</span>
+                                        <span class="dashboard-summary-unit">Item</span>
                                     </div>
-                                    <p class="text-body-sm font-bold mt-3 text-rose-600">Dibatalkan</p>
+                                    <p class="text-body-sm font-bold mt-3 text-danger">Dibatalkan</p>
                                 </div>
                             </div>
                         <div class="md:hidden space-y-3">
@@ -72,11 +72,11 @@
                                 </div>
                                 <div class="table-toolbar-shell__right">
                                     <div class="toolbar-actions">
-                                        <button @click="exportKeepBarangToExcel" class="secondary-cta-button secondary-cta-success active:scale-95"><i class="fa-solid fa-file-excel"></i><span class="ml-1">Excel</span></button>
-                                        <button @click="exportKeepBarangToPDF" class="secondary-cta-button secondary-cta-danger active:scale-95"><i class="fa-solid fa-file-pdf"></i><span class="ml-1">PDF</span></button>
+                                        <button @click="exportKeepBarangToExcel" class="primary-cta-button primary-cta-button--success active:scale-95"><i class="fa-solid fa-file-excel"></i><span class="ml-1">Excel</span></button>
+                                        <button @click="exportKeepBarangToPDF" class="primary-cta-button primary-cta-button--danger active:scale-95"><i class="fa-solid fa-file-pdf"></i><span class="ml-1">PDF</span></button>
                                         <button @click="openKeepBarangModal('create')" class="primary-cta-button primary-cta-button--accent active:scale-95"><i class="fa-solid fa-plus mr-1.5"></i>Tambah</button>
-                                        <button @click="loadKeepBarangData" class="secondary-cta-button secondary-cta-neutral active:scale-95"><i class="fa-solid fa-rotate text-body-sm"></i> Muat Ulang</button>
-                                        <button @click="keepBarangSearch='';keepBarangStatusFilter='';keepBarangHandleByFilter=''" class="secondary-cta-button secondary-cta-neutral" title="Reset"><i class="fa-solid fa-rotate-left text-body-sm"></i><span>Reset</span></button>
+                                        <button @click="loadKeepBarangData" class="primary-cta-button primary-cta-button--neutral active:scale-95"><i class="fa-solid fa-rotate text-body-sm"></i> Muat Ulang</button>
+                                        <button @click="keepBarangSearch='';keepBarangStatusFilter='';keepBarangHandleByFilter=''" class="primary-cta-button primary-cta-button--neutral" title="Reset"><i class="fa-solid fa-rotate-left text-body-sm"></i><span>Reset</span></button>
                                     </div>
                                 </div>
                             </div>
@@ -101,11 +101,11 @@
                                         <p class="mobile-data-card__title line-clamp-2">{{ row.NAMA || row.TYPE_HP || '-' }}</p>
                                         <div class="mobile-data-card__meta mt-2">
                                             <span
-                                                class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-overline font-bold uppercase">
+                                                class="px-2.5 py-1 rounded-lg bg-secondary text-light text-overline font-bold uppercase">
                                                 {{ row.HANDLE_BY || '-' }}
                                             </span>
                                             <span
-                                                class="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 text-overline font-bold uppercase">
+                                                class="px-2.5 py-1 rounded-lg bg-amber text-light text-overline font-bold uppercase">
                                                 {{ row.TYPE_HP || '-' }}
                                             </span>
                                         </div>
@@ -129,20 +129,20 @@
                                         </div>
                                         <div class="flex items-center gap-2">
                                             <a v-if="row.NOMOR_HP" :href="'https://wa.me/62' + formatWaNumber(row.NOMOR_HP)"
-                                                target="_blank" rel="noopener noreferrer" class="secondary-cta-button secondary-cta-link">WA 1</a>
+                                                target="_blank" rel="noopener noreferrer" class="primary-cta-button primary-cta-button--link">WA 1</a>
                                             <a v-if="row.NOMOR_HP_2" :href="'https://wa.me/62' + formatWaNumber(row.NOMOR_HP_2)"
-                                                target="_blank" rel="noopener noreferrer" class="secondary-cta-button secondary-cta-success">WA 2</a>
+                                                target="_blank" rel="noopener noreferrer" class="primary-cta-button primary-cta-button--success">WA 2</a>
                                         </div>
                                     </div>
                                     <div class="flex items-center justify-end gap-2">
                                         <div class="flex items-center gap-2">
                                             <button @click="openKeepBarangModal('edit', row)"
                                                 class="table-action-button table-action-compact" title="Edit"
-                                                aria-label="Edit"><i class="fa-solid fa-pen text-body-sm"></i></button>
+                                                aria-label="Edit"><i class="fa-solid fa-pen-to-square text-body-sm"></i></button>
                                             <button @click="deleteKeepBarang(row.ID)"
                                                 class="table-action-button table-action-compact table-action-danger"
                                                 title="Hapus" aria-label="Hapus"><i
-                                                    class="fa-solid fa-trash text-body-sm"></i></button>
+                                                    class="fa-solid fa-trash-can text-body-sm"></i></button>
                                         </div>
                                     </div>
                                 </div>
@@ -171,11 +171,11 @@
                                 <div class="table-toolbar-shell__right">
                                     <div class="toolbar-actions">
                                         <button @click="exportKeepBarangToExcel"
-                                            class="secondary-cta-button secondary-cta-success active:scale-95"><i
+                                            class="primary-cta-button primary-cta-button--success active:scale-95"><i
                                                 class="fa-solid fa-file-excel"></i><span
                                                 class="ml-1">Excel</span></button>
                                         <button @click="exportKeepBarangToPDF"
-                                            class="secondary-cta-button secondary-cta-danger active:scale-95"><i
+                                            class="primary-cta-button primary-cta-button--danger active:scale-95"><i
                                                 class="fa-solid fa-file-pdf"></i><span
                                                 class="ml-1">PDF</span></button>
                                     </div>
@@ -218,11 +218,11 @@
                                             class="primary-cta-button primary-cta-button--accent active:scale-95"><i
                                                 class="fa-solid fa-plus mr-1.5"></i>Tambah</button>
                                         <button @click="loadKeepBarangData"
-                                            class="secondary-cta-button secondary-cta-neutral active:scale-95"><i
+                                            class="primary-cta-button primary-cta-button--neutral active:scale-95"><i
                                                 class="fa-solid fa-rotate text-body-sm"></i> Muat Ulang</button>
                                         <button
                                             @click="keepBarangSearch='';keepBarangStatusFilter='';keepBarangHandleByFilter=''"
-                                            class="secondary-cta-button secondary-cta-neutral" title="Reset"><i
+                                            class="primary-cta-button primary-cta-button--neutral" title="Reset"><i
                                                 class="fa-solid fa-rotate-left text-body-sm"></i><span>Reset</span></button>
                                     </div>
                                 </div>
@@ -230,23 +230,22 @@
                             <div class="overflow-x-auto">
                                 <table class="w-full min-w-[1650px] table-fixed text-body-sm text-left border-collapse">
                                     <thead>
-                                        <tr
-                                            class="border-b border-slate-100 text-body-sm font-bold uppercase tracking-widest text-slate-400">
-                                            <th class="px-4 py-3 text-center text-body-sm font-bold uppercase tracking-widest text-slate-400 w-[56px]">#</th>
-                                            <th class="px-4 py-3 text-left w-[96px]">Aksi</th>
-                                            <th class="px-4 py-3 text-left w-[100px]">Tgl Keep</th>
-                                            <th class="px-4 py-3 text-left w-[16%]">Nama</th>
-                                            <th class="px-4 py-3 text-left w-[120px]">No HP</th>
-                                            <th class="px-4 py-3 text-left w-[14%]">Type HP</th>
-                                            <th class="px-4 py-3 text-left w-[130px]">IMEI</th>
-                                            <th class="px-4 py-3 text-right w-[110px]">DP</th>
-                                            <th class="px-4 py-3 text-right w-[120px]">Harga Jual</th>
-                                            <th class="px-4 py-3 text-left w-[110px]">Rencana Ambil</th>
-                                            <th class="px-4 py-3 text-right w-[90px]">Sisa Hari</th>
-                                            <th class="px-4 py-3 text-left w-[110px]">Tgl Expired</th>
-                                            <th class="px-4 py-3 text-left w-[120px]">Handle By</th>
-                                            <th class="px-4 py-3 text-center w-[110px]">Status</th>
-                                            <th class="px-4 py-3 text-left w-[130px]">Follow Up</th>
+                                        <tr class="table-header-row">
+                                            <th class="table-header-cell table-header-index table-freeze-index">#</th>
+                                            <th class="table-header-cell table-header-action table-freeze-action">Aksi</th>
+                                            <th class="table-header-cell text-left w-[100px]">Tgl Keep</th>
+                                            <th class="table-header-cell text-left w-[16%]">Nama</th>
+                                            <th class="table-header-cell text-left w-[120px]">No HP</th>
+                                            <th class="table-header-cell text-left w-[14%]">Type HP</th>
+                                            <th class="table-header-cell text-left w-[130px]">IMEI</th>
+                                            <th class="table-header-cell text-right w-[110px]">DP</th>
+                                            <th class="table-header-cell text-right w-[120px]">Harga Jual</th>
+                                            <th class="table-header-cell text-left w-[110px]">Rencana Ambil</th>
+                                            <th class="table-header-cell text-right w-[90px]">Sisa Hari</th>
+                                            <th class="table-header-cell text-left w-[110px]">Tgl Expired</th>
+                                            <th class="table-header-cell text-left w-[120px]">Handle By</th>
+                                            <th class="table-header-cell text-center w-[110px]">Status</th>
+                                            <th class="table-header-cell text-left w-[130px]">Follow Up</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -259,17 +258,17 @@
                                         </tr>
                                         <tr v-for="(row, idx) in pagedKeepBarangData" :key="row.ID || idx"
                                             class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors">
-                                            <td class="px-4 py-3 text-center text-body-sm font-bold text-slate-400 tabular-nums">{{ idx + 1 }}</td>
-                                            <td class="px-4 py-3 text-left">
+                                            <td class="px-4 py-3 text-center text-body-sm font-bold text-slate-400 tabular-nums table-freeze-index">{{ idx + 1 }}</td>
+                                            <td class="px-4 py-3 text-left table-freeze-action">
                                                 <div class="flex items-center gap-1.5">
                                                     <button @click="openKeepBarangModal('edit', row)"
                                                         class="table-action-button table-action-compact" title="Edit"
                                                         aria-label="Edit"><i
-                                                            class="fa-solid fa-pen text-body-sm"></i></button>
+                                                            class="fa-solid fa-pen-to-square text-body-sm"></i></button>
                                                     <button @click="deleteKeepBarang(row.ID)"
                                                         class="table-action-button table-action-compact table-action-danger"
                                                         title="Hapus" aria-label="Hapus"><i
-                                                            class="fa-solid fa-trash text-body-sm"></i></button>
+                                                            class="fa-solid fa-trash-can text-body-sm"></i></button>
                                                 </div>
                                             </td>
                                             <td class="px-4 py-3 text-left type-body text-slate-500 whitespace-nowrap">{{ row.TANGGAL_KEEP || '-' }}</td>
@@ -297,12 +296,12 @@
                                                     <a v-if="row.NOMOR_HP"
                                                         :href="'https://wa.me/62' + formatWaNumber(row.NOMOR_HP)"
                                                         target="_blank" rel="noopener noreferrer"
-                                                        class="px-2 py-1 rounded-lg text-body-sm font-bold bg-emerald-500 text-white hover:bg-emerald-600 transition-all">WA
+                                                        class="px-2 py-1 rounded-lg text-body-sm font-bold bg-success text-white hover:bg-success transition-all">WA
                                                         1</a>
                                                     <a v-if="row.NOMOR_HP_2"
                                                         :href="'https://wa.me/62' + formatWaNumber(row.NOMOR_HP_2)"
                                                         target="_blank" rel="noopener noreferrer"
-                                                        class="px-2 py-1 rounded-lg text-body-sm font-bold bg-sky-500 text-white hover:bg-sky-600 transition-all">WA
+                                                        class="px-2 py-1 rounded-lg text-body-sm font-bold bg-info text-white hover:bg-info transition-all">WA
                                                         2</a>
                                                 </div>
                                             </td>

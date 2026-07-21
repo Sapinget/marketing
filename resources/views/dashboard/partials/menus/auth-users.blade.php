@@ -22,6 +22,11 @@
                                         <span class="text-slate-700 font-medium">Refresh</span>
                                         <i class="fa-solid fa-rotate-right text-body-sm text-slate-300"></i>
                                     </button>
+                                    <button @click="openAuthUserModal('create')"
+                                        class="primary-cta-button primary-cta-button--accent active:scale-95">
+                                        <i class="fa-solid fa-user-plus"></i>
+                                        <span>Tambah User</span>
+                                    </button>
                                 </div>
                             </div>
 
@@ -35,6 +40,13 @@
                                     <article v-for="(user, idx) in filteredAuthUsers" :key="`mobile-user-${user?.ID || idx}`"
                                         class="stat-card mobile-record-card mobile-data-card animate-fadeIn">
                                         <div class="mobile-data-card__header">
+                                            <div
+                                                class="w-10 h-10 rounded-full bg-ppp-accent text-white flex items-center justify-center text-body font-semibold uppercase flex-shrink-0 overflow-hidden">
+                                                <img v-if="user?.avatar_url" :src="resolveAvatarUrl(user?.avatar_url)"
+                                                    class="w-full h-full object-cover" alt="Foto User"
+                                                    @error="markAuthUserAvatarFailed(user)" />
+                                                <span v-else>{{ ((user?.nama || user?.username || 'U')[0] || 'U').toUpperCase() }}</span>
+                                            </div>
                                             <div>
                                                 <div class="mobile-data-card__title">{{ user?.nama || user?.username || 'User' }}</div>
                                                 <div class="mobile-data-card__meta">@{{ user?.username || '-' }}</div>
@@ -50,11 +62,11 @@
                                             <div class="flex items-center gap-2">
                                                 <button @click="openAuthUserModal('edit', user)"
                                                     class="table-action-button table-action-compact" aria-label="Edit">
-                                                    <i class="fa-solid fa-pen text-overline"></i>
+                                                    <i class="fa-solid fa-pen-to-square text-overline"></i>
                                                 </button>
                                                 <button @click="removeAuthUser(user)"
                                                     class="table-action-button table-action-compact table-action-danger" aria-label="Hapus">
-                                                    <i class="fa-solid fa-trash text-overline"></i>
+                                                    <i class="fa-solid fa-trash-can text-overline"></i>
                                                 </button>
                                             </div>
                                         </div>
@@ -63,12 +75,12 @@
                             <div class="hidden md:block overflow-auto">
                                     <table class="w-full text-body-sm">
                                         <thead>
-                                            <tr>
-                                                <th class="px-4 py-2.5 text-center font-semibold w-24">Aksi</th>
-                                                <th class="px-4 py-2.5 text-left font-semibold">Username</th>
-                                                <th class="px-4 py-2.5 text-left font-semibold">Nama</th>
-                                                <th class="px-4 py-2.5 text-left font-semibold">Role</th>
-                                                <th class="px-4 py-2.5 text-left font-semibold">Email</th>
+                                            <tr class="table-header-row">
+                                                <th class="table-header-cell text-center w-24">Aksi</th>
+                                                <th class="table-header-cell text-left">User</th>
+                                                <th class="table-header-cell text-left">Nama</th>
+                                                <th class="table-header-cell text-left">Role</th>
+                                                <th class="table-header-cell text-left">Email</th>
                                             </tr>
                                         </thead>
                                         <tbody class="divide-y divide-slate-100">
@@ -84,15 +96,26 @@
                                                     <div class="flex items-center justify-center gap-2">
                                                         <button @click="openAuthUserModal('edit', user)"
                                                             class="table-action-button table-action-compact" aria-label="Edit">
-                                                            <i class="fa-solid fa-pen text-body-sm"></i>
+                                                            <i class="fa-solid fa-pen-to-square text-body-sm"></i>
                                                         </button>
                                                         <button @click="removeAuthUser(user)"
                                                             class="table-action-button table-action-compact table-action-danger" aria-label="Hapus">
-                                                            <i class="fa-solid fa-trash text-body-sm"></i>
+                                                            <i class="fa-solid fa-trash-can text-body-sm"></i>
                                                         </button>
                                                     </div>
                                                 </td>
-                                                <td class="px-4 py-2.5 text-slate-700 font-medium whitespace-nowrap">{{ user?.username || '-' }}</td>
+                                                <td class="px-4 py-2.5 text-slate-700 font-medium whitespace-nowrap">
+                                                    <div class="flex items-center gap-3">
+                                                        <div
+                                                            class="w-9 h-9 rounded-full bg-ppp-accent text-white flex items-center justify-center text-body-sm font-semibold uppercase flex-shrink-0 overflow-hidden">
+                                                            <img v-if="user?.avatar_url" :src="resolveAvatarUrl(user?.avatar_url)"
+                                                                class="w-full h-full object-cover" alt="Foto User"
+                                                                @error="markAuthUserAvatarFailed(user)" />
+                                                            <span v-else>{{ ((user?.nama || user?.username || 'U')[0] || 'U').toUpperCase() }}</span>
+                                                        </div>
+                                                        <span>@{{ user?.username || '-' }}</span>
+                                                    </div>
+                                                </td>
                                                 <td class="px-4 py-2.5 text-slate-600 min-w-[220px]">{{ user?.nama || user?.username || '-' }}</td>
                                                 <td class="px-4 py-2.5 text-slate-600 whitespace-nowrap">
                                                     <span class="entity-badge entity-badge--info">{{ user?.role || '-' }}</span>
@@ -121,7 +144,7 @@
                                 <div class="mobile-sheet modal-width-form relative w-full bg-white radius-sheet border border-slate-200 overflow-hidden animate-fadeIn flex flex-col max-h-[90dvh]">
                                     <div class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
                                         <div class="modal-header-copy">
-                                            <div class="modal-header-icon bg-slate-100 text-slate-600 border border-slate-200">
+                                            <div class="modal-header-icon bg-secondary text-light border border-slate-200">
                                                 <i :class="['fa-solid text-heading-sm', authUserFormMode === 'edit' ? 'fa-pen-to-square' : 'fa-user-plus']"></i>
                                             </div>
                                             <div>
@@ -135,6 +158,25 @@
                                     </div>
                                     <form @submit.prevent="submitAuthUserForm" class="flex flex-1 flex-col min-h-0">
                                         <div class="flex-1 overflow-y-auto p-6 space-y-4">
+                                            <div v-if="authUserFormMode === 'edit'" class="flex flex-col items-center gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                                                <label for="auth-user-avatar-input"
+                                                    class="relative w-24 h-24 rounded-full bg-amber text-light flex items-center justify-center text-3xl font-bold overflow-hidden cursor-pointer hover:ring-4 hover:ring-amber/30 transition-all"
+                                                    :class="submittingAuthUserAvatar ? 'pointer-events-none' : ''">
+                                                    <img v-if="authUserForm.avatar_url" :src="resolveAvatarUrl(authUserForm.avatar_url)" class="w-full h-full object-cover" alt="Foto User" @error="authUserForm.avatar_url = null" />
+                                                    <span v-else>{{ ((authUserForm.nama || authUserForm.username || 'U')[0] || 'U').toUpperCase() }}</span>
+                                                    <div v-if="submittingAuthUserAvatar"
+                                                        class="absolute inset-0 bg-slate-950/55 flex items-center justify-center">
+                                                        <i class="fa-solid fa-spinner fa-spin text-white text-2xl"></i>
+                                                    </div>
+                                                </label>
+                                                <input id="auth-user-avatar-input" name="auth_user_avatar_input" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" :disabled="submittingAuthUserAvatar" @change="uploadAuthUserAvatar" />
+                                                <label for="auth-user-avatar-input" class="text-body-sm text-slate-400 font-bold uppercase tracking-widest cursor-pointer hover:text-ppp-accent transition-colors"
+                                                    :class="submittingAuthUserAvatar ? 'opacity-50 pointer-events-none' : ''">
+                                                    <i class="fa-solid fa-upload mr-1" :class="submittingAuthUserAvatar ? 'fa-spin' : ''"></i>
+                                                    <span v-if="submittingAuthUserAvatar">Mengunggah...</span>
+                                                    <span v-else>Ganti Foto User</span>
+                                                </label>
+                                            </div>
                                             <div class="sr-only" aria-hidden="true">
                                                 <label for="modal-auth-user-username-hint">Username</label>
                                                 <input id="modal-auth-user-username-hint" type="text" name="username"
@@ -143,14 +185,14 @@
                                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                                 <div>
                                                     <label for="auth-user-username"
-                                                        class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Username <span class="text-red-500">*</span></label>
+                                                        class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Username <span class="text-danger">*</span></label>
                                                     <input id="auth-user-username" name="auth_user_username"
                                                         v-model="authUserForm.username" type="text" placeholder="mis. kasir"
                                                         autocomplete="off" minlength="3" class="form-input font-bold" />
                                                 </div>
                                                 <div>
                                                     <label for="auth-user-nama"
-                                                        class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Nama <span class="text-red-500">*</span></label>
+                                                        class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Nama <span class="text-danger">*</span></label>
                                                     <input id="auth-user-nama" name="auth_user_nama"
                                                         v-model="authUserForm.nama" type="text" placeholder="Nama lengkap"
                                                         autocomplete="off" class="form-input" />
@@ -165,7 +207,7 @@
                                             </div>
                                             <div class="relative search-select-container">
                                                 <label for="auth-user-role"
-                                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Role <span class="text-red-500">*</span></label>
+                                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Role <span class="text-danger">*</span></label>
                                                 <div @click="toggleSearchSelect($event, 'authUserRole')"
                                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
                                                     <span :class="authUserForm.role ? 'text-slate-800 font-medium' : 'text-slate-400'">
@@ -199,14 +241,14 @@
                                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                                 <div>
                                                     <label for="auth-user-pin"
-                                                        class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Password <span class="text-red-500">*</span></label>
+                                                        class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Password <span class="text-danger">*</span></label>
                                                     <input id="auth-user-pin" name="auth_user_pin"
                                                         v-model="authUserForm.pin" type="password" :placeholder="authUserFormMode === 'edit' ? 'Kosongkan jika tidak diubah' : 'Password login'"
                                                         autocomplete="new-password" minlength="6" class="form-input" />
                                                 </div>
                                                 <div>
                                                     <label for="auth-user-confirm-pin"
-                                                        class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Konfirmasi <span class="text-red-500">*</span></label>
+                                                        class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Konfirmasi <span class="text-danger">*</span></label>
                                                     <input id="auth-user-confirm-pin" name="auth_user_confirm_pin"
                                                         v-model="authUserForm.confirmPin" type="password" :placeholder="authUserFormMode === 'edit' ? 'Ulangi password baru' : 'Ulangi Password'"
                                                         autocomplete="new-password" minlength="6" class="form-input" />
@@ -215,9 +257,9 @@
                                         </div>
                                         <div class="modal-footer-bar modal-footer-actions">
                                             <button type="button" @click="closeAuthUserModal"
-                                                class="secondary-cta-button secondary-cta-neutral">Batal</button>
+                                                class="primary-cta-button primary-cta-button--neutral">Batal</button>
                                             <button type="submit" :disabled="submittingAuthUser"
-                                                class="primary-cta-button primary-cta-button--info shadow-sm active:scale-95 disabled:opacity-50">
+                                                class="primary-cta-button primary-cta-button--info active:scale-95 disabled:opacity-50">
                                                 <i v-if="submittingAuthUser" class="fa-solid fa-spinner fa-spin"></i>
                                                 <i v-else :class="['fa-solid', authUserFormMode === 'edit' ? 'fa-floppy-disk' : 'fa-user-plus']"></i>
                                                 {{ authUserFormMode === 'edit' ? 'Simpan Perubahan' : 'Simpan User' }}

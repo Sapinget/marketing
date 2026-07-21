@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Design System - Pura Pura Ponsel</title>
-  <link rel="stylesheet" href="{{ asset('vendor/dashboard/fontawesome/css/all.min.css') }}">
+  @php($fontAwesomeCssPath = public_path('vendor/dashboard/fontawesome/css/all.min.css'))
+  <link rel="stylesheet" href="{{ asset('vendor/dashboard/fontawesome/css/all.min.css') }}?v={{ file_exists($fontAwesomeCssPath) ? filemtime($fontAwesomeCssPath) : time() }}">
   <style>
     /* Design Tokens */
     :root {
@@ -111,8 +112,7 @@
     .primary-cta-button { border-radius: 16px; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; min-height: 36px; padding: 0 16px; }
     .login-button { background: #0f172a; border: 0; color: #fff; border-radius: 16px; font-size: 11px; font-weight: 600; letter-spacing: 0.18em; padding: 15px 18px; text-transform: uppercase; width: 100%; transition: background 0.18s; }
     .login-button:hover { background: #020617; }
-    .secondary-cta-button { background: #fff; border: 1px solid var(--ppp-line); border-radius: 12px; color: #475569; font-size: 11px; font-weight: 700; min-height: 32px; padding: 0 12px; display: inline-flex; align-items: center; gap: 6px; }
-    .secondary-cta-link { color: var(--ppp-accent); border-color: #c7d2fe; background: #eff6ff; }
+
     .modal-primary-button { background: #0f172a; border: 0; border-radius: 16px; color: #fff; font-size: 11px; font-weight: 700; min-height: 38px; padding: 0 20px; }
     .modal-secondary-button { background: #fff; border: 1px solid var(--ppp-line); border-radius: 16px; color: #475569; font-size: 11px; font-weight: 700; min-height: 38px; padding: 0 20px; }
     .modal-danger-button { background: #fef2f2; border: 1px solid #fecaca; border-radius: 16px; color: #dc2626; font-size: 11px; font-weight: 700; min-height: 38px; padding: 0 20px; }
@@ -133,10 +133,10 @@
 
     /* Badge */
     .badge { border-radius: 999px; display: inline-flex; font-size: 10px; font-weight: 800; letter-spacing: 0.08em; padding: 5px 9px; text-transform: uppercase; }
-    .badge.progress { background: #eff6ff; color: #2563eb; }
-    .badge.done     { background: #ecfdf5; color: #059669; }
-    .badge.draft    { background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0; }
-    .badge.danger   { background: #fef2f2; color: #dc2626; }
+    .badge.progress { background: rgb(37 99 235); color: #fff; }
+    .badge.done     { background: rgb(4 120 87); color: #fff; }
+    .badge.draft    { background: rgb(100 116 139); color: #fff; }
+    .badge.danger   { background: #dc2626; color: #fff; }
 
     /* KPI Card */
     .kpi-card { background: #fff; border: 1px solid var(--ppp-line); border-radius: 8px; padding: 16px; }
@@ -195,7 +195,7 @@
     .brand-sub-demo  { font-size: 9px; color: #94a3b8; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 2px; }
     .nav-item-demo { align-items: center; background: transparent; border: 0; color: #64748b; display: flex; font-size: 11px; font-weight: 600; gap: 10px; min-height: 40px; padding: 0 16px; transition: background 0.14s, color 0.14s; width: 100%; text-align: left; }
     .nav-item-demo:hover { background: #f1f5f9; color: #475569; }
-    .nav-item-demo.active { background: linear-gradient(90deg, var(--ppp-accent), var(--ppp-accent-dark)); color: #fff; }
+    .nav-item-demo.active { background: var(--ppp-accent); color: #fff; }
     .nav-sub-demo { align-items: center; background: transparent; border: 0; color: #94a3b8; display: flex; font-size: 10.5px; font-weight: 600; gap: 10px; min-height: 34px; padding: 0 16px 0 34px; transition: background 0.14s, color 0.14s; width: 100%; text-align: left; }
     .nav-sub-demo:hover { background: #f1f5f9; color: #475569; }
     .user-card-demo { align-items: center; border-top: 1px solid var(--ppp-line); display: flex; gap: 10px; padding: 12px 14px; }
@@ -472,15 +472,14 @@
     </div>
 
     <div class="ds-block">
-      <div class="ds-block-title">Secondary CTA Family</div>
+      <div class="ds-block-title">Primary CTA Family</div>
       <div class="ds-preview">
         <div class="ds-row">
-          <button class="secondary-cta-button"><i class="fa-solid fa-file-excel"></i> Export Excel</button>
-          <button class="secondary-cta-button"><i class="fa-solid fa-print"></i> Print</button>
-          <button class="secondary-cta-button secondary-cta-link"><i class="fa-solid fa-arrow-up-right-from-square"></i> Buka Link</button>
-          <button class="secondary-cta-button"><i class="fa-solid fa-file-csv"></i> CSV</button>
+          <button class="primary-cta-button"><i class="fa-solid fa-file-excel"></i> Export Excel</button>
+          <button class="primary-cta-button"><i class="fa-solid fa-print"></i> Print</button>
+          <button class="primary-cta-button"><i class="fa-solid fa-file-csv"></i> CSV</button>
         </div>
-        <p class="ds-meta"><code>.secondary-cta-button</code> + modifier <code>.secondary-cta-link</code></p>
+        <p class="ds-meta"><code>.primary-cta-button</code></p>
       </div>
     </div>
 

@@ -10,7 +10,7 @@
                             <div class="h-3 bg-slate-100 rounded-full w-56"></div>
                         </div>
                     </div>
-                    <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                    <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
                         <div v-for="i in 4" :key="'sk-ep-st'+i"
                             class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
                             <div class="h-3 bg-slate-200 rounded-full w-20 mb-2"></div>
@@ -41,32 +41,32 @@
             <div v-if="activeTab === 'editor_performance' && bonusConfigLoaded" class="space-y-6 animate-fadeIn pb-10">
 
                 <!-- Summary Stats (di atas judul, konsisten) -->
-                <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
                     <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                        <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-photo-film text-[120px]"></i></div>
-                        <p class="text-overline font-bold uppercase tracking-widest text-blue-500 mb-3">Total Output</p>
+                        <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-photo-film text-[120px]"></i></div>
+                        <p class="dashboard-summary-title">Total Output</p>
                         <div class="flex items-baseline gap-2">
                             <span class="dashboard-summary-value">{{ editorDashboardData.totalVideos }}</span>
-                            <span class="dashboard-summary-unit text-blue-400">Videos</span>
+                            <span class="dashboard-summary-unit">Videos</span>
                         </div>
-                        <p class="text-body-sm font-bold text-blue-600 mt-3">Dalam periode aktif</p>
+                        <p class="text-body-sm font-bold text-amber mt-3">Dalam periode aktif</p>
                     </div>
                     <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                        <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-eye text-[120px]"></i></div>
-                        <p class="text-overline font-bold uppercase tracking-widest text-emerald-500 mb-3">Total Reach</p>
+                        <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-eye text-[120px]"></i></div>
+                        <p class="dashboard-summary-title">Total Reach</p>
                         <div class="flex items-baseline gap-2">
                             <span class="dashboard-summary-value">{{ formatNumber(editorDashboardData.totalViews) }}</span>
-                            <span class="dashboard-summary-unit text-emerald-400">Views</span>
+                            <span class="dashboard-summary-unit">Views</span>
                         </div>
-                        <p class="text-body-sm font-bold text-emerald-600 mt-3">Total views gabungan</p>
+                        <p class="text-body-sm font-bold text-success mt-3">Total views gabungan</p>
                     </div>
                     <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                        <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-trophy text-[120px]"></i></div>
-                        <p class="text-overline font-bold uppercase tracking-widest text-amber-500 mb-3">Top Editor</p>
+                        <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-trophy text-[120px]"></i></div>
+                        <p class="dashboard-summary-title">Top Editor</p>
                         <div class="flex items-baseline gap-2">
                             <span class="dashboard-summary-value">{{ editorDashboardData.leaderboard.length > 0 ? editorDashboardData.leaderboard[0].name : '-' }}</span>
                         </div>
-                        <p class="text-body-sm font-bold text-amber-600 mt-3">{{ editorDashboardData.leaderboard.length > 0 ? editorDashboardData.leaderboard[0].count + ' proyek | ' + formatNumber(editorDashboardData.leaderboard[0].views) + ' views' : 'Belum ada data' }}</p>
+                        <p class="text-body-sm font-bold text-amber mt-3">{{ editorDashboardData.leaderboard.length > 0 ? editorDashboardData.leaderboard[0].count + ' proyek | ' + formatNumber(editorDashboardData.leaderboard[0].views) + ' views' : 'Belum ada data' }}</p>
                     </div>
                 </div>
 
@@ -74,12 +74,12 @@
                 <section class="section-card section-card-body">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
                         <div class="modal-header-copy">
-                            <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
+                            <div class="w-12 h-12 rounded-2xl bg-amber text-light flex items-center justify-center border border-amber">
                                 <i class="fa-solid fa-clapperboard text-heading-lg"></i>
                             </div>
                             <div>
                                 <h2 class="type-heading-sm font-bold text-slate-900">Editor Performance</h2>
-                                <p class="text-body-sm text-blue-500 uppercase tracking-widest font-bold mt-0.5">
+                                <p class="text-body-sm text-amber uppercase tracking-widest font-bold mt-0.5">
                                     Creative Command | Live Metrics</p>
                             </div>
                         </div>
@@ -136,7 +136,7 @@
                         <div v-for="(editor, idx) in editorDashboardData.leaderboard" :key="editor.name"
                             class="flex items-center gap-3 py-3 border-b border-slate-50 last:border-0">
                             <div
-                                :class="['w-7 h-7 rounded-xl flex items-center justify-center text-body-sm font-extrabold shrink-0', idx === 0 ? 'bg-amber-400 text-white' : idx === 1 ? 'bg-slate-300 text-white' : idx === 2 ? 'bg-orange-400 text-white' : 'bg-slate-100 text-slate-500']">
+                                :class="['w-7 h-7 rounded-xl flex items-center justify-center text-body-sm font-extrabold shrink-0', idx === 0 ? 'bg-amber text-white' : idx === 1 ? 'bg-slate-300 text-white' : idx === 2 ? 'bg-amber text-white' : 'bg-secondary text-light']">
                                 {{ idx + 1 }}</div>
                             <div class="flex-1 min-w-0">
                                 <p class="text-body font-bold text-slate-800 uppercase truncate">{{ editor.name }}</p>
@@ -147,7 +147,7 @@
                                 <p class="text-overline-xs text-slate-400 font-bold uppercase">views</p>
                             </div>
                             <div
-                                :class="['w-14 text-center px-1.5 py-0.5 rounded-lg text-overline font-bold shrink-0', editor.avgScore >= 80 ? 'bg-red-100 text-red-600' : editor.avgScore >= 50 ? 'bg-emerald-100 text-emerald-600' : editor.avgScore >= 20 ? 'bg-amber-100 text-amber-600' : 'bg-slate-100 text-slate-500']">
+                                :class="['w-14 text-center px-1.5 py-0.5 rounded-lg text-overline font-bold shrink-0', editor.avgScore >= 80 ? 'bg-danger text-light' : editor.avgScore >= 50 ? 'bg-success text-light' : editor.avgScore >= 20 ? 'bg-amber text-light' : 'bg-secondary text-light']">
                                 {{ editor.avgScore }}
                             </div>
                         </div>
@@ -165,21 +165,16 @@
                         <div class="overflow-x-auto">
                             <table class="w-full text-body-sm text-left border-collapse min-w-[480px]">
                                 <thead class="bg-slate-50">
-                                    <tr>
-                                        <th
-                                            class="px-5 py-3 text-overline uppercase tracking-widest text-slate-400 font-bold">
+                                    <tr class="table-header-row">
+                                        <th class="table-header-cell">
                                             Tanggal</th>
-                                        <th
-                                            class="px-5 py-3 text-overline uppercase tracking-widest text-slate-400 font-bold">
+                                        <th class="table-header-cell">
                                             Proyek</th>
-                                        <th
-                                            class="px-5 py-3 text-overline uppercase tracking-widest text-slate-400 font-bold">
+                                        <th class="table-header-cell">
                                             Editor</th>
-                                        <th
-                                            class="px-5 py-3 text-overline uppercase tracking-widest text-slate-400 font-bold text-right">
+                                        <th class="table-header-cell text-right">
                                             Views</th>
-                                        <th
-                                            class="px-5 py-3 text-overline uppercase tracking-widest text-slate-400 font-bold text-center">
+                                        <th class="table-header-cell text-center">
                                             KPI</th>
                                     </tr>
                                 </thead>
@@ -197,14 +192,30 @@
                                             <p
                                                 class="text-body font-semibold text-slate-800 leading-tight line-clamp-2">
                                                 {{ video.Judul }}</p>
-                                            <p class="text-overline text-slate-400 mt-0.5">{{ video.Platforms }}
-                                            </p>
+                                            <div class="mt-1 flex items-center gap-2">
+                                                <i :class="getPlatformIcon((video.Platforms || '').split(',')[0]) + ' text-body text-slate-400'"></i>
+                                                <span class="text-body font-bold text-slate-700">{{ platformDisplayName(video.Platforms) }}</span>
+                                            </div>
                                         </td>
-                                        <td class="px-5 py-3 text-body font-bold text-slate-600 uppercase">{{ video.Editor }}</td>
+                                        <td class="px-5 py-3 text-left">
+                                            <div class="flex items-center gap-2">
+                                                <div
+                                                    class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-overline font-bold text-slate-600 flex-shrink-0 overflow-hidden">
+                                                    <img v-if="resolveUserAvatarUrl(video.Editor)"
+                                                        :src="resolveAvatarUrl(resolveUserAvatarUrl(video.Editor))"
+                                                        class="w-full h-full object-cover" alt="Foto Editor"
+                                                        @error="markMasterPlanEditorAvatarFailed(video.Editor)" />
+                                                    <span v-else>{{ masterPersonInitials(video.Editor) }}</span>
+                                                </div>
+                                                <div
+                                                    class="text-body text-slate-700 font-semibold truncate max-w-[80px]">
+                                                    {{ personDisplayName(video.Editor) }}</div>
+                                            </div>
+                                        </td>
                                         <td class="px-5 py-3 text-right text-body font-bold text-slate-700">{{ formatNumber(video.totalViews) }}</td>
                                         <td class="px-5 py-3 text-center">
                                             <span
-                                                :class="['inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-overline font-bold', getVelocity(video).label === 'Viral' ? 'bg-red-100 text-red-600' : getVelocity(video).label === 'High' ? 'bg-emerald-100 text-emerald-600' : getVelocity(video).label === 'Avg' ? 'bg-amber-100 text-amber-600' : getVelocity(video).label === 'New' ? 'bg-slate-100 text-slate-500' : 'bg-violet-100 text-violet-600']">
+                                                :class="['inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-overline font-bold', getVelocity(video).label === 'Viral' ? 'bg-danger text-light' : getVelocity(video).label === 'High' ? 'bg-success text-light' : getVelocity(video).label === 'Avg' ? 'bg-amber text-light' : getVelocity(video).label === 'New' ? 'bg-secondary text-light' : 'bg-secondary text-light']">
                                                 <i :class="getVelocity(video).icon + ' text-overline-xs'"></i> {{ getVelocity(video).label }}
                                             </span>
                                         </td>

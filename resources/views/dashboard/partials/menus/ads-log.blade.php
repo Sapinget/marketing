@@ -28,39 +28,39 @@
             <div v-if="activeTab === 'ads_log' && tabDataLoaded['ads']" class="space-y-6 animate-fadeIn pb-10">
 
                 <!-- Summary Cards (di atas judul, konsisten) -->
-                <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
                     <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                        <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-rectangle-ad text-[120px]"></i></div>
-                        <p class="text-overline font-bold uppercase tracking-widest text-blue-500 mb-3">Total Iklan</p>
+                        <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-rectangle-ad text-[120px]"></i></div>
+                        <p class="dashboard-summary-title">Total Iklan</p>
                         <div class="flex items-baseline gap-2">
                             <span class="dashboard-summary-value">{{ filteredAdsData.length }}</span>
-                            <span class="dashboard-summary-unit text-blue-400">Iklan</span>
+                            <span class="dashboard-summary-unit">Iklan</span>
                         </div>
-                        <p class="text-body-sm font-bold text-blue-600 mt-3">Dalam periode aktif</p>
+                        <p class="text-body-sm font-bold text-amber mt-3">Dalam periode aktif</p>
                     </div>
                     <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                        <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-money-bill-wave text-[120px]"></i></div>
-                        <p class="text-overline font-bold uppercase tracking-widest text-amber-500 mb-3">Total Spent</p>
+                        <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-money-bill-wave text-[120px]"></i></div>
+                        <p class="dashboard-summary-title">Total Spent</p>
                         <div class="flex items-baseline gap-2">
                             <span class="dashboard-summary-value">{{ formatCurrency(filteredAdsData.reduce((s, r) => s + (Number(r.Biaya)||0), 0)) }}</span>
                         </div>
-                        <p class="text-body-sm font-bold text-amber-600 mt-3">Total biaya iklan</p>
+                        <p class="text-body-sm font-bold text-amber mt-3">Total biaya iklan</p>
                     </div>
                     <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                        <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-bullhorn text-[120px]"></i></div>
-                        <p class="text-overline font-bold uppercase tracking-widest text-emerald-500 mb-3">Total Reach</p>
+                        <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-bullhorn text-[120px]"></i></div>
+                        <p class="dashboard-summary-title">Total Reach</p>
                         <div class="flex items-baseline gap-2">
                             <span class="dashboard-summary-value">{{ filteredAdsData.reduce((s, r) => s + (Number(r.Jangkauan)||0), 0).toLocaleString('id') }}</span>
                         </div>
-                        <p class="text-body-sm font-bold text-emerald-600 mt-3">Jangkauan total</p>
+                        <p class="text-body-sm font-bold text-success mt-3">Jangkauan total</p>
                     </div>
                     <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                        <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-star text-[120px]"></i></div>
-                        <p class="text-overline font-bold uppercase tracking-widest text-violet-500 mb-3">Avg Score</p>
+                        <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-star text-[120px]"></i></div>
+                        <p class="dashboard-summary-title">Avg Score</p>
                         <div class="flex items-baseline gap-2">
                             <span class="dashboard-summary-value">{{ filteredAdsData.length ? Math.round(filteredAdsData.reduce((s, r) => s + (Number(r.Rata_Komentar)||0), 0) / filteredAdsData.length) : 0 }}</span>
                         </div>
-                        <p class="text-body-sm font-bold text-violet-600 mt-3">Rata-rata komentar</p>
+                        <p class="text-body-sm font-bold text-slate-600 mt-3">Rata-rata komentar</p>
                     </div>
                 </div>
 
@@ -77,7 +77,7 @@
                             :style="getStaggerStyle(idx)">
                             <div class="mobile-data-card__header">
                                 <span
-                                    class="px-2.5 py-1 rounded-full text-overline font-bold uppercase tracking-wider bg-blue-50 text-blue-700">
+                                    class="px-2.5 py-1 rounded-full text-overline font-bold uppercase tracking-wider bg-amber text-light">
                                     {{ row.Kategori || '-' }}
                                 </span>
                                 <span class="type-body-sm text-slate-400 font-bold uppercase tracking-widest">
@@ -87,12 +87,12 @@
                             <div>
                                 <p class="mobile-data-card__title line-clamp-2">{{ row.Nama || '-' }}</p>
                                 <div class="mobile-data-card__meta mt-2">
+                                    <div class="flex items-center gap-2">
+                                        <i :class="getPlatformIcon(row.Platform || 'Ads') + ' text-body text-slate-400'"></i>
+                                        <span class="text-body font-bold text-slate-700">{{ platformDisplayName(row.Platform || 'Ads') }}</span>
+                                    </div>
                                     <span
-                                        class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-overline font-bold uppercase">
-                                        {{ row.Platform || 'Ads' }}
-                                    </span>
-                                    <span
-                                        class="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 text-overline font-bold uppercase">
+                                        class="px-2.5 py-1 rounded-lg bg-amber text-light text-overline font-bold uppercase">
                                         {{ row.ID_Ads || 'Tanpa ID' }}
                                     </span>
                                 </div>
@@ -100,7 +100,7 @@
                             <div class="mobile-data-card__summary">
                                 <div>
                                     <div class="type-body-sm text-slate-400 uppercase">Spend</div>
-                                    <div class="type-body font-bold text-blue-600">{{ formatCurrency(row.Biaya||0) }}
+                                    <div class="type-body font-bold text-amber">{{ formatCurrency(row.Biaya||0) }}
                                     </div>
                                 </div>
                                 <div>
@@ -110,17 +110,17 @@
                             </div>
                             <div class="mobile-data-card__actions">
                                 <div class="type-body-sm font-bold"
-                                    :class="(Number(row.Rata_Komentar)||0) >= 70 ? 'text-emerald-600' : (Number(row.Rata_Komentar)||0) >= 40 ? 'text-amber-500' : 'text-slate-400'">
+                                    :class="(Number(row.Rata_Komentar)||0) >= 70 ? 'text-success' : (Number(row.Rata_Komentar)||0) >= 40 ? 'text-amber' : 'text-slate-400'">
                                     Score {{ Number(row.Rata_Komentar)||0 }}
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <button @click="openAdsModal('edit', row)"
                                         class="table-action-button table-action-compact" title="Edit"
-                                        aria-label="Edit"><i class="fa-solid fa-pen text-body-sm"></i></button>
+                                        aria-label="Edit"><i class="fa-solid fa-pen-to-square text-body-sm"></i></button>
                                     <button @click="deleteAdsRow(row.ID)"
                                         class="table-action-button table-action-compact table-action-danger"
                                         title="Hapus" aria-label="Hapus"><i
-                                            class="fa-solid fa-trash text-body-sm"></i></button>
+                                            class="fa-solid fa-trash-can text-body-sm"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -160,7 +160,7 @@
                                         - {{ adsDateFilter.end ? formatShortDate(adsDateFilter.end) : '...' }}</template>
                                     <template v-else>Semua Tanggal</template>
                                     <i v-if="adsDateFilter.start" @click.stop="adsDateFilter = {start:'',end:''}"
-                                        class="fa-solid fa-xmark text-overline text-slate-400 hover:text-rose-500 ml-1"></i>
+                                        class="fa-solid fa-xmark text-overline text-slate-400 hover:text-danger ml-1"></i>
                                 </button>
                             </div>
                             <div class="toolbar-actions">
@@ -168,7 +168,7 @@
                                     class="primary-cta-button primary-cta-button--accent active:scale-95"><i
                                         class="fa-solid fa-plus text-overline"></i> Tambah</button>
                                 <button @click="exportAdsLogToPDF"
-                                    class="secondary-cta-button secondary-cta-danger active:scale-95"><i
+                                    class="primary-cta-button primary-cta-button--danger active:scale-95"><i
                                         class="fa-solid fa-file-pdf text-[9px]"></i><span
                                         class="ml-1">PDF</span></button>
                             </div>
@@ -177,28 +177,38 @@
                     <div class="overflow-x-auto">
                         <table class="w-full text-body-sm text-left border-collapse min-w-[900px]">
                             <thead>
-                                <tr
-                                    class="border-b border-slate-100 text-body-sm font-bold uppercase tracking-widest text-slate-400">
-                                    <th class="px-4 py-3 text-center w-12">#</th>
-                                    <th class="px-4 py-3">Nama Iklan</th>
-                                    <th class="px-4 py-3 text-center w-28">ID Ads</th>
-                                    <th class="px-4 py-3 text-center w-24">Reach</th>
-                                    <th class="px-4 py-3 text-center w-20">Score</th>
-                                    <th class="px-4 py-3 text-center w-24">Tanggal</th>
-                                    <th class="px-4 py-3 text-center w-28">Biaya</th>
-                                    <th class="px-4 py-3 text-center w-28">Sisa Saldo</th>
-                                    <th class="px-4 py-3 text-center w-36 whitespace-nowrap">Kategori</th>
-                                    <th class="px-4 py-3 text-right w-24">Aksi</th>
+                                <tr class="table-header-row">
+                                    <th class="table-header-cell table-header-index table-freeze-index">#</th>
+                                    <th class="table-header-cell table-header-action table-freeze-action">Aksi</th>
+                                    <th class="table-header-cell">Nama Iklan</th>
+                                    <th class="table-header-cell text-center w-28">ID Ads</th>
+                                    <th class="table-header-cell text-center w-24">Reach</th>
+                                    <th class="table-header-cell text-center w-20">Score</th>
+                                    <th class="table-header-cell text-center w-24">Tanggal</th>
+                                    <th class="table-header-cell text-center w-28">Biaya</th>
+                                    <th class="table-header-cell text-center w-28">Sisa Saldo</th>
+                                    <th class="table-header-cell text-center w-36">Kategori</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr v-if="pagedAdsData.length === 0">
-                                    <td colspan="9" class="px-4 py-12 text-center text-body text-slate-400">
+                                    <td colspan="10" class="px-4 py-12 text-center text-body text-slate-400">
                                         Belum ada data iklan</td>
                                 </tr>
                                 <tr v-for="(row, idx) in pagedAdsData" :key="row.ID"
                                     class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                                    <td class="px-4 py-3 text-center text-body text-slate-400">{{ (adsPage - 1) * 20 + idx + 1 }}</td>
+                                    <td class="px-4 py-3 text-center text-body text-slate-400 table-freeze-index">{{ (adsPage - 1) * 20 + idx + 1 }}</td>
+                                    <td class="px-4 py-3 table-freeze-action">
+                                        <div class="flex items-center gap-1.5">
+                                            <button @click="openAdsModal('edit', row)"
+                                                class="table-action-button table-action-compact" title="Edit"
+                                                aria-label="Edit"><i class="fa-solid fa-pen-to-square text-body-sm"></i></button>
+                                            <button @click="deleteAdsRow(row.ID)"
+                                                class="table-action-button table-action-compact table-action-danger"
+                                                title="Hapus" aria-label="Hapus"><i
+                                                    class="fa-solid fa-trash-can text-body-sm"></i></button>
+                                        </div>
+                                    </td>
                                     <td class="px-4 py-3">
                                         <p class="font-semibold text-slate-800 uppercase text-body-sm">{{ row.Nama }}</p>
                                     </td>
@@ -209,26 +219,15 @@
                                     <td class="px-4 py-3 text-center text-body font-bold text-slate-600">{{ (Number(row.Jangkauan)||0).toLocaleString('id') }}</td>
                                     <td class="px-4 py-3 text-center">
                                         <span class="text-heading-sm font-bold"
-                                            :class="(Number(row.Rata_Komentar)||0) >= 70 ? 'text-emerald-600' : (Number(row.Rata_Komentar)||0) >= 40 ? 'text-amber-500' : 'text-slate-400'">{{ Number(row.Rata_Komentar)||0 }}</span>
+                                            :class="(Number(row.Rata_Komentar)||0) >= 70 ? 'text-success' : (Number(row.Rata_Komentar)||0) >= 40 ? 'text-amber' : 'text-slate-400'">{{ Number(row.Rata_Komentar)||0 }}</span>
                                     </td>
                                     <td class="px-4 py-3 text-center text-body text-slate-500">{{ formatShortDate(row.Tanggal) }}</td>
-                                    <td class="px-4 py-3 text-center text-body font-bold text-blue-600">{{ formatCurrency(row.Biaya||0) }}</td>
-                                    <td class="px-4 py-3 text-center text-body font-bold text-emerald-600">{{ formatCurrency(row.Sisa_Saldo||0) }}</td>
+                                    <td class="px-4 py-3 text-center text-body font-bold text-amber">{{ formatCurrency(row.Biaya||0) }}</td>
+                                    <td class="px-4 py-3 text-center text-body font-bold text-success">{{ formatCurrency(row.Sisa_Saldo||0) }}</td>
                                     <td class="px-4 py-3 text-center whitespace-nowrap">
                                         <span v-if="row.Kategori"
-                                            class="inline-flex items-center justify-center px-2.5 py-1 rounded-lg bg-amber-50 text-amber-700 text-[9px] font-bold uppercase whitespace-nowrap">{{ row.Kategori }}</span>
+                                            class="inline-flex items-center justify-center px-2.5 py-1 rounded-lg bg-amber text-light text-[9px] font-bold uppercase whitespace-nowrap">{{ row.Kategori }}</span>
                                         <span v-else class="text-body-sm text-slate-300 italic">-</span>
-                                    </td>
-                                    <td class="px-4 py-3 text-right">
-                                        <div class="flex items-center justify-end gap-1.5">
-                                            <button @click="openAdsModal('edit', row)"
-                                                class="table-action-button table-action-compact" title="Edit"
-                                                aria-label="Edit"><i class="fa-solid fa-pen text-body-sm"></i></button>
-                                            <button @click="deleteAdsRow(row.ID)"
-                                                class="table-action-button table-action-compact table-action-danger"
-                                                title="Hapus" aria-label="Hapus"><i
-                                                    class="fa-solid fa-trash text-body-sm"></i></button>
-                                        </div>
                                     </td>
                                 </tr>
                             </tbody>

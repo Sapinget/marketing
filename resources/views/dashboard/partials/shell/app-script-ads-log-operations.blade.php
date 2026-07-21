@@ -20,10 +20,10 @@
 
                 const adsPlatformColor = (platform) => {
                     const p = (platform || '').toLowerCase();
-                    if (p === 'meta') return 'bg-blue-100 text-blue-700';
-                    if (p === 'google') return 'bg-red-100 text-red-700';
-                    if (p === 'mekari') return 'bg-teal-100 text-teal-700';
-                    return 'bg-slate-100 text-slate-600';
+                    if (p === 'meta') return 'bg-amber text-light';
+                    if (p === 'google') return 'bg-danger text-light';
+                    if (p === 'mekari') return 'bg-info text-light';
+                    return 'bg-secondary text-light';
                 };
 
                 const filteredAdsData = computed(() => {

@@ -3,9 +3,12 @@
 .env
 .env.backup
 .env.production
+.claude/settings.json
 .phpactor.json
 .phpunit.result.cache
-/.codex
+/.codex/*
+!/.codex/
+!/.codex/AGENTS.md
 /.cursor/
 /.idea
 /.nova
@@ -14,11 +17,14 @@
 /.zed
 /auth.json
 /node_modules
+/.pnpm-store/
 /public/build/*
 !/public/build/.gitignore
 /public/fonts-manifest.dev.json
 /public/hot
 /public/storage
+/public/adminer.php
+/public/pma
 /storage/*.key
 /storage/pail
 /var/folders/
@@ -35,7 +41,9 @@ storage/app-frame-expanded.html
 *.png
 
 # Dev tooling
-/.opencode/
+/.opencode/*
+!/.opencode/
+!/.opencode/AI_WORKSPACE.md
 /prompts.chat/
 /bootstrap/dev/
 

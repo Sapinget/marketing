@@ -1,7 +1,7 @@
 @verbatim
                 <!-- Dashboard Menu -->
                 <div v-if="!isTeknisi" @click="switchTab('dashboard')"
-                    :class="['flex items-center justify-between px-5 py-3 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'dashboard' ? 'sidebar-nav-item-active bg-gradient-to-r from-ppp-accent to-[#3D4FDB] text-white' : 'text-slate-500 hover:bg-slate-50']">
+                    :class="['flex items-center justify-between px-5 py-3 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'dashboard' ? 'sidebar-nav-item-active bg-gradient-to-r from-ppp-accent to-[#3D4FDB] text-white' : 'nav-idle']">
                     <div v-if="activeTab === 'dashboard'"
                         class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
                     </div>
@@ -15,7 +15,7 @@
                 <!-- Konten Accordion -->
                 <div v-if="!isTeknisi" class="select-none">
                     <div @click="toggleMenuGroup('konten')"
-                        :class="['flex items-center justify-between px-5 py-3 cursor-pointer group transition-all duration-300', ['master','ideation','distribution','analytics','calendar','story','unboxing'].includes(activeTab) ? 'text-ppp-accent' : 'text-slate-500 hover:bg-slate-50']">
+                        :class="['flex items-center justify-between px-5 py-3 cursor-pointer group transition-all duration-300', ['master','ideation','distribution','analytics','calendar','story','unboxing'].includes(activeTab) ? 'nav-accordion-active' : 'nav-idle']">
                         <div class="flex items-center gap-3">
                             <i
                                 class="fa-solid fa-folder-open text-body w-4 text-center transition-transform duration-300 group-hover:scale-110"></i>
@@ -28,7 +28,7 @@
                     <transition name="sidebar-accordion">
                         <div v-show="kontenOpen" class="sidebar-accordion-panel">
                             <div @click="switchTab('master')"
-                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'master' ? 'sidebar-nav-item-active bg-gradient-to-r from-ppp-accent to-[#3D4FDB] text-white' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600']">
+                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'master' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
                                 <div v-if="activeTab === 'master'"
                                     class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
                                 </div>
@@ -37,7 +37,7 @@
                                 <span class="type-body-sm font-medium tracking-wide relative z-10">Master Plan</span>
                             </div>
                             <div @click="switchTab('unboxing')"
-                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'unboxing' ? 'sidebar-nav-item-active bg-gradient-to-r from-ppp-accent to-[#3D4FDB] text-white' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600']">
+                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'unboxing' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
                                 <div v-if="activeTab === 'unboxing'"
                                     class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
                                 </div>
@@ -46,7 +46,7 @@
                                 <span class="type-body-sm font-medium tracking-wide relative z-10">Unboxing</span>
                             </div>
                             <div @click="switchTab('ideation')"
-                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'ideation' ? 'sidebar-nav-item-active bg-gradient-to-r from-ppp-accent to-[#3D4FDB] text-white' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600']">
+                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'ideation' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
                                 <div v-if="activeTab === 'ideation'"
                                     class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
                                 </div>
@@ -55,7 +55,7 @@
                                 <span class="type-body-sm font-medium tracking-wide relative z-10">Ideation</span>
                             </div>
                             <div @click="switchTab('distribution')"
-                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'distribution' ? 'sidebar-nav-item-active bg-gradient-to-r from-ppp-accent to-[#3D4FDB] text-white' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600']">
+                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'distribution' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
                                 <div v-if="activeTab === 'distribution'"
                                     class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
                                 </div>
@@ -64,7 +64,7 @@
                                 <span class="type-body-sm font-medium tracking-wide relative z-10">Distribution</span>
                             </div>
                             <div @click="switchTab('analytics')"
-                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'analytics' ? 'sidebar-nav-item-active bg-gradient-to-r from-ppp-accent to-[#3D4FDB] text-white' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600']">
+                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'analytics' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
                                 <div v-if="activeTab === 'analytics'"
                                     class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
                                 </div>
@@ -73,16 +73,16 @@
                                 <span class="type-body-sm font-medium tracking-wide relative z-10">Analytics</span>
                             </div>
                             <div @click="switchTab('calendar')"
-                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'calendar' ? 'sidebar-nav-item-active bg-gradient-to-r from-ppp-accent to-[#3D4FDB] text-white' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600']">
+                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'calendar' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
                                 <div v-if="activeTab === 'calendar'"
                                     class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
                                 </div>
                                 <i
-                                    class="fa-solid fa-calendar-alt text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
+                                    class="fa-solid fa-calendar-days text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
                                 <span class="type-body-sm font-medium tracking-wide relative z-10">Kalender</span>
                             </div>
                             <div @click="switchTab('story')"
-                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'story' ? 'sidebar-nav-item-active bg-gradient-to-r from-ppp-accent to-[#3D4FDB] text-white' : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600']">
+                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'story' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
                                 <div v-if="activeTab === 'story'"
                                     class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
                                 </div>

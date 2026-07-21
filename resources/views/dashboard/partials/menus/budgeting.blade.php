@@ -10,7 +10,7 @@
                             <div class="h-3 bg-slate-100 rounded-full w-56"></div>
                         </div>
                     </div>
-                    <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                    <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
                         <div v-for="i in 4" :key="'sk-bg-st'+i"
                             class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
                             <div class="h-3 bg-slate-200 rounded-full w-20 mb-2"></div>
@@ -31,7 +31,7 @@
                 <section class="section-card section-card-body">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
                         <div class="modal-header-copy">
-                            <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
+                            <div class="w-12 h-12 rounded-2xl bg-amber text-light flex items-center justify-center border border-amber">
                                 <i class="fa-solid fa-wallet text-heading-lg"></i>
                             </div>
                             <div>
@@ -42,13 +42,13 @@
                         </div>
                         <div class="toolbar-actions">
                             <button @click="exportBudgetToExcel"
-                                class="secondary-cta-button secondary-cta-success active:scale-95"><i
+                                class="primary-cta-button primary-cta-button--success active:scale-95"><i
                                     class="fa-solid fa-file-excel text-[9px]"></i> Excel</button>
                             <button @click="exportBudgetToPDF"
-                                class="secondary-cta-button secondary-cta-danger active:scale-95"><i
+                                class="primary-cta-button primary-cta-button--danger active:scale-95"><i
                                     class="fa-solid fa-file-pdf text-[9px]"></i> PDF</button>
                             <button @click="showBudgetSettings = !showBudgetSettings"
-                                class="secondary-cta-button secondary-cta-neutral active:scale-95"><i
+                                class="primary-cta-button primary-cta-button--neutral active:scale-95"><i
                                     class="fa-solid fa-sliders text-overline"></i> Atur</button>
                         </div>
                     </div>
@@ -69,11 +69,11 @@
                                 <template v-else>Pilih Periode</template>
                                 <i v-if="budgetDateFilter.start"
                                     @click.stop="budgetDateFilter = { start: '', end: '' }"
-                                    class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-red-500"></i>
+                                    class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-danger"></i>
                             </button>
                         </div>
                         <button @click="budgetDateFilter = { start: '', end: '' }"
-                            class="secondary-cta-button secondary-cta-neutral" title="Reset"><i
+                            class="primary-cta-button primary-cta-button--neutral" title="Reset"><i
                                 class="fa-solid fa-rotate-left text-body-sm"></i><span>Reset</span></button>
                     </div>
                 </div>
@@ -208,8 +208,8 @@
                                     class="w-full text-body bg-white border border-slate-200 rounded-lg p-2 outline-none" />
                             </div>
                             <button @click="budgetConfig.colabPartners.splice(idx, 1)"
-                                class="absolute -top-2 -right-2 bg-rose-500 text-white h-5 w-5 rounded-full text-body-sm flex items-center justify-center"><i
-                                    class="fa-solid fa-times"></i></button>
+                                class="absolute -top-2 -right-2 bg-danger text-white h-5 w-5 rounded-full text-body-sm flex items-center justify-center"><i
+                                    class="fa-solid fa-xmark"></i></button>
                         </div>
                         <div v-if="!budgetConfig.colabPartners || budgetConfig.colabPartners.length === 0"
                             class="text-center py-4 text-body-sm text-slate-400 italic bg-slate-50 rounded-xl border border-dashed border-slate-200">
@@ -247,8 +247,8 @@
                                     class="w-full text-body bg-white border border-slate-200 rounded-lg p-2 outline-none" />
                             </div>
                             <button @click="budgetConfig.others.splice(idx, 1)"
-                                class="absolute -top-2 -right-2 bg-rose-500 text-white h-5 w-5 rounded-full text-body-sm flex items-center justify-center"><i
-                                    class="fa-solid fa-times"></i></button>
+                                class="absolute -top-2 -right-2 bg-danger text-white h-5 w-5 rounded-full text-body-sm flex items-center justify-center"><i
+                                    class="fa-solid fa-xmark"></i></button>
                         </div>
                         <div v-if="budgetConfig.others.length === 0"
                             class="text-center py-4 text-body-sm text-slate-400 italic bg-slate-50 rounded-xl border border-dashed border-slate-200">
@@ -256,7 +256,7 @@
                     </div>
                     <div class="flex justify-end pt-2 border-t border-slate-100">
                         <button @click="saveBudgetServer" :disabled="submitting"
-                            class="px-5 py-2.5 bg-ppp-accent text-white rounded-xl text-body font-bold flex items-center gap-2 hover:bg-ppp-accent-dark transition disabled:opacity-50">
+                            class="px-5 py-2.5 bg-ppp-accent text-white rounded-xl text-body font-bold flex items-center gap-2 hover:bg-amber transition disabled:opacity-50">
                             <i v-if="!submitting" class="fa-solid fa-floppy-disk"></i>
                             <i v-else class="fa-solid fa-circle-notch fa-spin"></i>
                             {{ submitting ? 'Menyimpan...' : 'Simpan Konfigurasi' }}
@@ -265,13 +265,13 @@
                 </div>
 
                 <!-- Summary cards (compact) -->
-                <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                    <div v-for="c in budgetSummary.cards" :key="c.label" class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                        <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i :class="[c.iconPrefix || 'fa-solid', c.icon, 'text-[120px]']"></i></div>
-                        <p :class="['text-overline font-bold uppercase tracking-widest mb-3', c.color]">{{ c.label }}</p>
+                <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
+                    <div v-for="c in budgetSummary.cards.slice(0, 5)" :key="c.label" class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
+                        <div class="absolute -right-4 -bottom-4 opacity-5"><i :class="[c.iconPrefix || 'fa-solid', c.icon, 'text-[120px]']"></i></div>
+                        <p class="dashboard-summary-title">{{ c.label }}</p>
                         <div class="flex items-baseline gap-2">
                             <span class="dashboard-summary-value">{{ c.value }}</span>
-                            <span v-if="c.unit" :class="['dashboard-summary-unit', c.unitColor]">{{ c.unit }}</span>
+                            <span v-if="c.unit" class="dashboard-summary-unit">{{ c.unit }}</span>
                         </div>
                         <p :class="['text-body-sm font-bold mt-3', c.subColor]">{{ c.sub }}</p>
                     </div>
@@ -290,7 +290,7 @@
                     <div class="modal-header-bar radius-sheet-top">
                         <div class="modal-header-copy">
                             <div
-                                class="modal-header-icon bg-blue-50 text-blue-600">
+                                class="modal-header-icon bg-amber text-light">
                                 <i class="fa-solid fa-calculator"></i>
                             </div>
                             <div>
@@ -302,12 +302,111 @@
                             class="icon-utility-button icon-utility-danger"><i
                                 class="fa-solid fa-xmark text-sm"></i></button>
                     </div>
-                    <div class="flex-1 overflow-y-auto p-6 space-y-4">
-                        <div>
-                            <label for="harga-kompetitor-nama-produk" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Nama
-                                Produk</label>
-                            <input id="harga-kompetitor-nama-produk" name="harga_kompetitor_nama_produk" v-model="hargaKompetitorForm.Nama_Produk" type="text" class="form-input-compact"
-                                placeholder="Contoh: Samsung S24 Ultra 256GB" />
+                    <div class="harga-kompetitor-modal-body flex-1 overflow-y-auto p-4 space-y-3">
+                        <label for="harga-kompetitor-nama-produk" class="sr-only">Nama Produk</label>
+                        <input id="harga-kompetitor-nama-produk" name="harga_kompetitor_nama_produk" type="hidden"
+                            :value="[hargaKompetitorForm.BRAND, hargaKompetitorForm.SERI, hargaKompetitorForm.RAM, hargaKompetitorForm.INTERNAL, hargaKompetitorForm.SIZE, hargaKompetitorForm.WARNA].filter(Boolean).join(' ') || hargaKompetitorForm.Nama_Produk || ''" />
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Kategori</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'harga_kategori')"
+                                    :aria-expanded="searchSelectOpen === 'harga_kategori' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span :class="hargaKompetitorForm.KATEGORI ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ hargaKompetitorForm.KATEGORI || 'Pilih kategori' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'harga_kategori'" :style="popoverStyle" class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="harga_kategori_search" autocomplete="off" aria-label="Cari kategori harga" placeholder="Cari kategori..." class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in hargaKategoriOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))" :key="opt"
+                                                @click="hargaKompetitorForm.KATEGORI = opt; hargaKompetitorForm.BRAND = ''; hargaKompetitorForm.SERI = ''; searchSelectOpen = null"
+                                                :class="['popover-option', hargaKompetitorForm.KATEGORI === opt ? 'popover-option-active' : '']">{{ opt }}</div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Brand</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'harga_brand')"
+                                    :aria-expanded="searchSelectOpen === 'harga_brand' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span :class="hargaKompetitorForm.BRAND ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ hargaKompetitorForm.BRAND || 'Pilih brand' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'harga_brand'" :style="popoverStyle" class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="harga_brand_search" autocomplete="off" aria-label="Cari brand harga" placeholder="Cari brand..." class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in hargaBrandOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))" :key="opt"
+                                                @click="hargaKompetitorForm.BRAND = opt; hargaKompetitorForm.SERI = ''; searchSelectOpen = null"
+                                                :class="['popover-option', hargaKompetitorForm.BRAND === opt ? 'popover-option-active' : '']">{{ opt }}</div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Seri</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'harga_seri')"
+                                    :aria-expanded="searchSelectOpen === 'harga_seri' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span :class="hargaKompetitorForm.SERI ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ hargaKompetitorForm.SERI || 'Pilih seri' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'harga_seri'" :style="popoverStyle" class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="harga_seri_search" autocomplete="off" aria-label="Cari seri harga" placeholder="Cari seri..." class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in hargaSeriOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))" :key="opt"
+                                                @click="hargaKompetitorForm.SERI = opt; searchSelectOpen = null"
+                                                :class="['popover-option', hargaKompetitorForm.SERI === opt ? 'popover-option-active' : '']">{{ opt }}</div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div>
+                                <label for="harga-kompetitor-warna" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Warna</label>
+                                <input id="harga-kompetitor-warna" name="harga_kompetitor_warna" v-model="hargaKompetitorForm.WARNA" type="text" class="form-input-compact" placeholder="Warna" />
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2.5">
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">RAM</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'harga_ram')" :aria-expanded="searchSelectOpen === 'harga_ram' ? 'true' : 'false'" class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span :class="hargaKompetitorForm.RAM ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ hargaKompetitorForm.RAM || 'RAM' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade"><div v-if="searchSelectOpen === 'harga_ram'" :style="popoverStyle" class="search-select-popover"><div class="max-h-48 overflow-y-auto custom-scrollbar"><div v-for="opt in hargaRAMOptions" :key="opt" @click="hargaKompetitorForm.RAM = opt; searchSelectOpen = null" :class="['popover-option', hargaKompetitorForm.RAM === opt ? 'popover-option-active' : '']">{{ opt }}</div></div></div></transition>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Internal</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'harga_internal')" :aria-expanded="searchSelectOpen === 'harga_internal' ? 'true' : 'false'" class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span :class="hargaKompetitorForm.INTERNAL ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ hargaKompetitorForm.INTERNAL || 'Internal' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade"><div v-if="searchSelectOpen === 'harga_internal'" :style="popoverStyle" class="search-select-popover"><div class="max-h-48 overflow-y-auto custom-scrollbar"><div v-for="opt in hargaInternalOptions" :key="opt" @click="hargaKompetitorForm.INTERNAL = opt; searchSelectOpen = null" :class="['popover-option', hargaKompetitorForm.INTERNAL === opt ? 'popover-option-active' : '']">{{ opt }}</div></div></div></transition>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Size</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'harga_size')" :aria-expanded="searchSelectOpen === 'harga_size' ? 'true' : 'false'" class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span :class="hargaKompetitorForm.SIZE ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ hargaKompetitorForm.SIZE || 'Size' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade"><div v-if="searchSelectOpen === 'harga_size'" :style="popoverStyle" class="search-select-popover"><div class="max-h-48 overflow-y-auto custom-scrollbar"><div v-for="opt in hargaSizeOptions" :key="opt" @click="hargaKompetitorForm.SIZE = opt; searchSelectOpen = null" :class="['popover-option', hargaKompetitorForm.SIZE === opt ? 'popover-option-active' : '']">{{ opt }}</div></div></div></transition>
+                            </div>
+                        </div>
+                        <div class="harga-kompetitor-info-card bg-slate-50 p-2.5 rounded-xl text-body text-slate-600">
+                            <span class="font-bold">Nama Produk: </span>
+                            <span class="font-semibold text-slate-800">{{ [hargaKompetitorForm.BRAND, hargaKompetitorForm.SERI, hargaKompetitorForm.RAM, hargaKompetitorForm.INTERNAL, hargaKompetitorForm.SIZE, hargaKompetitorForm.WARNA].filter(Boolean).join(' ') || hargaKompetitorForm.Nama_Produk || '-' }}</span>
                         </div>
                         <div>
                             <label class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Tanggal
@@ -319,7 +418,7 @@
                                     :class="hargaKompetitorForm.Tanggal_Cek ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ hargaKompetitorForm.Tanggal_Cek || 'Pilih tanggal' }}</span>
                             </button>
                         </div>
-                        <div class="grid grid-cols-2 gap-3">
+                        <div class="grid grid-cols-2 gap-2.5">
                             <div>
                                 <label for="harga-kompetitor-distributor-1" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Harga
                                     Distributor 1</label>
@@ -333,7 +432,7 @@
                                     class="form-input-compact" />
                             </div>
                         </div>
-                        <div class="grid grid-cols-2 gap-3">
+                        <div class="grid grid-cols-2 gap-2.5">
                             <div>
                                 <label for="harga-kompetitor-kompetitor" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Harga
                                     Kompetitor</label>
@@ -347,22 +446,53 @@
                                     class="form-input-compact" />
                             </div>
                         </div>
-                        <div>
-                            <label for="harga-kompetitor-margin-profit" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Margin
-                                Profit</label>
-                            <input id="harga-kompetitor-margin-profit" name="harga_kompetitor_margin_profit" v-model.number="hargaKompetitorForm.Margin_Profit" type="number"
-                                class="form-input-compact" />
+                        <div class="harga-kompetitor-info-card bg-slate-50 p-2.5 rounded-xl text-body text-slate-600">
+                            <span class="font-bold">Margin Profit Otomatis: </span>
+                            <span
+                                :class="hargaKompetitorCalculatedMargin >= 0 ? 'text-success font-bold' : 'text-danger font-bold'">
+                                {{ formatCurrency(hargaKompetitorCalculatedMargin) }}
+                            </span>
+                            <div class="type-body-sm text-slate-400 mt-1">
+                                Dihitung dari Harga Rencana Jual - harga distributor tertinggi.
+                            </div>
+                        </div>
+                        <div class="harga-kompetitor-info-card rounded-xl border border-slate-100 bg-slate-50 p-2.5">
+                            <div class="flex items-start justify-between gap-2.5">
+                                <div class="min-w-0">
+                                    <div class="type-body-sm font-bold uppercase tracking-[0.18em] text-slate-400">Saran Harga</div>
+                                    <div class="mt-1 text-heading-sm font-bold text-slate-900">
+                                        {{ hargaKompetitorSuggestion.canSuggest ? formatCurrency(hargaKompetitorSuggestion.suggestedPrice) : '-' }}
+                                    </div>
+                                    <div class="mt-1 text-body-sm leading-relaxed text-slate-500">
+                                        <template v-if="hargaKompetitorSuggestion.canSuggest">
+                                            <template v-if="hargaKompetitorSuggestion.useCompetitiveSuggestion">
+                                                Kompetitor - Rp100.000, margin kompetitor {{ formatCurrency(hargaKompetitorSuggestion.competitorProfit) }}, estimasi profit {{ formatCurrency(hargaKompetitorSuggestion.suggestedProfit) }}.
+                                            </template>
+                                            <template v-else>
+                                                Modal + Rp100.000, karena margin kompetitor {{ formatCurrency(hargaKompetitorSuggestion.competitorProfit) }} <= Rp200.000.
+                                            </template>
+                                        </template>
+                                        <template v-else-if="!hargaKompetitorSuggestion.competitorPrice || !hargaKompetitorSuggestion.distributorCost">
+                                            Isi harga distributor dan kompetitor untuk menghitung saran.
+                                        </template>
+                                    </div>
+                                </div>
+                                <button @click="applyHargaKompetitorSuggestion" :disabled="!hargaKompetitorSuggestion.canSuggest"
+                                    class="primary-cta-button primary-cta-button--accent shrink-0">
+                                    Gunakan
+                                </button>
+                            </div>
                         </div>
                         <div class="bg-slate-50 p-3 rounded-xl text-body text-slate-600">
                             <span class="font-bold">Selisih (Rencana Jual - Kompetitor): </span>
                             <span
-                                :class="(hargaKompetitorForm.Harga_Rencana_Jual - hargaKompetitorForm.Harga_Kompetitor) >= 0 ? 'text-emerald-600 font-bold' : 'text-rose-500 font-bold'">
+                                :class="(hargaKompetitorForm.Harga_Rencana_Jual - hargaKompetitorForm.Harga_Kompetitor) >= 0 ? 'text-success font-bold' : 'text-danger font-bold'">
                                 {{ formatCurrency((hargaKompetitorForm.Harga_Rencana_Jual || 0) - (hargaKompetitorForm.Harga_Kompetitor || 0)) }}
                             </span>
                         </div>
                     </div>
                     <div class="modal-footer-bar modal-footer-actions">
-                        <button @click="hargaKompetitorModalOpen = false" class="secondary-cta-button secondary-cta-neutral">Batal</button>
+                        <button @click="hargaKompetitorModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
                         <button @click="saveHargaKompetitor" :disabled="submitting" class="primary-cta-button">
                             <i v-if="submitting" class="fa-solid fa-circle-notch fa-spin"></i>
                             {{ submitting ? 'Menyimpan...' : 'Simpan' }}
@@ -383,7 +513,7 @@
                     class="mobile-sheet modal-width-form radius-sheet modal-sheet-surface">
                     <div class="modal-header-bar radius-sheet-top">
                         <div class="modal-header-copy">
-                            <div class="modal-header-icon bg-blue-500 text-white">
+                            <div class="modal-header-icon bg-amber text-white">
                                 <i class="fa-solid fa-rectangle-ad text-heading-lg"></i>
                             </div>
                             <div>
@@ -398,7 +528,7 @@
                     <div class="flex-1 overflow-y-auto p-6 space-y-4">
                         <div class="grid grid-cols-2 gap-3">
                             <div class="col-span-2">
-                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Tanggal <span class="text-red-500">*</span></label>
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Tanggal <span class="text-danger">*</span></label>
                                 <button @click="openCalendar($event, 'form', '', 'adsTanggal')"
                                     class="select-trigger-button-form toolbar-trigger-field-form">
                                     <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
@@ -408,7 +538,7 @@
                         </div>
                         <div>
                             <label for="ads-nama" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Nama Iklan /
-                                Campaign <span class="text-red-500">*</span></label>
+                                Campaign <span class="text-danger">*</span></label>
                             <input id="ads-nama" name="ads_nama" v-model="adsForm.Nama" type="text" class="form-input-compact"
                                 placeholder="Contoh: Promo Lebaran Reel" />
                         </div>
@@ -484,7 +614,7 @@
                             <div class="mt-3 bg-slate-50 rounded-xl px-4 py-3 flex items-center justify-between">
                                 <span class="text-body-sm font-bold text-slate-400 uppercase">Score (Auto)</span>
                                 <span class="text-display-sm font-bold"
-                                    :class="adsComputedScore >= 70 ? 'text-emerald-600' : adsComputedScore >= 40 ? 'text-amber-500' : 'text-slate-400'">{{ adsComputedScore }}</span>
+                                    :class="adsComputedScore >= 70 ? 'text-success' : adsComputedScore >= 40 ? 'text-amber' : 'text-slate-400'">{{ adsComputedScore }}</span>
                             </div>
                         </div>
                         <div class="border-t border-slate-100 pt-4">
@@ -507,9 +637,9 @@
                         </div>
                     </div>
                     <div class="modal-footer-bar modal-footer-actions">
-                        <button @click="adsModalOpen = false" class="secondary-cta-button secondary-cta-neutral">Batal</button>
+                        <button @click="adsModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
                         <button @click="saveAdsRow" :disabled="submitting"
-                            class="px-5 py-2.5 rounded-xl bg-blue-500 text-white text-body font-bold hover:bg-blue-600 transition-all disabled:opacity-60">
+                            class="px-5 py-2.5 rounded-xl bg-amber text-white text-body font-bold hover:bg-amber transition-all disabled:opacity-60">
                             {{ submitting ? 'Menyimpan...' : 'Simpan' }}
                         </button>
                     </div>
@@ -529,7 +659,7 @@
                     <div class="modal-header-bar radius-sheet-top">
                         <div class="modal-header-copy">
                             <div
-                                class="modal-header-icon bg-violet-50 text-violet-600">
+                                class="modal-header-icon bg-secondary text-light">
                                 <i class="fa-solid fa-calendar-check"></i>
                             </div>
                             <div>
@@ -595,7 +725,7 @@
                         </div>
                     </div>
                     <div class="modal-footer-bar modal-footer-actions">
-                        <button @click="lpjkModalOpen = false" class="secondary-cta-button secondary-cta-neutral">Batal</button>
+                        <button @click="lpjkModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
                         <button @click="saveLpjk" :disabled="submitting" class="primary-cta-button">
                             <i v-if="submitting" class="fa-solid fa-circle-notch fa-spin"></i>
                             {{ submitting ? 'Menyimpan...' : 'Simpan' }}
@@ -618,7 +748,7 @@
                         class="modal-header-bar radius-sheet-top shrink-0">
                         <div class="modal-header-copy">
                             <div
-                                class="modal-header-icon bg-violet-500 text-white">
+                                class="modal-header-icon bg-slate-500 text-white">
                                 <i class="fa-solid fa-file-invoice-dollar"></i>
                             </div>
                             <div>
@@ -627,7 +757,7 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button @click="exportLpjkDetailToPDF" class="secondary-cta-button secondary-cta-danger"><i
+                            <button @click="exportLpjkDetailToPDF" class="primary-cta-button primary-cta-button--danger"><i
                                     class="fa-solid fa-file-pdf"></i> PDF</button>
                             <button @click="closeLpjkDetail" class="icon-utility-button icon-utility-danger"><i
                                     class="fa-solid fa-xmark text-sm"></i></button>
@@ -719,27 +849,20 @@
                                             <div class="overflow-x-auto">
                                             <table class="w-full border-collapse text-body-sm min-w-[460px]">
                                                 <thead>
-                                                    <tr>
-                                                        <th
-                                                            class="border-b-2 border-slate-800 px-2 py-2 w-[5%] text-left">
+                                                    <tr class="table-header-row">
+                                                        <th class="table-header-cell w-[5%] text-left">
                                                             NO</th>
-                                                        <th
-                                                            class="border-b-2 border-slate-800 px-2 py-2 w-[35%] text-left">
+                                                        <th class="table-header-cell w-[35%] text-left">
                                                             NAMA PENGELUARAN</th>
-                                                        <th
-                                                            class="border-b-2 border-slate-800 px-2 py-2 w-[15%] text-right">
+                                                        <th class="table-header-cell w-[15%] text-right">
                                                             SATUAN</th>
-                                                        <th
-                                                            class="border-b-2 border-slate-800 px-2 py-2 w-[8%] text-center">
+                                                        <th class="table-header-cell w-[8%] text-center">
                                                             QTY</th>
-                                                        <th
-                                                            class="border-b-2 border-slate-800 px-2 py-2 w-[17%] text-right">
+                                                        <th class="table-header-cell w-[17%] text-right">
                                                             TOTAL BIAYA</th>
-                                                        <th
-                                                            class="border-b-2 border-slate-800 px-2 py-2 w-[15%] text-center">
+                                                        <th class="table-header-cell w-[15%] text-center">
                                                             BUKTI</th>
-                                                        <th
-                                                            class="border-b-2 border-slate-800 px-2 py-2 w-[5%] text-center text-slate-400">
+                                                        <th class="table-header-cell w-[5%] text-center">
                                                             #</th>
                                                     </tr>
                                                 </thead>
@@ -762,8 +885,8 @@
                                                             {{ item.Bukti }}</td>
                                                         <td class="border-b border-slate-200 px-1 py-1 text-center">
                                                             <button @click="deleteLpjkDetail(item.ID)"
-                                                                class="text-slate-300 hover:text-rose-500 transition px-2 py-1"><i
-                                                                    class="fa-solid fa-trash text-body-sm"></i></button>
+                                                                class="text-slate-300 hover:text-danger transition px-2 py-1"><i
+                                                                    class="fa-solid fa-trash-can text-body-sm"></i></button>
                                                         </td>
                                                     </tr>
                                                     <tr class="font-bold bg-slate-50">
@@ -821,8 +944,17 @@
                                 <p class="text-body font-bold text-slate-800">{{ item.Judul }}</p>
                                 <p class="text-overline text-slate-400 mt-0.5">{{ item.Tanggal_Rencana }}</p>
                             </div>
-                            <span
-                                class="px-2.5 py-1 bg-ppp-accent/10 text-ppp-accent text-overline font-bold rounded-lg">{{ item.colabPartner }}</span>
+                            <div class="flex items-center gap-2">
+                                <div
+                                    class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-overline font-bold text-slate-600 flex-shrink-0 overflow-hidden">
+                                    <img v-if="resolveUserAvatarUrl(item.colabPartner)"
+                                        :src="resolveAvatarUrl(resolveUserAvatarUrl(item.colabPartner))"
+                                        class="w-full h-full object-cover" alt="Foto Colab"
+                                        @error="markMasterPlanEditorAvatarFailed(item.colabPartner)" />
+                                    <span v-else>{{ masterPersonInitials(item.colabPartner) }}</span>
+                                </div>
+                                <div class="text-body text-slate-700 font-semibold truncate max-w-[80px]">{{ personDisplayName(item.colabPartner) }}</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -843,7 +975,7 @@
                         class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
                         <div class="flex items-center gap-3">
                             <div
-                                class="modal-header-icon bg-emerald-50 text-emerald-600 border border-emerald-100">
+                                class="modal-header-icon bg-success text-light border border-success">
                                 <i class="fa-solid fa-arrow-trend-up"></i>
                             </div>
                             <div>
@@ -1132,10 +1264,10 @@
                             </div>
                             <!-- Preview bonus -->
                             <div
-                                class="bg-emerald-50 border border-emerald-100 rounded-2xl px-4 py-3 flex items-center justify-between">
-                                <span class="text-body-sm font-bold text-emerald-600 uppercase tracking-widest">Est.
+                                class="bg-success border border-success rounded-2xl px-4 py-3 flex items-center justify-between">
+                                <span class="text-body-sm font-bold text-success uppercase tracking-widest">Est.
                                     Bonus</span>
-                                <span class="text-heading-sm font-bold text-emerald-700">{{ formatCurrency((sellOutForm.Realisasi_Unit || 0) >= (sellOutForm.Target_Unit || 0) && (sellOutForm.Target_Unit || 0) > 0 ? (sellOutForm.Realisasi_Unit || 0) * (sellOutForm.Bonus_Nominal || 0) : 0) }}</span>
+                                <span class="text-heading-sm font-bold text-success">{{ formatCurrency((sellOutForm.Realisasi_Unit || 0) >= (sellOutForm.Target_Unit || 0) && (sellOutForm.Target_Unit || 0) > 0 ? (sellOutForm.Realisasi_Unit || 0) * (sellOutForm.Bonus_Nominal || 0) : 0) }}</span>
                             </div>
                             <!-- Periode Start -->
                             <div class="relative search-select-container">
@@ -1169,7 +1301,7 @@
                         </div>
                     </div>
                     <div class="modal-footer-bar modal-footer-actions">
-                        <button @click="sellOutModalOpen = false" class="secondary-cta-button secondary-cta-neutral">Batal</button>
+                        <button @click="sellOutModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
                         <button @click="saveSellOut" :disabled="submitting"
                             class="primary-cta-button primary-cta-button--success">{{ submitting ? 'Menyimpan...' : 'Simpan' }}</button>
                     </div>
@@ -1192,13 +1324,13 @@
                     class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[1010]">
                     <div class="modal-header-copy">
                         <div
-                                :class="['modal-header-icon text-white', modalType === 'create' ? 'bg-emerald-500' : 'bg-ppp-accent']">
+                                class="modal-header-icon bg-amber text-light">
                             <i
                                 :class="['fa-solid text-body', modalType === 'create' ? 'fa-plus' : 'fa-pen-to-square']"></i>
                         </div>
                         <div>
                             <div class="type-heading-sm text-slate-900">{{ modalType === 'create' ? 'Tambah Plan Baru' : 'Edit Plan Konten' }}</div>
-                            <div class="type-body-sm text-slate-400 uppercase tracking-widest mt-0.5">Marketing Module
+                            <div class="type-body-sm text-amber uppercase font-bold mt-0.5">Marketing Module
                             </div>
                         </div>
                     </div>
@@ -1209,20 +1341,20 @@
                 </div>
 
                 <!-- Scrollable Body -->
-                <div class="p-6 overflow-y-auto custom-scrollbar flex-1">
-                    <div class="space-y-6">
-                        <section class="space-y-5">
-                            <div class="form-section-card">
+                <div class="master-plan-modal-body p-4 md:p-5 overflow-y-auto custom-scrollbar flex-1">
+                    <div class="space-y-5">
+                        <section class="space-y-3">
+                            <div class="master-plan-form-section">
                                 <div class="form-section-title">Ringkasan Konten</div>
                                 <div class="form-section-copy">Info inti plan, owner, status, dan jadwal kerja.</div>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div class="master-plan-form-grid grid grid-cols-1 md:grid-cols-2 gap-3">
                                 <!-- 1. Judul -->
                                 <div class="md:col-span-2">
                                     <label for="master-plan-judul" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Judul
-                                        Konten <span class="text-red-500">*</span></label>
+                                        Konten <span class="text-danger">*</span></label>
                                     <input id="master-plan-judul" name="master_plan_judul" v-model="masterForm.Judul" type="text" placeholder="Contoh: Review iPhone 15 Pro"
-                                        class="form-input" />
+                                        class="form-input-compact" />
                                 </div>
 
                                 <!-- 2. Link Folder Drive -->
@@ -1233,14 +1365,14 @@
                                         <i
                                             class="fa-brands fa-google-drive absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 text-body"></i>
                                         <input id="master-plan-link-drive" name="master_plan_link_drive" v-model="masterForm.Link_Drive" type="text"
-                                            placeholder="https://drive.google.com/..." class="form-input form-input-leading-icon" />
+                                            placeholder="https://drive.google.com/..." class="form-input-compact form-input-leading-icon" />
                                     </div>
                                 </div>
 
                                 <!-- 3. Format & Status Side-by-side -->
                                 <div class="relative search-select-container">
                                     <label class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Format
-                                        Konten <span class="text-red-500">*</span></label>
+                                        Konten <span class="text-danger">*</span></label>
                                     <div @click="toggleSearchSelect($event, 'format')"
                                         class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
                                         <span
@@ -1271,7 +1403,7 @@
 
                                 <div class="relative search-select-container">
                                     <label class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Status
-                                        <span class="text-red-500">*</span></label>
+                                        <span class="text-danger">*</span></label>
                                     <div @click="toggleSearchSelect($event, 'status')"
                                         class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
                                         <span class="text-slate-800 font-medium">{{ masterForm.Status }}</span>
@@ -1292,7 +1424,7 @@
                                 <!-- 6. Editor, Talent & Tanggal Rencana -->
                                 <div class="relative search-select-container">
                                     <label
-                                        class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Editor <span class="text-red-500">*</span></label>
+                                        class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Editor <span class="text-danger">*</span></label>
                                     <div @click="toggleSearchSelect($event, 'editor')"
                                         class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
                                         <span :class="masterForm.Editor ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ masterForm.Editor || 'Pilih Editor' }}</span>
@@ -1336,14 +1468,14 @@
                                     <label
                                         class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Talent</label>
                                     <div @click="toggleSearchSelect($event, 'talent')"
-                                        class="select-trigger-button select-trigger-button-form min-h-[48px]">
+                                        class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form master-plan-multi-trigger">
                                         <div class="flex flex-wrap gap-1">
                                             <span v-if="!masterForm.Talent.length" class="text-slate-400">Pilih / cari
                                                 talent...</span>
                                             <div v-for="talent in masterForm.Talent" :key="talent" class="multi-select-chip">
                                                 {{ talent }}
                                                 <i @click.stop="toggleTalent(talent)"
-                                                    class="fa-solid fa-xmark hover:text-red-500 cursor-pointer"></i>
+                                                    class="fa-solid fa-xmark hover:text-danger cursor-pointer"></i>
                                             </div>
                                         </div>
                                         <i class="fa-solid fa-chevron-down text-body-sm text-slate-300 flex-shrink-0"></i>
@@ -1378,26 +1510,26 @@
                             </div>
                         </section>
 
-                        <section class="space-y-5">
-                            <div class="form-section-card">
+                        <section class="space-y-3">
+                            <div class="master-plan-form-section">
                                 <div class="form-section-title">Distribusi & Asset</div>
                                 <div class="form-section-copy">Platform tayang, link kerja, skrip, caption, dan metadata
                                     publish.</div>
                             </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div class="master-plan-form-grid grid grid-cols-1 md:grid-cols-2 gap-3">
                                 <!-- 4. Platforms -->
                                 <div class="relative md:col-span-2 search-select-container">
                                     <label
                                         class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Platforms</label>
                                     <div @click="toggleSearchSelect($event, 'platforms')"
-                                        class="select-trigger-button select-trigger-button-form min-h-[48px]">
+                                        class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form master-plan-multi-trigger">
                                         <div class="flex flex-wrap gap-1">
                                             <span v-if="!masterForm.Platforms.length" class="text-slate-400">Pilih
                                                 Platform</span>
                                             <div v-for="p in masterForm.Platforms" :key="p" class="multi-select-chip">
                                                 {{ p }}
                                                 <i @click.stop="togglePlatform(p)"
-                                                    class="fa-solid fa-xmark hover:text-red-500"></i>
+                                                    class="fa-solid fa-xmark hover:text-danger"></i>
                                             </div>
                                         </div>
                                         <i class="fa-solid fa-chevron-down text-body-sm text-slate-300 flex-shrink-0"></i>
@@ -1433,14 +1565,14 @@
                                     <label
                                         class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Colab</label>
                                     <div @click="toggleSearchSelect($event, 'colab')"
-                                        class="select-trigger-button select-trigger-button-form min-h-[48px]">
+                                        class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form master-plan-multi-trigger">
                                         <div class="flex flex-wrap gap-1">
                                             <span v-if="!masterForm.Colab.length" class="text-slate-400">Pilih / cari
                                                 colab...</span>
                                             <div v-for="c in masterForm.Colab" :key="c" class="multi-select-chip">
                                                 {{ c }}
                                                 <i @click.stop="toggleColab(c)"
-                                                    class="fa-solid fa-xmark hover:text-red-500 cursor-pointer"></i>
+                                                    class="fa-solid fa-xmark hover:text-danger cursor-pointer"></i>
                                             </div>
                                         </div>
                                         <i class="fa-solid fa-chevron-down text-body-sm text-slate-300 flex-shrink-0"></i>
@@ -1477,29 +1609,30 @@
                                 <template
                                     v-if="masterForm.Status && (masterForm.Status.toUpperCase() === 'SCHEDULE' || masterForm.Status.toUpperCase() === 'PUBLISHED' || masterForm.Status.toUpperCase() === 'DONE')">
                                     <div class="md:col-span-2">
-                                        <label
-                                            class="block text-body-sm font-bold text-blue-500 uppercase tracking-widest mb-3">Distribution
-                                            Details</label>
-                                        <div class="space-y-3">
-                                            <div v-for="plat in masterForm.Platforms" :key="plat" class="surface-panel-soft">
-                                                <div class="flex items-center gap-2 mb-3">
-                                                    <i :class="[getPlatformIcon(plat), 'text-slate-400 text-body']"></i>
-                                                    <span class="text-body font-bold text-slate-700">{{ plat }}</span>
+                                        <div class="master-plan-form-section master-plan-form-section-inner">
+                                            <div class="form-section-title">Distribution Details</div>
+                                            <div class="form-section-copy">Link post, tipe distribusi, dan tanggal publish per platform.</div>
+                                        </div>
+                                        <div class="space-y-2">
+                                            <div v-for="plat in masterForm.Platforms" :key="plat" class="master-plan-distribution-panel">
+                                                <div class="flex items-center gap-2 mb-2">
+                                                    <i :class="getPlatformIcon(plat) + ' text-body text-slate-400'"></i>
+                                                    <span class="text-body font-bold text-slate-700">{{ platformDisplayName(plat) }}</span>
                                                 </div>
-                                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                                    <div class="sm:col-span-1">
+                                                <div class="master-plan-distribution-grid">
+                                                    <div class="master-plan-distribution-field">
                                                         <label
                                                             :for="`master-distribution-link-${String(plat).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`"
                                                             class="block text-overline font-bold text-slate-400 uppercase tracking-widest mb-1.5">Link
                                                             Post</label>
                                                         <input :id="`master-distribution-link-${String(plat).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`" :name="`master_distribution_link_${String(plat).toLowerCase().replace(/[^a-z0-9]+/g, '_')}`" v-model="masterForm.Distribution_Meta[plat].link" type="text"
-                                                            placeholder="https://..." class="form-input-compact-white" />
+                                                            placeholder="https://..." class="form-input-compact" />
                                                     </div>
-                                                    <div>
+                                                    <div class="master-plan-distribution-field">
                                                         <label
                                                             class="block text-overline font-bold text-slate-400 uppercase tracking-widest mb-1.5">Type</label>
                                                         <div @click="toggleSearchSelect($event, 'distType_'+plat)"
-                                                            class="select-trigger-button select-trigger-button-compact relative search-select-container">
+                                                            class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form relative search-select-container">
                                                             <span
                                                                 :class="masterForm.Distribution_Meta[plat].type ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ masterForm.Distribution_Meta[plat].type || 'Pilih Type' }}</span>
                                                             <i class="fa-solid fa-chevron-down text-overline text-slate-300"></i>
@@ -1515,12 +1648,12 @@
                                                             </transition>
                                                         </div>
                                                     </div>
-                                                    <div>
+                                                    <div class="master-plan-distribution-field">
                                                         <label
                                                             class="block text-overline font-bold text-slate-400 uppercase tracking-widest mb-1.5">Tanggal
                                                             Publish</label>
                                                         <button type="button" @click="openCalendar($event, 'published', plat)"
-                                                            class="select-trigger-button-compact">
+                                                            class="select-trigger-button-form toolbar-trigger-field-form">
                                                             <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
                                                             <span
                                                                 :class="masterForm.Distribution_Meta[plat].date ? 'text-slate-700 font-medium' : 'text-slate-400'">
@@ -1540,35 +1673,35 @@
                                         <label for="master-plan-skrip"
                                             class="block text-body-sm font-bold text-slate-400 uppercase tracking-widest">Skrip</label>
                                         <div
-                                            class="flex rounded-xl overflow-hidden border border-slate-100 text-body-sm font-bold">
+                                            class="master-plan-toggle-group">
                                             <button type="button" @click="masterForm.Skrip = ''"
-                                                :class="['px-3 py-1.5 transition-all', masterForm.Skrip !== 'Tidak' ? 'bg-ppp-accent text-white' : 'bg-slate-50 text-slate-400 hover:bg-slate-100']">Ya</button>
+                                                :class="['master-plan-toggle-button', masterForm.Skrip !== 'Tidak' ? 'master-plan-toggle-button-active' : '']">Ya</button>
                                             <button type="button" @click="masterForm.Skrip = 'Tidak'"
-                                                :class="['px-3 py-1.5 transition-all', masterForm.Skrip === 'Tidak' ? 'bg-slate-200 text-slate-600' : 'bg-slate-50 text-slate-400 hover:bg-slate-100']">Tidak</button>
+                                                :class="['master-plan-toggle-button', masterForm.Skrip === 'Tidak' ? 'master-plan-toggle-button-active' : '']">Tidak</button>
                                         </div>
                                     </div>
                                     <transition name="fade">
                                         <textarea id="master-plan-skrip" name="master_plan_skrip" v-if="masterForm.Skrip !== 'Tidak'" v-model="masterForm.Skrip" rows="4"
                                             placeholder="Isi skrip konten..."
-                                            class="form-input resize-none custom-scrollbar"></textarea>
-                                    </transition>
-                                </div>
-                                <div>
+                                            class="form-input-compact resize-none custom-scrollbar"></textarea>
+                                </transition>
+                            </div>
+                            <div>
                                     <div class="flex items-center justify-between mb-2">
                                         <label for="master-plan-caption"
                                             class="block text-body-sm font-bold text-slate-400 uppercase tracking-widest">Caption</label>
                                         <div
-                                            class="flex rounded-xl overflow-hidden border border-slate-100 text-body-sm font-bold">
+                                            class="master-plan-toggle-group">
                                             <button type="button" @click="masterForm.Caption = ''"
-                                                :class="['px-3 py-1.5 transition-all', masterForm.Caption !== 'Tidak' ? 'bg-ppp-accent text-white' : 'bg-slate-50 text-slate-400 hover:bg-slate-100']">Ya</button>
+                                                :class="['master-plan-toggle-button', masterForm.Caption !== 'Tidak' ? 'master-plan-toggle-button-active' : '']">Ya</button>
                                             <button type="button" @click="masterForm.Caption = 'Tidak'"
-                                                :class="['px-3 py-1.5 transition-all', masterForm.Caption === 'Tidak' ? 'bg-slate-200 text-slate-600' : 'bg-slate-50 text-slate-400 hover:bg-slate-100']">Tidak</button>
+                                                :class="['master-plan-toggle-button', masterForm.Caption === 'Tidak' ? 'master-plan-toggle-button-active' : '']">Tidak</button>
                                         </div>
                                     </div>
                                     <transition name="fade">
                                         <textarea id="master-plan-caption" name="master_plan_caption" v-if="masterForm.Caption !== 'Tidak'" v-model="masterForm.Caption" rows="4"
                                             placeholder="Caption untuk posting..."
-                                            class="form-input resize-none custom-scrollbar"></textarea>
+                                            class="form-input-compact resize-none custom-scrollbar"></textarea>
                                     </transition>
                                 </div>
                             </div>
@@ -1578,8 +1711,8 @@
 
                     <!-- Sticky Footer -->
                     <div class="modal-footer-bar modal-footer-actions">
-                        <button @click="modalOpen = false" class="secondary-cta-button secondary-cta-neutral flex-1">Batal</button>
-                        <button @click="saveMasterPlan" :disabled="submitting" class="primary-cta-button flex-1">
+                        <button @click="modalOpen = false" class="primary-cta-button primary-cta-button--neutral flex-1">Batal</button>
+                        <button @click="saveMasterPlan" :disabled="submitting" class="primary-cta-button primary-cta-button--accent flex-1">
                             <i v-if="submitting" class="fa-solid fa-circle-notch fa-spin text-xs"></i>
                             <i v-else class="fa-solid fa-floppy-disk text-xs"></i>
                             {{ submitting ? 'Menyimpan...' : (modalType === 'create' ? 'Simpan' : 'Update') }}
@@ -1592,49 +1725,51 @@
 
     <teleport to="body">
         <transition name="fade">
-            <div v-if="calendarOpen" class="fixed inset-0 z-[5000] flex items-center justify-center p-4 overlay-motion-dialog">
-                <div @click="calendarOpen = false" class="absolute inset-0 bg-slate-900/20 backdrop-blur-[2px] overlay-backdrop">
-                </div>
-                <div
-                    class="w-full modal-width-compact bg-white radius-dialog border border-slate-200 overflow-hidden animate-fadeIn z-[5001] overlay-dialog-surface">
-                    <div class="p-5 bg-blue-600 text-white">
-                        <div class="text-body-sm uppercase tracking-widest opacity-80 mb-1">{{ calendarMode === 'filter' ? 'Pilih Range Tanggal' : 'Pilih Tanggal' }}</div>
-                        <div class="text-xl font-bold">{{ formatFullDate(calendarTargetDate) }}</div>
+            <div v-if="calendarOpen" class="calendar-popover-layer">
+                <div class="calendar-popover-panel animate-fadeIn" :style="calendarAnchorStyle">
+                    <div class="calendar-popover-value">
+                        <div class="min-w-0">
+                            <div class="calendar-popover-label">{{ calendarMode === 'filter' ? 'Range Tanggal' : 'Tanggal' }}</div>
+                            <div class="calendar-popover-date truncate">{{ formatFullDate(calendarTargetDate) || 'Pilih tanggal' }}</div>
+                        </div>
+                        <button type="button" @click="calendarOpen = false" class="calendar-popover-close" aria-label="Tutup kalender">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
                     </div>
-                    <div class="p-4">
-                        <div class="flex items-center justify-between mb-4 px-2">
+                    <div class="calendar-popover-body">
+                        <div class="calendar-popover-monthbar">
                             <button @click="changeMonth(-1)" aria-label="Bulan sebelumnya"
                                 class="icon-utility-button icon-utility-round"><i
                                     class="fa-solid fa-chevron-left text-body-sm"></i></button>
-                            <div class="text-body font-bold text-slate-800 uppercase tracking-widest">{{ monthNames[currentDateView.getMonth()] }} {{ currentDateView.getFullYear() }}</div>
+                            <div class="calendar-popover-month">{{ monthNames[currentDateView.getMonth()] }} {{ currentDateView.getFullYear() }}</div>
                             <button @click="changeMonth(1)" aria-label="Bulan berikutnya"
                                 class="icon-utility-button icon-utility-round"><i
                                     class="fa-solid fa-chevron-right text-body-sm"></i></button>
                         </div>
-                        <div class="grid grid-cols-7 gap-1 text-center mb-2">
+                        <div class="calendar-popover-weekdays">
                             <div v-for="day in ['S', 'S', 'R', 'K', 'J', 'S', 'M']" :key="day"
-                                class="text-overline font-bold text-slate-300 py-1">{{ day }}</div>
+                                class="calendar-popover-weekday">{{ day }}</div>
                         </div>
-                        <div class="grid grid-cols-7 gap-1 text-center">
+                        <div class="calendar-popover-grid">
                             <div v-for="n in calendarEmptyDays" :key="'empty-'+n" class="py-2"></div>
                             <div v-for="day in calendarDaysInMonth" :key="day" @click="selectDate(day)" @mouseenter="() => {
                                             const year = currentDateView.getFullYear();
                                             const month = currentDateView.getMonth();
                                             hoveredDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                                         }" @mouseleave="hoveredDate = ''"
-                                :class="['calendar-day-button', isStartDate(day) ? 'bg-emerald-500 text-white ring-2 ring-emerald-300' : (isEndDate(day) ? 'bg-orange-500 text-white ring-2 ring-orange-300' : ''), !isStartDate(day) && isSelectedDate(day) ? 'bg-blue-600 text-white' : '', isInRange(day) ? 'bg-blue-50 text-blue-600' : '', !isStartDate(day) && !isEndDate(day) && !isSelectedDate(day) && !isInRange(day) ? 'text-slate-600' : '', isToday(day) && !isStartDate(day) && !isEndDate(day) && !isSelectedDate(day) && !isInRange(day) ? 'text-blue-600' : '']">
+                                :class="['calendar-day-button', (isStartDate(day) || isEndDate(day) || isSelectedDate(day)) ? 'calendar-day-active' : '', isInRange(day) ? 'calendar-day-range' : '', !isStartDate(day) && !isEndDate(day) && !isSelectedDate(day) && !isInRange(day) ? 'text-slate-600' : '', isToday(day) && !isStartDate(day) && !isEndDate(day) && !isSelectedDate(day) && !isInRange(day) ? 'text-light' : '']">
                                 {{ day }}
                                 <div v-if="isToday(day)"
-                                    :class="['w-1 h-1 rounded-full absolute bottom-1.5', (isStartDate(day) || isEndDate(day) || isSelectedDate(day)) ? 'bg-white' : 'bg-blue-600']">
+                                    :class="['w-1 h-1 rounded-full absolute bottom-1.5', (isStartDate(day) || isEndDate(day) || isSelectedDate(day)) ? 'bg-white' : 'bg-amber']">
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="p-4 pt-0 flex items-center justify-between gap-2">
+                    <div class="calendar-popover-footer">
                         <button @click="resetCalendar"
-                            class="calendar-footer-action text-slate-400 hover:text-rose-500">Reset</button>
+                            class="calendar-footer-action text-slate-400 hover:text-danger">Reset</button>
                         <button @click="calendarOpen = false"
-                            class="calendar-footer-action text-blue-600">Selesai</button>
+                            class="calendar-footer-action text-amber">Selesai</button>
                     </div>
                 </div>
             </div>
@@ -1651,7 +1786,7 @@
                     class="modal-width-compact radius-dialog modal-dialog-surface overlay-dialog-surface">
                     <div class="p-8 text-center">
                         <div
-                            :class="['w-16 h-16 rounded-3xl flex items-center justify-center mx-auto mb-5', confirmModal.type === 'danger' ? 'bg-rose-50 text-rose-500' : 'bg-blue-50 text-blue-500']">
+                            :class="['w-16 h-16 rounded-3xl flex items-center justify-center mx-auto mb-5', confirmModal.type === 'danger' ? 'bg-danger text-light' : 'bg-amber text-light']">
                             <i
                                 :class="['fa-solid text-2xl', confirmModal.type === 'danger' ? 'fa-trash-can' : 'fa-circle-info']"></i>
                         </div>
@@ -1659,7 +1794,7 @@
                         <p class="text-body text-slate-500 leading-relaxed">{{ confirmModal.message }}</p>
                     </div>
                     <div class="flex gap-3 p-4 border-t border-slate-100 bg-slate-50/80">
-                        <button @click="confirmModal.open = false" class="secondary-cta-button secondary-cta-neutral flex-1">Batal</button>
+                        <button @click="confirmModal.open = false" class="primary-cta-button primary-cta-button--neutral flex-1">Batal</button>
                         <button @click="confirmModal.onConfirm(); confirmModal.open = false"
                             :class="['primary-cta-button flex-1', confirmModal.type === 'danger' ? 'primary-cta-button--danger' : 'primary-cta-button--info']">Ya,
                             Lanjutkan</button>
@@ -1682,7 +1817,7 @@
                         class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
                         <div class="modal-header-copy">
                             <div
-                                class="modal-header-icon bg-slate-100 text-slate-600 border border-slate-200">
+                                class="modal-header-icon bg-secondary text-light border border-slate-200">
                                 <i class="fa-solid fa-boxes-stacked text-heading-sm"></i>
                             </div>
                             <div>
@@ -1768,7 +1903,7 @@
                         </div>
                         <div class="modal-footer-bar modal-footer-actions">
                             <button type="button" @click="closeNamaStockFormModal"
-                                class="secondary-cta-button secondary-cta-neutral">Batal</button>
+                                class="primary-cta-button primary-cta-button--neutral">Batal</button>
                             <button type="submit"
                                 class="primary-cta-button">{{ namaStockFormMode === 'create' ? 'Tambah' : 'Simpan' }}</button>
                         </div>
@@ -1791,7 +1926,7 @@
                         class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[1010]">
                         <div class="modal-header-copy">
                             <div
-                                :class="['modal-header-icon text-white', storyModalType === 'create' ? 'bg-emerald-500' : 'bg-rose-500']">
+                                :class="['modal-header-icon text-white', storyModalType === 'create' ? 'bg-success' : 'bg-danger']">
                                 <i
                                     :class="['fa-solid text-body', storyModalType === 'create' ? 'fa-plus' : 'fa-pen-to-square']"></i>
                             </div>
@@ -1830,13 +1965,13 @@
                             </div>
                             <div>
                                 <label for="story-jam" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Waktu
-                                    Tayang (Jam) <span class="text-red-500">*</span></label>
+                                    Tayang (Jam) <span class="text-danger">*</span></label>
                                 <input id="story-jam" name="story_jam" v-model="storyForm.Jam" type="time" class="form-input" />
                             </div>
                         </div>
                         <div>
                             <label for="story-konten" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Story
-                                (Konten) <span class="text-red-500">*</span></label>
+                                (Konten) <span class="text-danger">*</span></label>
                             <input id="story-konten" name="story_konten" v-model="storyForm.Story" type="text" placeholder="Ketik ide konten..."
                                 class="form-input uppercase" />
                         </div>
@@ -1865,7 +2000,7 @@
                                     <div class="max-h-48 overflow-y-auto custom-scrollbar">
                                         <div v-for="opt in (statusOptions.length ? statusOptions : ['DRAFT','TERJADWAL','PUBLISH'])"
                                             :key="opt" @click="storyForm.Status = opt; searchSelectOpen = null"
-                                            :class="['popover-option', storyForm.Status === opt ? 'bg-rose-500 text-white font-semibold' : 'text-slate-600 hover:bg-slate-50']">
+                                            :class="['popover-option', storyForm.Status === opt ? 'bg-danger text-white font-semibold' : 'text-slate-600 hover:bg-slate-50']">
                                             {{ opt }}</div>
                                     </div>
                                 </div>
@@ -1874,7 +2009,7 @@
                     </div>
 
                     <div class="modal-footer-bar modal-footer-actions">
-                        <button @click="storyModalOpen = false" class="secondary-cta-button secondary-cta-neutral">Batal</button>
+                        <button @click="storyModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
                         <button @click="saveStory" :disabled="submitting"
                             class="primary-cta-button primary-cta-button--danger">
                             <i v-if="submitting" class="fa-solid fa-spinner fa-spin"></i>
@@ -1899,7 +2034,7 @@
                         class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
                         <div class="modal-header-copy">
                             <div
-                                class="modal-header-icon bg-cyan-50 text-cyan-600 border border-cyan-100">
+                                class="modal-header-icon bg-info text-light border border-info">
                                 <i class="fa-solid fa-cart-shopping"></i>
                             </div>
                             <div>
@@ -2141,7 +2276,7 @@
                         </div>
                     </div>
                     <div class="modal-footer-bar modal-footer-actions">
-                        <button @click="orderanOnlineModalOpen = false" class="secondary-cta-button secondary-cta-neutral">Batal</button>
+                        <button @click="orderanOnlineModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
                         <button @click="saveOrderanOnline" :disabled="submitting" class="primary-cta-button">{{ submitting ? 'Menyimpan...' : 'Simpan' }}</button>
                     </div>
                 </div>
@@ -2162,7 +2297,7 @@
                         class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
                         <div class="modal-header-copy">
                             <div
-                                class="modal-header-icon bg-amber-50 text-amber-600 border border-amber-100">
+                                class="modal-header-icon bg-amber text-light border border-amber">
                                 <i class="fa-solid fa-circle-question"></i>
                             </div>
                             <div>
@@ -2487,7 +2622,7 @@
                         </div>
                     </div>
                     <div class="modal-footer-bar modal-footer-actions">
-                        <button @click="unitDitanyaModalOpen = false" class="secondary-cta-button secondary-cta-neutral">Batal</button>
+                        <button @click="unitDitanyaModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
                         <button @click="saveUnitDitanya" :disabled="submitting" class="primary-cta-button">{{ submitting ? 'Menyimpan...' : 'Simpan' }}</button>
                     </div>
                 </div>
@@ -2508,7 +2643,7 @@
                         class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
                         <div class="modal-header-copy">
                             <div
-                                class="modal-header-icon bg-rose-50 text-rose-600 border border-rose-100">
+                                class="modal-header-icon bg-danger text-light border border-danger">
                                 <i class="fa-solid fa-shield-heart"></i>
                             </div>
                             <div>
@@ -2797,7 +2932,7 @@
                         </div>
                     </div>
                     <div class="modal-footer-bar modal-footer-actions">
-                        <button @click="claimGaransiModalOpen = false" class="secondary-cta-button secondary-cta-neutral">Batal</button>
+                        <button @click="claimGaransiModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
                         <button @click="saveClaimGaransi" :disabled="submitting" class="primary-cta-button">{{ submitting ? 'Menyimpan...' : 'Simpan' }}</button>
                     </div>
                 </div>
@@ -2818,7 +2953,7 @@
                         class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
                         <div class="modal-header-copy">
                             <div
-                                class="modal-header-icon bg-indigo-50 text-indigo-600 border border-indigo-100">
+                                class="modal-header-icon bg-amber text-light border border-amber">
                                 <i class="fa-solid fa-box-archive"></i>
                             </div>
                             <div>
@@ -3065,7 +3200,7 @@
                         </div>
                     </div>
                     <div class="modal-footer-bar modal-footer-actions">
-                        <button @click="keepBarangModalOpen = false" class="secondary-cta-button secondary-cta-neutral">Batal</button>
+                        <button @click="keepBarangModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
                         <button @click="saveKeepBarang" :disabled="submitting" class="primary-cta-button">{{ submitting ? 'Menyimpan...' : 'Simpan' }}</button>
                     </div>
                 </div>
@@ -3086,7 +3221,7 @@
                         class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
                         <div class="modal-header-copy">
                             <div
-                                class="modal-header-icon bg-orange-50 text-orange-600 border border-orange-100">
+                                class="modal-header-icon bg-amber text-light border border-amber">
                                 <i class="fa-solid fa-bullhorn"></i>
                             </div>
                             <div>
@@ -3126,7 +3261,7 @@
                         <!-- Nama Program -->
                         <div>
                             <label for="promo-program" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Nama
-                                Program <span class="text-red-500">*</span></label>
+                                Program <span class="text-danger">*</span></label>
                             <input id="promo-program" name="promo_program" v-model="promoForm.Program" type="text" placeholder="Promo Cashback..."
                                 class="form-input" />
                         </div>
@@ -3208,7 +3343,7 @@
                         </div>
                     </div>
                     <div class="modal-footer-bar modal-footer-actions">
-                        <button @click="promoModalOpen = false" class="secondary-cta-button secondary-cta-neutral">Batal</button>
+                        <button @click="promoModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
                         <button @click="savePromo" :disabled="submitting" class="primary-cta-button">{{ submitting ? 'Menyimpan...' : 'Simpan' }}</button>
                     </div>
                 </div>
@@ -3229,7 +3364,7 @@
                         class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
                         <div class="modal-header-copy">
                             <div
-                                :class="['modal-header-icon text-white', unboxingModalType === 'create' ? 'bg-amber-500' : 'bg-ppp-accent']">
+                                :class="['modal-header-icon text-white', unboxingModalType === 'create' ? 'bg-amber' : 'bg-ppp-accent']">
                                 <i
                                     :class="['fa-solid text-body', unboxingModalType === 'create' ? 'fa-plus' : 'fa-pen-to-square']"></i>
                             </div>
@@ -3246,7 +3381,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div class="md:col-span-2">
                                 <label for="unboxing-judul" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Judul
-                                    Unboxing <span class="text-red-500">*</span></label>
+                                    Unboxing <span class="text-danger">*</span></label>
                                 <input id="unboxing-judul" name="unboxing_judul" v-model="unboxingForm.Nama" type="text"
                                     placeholder="Contoh: Unboxing Samsung S24 Ultra" class="form-input" />
                             </div>
@@ -3323,7 +3458,7 @@
                         </div>
                     </div>
                     <div class="modal-footer-bar modal-footer-actions">
-                        <button @click="unboxingModalOpen = false" class="secondary-cta-button secondary-cta-neutral">Batal</button>
+                        <button @click="unboxingModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
                         <button @click="saveUnboxing" :disabled="submitting" class="primary-cta-button">{{ submitting ? 'Menyimpan...' : 'Simpan' }}</button>
                     </div>
                 </div>
@@ -3358,7 +3493,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div class="md:col-span-2">
                                 <label for="distribution-judul" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Judul
-                                    <span class="text-red-500">*</span></label>
+                                    <span class="text-danger">*</span></label>
                                 <input id="distribution-judul" name="distribution_judul" v-model="distributionForm.Judul" type="text" placeholder="Judul konten"
                                     class="form-input" />
                             </div>
@@ -3404,7 +3539,7 @@
                         </div>
                     </div>
                     <div class="modal-footer-bar modal-footer-actions">
-                        <button @click="distModalOpen = false" class="secondary-cta-button secondary-cta-neutral">Batal</button>
+                        <button @click="distModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
                         <button @click="saveDistribution" :disabled="submitting" class="primary-cta-button">{{ submitting ? 'Menyimpan...' : 'Simpan' }}</button>
                     </div>
                 </div>
@@ -3425,7 +3560,7 @@
                         class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
                         <div class="modal-header-copy">
                             <div class="modal-header-icon text-white bg-ppp-accent">
-                                <i class="fa-solid fa-chart-bar text-body"></i>
+                                <i class="fa-solid fa-chart-simple text-body"></i>
                             </div>
                             <div>
                                 <div class="type-heading-sm text-slate-900">{{ analyticsForm.ID ? 'Edit Analitik' : 'Tambah Analitik' }}</div>
@@ -3440,7 +3575,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div class="md:col-span-2">
                                 <label for="analytics-judul" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Judul
-                                    <span class="text-red-500">*</span></label>
+                                    <span class="text-danger">*</span></label>
                                 <input id="analytics-judul" name="analytics_judul" v-model="analyticsForm.Judul" type="text" placeholder="Judul konten"
                                     class="form-input" />
                             </div>
@@ -3466,6 +3601,11 @@
                                 </transition>
                             </div>
                             <div>
+                                <label for="analytics-id-post"
+                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">ID Post</label>
+                                <input id="analytics-id-post" name="analytics_id_post" v-model="analyticsForm.ID_Post" @input="queueAnalyticsIdPostSync($event.target.value)" type="text" placeholder="Post ID (sinkron dari Feed Konten)" class="form-input" />
+                            </div>
+                            <div>
                                 <label for="analytics-views"
                                     class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Views</label>
                                 <input id="analytics-views" name="analytics_views" v-model.number="analyticsForm.Views" type="number" min="0" class="form-input" />
@@ -3489,7 +3629,7 @@
                         </div>
                     </div>
                     <div class="modal-footer-bar modal-footer-actions">
-                        <button @click="analyticsModalOpen = false" class="secondary-cta-button secondary-cta-neutral">Batal</button>
+                        <button @click="analyticsModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
                         <button @click="saveAnalytics" :disabled="submitting" class="primary-cta-button">{{ submitting ? 'Menyimpan...' : 'Simpan' }}</button>
                     </div>
                 </div>
@@ -3529,18 +3669,25 @@
                                     <div class="flex items-start justify-between gap-2 mb-1.5">
                                         <div class="flex items-center gap-2">
                                             <i
-                                                :class="[getPlatformIcon(item.Platform || (item.Platforms || '').split(',')[0]), 'text-xs text-blue-500']"></i>
+                                                :class="getPlatformIcon(item.Platform || (item.Platforms || '').split(',')[0]) + ' text-body text-slate-400'"></i>
                                             <span
-                                                class="text-body-sm font-bold text-blue-500 uppercase tracking-widest">Konten</span>
+                                                class="text-body font-bold text-slate-700">{{ platformDisplayName(item.Platform || (item.Platforms || '').split(',')[0]) }}</span>
                                         </div>
                                         <span
-                                            class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap bg-blue-50 text-blue-500 uppercase">{{ item.Status }}</span>
+                                            class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap bg-amber text-light uppercase">{{ item.Status }}</span>
                                     </div>
                                     <h4 class="text-[12px] font-bold text-slate-900 leading-[1.2] mb-1 uppercase">{{ item.Judul }}</h4>
                                     <div class="flex items-center gap-2.5 flex-wrap">
                                         <div class="flex items-center gap-1.5">
-                                            <i class="fa-solid fa-user text-overline text-slate-300"></i>
-                                            <span class="text-body-sm font-medium text-slate-500">{{ item.Editor || '-' }}</span>
+                                            <div
+                                                class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-overline font-bold text-slate-600 flex-shrink-0 overflow-hidden">
+                                                <img v-if="resolveUserAvatarUrl(item.Editor)"
+                                                    :src="resolveAvatarUrl(resolveUserAvatarUrl(item.Editor))"
+                                                    class="w-full h-full object-cover" alt="Foto Editor"
+                                                    @error="markMasterPlanEditorAvatarFailed(item.Editor)" />
+                                                <span v-else>{{ masterPersonInitials(item.Editor) }}</span>
+                                            </div>
+                                            <span class="text-body text-slate-700 font-semibold truncate max-w-[80px]">{{ personDisplayName(item.Editor) }}</span>
                                         </div>
                                         <div class="flex items-center gap-1.5">
                                             <i class="fa-solid fa-clapperboard text-overline text-slate-300"></i>
@@ -3557,12 +3704,12 @@
                                 <template v-else-if="item.TYPE === 'story'">
                                     <div class="flex items-start justify-between gap-2 mb-1.5">
                                         <div class="flex items-center gap-2">
-                                            <i class="fa-solid fa-clapperboard text-xs text-rose-500"></i>
+                                            <i class="fa-solid fa-clapperboard text-xs text-danger"></i>
                                             <span
-                                                class="text-body-sm font-bold text-rose-500 uppercase tracking-widest">Story</span>
+                                                class="text-body-sm font-bold text-danger uppercase tracking-widest">Story</span>
                                         </div>
                                         <span v-if="item.Status"
-                                            class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap bg-rose-50 text-rose-500 uppercase">{{ item.Status }}</span>
+                                            class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap bg-danger text-light uppercase">{{ item.Status }}</span>
                                     </div>
                                     <h4 class="text-[12px] font-bold text-slate-900 leading-[1.2] mb-1 uppercase">{{ item.Story_Schedule || item.Story }}</h4>
                                     <div class="flex items-center gap-2.5 flex-wrap">
@@ -3577,7 +3724,7 @@
                                     </div>
                                     <div class="mt-2.5 pt-2 border-t border-slate-50 flex items-center justify-end">
                                         <button @click="openEditStoryModal(item); calendarDayModalOpen = false"
-                                            class="text-body-sm font-bold text-rose-500 hover:underline">Edit
+                                            class="text-body-sm font-bold text-danger hover:underline">Edit
                                             Story <i class="fa-solid fa-arrow-right ml-1"></i></button>
                                     </div>
                                 </template>
@@ -3585,12 +3732,12 @@
                                 <template v-else>
                                     <div class="flex items-center gap-2.5">
                                         <div
-                                            class="w-8 h-8 rounded-lg flex items-center justify-center text-white bg-amber-500">
+                                            class="w-8 h-8 rounded-lg flex items-center justify-center text-white bg-amber">
                                             <i class="fa-solid fa-star text-body-sm"></i>
                                         </div>
                                         <div>
                                             <span
-                                                class="text-overline font-black uppercase tracking-widest text-amber-500">Hari Raya</span>
+                                                class="text-overline font-black uppercase tracking-widest text-amber">Hari Raya</span>
                                             <h4 class="text-[12px] font-bold text-slate-900 leading-[1.2] mb-1 uppercase">{{ item.Nama_Event }}</h4>
                                         </div>
                                     </div>

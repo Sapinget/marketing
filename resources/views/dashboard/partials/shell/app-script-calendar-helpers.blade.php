@@ -14,10 +14,46 @@
                     return commonDateFilter;
                 };
 
+                let calendarAnchorElement = null;
+
+                const updateCalendarAnchorPosition = () => {
+                    if (!calendarOpen.value || !calendarAnchorElement || typeof calendarAnchorElement.getBoundingClientRect !== 'function') return;
+
+                    const rect = calendarAnchorElement.getBoundingClientRect();
+                    const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 360;
+                    const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 640;
+                    const margin = 12;
+                    const gap = 8;
+                    const panelWidth = Math.min(Math.max(rect.width, 292), viewportWidth - (margin * 2), 340);
+                    const left = Math.min(Math.max(rect.left, margin), viewportWidth - panelWidth - margin);
+                    const estimatedPanelHeight = calendarMode.value === 'filter' ? 386 : 356;
+                    const belowTop = rect.bottom + gap;
+                    const aboveTop = rect.top - estimatedPanelHeight - gap;
+                    const top = belowTop + estimatedPanelHeight <= viewportHeight - margin
+                        ? belowTop
+                        : Math.max(margin, aboveTop);
+
+                    calendarAnchorStyle.value = {
+                        top: `${Math.round(top)}px`,
+                        left: `${Math.round(left)}px`,
+                        width: `${Math.round(panelWidth)}px`,
+                    };
+                };
+
+                const closeCalendarOnOutsideClick = (event) => {
+                    if (!calendarOpen.value) return;
+                    const target = event.target;
+                    if (target?.closest?.('.calendar-popover-panel')) return;
+                    if (calendarAnchorElement?.contains?.(target)) return;
+                    calendarOpen.value = false;
+                };
+
                 const openCalendar = (event, mode, plat = "", formContext = 'master') => {
+                    event?.stopPropagation?.();
                     calendarMode.value = mode;
                     currentPlatForDate.value = plat;
                     calendarFormContext.value = formContext;
+                    calendarAnchorElement = event?.currentTarget || event?.target?.closest?.('button, input, [role="button"]') || null;
                     let initialDate = new Date();
 
                     if (mode === "form") {
@@ -69,6 +105,7 @@
 
                     currentDateView.value = isNaN(initialDate.getTime()) ? new Date() : initialDate;
                     calendarOpen.value = true;
+                    nextTick(() => updateCalendarAnchorPosition());
                 };
 
                 const resetCalendar = () => {
@@ -105,23 +142,28 @@
                 };
 
                 const getPlatformIcon = (plat) => {
+                    const key = String(plat || '').trim().toLowerCase();
                     const map = {
-                        'Instagram': 'fa-brands fa-instagram',
-                        'TikTok': 'fa-brands fa-tiktok',
-                        'YouTube': 'fa-brands fa-youtube',
-                        'Facebook': 'fa-brands fa-facebook',
-                        'X': 'fa-brands fa-x-twitter',
-                        'Threads': 'fa-brands fa-threads'
+                        'instagram': 'fa-brands fa-instagram',
+                        'tiktok': 'fa-brands fa-tiktok',
+                        'youtube': 'fa-brands fa-youtube',
+                        'facebook': 'fa-brands fa-facebook',
+                        'x': 'fa-brands fa-x-twitter',
+                        'threads': 'fa-brands fa-threads'
                     };
-                    return map[plat] || 'fa-solid fa-link';
+                    const match = Object.keys(map).find(k => key.includes(k));
+                    return match ? map[match] : 'fa-solid fa-link';
                 };
 
                 const hasAnyLink = (item) => {
-                    if (!item.Distribution_Meta || typeof item.Distribution_Meta !== 'object') return false;
+                    if (!item?.Distribution_Meta || typeof item.Distribution_Meta !== 'object') return false;
                     return Object.values(item.Distribution_Meta).some(d => d && typeof d === 'object' && d.link && typeof d.link === 'string');
                 };
-                const hasAnyMasterLink = (item) => hasAnyLink(item) || !!String(item?.Link_Drive || '').trim();
-
+                const hasAnyMasterLink = (item) => !!String(item?.Link_Drive || '').trim();
+                const toProperCase = (value) => String(value || '')
+                    .toLowerCase()
+                    .replace(/\b\w/g, (char) => char.toUpperCase());
+ 
                 const formatFullDate = window.MarketingDashboardRuntimeHelpers?.formatFullDate || ((d) => {
                     if (!d) return '';
                     const date = new Date(d);

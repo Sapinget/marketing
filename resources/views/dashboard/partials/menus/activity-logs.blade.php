@@ -3,7 +3,7 @@
                         <section class="section-card section-card-body">
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
                                 <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
+                                    <div class="w-12 h-12 rounded-2xl bg-amber text-light flex items-center justify-center border border-amber">
                                         <i class="fa-solid fa-clock-rotate-left text-body"></i>
                                     </div>
                                     <div>
@@ -114,12 +114,12 @@
                                 <div class="hidden md:block overflow-auto">
                                     <table class="w-full text-body-sm">
                                         <thead class="bg-slate-50">
-                                            <tr>
-                                                <th class="px-4 py-2.5 text-left text-slate-500 font-semibold">Waktu</th>
-                                                <th class="px-4 py-2.5 text-left text-slate-500 font-semibold">Aksi</th>
-                                                <th class="px-4 py-2.5 text-left text-slate-500 font-semibold">Tabel</th>
-                                                <th class="px-4 py-2.5 text-left text-slate-500 font-semibold">Record Key</th>
-                                                <th class="px-4 py-2.5 text-left text-slate-500 font-semibold">User</th>
+                                            <tr class="table-header-row">
+                                                <th class="table-header-cell text-left">Waktu</th>
+                                                <th class="table-header-cell text-left">Aksi</th>
+                                                <th class="table-header-cell text-left">Tabel</th>
+                                                <th class="table-header-cell text-left">Record Key</th>
+                                                <th class="table-header-cell text-left">User</th>
                                             </tr>
                                         </thead>
                                         <tbody class="divide-y divide-slate-100">

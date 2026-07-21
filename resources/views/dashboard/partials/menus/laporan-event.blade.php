@@ -34,13 +34,13 @@
             <div v-if="activeTab === 'laporan_event' && tabDataLoaded['lpjk']" class="space-y-6 animate-fadeIn pb-10">
                 <!-- Summary cards -->
                 <div class="space-y-3">
-                    <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                        <div v-for="c in lpjkSummary.cards" :key="c.label" class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                            <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i :class="['fa-solid', c.icon, 'text-[120px]']"></i></div>
-                            <p :class="['text-overline font-bold uppercase tracking-widest mb-3', c.color]">{{ c.label }}</p>
+                    <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
+                        <div v-for="c in lpjkSummary.cards.slice(0, 5)" :key="c.label" class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
+                            <div class="absolute -right-4 -bottom-4 opacity-5"><i :class="['fa-solid', c.icon, 'text-[120px]']"></i></div>
+                            <p class="dashboard-summary-title">{{ c.label }}</p>
                             <div class="flex items-baseline gap-2">
                                 <span class="dashboard-summary-value">{{ c.value }}</span>
-                                <span v-if="c.unit" :class="['dashboard-summary-unit', c.unitColor]">{{ c.unit }}</span>
+                                <span v-if="c.unit" class="dashboard-summary-unit">{{ c.unit }}</span>
                             </div>
                             <p :class="['text-body-sm font-bold mt-3', c.subColor]">{{ c.sub }}</p>
                         </div>
@@ -70,11 +70,11 @@
                                 <p class="mobile-data-card__title line-clamp-2">{{ row.Nama_Event || '-' }}</p>
                                 <div class="mobile-data-card__meta mt-2">
                                     <span
-                                        class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-overline font-bold uppercase">
+                                        class="px-2.5 py-1 rounded-lg bg-secondary text-light text-overline font-bold uppercase">
                                         Event
                                     </span>
                                     <span
-                                        class="px-2.5 py-1 rounded-lg bg-violet-50 text-violet-700 text-overline font-bold uppercase">
+                                        class="px-2.5 py-1 rounded-lg bg-secondary text-light text-overline font-bold uppercase">
                                         Budget
                                     </span>
                                 </div>
@@ -92,7 +92,7 @@
                             </div>
                             <div class="mobile-data-card__actions">
                                 <div class="type-body-sm font-bold"
-                                    :class="(row.Selisih || 0) >= 0 ? 'text-emerald-600' : 'text-rose-500'">
+                                    :class="(row.Selisih || 0) >= 0 ? 'text-success' : 'text-danger'">
                                     {{ formatCurrency(row.Selisih) }}
                                 </div>
                                 <div class="flex items-center gap-2">
@@ -102,11 +102,11 @@
                                             class="fa-solid fa-eye text-body-sm"></i></button>
                                     <button @click="openLpjkModal('edit', row)"
                                         class="table-action-button table-action-compact" title="Edit"
-                                        aria-label="Edit"><i class="fa-solid fa-pen text-body-sm"></i></button>
+                                        aria-label="Edit"><i class="fa-solid fa-pen-to-square text-body-sm"></i></button>
                                     <button @click="deleteLpjk(row.ID)"
                                         class="table-action-button table-action-compact table-action-danger"
                                         title="Hapus" aria-label="Hapus"><i
-                                            class="fa-solid fa-trash text-body-sm"></i></button>
+                                            class="fa-solid fa-trash-can text-body-sm"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -144,7 +144,7 @@
                                     class="primary-cta-button primary-cta-button--accent active:scale-95"><i
                                         class="fa-solid fa-plus text-overline"></i> Tambah</button>
                                 <button @click="exportLpjkDetailToPDF"
-                                    class="secondary-cta-button secondary-cta-danger active:scale-95"><i
+                                    class="primary-cta-button primary-cta-button--danger active:scale-95"><i
                                         class="fa-solid fa-file-pdf text-[9px]"></i><span
                                         class="ml-1">PDF</span></button>
                             </div>
@@ -153,16 +153,15 @@
                     <div class="overflow-x-auto">
                         <table class="w-full text-body-sm text-left border-collapse min-w-[900px]">
                             <thead>
-                                <tr
-                                    class="border-b border-slate-100 text-body-sm font-bold uppercase tracking-widest text-slate-400">
-                                    <th class="px-4 py-3 text-center w-12">#</th>
-                                    <th class="px-4 py-3">Event</th>
-                                    <th class="px-4 py-3 text-center w-28">Tanggal</th>
-                                    <th class="px-4 py-3 text-center w-28">Budget</th>
-                                    <th class="px-4 py-3 text-center w-28">Realisasi</th>
-                                    <th class="px-4 py-3 text-center w-24">Selisih</th>
-                                    <th class="px-4 py-3 text-center w-24">Status</th>
-                                    <th class="px-4 py-3 text-right w-28">Aksi</th>
+                                <tr class="table-header-row">
+                                    <th class="table-header-cell table-header-index table-freeze-index">#</th>
+                                    <th class="table-header-cell table-header-action table-freeze-action">Aksi</th>
+                                    <th class="table-header-cell">Event</th>
+                                    <th class="table-header-cell text-center w-28">Tanggal</th>
+                                    <th class="table-header-cell text-center w-28">Budget</th>
+                                    <th class="table-header-cell text-center w-28">Realisasi</th>
+                                    <th class="table-header-cell text-center w-24">Selisih</th>
+                                    <th class="table-header-cell text-center w-24">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -172,7 +171,22 @@
                                 </tr>
                                 <tr v-for="(row, idx) in pagedLpjkData" :key="row.ID"
                                     class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                                    <td class="px-4 py-3 text-center text-body text-slate-400">{{ (lpjkPage - 1) * 20 + idx + 1 }}</td>
+                                    <td class="px-4 py-3 text-center text-body text-slate-400 table-freeze-index">{{ (lpjkPage - 1) * 20 + idx + 1 }}</td>
+                                    <td class="px-4 py-3 table-freeze-action">
+                                        <div class="flex items-center gap-1.5">
+                                            <button @click="openLpjkDetail(row)"
+                                                class="table-action-button table-action-compact table-action-view"
+                                                title="Detail Pengeluaran" aria-label="Detail Pengeluaran"><i
+                                                    class="fa-solid fa-eye text-body-sm"></i></button>
+                                            <button @click="openLpjkModal('edit', row)"
+                                                class="table-action-button table-action-compact" title="Edit"
+                                                aria-label="Edit"><i class="fa-solid fa-pen-to-square text-body-sm"></i></button>
+                                            <button @click="deleteLpjk(row.ID)"
+                                                class="table-action-button table-action-compact table-action-danger"
+                                                title="Hapus" aria-label="Hapus"><i
+                                                    class="fa-solid fa-trash-can text-body-sm"></i></button>
+                                        </div>
+                                    </td>
                                     <td class="px-4 py-3">
                                         <p class="font-semibold text-slate-800 uppercase text-body-sm">{{ row.Nama_Event }}</p>
                                         <p v-if="row.Keterangan" class="text-body-sm text-slate-400 mt-0.5 line-clamp-1">
@@ -182,26 +196,11 @@
                                     <td class="px-4 py-3 text-center text-body font-bold text-slate-600">{{ formatCurrency(row.Budget_Rencana) }}</td>
                                     <td class="px-4 py-3 text-center text-body font-bold text-slate-800">{{ formatCurrency(row.Realisasi_Biaya) }}</td>
                                     <td class="px-4 py-3 text-center text-body font-bold"
-                                        :class="(row.Selisih || 0) >= 0 ? 'text-emerald-600' : 'text-rose-500'">
+                                        :class="(row.Selisih || 0) >= 0 ? 'text-success' : 'text-danger'">
                                         {{ formatCurrency(row.Selisih) }}</td>
                                     <td class="px-4 py-3 text-center">
                                         <span :class="getStatusColor(row.Status)"
                                             class="inline-flex items-center px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase whitespace-nowrap">{{ row.Status }}</span>
-                                    </td>
-                                    <td class="px-4 py-3 text-right">
-                                        <div class="flex items-center justify-end gap-1.5">
-                                            <button @click="openLpjkDetail(row)"
-                                                class="table-action-button table-action-compact table-action-view"
-                                                title="Detail Pengeluaran" aria-label="Detail Pengeluaran"><i
-                                                    class="fa-solid fa-eye text-body-sm"></i></button>
-                                            <button @click="openLpjkModal('edit', row)"
-                                                class="table-action-button table-action-compact" title="Edit"
-                                                aria-label="Edit"><i class="fa-solid fa-pen text-body-sm"></i></button>
-                                            <button @click="deleteLpjk(row.ID)"
-                                                class="table-action-button table-action-compact table-action-danger"
-                                                title="Hapus" aria-label="Hapus"><i
-                                                    class="fa-solid fa-trash text-body-sm"></i></button>
-                                        </div>
                                     </td>
                                 </tr>
                             </tbody>

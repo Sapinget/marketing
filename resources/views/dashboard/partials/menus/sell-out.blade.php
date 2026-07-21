@@ -29,41 +29,41 @@
             <div v-if="activeTab === 'sell_out' && tabDataLoaded['sellOut']" class="space-y-6 animate-fadeIn pb-10">
 
                 <!-- Summary Cards (di atas judul, konsisten) -->
-                <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+                <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
                     <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                        <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-bullseye text-[120px]"></i></div>
-                        <p class="text-overline font-bold uppercase tracking-widest text-blue-500 mb-3">Total Target</p>
+                        <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-bullseye text-[120px]"></i></div>
+                        <p class="dashboard-summary-title">Total Target</p>
                         <div class="flex items-baseline gap-2">
                             <span class="dashboard-summary-value">{{ sellOutSummary.totalTargets }}</span>
-                            <span class="dashboard-summary-unit text-blue-400">Program</span>
+                            <span class="dashboard-summary-unit">Program</span>
                         </div>
-                        <p class="text-body-sm font-bold text-blue-600 mt-3">Program aktif</p>
+                        <p class="text-body-sm font-bold text-amber mt-3">Program aktif</p>
                     </div>
                     <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                        <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-check-double text-[120px]"></i></div>
-                        <p class="text-overline font-bold uppercase tracking-widest text-emerald-500 mb-3">Tercapai</p>
+                        <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-check-double text-[120px]"></i></div>
+                        <p class="dashboard-summary-title">Tercapai</p>
                         <div class="flex items-baseline gap-2">
                             <span class="dashboard-summary-value">{{ sellOutSummary.achieved }}</span>
-                            <span class="dashboard-summary-unit text-emerald-400">Target</span>
+                            <span class="dashboard-summary-unit">Target</span>
                         </div>
-                        <p class="text-body-sm font-bold text-emerald-600 mt-3">Dari {{ sellOutSummary.totalTargets }} target</p>
+                        <p class="text-body-sm font-bold text-success mt-3">Dari {{ sellOutSummary.totalTargets }} target</p>
                     </div>
                     <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                        <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-box text-[120px]"></i></div>
-                        <p class="text-overline font-bold uppercase tracking-widest text-violet-500 mb-3">Total Realisasi</p>
+                        <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-box text-[120px]"></i></div>
+                        <p class="dashboard-summary-title">Total Realisasi</p>
                         <div class="flex items-baseline gap-2">
                             <span class="dashboard-summary-value">{{ formatNumber(sellOutSummary.totalQty) }}</span>
-                            <span class="dashboard-summary-unit text-violet-400">Unit</span>
+                            <span class="dashboard-summary-unit">Unit</span>
                         </div>
-                        <p class="text-body-sm font-bold text-violet-600 mt-3">Unit terjual</p>
+                        <p class="text-body-sm font-bold text-slate-600 mt-3">Unit terjual</p>
                     </div>
                     <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                        <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i class="fa-solid fa-sack-dollar text-[120px]"></i></div>
-                        <p class="text-overline font-bold uppercase tracking-widest text-amber-500 mb-3">Total Bonus</p>
+                        <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-sack-dollar text-[120px]"></i></div>
+                        <p class="dashboard-summary-title">Total Bonus</p>
                         <div class="flex items-baseline gap-2">
                             <span class="dashboard-summary-value">{{ formatCurrency(sellOutSummary.totalBonus) }}</span>
                         </div>
-                        <p class="text-body-sm font-bold text-amber-600 mt-3">Estimasi payout</p>
+                        <p class="text-body-sm font-bold text-amber mt-3">Estimasi payout</p>
                     </div>
                 </div>
 
@@ -88,7 +88,7 @@
                                     <i class="fa-solid fa-building text-body-sm text-slate-400"></i>
                                     <span class="truncate">{{ sellOutVendorFilter || 'Semua Vendor' }}</span>
                                     <i v-if="sellOutVendorFilter" @click.stop="sellOutVendorFilter = ''"
-                                        class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-red-500"></i>
+                                        class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-danger"></i>
                                     <i v-else class="fa-solid fa-chevron-down ml-auto text-[9px] text-slate-400"></i>
                                 </button>
                                 <transition name="fade">
@@ -112,7 +112,7 @@
                                     <i class="fa-solid fa-calendar text-body-sm text-slate-400"></i>
                                     <span class="truncate">{{ formatMonthLabel(sellOutMonth) || 'Semua Bulan' }}</span>
                                     <i v-if="sellOutMonth" @click.stop="sellOutMonth = ''"
-                                        class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-red-500"></i>
+                                        class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-danger"></i>
                                     <i v-else class="fa-solid fa-chevron-down ml-auto text-[9px] text-slate-400"></i>
                                 </button>
                                 <transition name="fade">
@@ -135,11 +135,11 @@
                                     class="primary-cta-button primary-cta-button--accent active:scale-95"><i
                                         class="fa-solid fa-plus"></i> Tambah</button>
                                 <button @click="exportSellOutToExcel"
-                                    class="secondary-cta-button secondary-cta-success active:scale-95"><i
+                                    class="primary-cta-button primary-cta-button--success active:scale-95"><i
                                         class="fa-solid fa-file-excel"></i><span
                                         class="ml-1">Excel</span></button>
                                 <button @click="exportSellOutToPDF"
-                                    class="secondary-cta-button secondary-cta-danger active:scale-95"><i
+                                    class="primary-cta-button primary-cta-button--danger active:scale-95"><i
                                         class="fa-solid fa-file-pdf"></i><span
                                         class="ml-1">PDF</span></button>
                             </div>
@@ -148,39 +148,28 @@
                     <div class="overflow-x-auto">
                     <table class="w-full text-body-sm">
                         <thead>
-                            <tr>
-                                <th
-                                    class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100 w-20 text-left">
-                                    Aksi</th>
-                                <th
-                                    class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100 w-10 text-center">
+                            <tr class="table-header-row">
+                                <th class="table-header-cell table-header-index table-freeze-index">
                                     #</th>
-                                <th
-                                    class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100">
+                                <th class="table-header-cell table-header-action table-freeze-action">
+                                    Aksi</th>
+                                <th class="table-header-cell">
                                     Vendor</th>
-                                <th
-                                    class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100">
+                                <th class="table-header-cell">
                                     Nama Produk</th>
-                                <th
-                                    class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100 text-center">
+                                <th class="table-header-cell text-center">
                                     Target</th>
-                                <th
-                                    class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100 text-center">
+                                <th class="table-header-cell text-center">
                                     Terjual</th>
-                                <th
-                                    class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100 text-center">
+                                <th class="table-header-cell text-center">
                                     Progres</th>
-                                <th
-                                    class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100 text-center">
+                                <th class="table-header-cell text-center">
                                     Status</th>
-                                <th
-                                    class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100 text-right">
+                                <th class="table-header-cell text-right">
                                     Bonus/Unit</th>
-                                <th
-                                    class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100 text-right">
+                                <th class="table-header-cell text-right">
                                     Total Bonus</th>
-                                <th
-                                    class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100 text-center">
+                                <th class="table-header-cell text-center">
                                     Periode</th>
                             </tr>
                         </thead>
@@ -193,30 +182,30 @@
                             </tr>
                             <tr v-for="(row, idx) in pagedSellOutData" :key="row.ID || idx"
                                 class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors group">
-                                <td class="px-5 py-3.5 text-left">
+                                <td class="px-5 py-3.5 text-body-sm text-slate-400 text-center table-freeze-index">{{ (sellOutPage - 1) * 20 + idx + 1 }}</td>
+                                <td class="px-5 py-3.5 text-left table-freeze-action">
                                     <div class="flex items-center gap-1.5">
                                         <button @click="openSellOutModal('edit', row)"
                                             class="table-action-button table-action-compact" title="Edit"
-                                            aria-label="Edit"><i class="fa-solid fa-pen text-overline"></i></button>
+                                            aria-label="Edit"><i class="fa-solid fa-pen-to-square text-overline"></i></button>
                                         <button @click="deleteSellOut(row.ID)"
                                             class="table-action-button table-action-compact table-action-danger"
                                             title="Hapus" aria-label="Hapus"><i
-                                                class="fa-solid fa-trash text-overline"></i></button>
+                                                class="fa-solid fa-trash-can text-overline"></i></button>
                                     </div>
                                 </td>
-                                <td class="px-5 py-3.5 text-body-sm text-slate-400 text-center">{{ (sellOutPage - 1) * 20 + idx + 1 }}</td>
                                 <td class="px-5 py-3.5 text-body font-bold text-slate-700">{{ row.Vendor || '-' }}</td>
                                 <td class="px-5 py-3.5">
                                     <p class="text-body font-semibold text-slate-800">{{ row.Nama_Produk || row.Seri || '-' }}</p>
                                     <p v-if="row.Catatan" class="text-overline text-slate-400 mt-0.5">{{ row.Catatan }}</p>
                                 </td>
                                 <td class="px-5 py-3.5 text-center text-body font-bold text-slate-700">{{ formatNumber(row.Target_Unit) }}</td>
-                                <td class="px-5 py-3.5 text-center text-body font-bold text-blue-600">{{ formatNumber(row.Realisasi_Unit || 0) }}</td>
+                                <td class="px-5 py-3.5 text-center text-body font-bold text-amber">{{ formatNumber(row.Realisasi_Unit || 0) }}</td>
                                 <td class="px-5 py-3.5 text-center">
                                     <div class="flex items-center gap-1.5 justify-center">
                                         <div class="w-20 h-2 bg-slate-100 rounded-full overflow-hidden">
                                             <div :style="`width:${getSellOutProgress(row).pct}%`"
-                                                :class="['h-full rounded-full transition-all', getSellOutProgress(row).achieved ? 'bg-emerald-500' : 'bg-amber-400']">
+                                                :class="['h-full rounded-full transition-all', getSellOutProgress(row).achieved ? 'bg-success' : 'bg-amber']">
                                             </div>
                                         </div>
                                         <span class="text-overline font-bold text-slate-500">{{ getSellOutProgress(row).pct }}%</span>
@@ -224,15 +213,15 @@
                                 </td>
                                 <td class="px-5 py-3.5 text-center">
                                     <span :class="['px-2.5 py-1 rounded-lg text-overline font-bold uppercase', 
-                                                    getSellOutProgress(row).status === 'TERPAKAI' ? 'bg-emerald-100 text-emerald-700' : 
-                                                    getSellOutProgress(row).status === 'TIDAK DIPAKAI' ? 'bg-blue-100 text-blue-700' :
-                                                    getSellOutProgress(row).status === 'PROGRESS' ? 'bg-amber-100 text-amber-700' : 
-                                                    'bg-slate-100 text-slate-500']">
+                                                    getSellOutProgress(row).status === 'TERPAKAI' ? 'bg-success text-light' : 
+                                                    getSellOutProgress(row).status === 'TIDAK DIPAKAI' ? 'bg-amber text-light' :
+                                                    getSellOutProgress(row).status === 'PROGRESS' ? 'bg-amber text-light' : 
+                                                    'bg-secondary text-light']">
                                         {{ getSellOutProgress(row).status }}
                                     </span>
                                 </td>
                                 <td class="px-5 py-3.5 text-right text-body text-slate-600">{{ row.Bonus_Nominal ? formatCurrency(row.Bonus_Nominal) : '-' }}</td>
-                                <td class="px-5 py-3.5 text-right text-body font-bold text-emerald-600">{{ getSellOutProgress(row).bonusTotal > 0 ? formatCurrency(getSellOutProgress(row).bonusTotal) : '-' }}</td>
+                                <td class="px-5 py-3.5 text-right text-body font-bold text-success">{{ getSellOutProgress(row).bonusTotal > 0 ? formatCurrency(getSellOutProgress(row).bonusTotal) : '-' }}</td>
                                 <td class="px-5 py-3.5 text-center text-body-sm text-slate-400">
                                     <template v-if="row.Periode_Start">{{ formatShortDate(row.Periode_Start) }}</template>
                                     <template v-if="row.Periode_Start && row.Periode_End"> - </template>
@@ -272,12 +261,12 @@
                                 <p class="text-overline font-bold text-slate-400 uppercase mt-0.5">{{ row.Vendor || '-' }}</p>
                             </div>
                             <span
-                                :class="['px-2.5 py-1 rounded-lg text-overline font-bold uppercase shrink-0', getSellOutProgress(row).status === 'TERCAPAI' ? 'bg-emerald-100 text-emerald-700' : getSellOutProgress(row).status === 'PROGRESS' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500']">{{ getSellOutProgress(row).status }}</span>
+                                :class="['px-2.5 py-1 rounded-lg text-overline font-bold uppercase shrink-0', getSellOutProgress(row).status === 'TERCAPAI' ? 'bg-success text-light' : getSellOutProgress(row).status === 'PROGRESS' ? 'bg-amber text-light' : 'bg-secondary text-light']">{{ getSellOutProgress(row).status }}</span>
                         </div>
                         <div class="flex items-center gap-1.5">
                             <div class="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
                                 <div :style="`width:${getSellOutProgress(row).pct}%`"
-                                    :class="['h-full rounded-full', getSellOutProgress(row).achieved ? 'bg-emerald-500' : 'bg-amber-400']">
+                                    :class="['h-full rounded-full', getSellOutProgress(row).achieved ? 'bg-success' : 'bg-amber']">
                                 </div>
                             </div>
                             <span class="text-body-sm font-bold text-slate-500 w-10 text-right">{{ getSellOutProgress(row).pct }}%</span>
@@ -289,7 +278,7 @@
                             </div>
                             <div class="bg-slate-50 rounded-xl p-2">
                                 <p class="text-overline text-slate-400 font-bold uppercase">Terjual</p>
-                                <p class="text-body font-bold text-blue-600">{{ formatNumber(row.Realisasi_Unit || 0) }}</p>
+                                <p class="text-body font-bold text-amber">{{ formatNumber(row.Realisasi_Unit || 0) }}</p>
                             </div>
                         </div>
                         <div class="mobile-data-card__actions">
@@ -297,10 +286,10 @@
                             <div class="flex gap-1.5">
                                 <button @click="openSellOutModal('edit', row)"
                                     class="table-action-button table-action-compact" title="Edit" aria-label="Edit"><i
-                                        class="fa-solid fa-pen text-body-sm"></i></button>
+                                        class="fa-solid fa-pen-to-square text-body-sm"></i></button>
                                 <button @click="deleteSellOut(row.ID)"
                                     class="table-action-button table-action-compact table-action-danger" title="Hapus"
-                                    aria-label="Hapus"><i class="fa-solid fa-trash text-body-sm"></i></button>
+                                    aria-label="Hapus"><i class="fa-solid fa-trash-can text-body-sm"></i></button>
                             </div>
                         </div>
                     </div>

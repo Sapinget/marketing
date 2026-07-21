@@ -98,7 +98,134 @@
                     });
                 };
 
+                const analyticsSyncingMetaPost = ref(false);
+                const suppressAnalyticsIdPostWatcher = ref(false);
+                const analyticsOriginalMetrics = ref({ Views: 0, Likes: 0, Comments: 0, Shares: 0 });
+                let analyticsIdPostLookupToken = 0;
+                let analyticsIdPostDebounce = null;
+                const normalizeMetaPostId = (value) => String(value || '').trim();
+                const isInstagramAnalyticsPlatform = () => String(analyticsForm.value.Platform || '').trim().toLowerCase() === 'instagram';
+                const getMetaFeedPostId = (row) => normalizeMetaPostId(row?.post_id || row?.ID || row?.Post_ID || row?.ID_Post || row?.id_post || row?.['Post ID'] || row?.['post id'] || row?.media_id);
+                const restoreAnalyticsOriginalMetrics = () => {
+                    analyticsForm.value.Views = Number(analyticsOriginalMetrics.value.Views || 0);
+                    analyticsForm.value.Likes = Number(analyticsOriginalMetrics.value.Likes || 0);
+                    analyticsForm.value.Comments = Number(analyticsOriginalMetrics.value.Comments || 0);
+                    analyticsForm.value.Shares = Number(analyticsOriginalMetrics.value.Shares || 0);
+                };
+                const updateAnalyticsMetricInputs = () => {
+                    [
+                        ['analytics-views', analyticsForm.value.Views],
+                        ['analytics-likes', analyticsForm.value.Likes],
+                        ['analytics-comments', analyticsForm.value.Comments],
+                        ['analytics-shares', analyticsForm.value.Shares],
+                    ].forEach(([id, value]) => {
+                        const input = document.getElementById(id);
+                        if (input) input.value = Number(value || 0);
+                    });
+                };
+                const applyAnalyticsMetaPost = (post) => {
+                    analyticsForm.value.Views = Number(post?.views || 0);
+                    analyticsForm.value.Likes = Number(post?.likes || 0);
+                    analyticsForm.value.Comments = Number(post?.comments || 0);
+                    analyticsForm.value.Shares = Number(post?.shares || 0);
+                    updateAnalyticsMetricInputs();
+                };
+                const findMetaFeedPost = async (postId) => {
+                    const normalizedPostId = normalizeMetaPostId(postId);
+                    if (!normalizedPostId) return null;
+                    const currentRows = Array.isArray(metaFeedData.value) ? metaFeedData.value : [];
+                    let found = currentRows.find((row) => getMetaFeedPostId(row) === normalizedPostId) || null;
+                    if (found) return found;
+                    const rows = await ensureRunApi().getMetaFeedData();
+                    metaFeedData.value = Array.isArray(rows) ? rows : [];
+                    return metaFeedData.value.find((row) => getMetaFeedPostId(row) === normalizedPostId) || null;
+                };
+                const syncAnalyticsFormFromIdPost = async (postId) => {
+                    const normalizedPostId = normalizeMetaPostId(postId);
+                    const lookupToken = ++analyticsIdPostLookupToken;
+                    if (!normalizedPostId) return;
+                    analyticsSyncingMetaPost.value = true;
+                    try {
+                        const post = await findMetaFeedPost(normalizedPostId);
+                        if (lookupToken !== analyticsIdPostLookupToken || normalizeMetaPostId(analyticsForm.value.ID_Post) !== normalizedPostId) return;
+                        if (!post) {
+                            showNotification('ID Post tidak ditemukan di Feed Konten.');
+                            return;
+                        }
+                        applyAnalyticsMetaPost(post);
+                        showNotification('Metric otomatis diambil dari Feed Konten.');
+                    } catch (error) {
+                        if (lookupToken !== analyticsIdPostLookupToken) return;
+                        handleError(error);
+                    } finally {
+                        if (lookupToken === analyticsIdPostLookupToken) analyticsSyncingMetaPost.value = false;
+                    }
+                };
+                const queueAnalyticsIdPostSync = (value, options = {}) => {
+                    if (!analyticsModalOpen.value || (!options.force && suppressAnalyticsIdPostWatcher.value)) return;
+                    if (!isInstagramAnalyticsPlatform()) return;
+                    if (analyticsIdPostDebounce) clearTimeout(analyticsIdPostDebounce);
+                    const normalizedValue = normalizeMetaPostId(value);
+                    if (!normalizedValue) {
+                        analyticsIdPostLookupToken++;
+                        restoreAnalyticsOriginalMetrics();
+                        analyticsSyncingMetaPost.value = false;
+                        return;
+                    }
+                    const localMatch = (Array.isArray(metaFeedData.value) ? metaFeedData.value : []).some((row) => getMetaFeedPostId(row) === normalizedValue);
+                    const delay = localMatch ? 0 : 250;
+                    analyticsIdPostDebounce = setTimeout(() => syncAnalyticsFormFromIdPost(normalizedValue), delay);
+                };
+                const bindAnalyticsIdPostDomSync = () => {
+                    const input = document.getElementById('analytics-id-post');
+                    if (!input || input.__analyticsIdPostSyncBound) return;
+                    input.__analyticsIdPostSyncBound = true;
+                    const syncFromDomInput = async () => {
+                        analyticsForm.value.ID_Post = input.value;
+                        if (!isInstagramAnalyticsPlatform()) return;
+                        if (analyticsIdPostDebounce) clearTimeout(analyticsIdPostDebounce);
+                        const normalizedValue = normalizeMetaPostId(input.value);
+                        if (!normalizedValue) {
+                            analyticsIdPostLookupToken++;
+                            restoreAnalyticsOriginalMetrics();
+                            updateAnalyticsMetricInputs();
+                            analyticsSyncingMetaPost.value = false;
+                            return;
+                        }
+                        const localMatch = (Array.isArray(metaFeedData.value) ? metaFeedData.value : []).some((row) => getMetaFeedPostId(row) === normalizedValue);
+                        const delay = localMatch ? 0 : 250;
+                        analyticsIdPostDebounce = setTimeout(async () => {
+                            const lookupToken = ++analyticsIdPostLookupToken;
+                            analyticsSyncingMetaPost.value = true;
+                            try {
+                                const response = await fetch(resolveAppUrl('/api/meta-posts/feed'), {
+                                    headers: { 'Accept': 'application/json' },
+                                });
+                                const payload = response.ok ? await response.json() : { data: [] };
+                                const rows = Array.isArray(payload.data) ? payload.data : [];
+                                metaFeedData.value = rows;
+                                const post = rows.find((row) => getMetaFeedPostId(row) === normalizedValue) || null;
+                                if (lookupToken !== analyticsIdPostLookupToken || normalizeMetaPostId(input.value) !== normalizedValue) return;
+                                if (!post) {
+                                    showNotification('ID Post tidak ditemukan di Feed Konten.');
+                                    return;
+                                }
+                                applyAnalyticsMetaPost(post);
+                                showNotification('Metric otomatis diambil dari Feed Konten.');
+                            } catch (error) {
+                                if (lookupToken !== analyticsIdPostLookupToken) return;
+                                handleError(error);
+                            } finally {
+                                if (lookupToken === analyticsIdPostLookupToken) analyticsSyncingMetaPost.value = false;
+                            }
+                        }, delay);
+                    };
+                    input.addEventListener('input', syncFromDomInput);
+                    input.addEventListener('change', syncFromDomInput);
+                };
                 const openAnalyticsModal = (item = null) => {
+                    analyticsIdPostLookupToken++;
+                    analyticsSyncingMetaPost.value = false;
                     if (item) {
                         analyticsForm.value = { ...item };
                         modalType.value = "edit";
@@ -108,6 +235,7 @@
                             Master_ID: "",
                             Judul: "",
                             Platform: "Instagram",
+                            ID_Post: "",
                             Views: 0,
                             Likes: 0,
                             Comments: 0,
@@ -115,8 +243,22 @@
                         };
                         modalType.value = "create";
                     }
+                    analyticsOriginalMetrics.value = {
+                        Views: analyticsForm.value.Views,
+                        Likes: analyticsForm.value.Likes,
+                        Comments: analyticsForm.value.Comments,
+                        Shares: analyticsForm.value.Shares,
+                    };
                     analyticsModalOpen.value = true;
+                    suppressAnalyticsIdPostWatcher.value = true;
+                    nextTick(() => {
+                        suppressAnalyticsIdPostWatcher.value = false;
+                        bindAnalyticsIdPostDomSync();
+                    });
                 };
+                watch(() => analyticsForm.value.ID_Post, (value) => {
+                    queueAnalyticsIdPostSync(value);
+                });
 
                 const saveAnalytics = () => {
                     if (submitting.value) return;

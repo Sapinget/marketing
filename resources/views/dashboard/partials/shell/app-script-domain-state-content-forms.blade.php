@@ -17,6 +17,7 @@
                     Master_ID: "",
                     Judul: "",
                     Platform: "Instagram",
+                    ID_Post: "",
                     Views: 0,
                     Likes: 0,
                     Comments: 0,

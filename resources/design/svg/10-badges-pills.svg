@@ -9,7 +9,7 @@
   </defs>
 
   <!-- Artboard background -->
-  <rect width="1000" height="480" fill="#f8fafc"/>
+  <rect width="1000" height="480" fill="#64748b"/>
 
   <!-- Title -->
   <text x="24" y="36" font-family="system-ui,-apple-system,sans-serif" font-size="16" font-weight="700" fill="#0f172a">BADGES, PILLS &amp; CHIPS</text>
@@ -19,20 +19,20 @@
     <text x="24" y="56" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="0.5">ENTITY BADGE — px=10 py=3 radius=99px font=10px fw=600</text>
 
     <!-- Badge 1: Info -->
-    <rect x="24" y="64" width="56" height="22" rx="11" fill="#eff6ff" stroke="#bfdbfe" stroke-width="1"/>
-    <text x="52" y="78" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" fill="#1d4ed8" text-anchor="middle">Info</text>
+    <rect x="24" y="64" width="56" height="22" rx="11" fill="#2563eb" stroke="#bfdbfe" stroke-width="1"/>
+    <text x="52" y="78" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">Info</text>
 
     <!-- Badge 2: Success / Aktif -->
-    <rect x="96" y="64" width="52" height="22" rx="11" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="1"/>
-    <text x="122" y="78" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" fill="#15803d" text-anchor="middle">Aktif</text>
+    <rect x="96" y="64" width="52" height="22" rx="11" fill="#047857" stroke="#bbf7d0" stroke-width="1"/>
+    <text x="122" y="78" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">Aktif</text>
 
     <!-- Badge 3: Warning / Pending -->
-    <rect x="164" y="64" width="66" height="22" rx="11" fill="#fff7ed" stroke="#fed7aa" stroke-width="1"/>
-    <text x="197" y="78" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" fill="#c2410c" text-anchor="middle">Pending</text>
+    <rect x="164" y="64" width="66" height="22" rx="11" fill="#b45309" stroke="#fed7aa" stroke-width="1"/>
+    <text x="197" y="78" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">Pending</text>
 
     <!-- Badge 4: Danger / Nonaktif -->
-    <rect x="246" y="64" width="68" height="22" rx="11" fill="#fef2f2" stroke="#fecaca" stroke-width="1"/>
-    <text x="280" y="78" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" fill="#b91c1c" text-anchor="middle">Nonaktif</text>
+    <rect x="246" y="64" width="68" height="22" rx="11" fill="#dc2626" stroke="#fecaca" stroke-width="1"/>
+    <text x="280" y="78" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" fill="#ffffff" text-anchor="middle">Nonaktif</text>
 
     <!-- Annotation -->
     <text x="330" y="78" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#94a3b8">h=22px · rx=99 · px=10 py=3</text>
@@ -53,9 +53,9 @@
     <text x="118" y="138" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#64748b">Menunggu</text>
 
     <!-- Pill 3: Proses -->
-    <rect x="192" y="124" width="62" height="20" rx="10" fill="#fff7ed"/>
+    <rect x="192" y="124" width="62" height="20" rx="10" fill="#b45309"/>
     <circle cx="206" cy="134" r="3" fill="#f97316"/>
-    <text x="214" y="138" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#c2410c">Proses</text>
+    <text x="214" y="138" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#ffffff">Proses</text>
 
     <text x="270" y="138" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#94a3b8">dot 6×6 · px=8 py=2 · rx=99</text>
   </g>
@@ -86,14 +86,14 @@
   <g id="Component/SummaryCounterPill">
     <text x="24" y="284" font-family="system-ui,-apple-system,sans-serif" font-size="9" fill="#94a3b8" font-weight="600" letter-spacing="0.5">SUMMARY COUNTER PILL</text>
 
-    <rect x="24" y="292" width="72" height="28" rx="14" fill="#eef0ff"/>
+    <rect x="24" y="292" width="72" height="28" rx="14" fill="#5066eb"/>
     <text x="60" y="309" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="#4f63ff" text-anchor="middle">42 item</text>
 
     <!-- With icon variant -->
-    <rect x="112" y="292" width="96" height="28" rx="14" fill="#eef0ff"/>
+    <rect x="112" y="292" width="96" height="28" rx="14" fill="#5066eb"/>
     <text x="132" y="309" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="#4f63ff">☰ 42 item</text>
 
-    <text x="220" y="309" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#94a3b8">rx=16 · px=10 py=4 · bg=#eef0ff · text=#4f63ff</text>
+    <text x="220" y="309" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#94a3b8">rx=16 · px=10 py=4 · bg=#5066eb · text=#4f63ff</text>
   </g>
 
   <!-- ===================== SECTION E — MULTI-SELECT CHIPS ===================== -->
@@ -104,24 +104,24 @@
     <rect x="24" y="362" width="420" height="40" rx="12" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
 
     <!-- Chip: Instagram × -->
-    <rect x="36" y="371" width="84" height="22" rx="11" fill="#eef0ff"/>
+    <rect x="36" y="371" width="84" height="22" rx="11" fill="#5066eb"/>
     <text x="74" y="385" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#4f63ff" text-anchor="middle">Instagram</text>
     <text x="110" y="385" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#4f63ff" text-anchor="middle">×</text>
 
     <!-- Chip: TikTok × -->
-    <rect x="132" y="371" width="68" height="22" rx="11" fill="#eef0ff"/>
+    <rect x="132" y="371" width="68" height="22" rx="11" fill="#5066eb"/>
     <text x="161" y="385" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#4f63ff" text-anchor="middle">TikTok</text>
     <text x="192" y="385" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#4f63ff" text-anchor="middle">×</text>
 
     <!-- Chip: YouTube × -->
-    <rect x="212" y="371" width="74" height="22" rx="11" fill="#eef0ff"/>
+    <rect x="212" y="371" width="74" height="22" rx="11" fill="#5066eb"/>
     <text x="244" y="385" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#4f63ff" text-anchor="middle">YouTube</text>
     <text x="278" y="385" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#4f63ff" text-anchor="middle">×</text>
 
     <!-- Cursor/placeholder -->
     <text x="300" y="385" font-family="system-ui,-apple-system,sans-serif" font-size="10" fill="#94a3b8">Tambah...</text>
 
-    <text x="24" y="414" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#94a3b8">rx=99 · px=8 py=3 · bg=#eef0ff · text=#4f63ff · "×" close icon</text>
+    <text x="24" y="414" font-family="system-ui,-apple-system,sans-serif" font-size="8" fill="#94a3b8">rx=99 · px=8 py=3 · bg=#5066eb · text=#4f63ff · "×" close icon</text>
   </g>
 
   <!-- ===================== SECTION F — METRIC CHIP CARD ===================== -->

@@ -1,0 +1,241 @@
+{
+  "version": "1.0.0",
+  "name": "AI Workspace",
+  "purpose": "Model-agnostic operating system for Claude, Codex, OpenCode, and other AI agents.",
+  "defaultWorkflow": [
+    "clarify_brief",
+    "route_to_crew",
+    "inspect_context",
+    "produce_artifact",
+    "verify",
+    "summarize_next_steps"
+  ],
+  "crews": [
+    {
+      "id": "developers",
+      "name": "Developers",
+      "tagline": "Ship code faster, from scaffold to QA",
+      "leadWhen": [
+        "scaffold or modify software",
+        "debug production behavior",
+        "write or improve tests",
+        "review architecture or implementation"
+      ],
+      "skills": [
+        "superpower",
+        "context7",
+        "mcp-builder",
+        "skill-creator",
+        "webapp-testing",
+        "claude-mem"
+      ],
+      "deliverables": [
+        "implementation plan",
+        "code changes",
+        "tests",
+        "QA checklist",
+        "release notes"
+      ],
+      "qualityBar": [
+        "small focused changes",
+        "repo patterns followed",
+        "security boundaries respected",
+        "tests or explicit verification included"
+      ]
+    },
+    {
+      "id": "design",
+      "name": "Design",
+      "tagline": "UI that never looks templated",
+      "leadWhen": [
+        "create or refine UI",
+        "define visual direction",
+        "improve UX flow",
+        "produce visual assets"
+      ],
+      "skills": [
+        "frontend-design",
+        "web-artifacts",
+        "canvas-design",
+        "algorithmic-art",
+        "ui-ux-pro-max",
+        "slack-gif"
+      ],
+      "deliverables": [
+        "screen direction",
+        "component specs",
+        "layout rules",
+        "visual QA notes",
+        "asset briefs"
+      ],
+      "qualityBar": [
+        "domain-specific UI",
+        "responsive and readable",
+        "no generic template feel",
+        "accessible interaction states"
+      ]
+    },
+    {
+      "id": "marketing",
+      "name": "Marketing",
+      "tagline": "Copy, SEO and ads that convert",
+      "leadWhen": [
+        "optimize acquisition",
+        "write ads or landing copy",
+        "audit SEO",
+        "plan conversion experiments"
+      ],
+      "skills": [
+        "seo-audit",
+        "programmatic-seo",
+        "ai-seo",
+        "cro",
+        "ad-creative",
+        "mktg-psychology"
+      ],
+      "deliverables": [
+        "positioning",
+        "SEO recommendations",
+        "ad variants",
+        "CRO test plan",
+        "tracking requirements"
+      ],
+      "qualityBar": [
+        "clear audience and offer",
+        "measurable hypothesis",
+        "channel-native copy",
+        "no unsupported claims"
+      ]
+    },
+    {
+      "id": "social-content",
+      "name": "Social & Content",
+      "tagline": "Feed the algorithm on autopilot",
+      "leadWhen": [
+        "plan content calendar",
+        "write social posts",
+        "turn one idea into many assets",
+        "build email sequences"
+      ],
+      "skills": [
+        "social",
+        "copywriting",
+        "content-strategy",
+        "video",
+        "pillar-content",
+        "email-sequences"
+      ],
+      "deliverables": [
+        "content pillars",
+        "post drafts",
+        "video scripts",
+        "email sequences",
+        "repurposing map"
+      ],
+      "qualityBar": [
+        "platform-native format",
+        "strong hook and clear CTA",
+        "consistent voice",
+        "batchable production workflow"
+      ]
+    },
+    {
+      "id": "finance",
+      "name": "Finance",
+      "tagline": "Model the number before you spend",
+      "leadWhen": [
+        "build financial model",
+        "evaluate pricing",
+        "compare companies",
+        "prepare investor materials"
+      ],
+      "skills": [
+        "dcf-model",
+        "3-statements",
+        "lbo-model",
+        "comps-analysis",
+        "pricing",
+        "pitch-deck"
+      ],
+      "deliverables": [
+        "assumptions table",
+        "financial model outline",
+        "scenario analysis",
+        "pricing recommendation",
+        "pitch narrative"
+      ],
+      "qualityBar": [
+        "explicit assumptions",
+        "sensitivity analysis",
+        "clear source notes",
+        "decision-ready summary"
+      ]
+    },
+    {
+      "id": "operations",
+      "name": "Operations",
+      "tagline": "Run the business like a machine",
+      "leadWhen": [
+        "document process",
+        "prepare launch",
+        "analyze incident",
+        "write internal communication"
+      ],
+      "skills": [
+        "sop-builder",
+        "incident-postmortem",
+        "business-case",
+        "launch-runbook",
+        "internal-comms",
+        "xlsx"
+      ],
+      "deliverables": [
+        "SOP",
+        "runbook",
+        "RACI",
+        "postmortem",
+        "internal memo",
+        "spreadsheet spec"
+      ],
+      "qualityBar": [
+        "owner and trigger are clear",
+        "steps are executable",
+        "failure modes covered",
+        "metrics defined"
+      ]
+    },
+    {
+      "id": "legal",
+      "name": "Legal",
+      "tagline": "Read the fine print to you",
+      "leadWhen": [
+        "review legal document",
+        "triage contract or NDA",
+        "identify compliance risk",
+        "query structured legal or policy data"
+      ],
+      "skills": [
+        "contract-review",
+        "nda-triage",
+        "legal-risk",
+        "compliance",
+        "docx",
+        "sql-queries"
+      ],
+      "deliverables": [
+        "risk summary",
+        "issue list",
+        "redline suggestions",
+        "questions for counsel",
+        "compliance checklist"
+      ],
+      "qualityBar": [
+        "not legal advice",
+        "jurisdiction and governing law noted",
+        "critical risks separated from negotiable points",
+        "source text referenced"
+      ]
+    }
+  ]
+}
+

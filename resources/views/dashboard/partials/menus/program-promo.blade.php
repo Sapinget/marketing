@@ -29,13 +29,13 @@
                         class="space-y-6 animate-fadeIn pb-10">
 <!-- Summary cards -->
 <div class="space-y-3">
-    <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-        <div v-for="c in promoSummary.cards" :key="c.label" class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-            <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i :class="['fa-solid', c.icon, 'text-[120px]']"></i></div>
-            <p :class="['text-overline font-bold uppercase tracking-widest mb-3', c.color]">{{ c.label }}</p>
+    <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
+        <div v-for="c in promoSummary.cards.slice(0, 5)" :key="c.label" class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
+            <div class="absolute -right-4 -bottom-4 opacity-5"><i :class="['fa-solid', c.icon, 'text-[120px]']"></i></div>
+            <p class="dashboard-summary-title">{{ c.label }}</p>
             <div class="flex items-baseline gap-2">
                 <span class="dashboard-summary-value">{{ c.value }}</span>
-                <span v-if="c.unit" :class="['dashboard-summary-unit', c.unitColor]">{{ c.unit }}</span>
+                <span v-if="c.unit" class="dashboard-summary-unit">{{ c.unit }}</span>
             </div>
             <p :class="['text-body-sm font-bold mt-3', c.subColor]">{{ c.sub }}</p>
         </div>
@@ -63,7 +63,7 @@
                                             <i class="fa-solid fa-plus"></i> Tambah
                                         </button>
                                         <button @click="exportPromoToPDF"
-                                            class="secondary-cta-button secondary-cta-danger active:scale-95">
+                                            class="primary-cta-button primary-cta-button--danger active:scale-95">
                                             <i class="fa-solid fa-file-pdf"></i> PDF
                                         </button>
                                     </div>
@@ -72,62 +72,54 @@
                             <div class="overflow-x-auto">
                                 <table class="w-full text-body-sm text-left border-collapse min-w-[860px]">
                                     <thead>
-                                        <tr>
-                                            <th
-                                                class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100 w-20 text-left">
-                                                Aksi</th>
-                                            <th
-                                                class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100 w-10 text-center">
+                                        <tr class="table-header-row">
+                                            <th class="table-header-cell table-header-index table-freeze-index">
                                                 #</th>
-                                            <th
-                                                class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100">
+                                            <th class="table-header-cell table-header-action table-freeze-action">
+                                                Aksi</th>
+                                            <th class="table-header-cell">
                                                 Program</th>
-                                            <th
-                                                class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100 w-32 text-center">
+                                            <th class="table-header-cell w-32 text-center">
                                                 Varian</th>
-                                            <th
-                                                class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100">
+                                            <th class="table-header-cell">
                                                 Benefit</th>
-                                            <th
-                                                class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100">
+                                            <th class="table-header-cell">
                                                 Rules</th>
-                                            <th
-                                                class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100 w-28 text-right">
+                                            <th class="table-header-cell w-28 text-right">
                                                 Harga</th>
-                                            <th
-                                                class="px-5 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold border-b border-slate-100 w-36 text-center">
+                                            <th class="table-header-cell w-36 text-center">
                                                 Periode</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr v-if="pagedPromoRows.length === 0">
-                                            <td colspan="9" class="px-5 py-16 text-center text-body text-slate-400">
+                                            <td colspan="8" class="px-5 py-16 text-center text-body text-slate-400">
                                                 <i class="fa-solid fa-bullhorn text-3xl mb-3 opacity-20 block"></i>
                                                 Belum ada data program promo
                                             </td>
                                         </tr>
                                         <template v-for="(row, idx) in pagedPromoRows" :key="row.ID || idx">
                                             <tr v-if="row.isCategoryHeader" class="bg-slate-50">
-                                                <td colspan="9"
+                                                <td colspan="8"
                                                     class="px-5 py-2 text-body-sm font-bold text-slate-500 uppercase tracking-widest border-y border-slate-100">
                                                     <i class="fa-solid fa-layer-group mr-2 text-ppp-accent"></i>{{ row.name }}
                                                 </td>
                                             </tr>
                                             <tr v-else
                                                 class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors group">
-                                                <td class="px-5 py-3.5 text-left">
+                                                <td class="px-5 py-3.5 text-body-sm text-slate-400 text-center table-freeze-index">{{ row.indexInGroup }}</td>
+                                                <td class="px-5 py-3.5 text-left table-freeze-action">
                                                     <div class="flex items-center gap-1.5">
                                                         <button @click="openPromoModal('edit', row)"
                                                             class="table-action-button table-action-compact"
                                                             title="Edit" aria-label="Edit"><i
-                                                                class="fa-solid fa-pen text-overline"></i></button>
+                                                                class="fa-solid fa-pen-to-square text-overline"></i></button>
                                                         <button @click="deletePromo(row.ID)"
                                                             class="table-action-button table-action-compact table-action-danger"
                                                             title="Hapus" aria-label="Hapus"><i
-                                                                class="fa-solid fa-trash text-overline"></i></button>
+                                                                class="fa-solid fa-trash-can text-overline"></i></button>
                                                     </div>
                                                 </td>
-                                                <td class="px-5 py-3.5 text-body-sm text-slate-400 text-center">{{ row.indexInGroup }}</td>
                                                 <td class="px-5 py-3.5">
                                                     <p
                                                         class="text-body-sm font-bold text-slate-900 uppercase tracking-tight leading-tight">
@@ -192,11 +184,11 @@
                                             <span v-if="row.Harga" class="text-body font-bold text-ppp-accent">{{ formatCurrency(row.Harga) }}</span>
                                             <button @click="openPromoModal('edit', row)"
                                                 class="table-action-button table-action-compact" title="Edit"
-                                                aria-label="Edit"><i class="fa-solid fa-pen text-body-sm"></i></button>
+                                                aria-label="Edit"><i class="fa-solid fa-pen-to-square text-body-sm"></i></button>
                                             <button @click="deletePromo(row.ID)"
                                                 class="table-action-button table-action-compact table-action-danger"
                                                 title="Hapus" aria-label="Hapus"><i
-                                                    class="fa-solid fa-trash text-body-sm"></i></button>
+                                                    class="fa-solid fa-trash-can text-body-sm"></i></button>
                                         </div>
                                     </div>
                                 </div>

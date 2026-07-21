@@ -1,24 +1,10 @@
 @verbatim
 <div v-if="activeTab === 'ideation'" class="space-y-6 animate-fadeIn pb-10">
-    <div class="space-y-3">
-        <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-            <div v-for="c in ideationSummary.cards" :key="c.label" class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i :class="['fa-solid', c.icon, 'text-[120px]']"></i></div>
-                <p :class="['text-overline font-bold uppercase tracking-widest mb-3', c.color]">{{ c.label }}</p>
-                <div class="flex items-baseline gap-2">
-                    <span class="dashboard-summary-value">{{ c.value }}</span>
-                    <span v-if="c.unit" :class="['dashboard-summary-unit', c.unitColor]">{{ c.unit }}</span>
-                </div>
-                <p :class="['text-body-sm font-bold mt-3', c.subColor]">{{ c.sub }}</p>
-            </div>
-        </div>
-    </div>
-
     <section class="section-card section-card-body">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
             <div class="flex items-center gap-4">
                 <div
-                    class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
+                    class="w-12 h-12 rounded-2xl bg-amber text-light flex items-center justify-center border border-amber">
                     <i class="fa-solid fa-lightbulb text-lg"></i>
                 </div>
                 <div>
@@ -47,7 +33,7 @@
                         class="primary-cta-button primary-cta-button--accent active:scale-95">
                         <i class="fa-solid fa-plus mr-2"></i>Buat Ide </button>
                     <button @click="exportExcel"
-                        class="secondary-cta-button secondary-cta-success active:scale-95"><i
+                        class="primary-cta-button primary-cta-button--success active:scale-95"><i
                             class="fa-solid fa-file-excel"></i><span
                             class="ml-1">Excel</span></button>
                 </div>
@@ -74,51 +60,55 @@
                 <div class="flex items-center justify-between px-2 mb-5">
                     <div class="flex items-center gap-2">
                         <div
-                            :class="['w-2 h-2 rounded-full', status === ideationDraftLabel ? 'bg-blue-500' : status === 'In Progress' ? 'bg-amber-500' : 'bg-emerald-500']">
+                            :class="['w-2 h-2 rounded-full', status === ideationDraftLabel ? 'bg-amber' : status === 'In Progress' ? 'bg-amber' : 'bg-success']">
                         </div>
                         <h3 class="text-body font-bold text-slate-700 uppercase tracking-widest">
                             {{ status }}</h3>
                         <span
-                            class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-body-sm font-bold">{{ items.length }}</span>
+                            class="px-2 py-0.5 rounded-full bg-secondary text-light text-body-sm font-bold">{{ items.length }}</span>
                     </div>
                 </div>
 
                 <div class="space-y-3 flex-1">
                     <div v-for="item in pagedKanbanBuckets[status]" :key="item.ID"
                         @click="openEditModal(item)"
-                        class="bg-white p-4 radius-card border border-slate-100 hover:border-ppp-accent/20 transition-all cursor-pointer group animate-fadeIn">
-                        <div class="flex items-start justify-between gap-3 mb-3">
+                        class="ideation-kanban-card bg-white p-3 radius-card border border-slate-100 hover:border-ppp-accent/20 transition-all cursor-pointer group animate-fadeIn">
+                        <div class="flex items-start justify-between gap-2 mb-2">
                             <span
-                                :class="['px-2 py-0.5 rounded-lg text-overline font-bold uppercase', getIdeationTypeTone(item).chip]">
+                                :class="['px-1.5 py-0.5 rounded-md text-overline-xs font-bold uppercase', getIdeationTypeTone(item).chip]">
                                 {{ item.Format_Konten }}
                             </span>
-                            <div class="flex items-center gap-2">
-                                <div class="w-6 h-6 rounded-full bg-slate-100 border-2 border-white flex items-center justify-center text-overline-xs font-bold text-slate-600"
-                                    :title="item.Editor">
-                                    {{ (item.Editor || 'U')[0] }}
+                            <div class="flex items-center gap-1.5">
+                                <div class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-overline font-bold text-slate-600 flex-shrink-0 overflow-hidden"
+                                    :title="personDisplayName(item.Editor)">
+                                    <img v-if="resolveUserAvatarUrl(item.Editor)"
+                                        :src="resolveAvatarUrl(resolveUserAvatarUrl(item.Editor))"
+                                        class="w-full h-full object-cover" alt="Foto Editor"
+                                        @error="markMasterPlanEditorAvatarFailed(item.Editor)" />
+                                    <span v-else>{{ masterPersonInitials(item.Editor) }}</span>
                                 </div>
                                 <button @click.stop="deleteMasterPlan(item.ID)"
-                                    class="w-6 h-6 rounded-full bg-rose-50 border border-rose-100 text-rose-400 hover:bg-rose-500 hover:text-white hover:border-rose-500 transition-all flex items-center justify-center">
-                                    <i class="fa-solid fa-trash text-overline-xs"></i>
+                                    class="w-5 h-5 rounded-full bg-danger border border-danger text-light hover:bg-danger hover:text-white hover:border-danger transition-all flex items-center justify-center">
+                                    <i class="fa-solid fa-trash-can text-overline-xs"></i>
                                 </button>
                             </div>
                         </div>
                         <div
-                            :class="['text-body font-bold text-slate-800 leading-tight mb-3 group-hover:text-ppp-accent transition-colors', (item.Status||'').toLowerCase() === 'done' || (item.Status||'').toLowerCase() === 'published' ? 'line-through opacity-60' : '']">
+                            :class="['type-body-sm font-medium text-slate-800 leading-tight mb-2 group-hover:text-ppp-accent transition-colors', (item.Status||'').toLowerCase() === 'done' || (item.Status||'').toLowerCase() === 'published' ? 'line-through opacity-60' : '']">
                             {{ item.Judul }}</div>
-                        <div class="flex items-center gap-1.5 mb-3">
+                        <div class="flex items-center gap-1.5 mb-2">
                             <span
-                                class="px-2 py-0.5 rounded-full bg-slate-50 border border-slate-100 text-slate-500 text-overline-xs font-bold uppercase tracking-wide">
+                                class="px-1.5 py-0.5 rounded-md bg-slate-50 border border-slate-100 text-slate-500 text-overline-xs font-medium uppercase tracking-wide">
                                 {{ getIdeaAgeLabel(item) }}
                             </span>
                         </div>
                         <div v-if="item.Skrip === 'Ada' || item.Skrip === 'Ya' || item.Caption === 'Ada' || item.Caption === 'Ya'"
-                            class="flex items-center gap-2 pt-3 border-t border-slate-50">
+                            class="flex items-center gap-1.5 pt-2 border-t border-slate-50">
                             <i v-if="item.Skrip === 'Ada' || item.Skrip === 'Ya'"
-                                class="fa-solid fa-file-lines text-emerald-500 text-body-sm"
+                                class="fa-solid fa-file-lines text-success text-body-sm"
                                 title="Skrip Ada"></i>
                             <i v-if="item.Caption === 'Ada' || item.Caption === 'Ya'"
-                                class="fa-solid fa-closed-captioning text-emerald-500 text-body-sm"
+                                class="fa-solid fa-closed-captioning text-success text-body-sm"
                                 title="Caption Ada"></i>
                         </div>
                     </div>
@@ -169,12 +159,21 @@
                 </div>
                 <div class="mobile-data-card__meta">
                     <span
-                        class="px-2 py-0.5 rounded-lg bg-slate-100 text-slate-500 text-overline font-bold">{{ item.Format_Konten }}</span>
+                        class="px-2 py-0.5 rounded-lg bg-secondary text-light text-overline font-bold">{{ item.Format_Konten }}</span>
                 </div>
                 <div class="mobile-data-card__summary">
                     <div>
                         <div class="type-body-sm text-slate-400 uppercase">Editor</div>
-                        <div class="type-body font-bold text-slate-600">{{ item.Editor || '-' }}
+                        <div class="flex items-center gap-2">
+                            <div
+                                class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-overline font-bold text-slate-600 flex-shrink-0 overflow-hidden">
+                                <img v-if="resolveUserAvatarUrl(item.Editor)"
+                                    :src="resolveAvatarUrl(resolveUserAvatarUrl(item.Editor))"
+                                    class="w-full h-full object-cover" alt="Foto Editor"
+                                    @error="markMasterPlanEditorAvatarFailed(item.Editor)" />
+                                <span v-else>{{ masterPersonInitials(item.Editor) }}</span>
+                            </div>
+                            <div class="text-body text-slate-700 font-semibold truncate max-w-[80px]">{{ personDisplayName(item.Editor) }}</div>
                         </div>
                     </div>
                     <div>
@@ -187,11 +186,11 @@
                     <div class="type-body-sm text-slate-400">{{ formatShortDate(item.Tanggal_Rencana) }}</div>
                     <div class="flex items-center gap-2">
                         <button @click.stop="openEditModal(item)"
-                            class="table-action-button table-action-compact"><i
-                                class="fa-solid fa-pen text-body-sm"></i></button>
+                            class="table-action-button table-action-compact" title="Edit" aria-label="Edit"><i
+                                class="fa-solid fa-pen-to-square text-body-sm"></i></button>
                         <button @click.stop="deleteMasterPlan(item.ID)"
-                            class="table-action-button table-action-compact table-action-danger"><i
-                                class="fa-solid fa-trash text-body-sm"></i></button>
+                            class="table-action-button table-action-compact table-action-danger" title="Hapus" aria-label="Hapus"><i
+                                class="fa-solid fa-trash-can text-body-sm"></i></button>
                     </div>
                 </div>
             </div>
@@ -204,27 +203,20 @@
         <div class="hidden md:block overflow-x-auto">
             <table class="w-full text-body-sm text-left border-collapse">
                 <thead>
-                    <tr class="bg-slate-50/50">
-                        <th
-                            class="px-6 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold">
+                    <tr class="table-header-row">
+                        <th class="table-header-cell">
                             Aksi</th>
-                        <th
-                            class="px-6 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold">
+                        <th class="table-header-cell">
                             Judul & Headline</th>
-                        <th
-                            class="px-6 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold">
+                        <th class="table-header-cell">
                             Format</th>
-                        <th
-                            class="px-6 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold">
+                        <th class="table-header-cell">
                             Responsible</th>
-                        <th
-                            class="px-6 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold text-center">
+                        <th class="table-header-cell text-center">
                             Asset</th>
-                        <th
-                            class="px-6 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold">
+                        <th class="table-header-cell">
                             Platforms</th>
-                        <th
-                            class="px-6 py-4 text-body-sm uppercase tracking-widest text-slate-400 font-bold text-center">
+                        <th class="table-header-cell text-center">
                             State</th>
                     </tr>
                 </thead>
@@ -234,11 +226,11 @@
                         <td class="px-6 py-5">
                             <div class="flex items-center gap-2">
                                 <button @click="openEditModal(item)"
-                                    class="table-action-button table-action-compact"><i
-                                        class="fa-solid fa-pen text-body-sm"></i></button>
+                                    class="table-action-button table-action-compact" title="Edit" aria-label="Edit"><i
+                                        class="fa-solid fa-pen-to-square text-body-sm"></i></button>
                                 <button @click="deleteMasterPlan(item.ID)"
-                                    class="table-action-button table-action-compact table-action-danger"><i
-                                        class="fa-solid fa-trash text-body-sm"></i></button>
+                                    class="table-action-button table-action-compact table-action-danger" title="Hapus" aria-label="Hapus"><i
+                                        class="fa-solid fa-trash-can text-body-sm"></i></button>
                             </div>
                         </td>
                         <td class="px-6 py-5">
@@ -248,34 +240,42 @@
                         </td>
                         <td class="px-6 py-5">
                             <span
-                                class="px-2 py-1 rounded-lg bg-slate-100 text-slate-600 text-overline font-bold uppercase">{{ item.Format_Konten }}</span>
+                                class="px-2 py-1 rounded-lg bg-secondary text-light text-overline font-bold uppercase">{{ item.Format_Konten }}</span>
                         </td>
                         <td class="px-6 py-5">
                             <div class="flex items-center gap-2">
                                 <div
-                                    class="w-6 h-6 rounded-full bg-ppp-accent/10 text-ppp-accent flex items-center justify-center text-overline font-bold uppercase">
-                                    {{ (item.Editor || 'U')[0] }}</div>
-                                <span class="text-body font-medium text-slate-600">{{ item.Editor }}</span>
+                                    class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-overline font-bold text-slate-600 flex-shrink-0 overflow-hidden">
+                                    <img v-if="resolveUserAvatarUrl(item.Editor)"
+                                        :src="resolveAvatarUrl(resolveUserAvatarUrl(item.Editor))"
+                                        class="w-full h-full object-cover" alt="Foto Editor"
+                                        @error="markMasterPlanEditorAvatarFailed(item.Editor)" />
+                                    <span v-else>{{ masterPersonInitials(item.Editor) }}</span>
+                                </div>
+                                <span class="text-body text-slate-700 font-semibold truncate max-w-[80px]">{{ personDisplayName(item.Editor) }}</span>
                             </div>
                         </td>
                         <td class="px-6 py-5 text-center">
                             <div class="flex items-center justify-center gap-2">
                                 <i v-if="item.Skrip === 'Ada' || item.Skrip === 'Ya'"
-                                    class="fa-solid fa-file-lines text-emerald-500 text-body-sm"
+                                    class="fa-solid fa-file-lines text-success text-body-sm"
                                     title="Skrip Ada"></i>
                                 <i v-else
                                     class="fa-solid fa-file-lines text-slate-200 text-body-sm"></i>
                                 <i v-if="item.Caption === 'Ada' || item.Caption === 'Ya'"
-                                    class="fa-solid fa-closed-captioning text-emerald-500 text-body-sm"
+                                    class="fa-solid fa-closed-captioning text-success text-body-sm"
                                     title="Caption Ada"></i>
                                 <i v-else
                                     class="fa-solid fa-closed-captioning text-slate-200 text-body-sm"></i>
                             </div>
                         </td>
                         <td class="px-6 py-5">
-                            <div class="flex flex-wrap gap-1 max-w-[120px]">
+                            <div class="flex flex-wrap gap-2 max-w-[160px]">
                                 <span v-for="plat in (item.Platforms || '').split(',')" :key="plat"
-                                    class="text-overline-xs text-slate-400 border border-slate-100 px-1.5 py-0.5 rounded-md font-bold uppercase">{{ (plat || '').trim() }}</span>
+                                    class="flex items-center gap-2">
+                                    <i :class="getPlatformIcon(plat) + ' text-body text-slate-400'"></i>
+                                    <span class="text-body font-bold text-slate-700">{{ platformDisplayName(plat) }}</span>
+                                </span>
                             </div>
                         </td>
                         <td class="px-6 py-5 text-center">

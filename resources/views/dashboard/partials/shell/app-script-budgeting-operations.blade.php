@@ -47,10 +47,10 @@
                 const budgetSummary = computed(() => {
                     const c = budgetCalculations.value;
                     const cards = [
-                        { label: 'Meta Ads', value: formatCurrency(c.metaTotal), icon: 'fa-facebook', iconPrefix: 'fa-brands', color: 'text-blue-500', subColor: 'text-blue-600', sub: 'Anggaran iklan' },
-                        { label: 'Google Ads', value: formatCurrency(c.googleTotal), icon: 'fa-google', iconPrefix: 'fa-brands', color: 'text-blue-500', subColor: 'text-blue-600', sub: 'Anggaran iklan' },
-                        { label: 'Mekari', value: formatCurrency(c.mekariVisitorTotal + c.mekariBroadcastTotal), icon: 'fa-bullhorn', color: 'text-amber-500', subColor: 'text-amber-600', sub: 'Ecosystem total' },
-                        { label: 'Colab', value: formatNumber(c.colabBreakdown.length), unit: 'Partner', icon: 'fa-handshake', color: 'text-violet-500', unitColor: 'text-violet-400', subColor: 'text-violet-600', sub: 'Paid collaboration' },
+                        { label: 'Meta Ads', value: formatCurrency(c.metaTotal), icon: 'fa-facebook', iconPrefix: 'fa-brands', color: 'text-amber', subColor: 'text-amber', sub: 'Anggaran iklan' },
+                        { label: 'Google Ads', value: formatCurrency(c.googleTotal), icon: 'fa-google', iconPrefix: 'fa-brands', color: 'text-amber', subColor: 'text-amber', sub: 'Anggaran iklan' },
+                        { label: 'Mekari', value: formatCurrency(c.mekariVisitorTotal + c.mekariBroadcastTotal), icon: 'fa-bullhorn', color: 'text-amber', subColor: 'text-amber', sub: 'Ecosystem total' },
+                        { label: 'Colab', value: formatNumber(c.colabBreakdown.length), unit: 'Partner', icon: 'fa-handshake', color: 'text-slate-500', unitColor: 'text-slate-400', subColor: 'text-slate-600', sub: 'Paid collaboration' },
                     ];
                     c.othersCalculated.forEach(o => {
                         cards.push({ label: o.name || 'Other', value: formatCurrency(o.total), icon: 'fa-layer-group', color: 'text-slate-500', subColor: 'text-slate-600', sub: 'Additional platform' });

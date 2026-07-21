@@ -5,7 +5,7 @@
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
                                 <div class="flex items-center gap-4">
                                     <div
-                                        class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center border border-indigo-100">
+                                        class="w-12 h-12 rounded-2xl bg-amber text-light flex items-center justify-center border border-amber">
                                         <i class="fa-solid fa-user-gear text-lg"></i>
                                     </div>
                                     <div>
@@ -22,16 +22,35 @@
                             <div
                                 class="md:col-span-2 lg:col-span-4 bg-white radius-dialog border border-slate-100 p-8 flex flex-col items-center text-center relative overflow-hidden group">
                                 <div
-                                    class="absolute top-0 left-0 w-full h-32 bg-gradient-to-br from-indigo-500 to-purple-600 opacity-[0.08] group-hover:opacity-20 transition-opacity duration-500">
+                                    class="absolute top-0 left-0 w-full h-32 bg-gradient-to-br from-amber-500 to-slate-600 opacity-[0.08] group-hover:opacity-20 transition-opacity duration-500">
                                 </div>
-                                <div
-                                    class="relative w-28 h-28 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center text-5xl font-bold mb-5 mt-2 border-[6px] border-white">
-                                    {{ currentUser?.nama?.charAt(0)?.toUpperCase() || 'U' }}
-                                </div>
-                                <h3 class="text-xl font-bold text-slate-900">{{ currentUser?.nama || 'Guest User' }}
+                                <label for="avatar-upload-input"
+                                    class="relative w-28 h-28 rounded-full bg-amber text-light flex items-center justify-center text-5xl font-bold mb-5 mt-2 border-[6px] border-white overflow-hidden cursor-pointer group/avatar hover:ring-4 hover:ring-amber/30 transition-all duration-200"
+                                    :class="submittingAvatar ? 'pointer-events-none' : ''">
+                                    <img v-if="currentUser?.avatar_url" :src="currentUser.avatar_url"
+                                        class="w-full h-full object-cover" alt="Foto Profil" />
+                                    <span v-else>{{ currentUser?.nama?.charAt(0)?.toUpperCase() || 'U' }}</span>
+                                    <div v-if="submittingAvatar"
+                                        class="absolute inset-0 bg-slate-950/55 flex items-center justify-center">
+                                        <i class="fa-solid fa-spinner fa-spin text-white text-2xl"></i>
+                                    </div>
+                                    <div v-else
+                                        class="absolute inset-0 bg-black/0 hover:bg-black/40 flex items-center justify-center transition-all duration-200 group-hover/avatar:bg-black/40">
+                                        <i class="fa-solid fa-camera text-white text-xl opacity-0 group-hover/avatar:opacity-100 transition-opacity duration-200"></i>
+                                    </div>
+                                </label>
+                                <input id="avatar-upload-input" name="avatar_upload_input" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" :disabled="submittingAvatar" @change="uploadProfileAvatar" />
+                                <label for="avatar-upload-input"
+                                    class="mt-2 text-body-sm text-slate-400 font-bold uppercase tracking-widest cursor-pointer hover:text-ppp-accent transition-colors"
+                                    :class="submittingAvatar ? 'opacity-50 pointer-events-none' : ''">
+                                    <i class="fa-solid fa-upload mr-1" :class="submittingAvatar ? 'fa-spin' : ''"></i>
+                                    <span v-if="submittingAvatar">Mengunggah...</span>
+                                    <span v-else>Ganti Foto</span>
+                                </label>
+                                <h3 class="text-xl font-bold text-slate-900 mt-4">{{ currentUser?.nama || 'Guest User' }}
                                 </h3>
                                 <p
-                                    class="text-body font-bold text-indigo-500 uppercase tracking-widest mt-2 px-4 py-1.5 bg-indigo-50 rounded-full">
+                                    class="text-body font-bold text-light uppercase tracking-widest mt-2 px-4 py-1.5 bg-amber rounded-full">
                                     {{ currentUser?.role || 'Marketing' }}</p>
 
                                 <div class="mt-8 w-full space-y-3">
@@ -46,9 +65,9 @@
                                         <span
                                             class="text-body-sm text-slate-400 font-bold uppercase tracking-widest">Akses</span>
                                         <div class="flex items-center gap-1.5">
-                                            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+                                            <div class="w-2 h-2 rounded-full bg-success animate-pulse"></div>
                                             <span
-                                                class="text-body-sm font-bold text-emerald-600 uppercase tracking-widest">Aktif</span>
+                                                class="text-body-sm font-bold text-success uppercase tracking-widest">Aktif</span>
                                         </div>
                                     </div>
                                 </div>
@@ -59,7 +78,7 @@
                                 class="md:col-span-1 lg:col-span-4 bg-white radius-dialog border border-slate-100 p-6 md:p-8 flex flex-col group">
                                 <h3 class="type-title font-bold text-slate-900 mb-6 flex items-center gap-2">
                                     <div
-                                        class="w-8 h-8 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                        class="w-8 h-8 rounded-xl bg-amber text-light flex items-center justify-center group-hover:scale-110 transition-transform">
                                         <i class="fa-solid fa-id-card text-body"></i>
                                     </div>
                                     Informasi Pribadi
@@ -86,7 +105,7 @@
                                 </div>
                                 <div class="pt-5 mt-auto">
                                     <button type="submit" :disabled="submittingInfo"
-                                        class="primary-cta-button w-full primary-cta-button--info shadow-lg shadow-blue-100 active:scale-95 disabled:opacity-50">
+                                        class="primary-cta-button w-full primary-cta-button--info active:scale-95 disabled:opacity-50">
                                         <i v-if="submittingInfo" class="fa-solid fa-spinner fa-spin"></i>
                                         <i v-else class="fa-solid fa-floppy-disk"></i>
                                         Simpan Profil
@@ -99,7 +118,7 @@
                                 class="md:col-span-1 lg:col-span-4 bg-white radius-dialog border border-slate-100 p-6 md:p-8 flex flex-col group">
                                 <h3 class="type-title font-bold text-slate-900 mb-6 flex items-center gap-2">
                                     <div
-                                        class="w-8 h-8 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                        class="w-8 h-8 rounded-xl bg-danger text-light flex items-center justify-center group-hover:scale-110 transition-transform">
                                         <i class="fa-solid fa-shield-halved text-body"></i>
                                     </div>
                                     Keamanan (PIN)
@@ -137,7 +156,7 @@
                                 </div>
                                 <div class="pt-5 mt-auto">
                                     <button type="submit" :disabled="submittingPin"
-                                        class="primary-cta-button w-full primary-cta-button--danger shadow-lg shadow-rose-100 active:scale-95 disabled:opacity-50">
+                                        class="primary-cta-button w-full primary-cta-button--danger active:scale-95 disabled:opacity-50">
                                         <i v-if="submittingPin" class="fa-solid fa-spinner fa-spin"></i>
                                         <i v-else class="fa-solid fa-lock"></i>
                                         Update PIN

@@ -209,14 +209,14 @@ Tambah semua token ke blok `@theme` di `app.css` sebelum fase lain dimulai.
 
 **dashboard-shell.css:**
 - [x] **I1** `modal-secondary/primary-button` min-height 42px → 40px
-- [x] **I4** `secondary-cta-button` font-size `--fs-body-sm` → `--fs-body`
+- [x] **I4** `primary-cta-button` font-size `--fs-body-sm` → `--fs-body`
 - [x] **I8** `table-empty-state` padding `2.5rem` → `var(--space-8)` (40px)
 - [x] **I12** `modal-header-icon` 40px → `var(--icon-bg-md)` (44px)
 - [x] **I13** `dashboard-summary-card-compact` desktop padding `1rem 1.1rem` → `var(--space-4)` (16px equal)
 - [x] **I6** `dashboard-summary-card-compact` mobile base: `4.65rem`→72px, `0.55rem`→`--space-2`, `1.1rem`→`--space-4`; desktop: `5.5rem`→88px; `.dashboard-summary-card` pad→`var(--space-4)`; `.stat-card` pad→`var(--space-4)`
 - [x] **I14** `select-trigger-button-form-tight` gap 6px → `var(--space-2)` (8px)
 - [x] **I15** `filter-trigger-button` padding Y `10px` → `var(--space-3)` (12px)
-- [x] **I16** `secondary-cta-button` padding X `14px` → `var(--space-4)` (16px)
+- [x] **I16** `primary-cta-button` padding X `14px` → `var(--space-4)` (16px)
 - [x] **I17** `reset-filter-button` padding X `14px` → `var(--space-4)` (16px)
 - [x] Audit dashboard-shell.css: modal-footer gap 10→8, table-action gap 6→8, compact border-radius 10→8, icon-utility border-radius 10→8, select pad 10→12, popover compact pad 6→8, period toolbar gap 6→8, segmented filter pad `8px 10px`→`8px 12px`, status-pill pad 6→8, entity-badge pad 10→8, mini-stat-chip gap 6→8, form-input-compact/search pad 10→12, multi-select-chip radius 10→8, calendar-footer pad `6px 10px`→`8px 12px`, mobile-card pads 10→12, sort-arrow margin 6→8, drag-handle margin `10px auto 2px`→`8px auto 4px`, table th 6→4, table td 5→4, desktop td 6→8
 - [x] Build: `npm run build` → ✓ 574ms
@@ -267,7 +267,7 @@ Tambah semua token ke blok `@theme` di `app.css` sebelum fase lain dimulai.
 - [x] Layout: `dashboard-sidebar-shell`, `dashboard-main-shell`, `page-view`, `sidebar-accordion-panel`
 - [x] Page header: `module-header`, `dashboard-hero`, `hero-badge`
 - [x] Cards: `kpi-card`, `panel`, `section-card`/`section-card-body`/`section-card-shell`, `stat-card`, `dashboard-summary-card-compact`, `mobile-data-card`, `settings-*`
-- [x] Buttons CTA: `primary-cta-button` (+`--accent`/`--info`), `secondary-cta-button` (+`-success`/`-danger`/`-neutral`/`-link`)
+- [x] Buttons CTA: `primary-cta-button` (+`--accent`/`--info`), `primary-cta-button` (+`-success`/`-danger`/`-neutral`/`-link`)
 - [x] Buttons icon: `icon-utility-button` (+`-bordered`/`-round`/`-danger`), `icon-button`, `ghost-button`, `table-action-button` (+variants)
 - [x] Modal buttons: `modal-primary-button` (+`--info`/`--success`/`--danger`), `modal-secondary-button`
 - [x] Filters: `filter-trigger-button`, `select-trigger-button` (+compact/form/form-tight), `toolbar-select-shell`, `reset-filter-button`
@@ -293,7 +293,7 @@ Tambah semua token ke blok `@theme` di `app.css` sebelum fase lain dimulai.
 
 #### F4 — Naming convention audit ✅ (documented, rename deferred)
 
-- [x] Audit: 14 class modifier pakai `-` bukan `--` (contoh: `secondary-cta-danger` → `secondary-cta-button--danger`)
+- [x] Audit: 14 class modifier pakai `-` bukan `--` (contoh: `primary-cta-button--danger` → `primary-cta-button--danger`)
 - [x] Dokumentasi di `docs/component-catalog.md` bagian F4
 - [ ] Rename batch (deferred — safe after visual QA Fase E selesai)
 

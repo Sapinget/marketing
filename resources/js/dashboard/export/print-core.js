@@ -72,7 +72,7 @@ function getDashboardAssetUrl(assetPath) {
  */
 export function getPrintBaseStyles() {
   const themeVars = getThemeVarsCSS();
-  const fontAwesomeHref = getDashboardAssetUrl('/vendor/dashboard/fontawesome/css/all.min.css');
+  const fontAwesomeHref = window.DASHBOARD_FONTAWESOME_URL || getDashboardAssetUrl('/vendor/dashboard/fontawesome/css/all.min.css');
 
   return [
     `<link href="${fontAwesomeHref}" rel="stylesheet">`,

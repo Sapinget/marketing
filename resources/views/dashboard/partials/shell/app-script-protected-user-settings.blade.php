@@ -39,20 +39,20 @@
                         },
                         getStatusColor: (status) => {
                             const s = status?.toUpperCase();
-                            if (s === "NOT STARTED") return "bg-slate-100 text-slate-600 border border-slate-200";
-                            if (s === "PENDING") return "bg-amber-100 text-amber-600 border border-amber-200";
-                            if (s === "PROCESED" || s === "PROCESSED") return "bg-indigo-100 text-indigo-600 border border-indigo-200";
-                            if (s === "CLAIM") return "bg-emerald-100 text-emerald-600 border border-emerald-200";
-                            if (s === "DRAFT") return "bg-slate-100 text-slate-500";
-                            if (s === "ONGOING") return "bg-amber-100 text-amber-700";
-                            if (s === "SELESAI") return "bg-emerald-100 text-emerald-700";
-                            if (s === "CANCEL") return "bg-rose-100 text-rose-500";
+                            if (s === "NOT STARTED") return "bg-secondary text-light border border-slate-200";
+                            if (s === "PENDING") return "bg-amber text-light border border-amber";
+                            if (s === "PROCESED" || s === "PROCESSED") return "bg-amber text-light border border-amber";
+                            if (s === "CLAIM") return "bg-success text-light border border-success";
+                            if (s === "DRAFT") return "bg-secondary text-light";
+                            if (s === "ONGOING") return "bg-amber text-light";
+                            if (s === "SELESAI") return "bg-success text-light";
+                            if (s === "CANCEL") return "bg-danger text-light";
                             const sl = s?.toLowerCase();
-                            if (sl === "editing" || sl === "progres") return "bg-blue-100 text-blue-600";
-                            if (sl === "shooting") return "bg-amber-100 text-amber-600";
-                            if (sl === "ide") return "bg-slate-100 text-slate-600";
-                            if (sl === "done" || sl === "published") return "bg-emerald-100 text-emerald-600";
-                            return "bg-slate-100 text-slate-600";
+                            if (sl === "editing" || sl === "progres") return "bg-amber text-light";
+                            if (sl === "shooting") return "bg-amber text-light";
+                            if (sl === "ide") return "bg-secondary text-light";
+                            if (sl === "done" || sl === "published") return "bg-success text-light";
+                            return "bg-secondary text-light";
                         },
                         resolveAppUrl: (url) => {
                             if (!url || /^https?:\/\//i.test(url)) return url;
@@ -100,6 +100,7 @@
                             ...(window.MarketingDashboardRuntimeHelpers || {}),
                             createAdminUserSettingsState: (makeRef) => ({
                                 profileForm: makeRef({ namaLengkap: "", oldPin: "", newPin: "", confirmPin: "" }),
+                                submittingAvatar: makeRef(false),
                                 authUsers: makeRef([]),
                                 authUsersLoaded: makeRef(false),
                                 authUserSearchQuery: makeRef(''),
@@ -107,15 +108,17 @@
                                 activityLogsLoaded: makeRef(false),
                                 activityLogFilters: makeRef({ table_name: "", action: "", record_key: "" }),
                                 submittingAuthUser: makeRef(false),
+                                submittingAuthUserAvatar: makeRef(false),
                                 showAuthUserModal: makeRef(false),
                                 authUserFormMode: makeRef("create"),
-                                authUserForm: makeRef({ ID: null, username: "", nama: "", email: "", role: "operasional", pin: "", confirmPin: "" }),
+                                authUserForm: makeRef({ ID: null, username: "", nama: "", email: "", role: "operasional", pin: "", confirmPin: "", avatar_url: null }),
                         }),
                     };
                 }
 
                 const adminUserSettingsState = window.MarketingDashboardRuntimeHelpers.createAdminUserSettingsState(ref);
                 const profileForm = adminUserSettingsState.profileForm || ref({ namaLengkap: "", oldPin: "", newPin: "", confirmPin: "" });
+                const submittingAvatar = adminUserSettingsState.submittingAvatar || ref(false);
                 const authUsers = adminUserSettingsState.authUsers || ref([]);
                 const authUsersLoaded = adminUserSettingsState.authUsersLoaded || ref(false);
                 const authUserSearchQuery = adminUserSettingsState.authUserSearchQuery || ref('');
@@ -123,14 +126,17 @@
                 const activityLogsLoaded = adminUserSettingsState.activityLogsLoaded || ref(false);
                 const activityLogFilters = adminUserSettingsState.activityLogFilters || ref({ table_name: "", action: "", record_key: "" });
                 const submittingAuthUser = adminUserSettingsState.submittingAuthUser || ref(false);
+                const submittingAuthUserAvatar = adminUserSettingsState.submittingAuthUserAvatar || ref(false);
                 const showAuthUserModal = adminUserSettingsState.showAuthUserModal || ref(false);
                 const authUserFormMode = adminUserSettingsState.authUserFormMode || ref("create");
-                const authUserForm = adminUserSettingsState.authUserForm || ref({ ID: null, username: "", nama: "", email: "", role: "operasional", pin: "", confirmPin: "" });
+                const authUserForm = adminUserSettingsState.authUserForm || ref({ ID: null, username: "", nama: "", email: "", role: "operasional", pin: "", confirmPin: "", avatar_url: null });
                 const authUserRoleOptions = [
                     { value: 'super_admin', label: 'Super Admin' },
                     { value: 'admin', label: 'Admin' },
                     { value: 'kasir', label: 'Kasir' },
                     { value: 'operasional', label: 'Operasional' },
+                    { value: 'brand_ambasador', label: 'Brand Ambasador' },
+                    { value: 'talent', label: 'Talent' },
                 ];
                 const filteredAuthUsers = computed(() => {
                     const q = String(authUserSearchQuery.value || '').trim().toLowerCase();
@@ -276,11 +282,11 @@
                 const getIdeationTypeTone = (item) => {
                     const raw = String(item?.Format_Konten || item?.ContentType || item?.Status || "general").trim().toUpperCase();
                     const palettes = [
-                        { chip: "bg-blue-500 text-white", card: "border-blue-500" },
-                        { chip: "bg-emerald-500 text-white", card: "border-emerald-500" },
-                        { chip: "bg-amber-500 text-white", card: "border-amber-500" },
-                        { chip: "bg-violet-500 text-white", card: "border-violet-500" },
-                        { chip: "bg-rose-500 text-white", card: "border-rose-500" }
+                        { chip: "bg-amber text-white", card: "border-amber" },
+                        { chip: "bg-success text-white", card: "border-success" },
+                        { chip: "bg-amber text-white", card: "border-amber" },
+                        { chip: "bg-slate-500 text-white", card: "border-slate-500" },
+                        { chip: "bg-danger text-white", card: "border-danger" }
                     ];
                     const fixedMap = { "AD": 0, "COLAB": 1, "PROMO": 2, "EDUKASI": 3, "STORY": 4 };
                     let idx = fixedMap[raw];
@@ -301,10 +307,10 @@
                 const getVelocity = (row) => {
                     const score = calculateScore(row);
                     if (!row.Views || row.Views == 0) return { label: "New", class: "bg-slate-500", icon: "fas fa-clock" };
-                    if (score >= 80) return { label: "Viral", class: "bg-red-500", icon: "fas fa-fire" };
-                    if (score >= 50) return { label: "High", class: "bg-emerald-500", icon: "fas fa-arrow-up" };
-                    if (score >= 20) return { label: "Avg", class: "bg-amber-500", icon: "fas fa-minus" };
-                    return { label: "Low", class: "bg-violet-500", icon: "fas fa-arrow-down" };
+                    if (score >= 80) return { label: "Viral", class: "bg-danger", icon: "fas fa-fire" };
+                    if (score >= 50) return { label: "High", class: "bg-success", icon: "fas fa-arrow-up" };
+                    if (score >= 20) return { label: "Avg", class: "bg-amber", icon: "fas fa-minus" };
+                    return { label: "Low", class: "bg-slate-500", icon: "fas fa-arrow-down" };
                 };
 
 

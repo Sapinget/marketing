@@ -1,11 +1,11 @@
 @verbatim
 <div v-if="activeTab === 'meta_feed'" class="space-y-6 animate-fadeIn pb-10">
                         <template v-if="metaFeedData.length">
-                            <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-                                <div v-for="c in metaFeedSummary.cards" :key="c.label" class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
-                                    <div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700"><i :class="['fa-solid', c.icon, 'text-[120px]']"></i></div>
-                                    <p :class="['text-overline font-bold uppercase tracking-widest mb-3', c.color]">{{ c.label }}</p>
-                                    <div class="flex items-baseline gap-2"><span class="dashboard-summary-value">{{ c.value }}</span><span v-if="c.unit" :class="['dashboard-summary-unit', c.unitColor]">{{ c.unit }}</span></div>
+                            <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
+                                <div v-for="c in metaFeedSummary.cards.slice(0, 5)" :key="c.label" class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
+                                    <div class="absolute -right-4 -bottom-4 opacity-5"><i :class="['fa-solid', c.icon, 'text-[120px]']"></i></div>
+                                    <p class="dashboard-summary-title">{{ c.label }}</p>
+                                    <div class="flex items-baseline gap-2"><span class="dashboard-summary-value">{{ c.value }}</span><span v-if="c.unit" class="dashboard-summary-unit">{{ c.unit }}</span></div>
                                     <p :class="['text-body-sm font-bold mt-3', c.subColor]">{{ c.sub }}</p>
                                 </div>
                             </div>
@@ -36,8 +36,8 @@
                             <section v-if="metaFeedMonthlySummary.length" class="section-card section-card-shell">
                                 <div class="px-5 pt-5"><h3 class="text-body font-bold text-slate-700 uppercase tracking-widest mb-3">Ringkasan Bulanan per Akun</h3></div>
                                 <div class="overflow-x-auto"><table class="w-full text-body-sm text-left border-collapse min-w-[860px]">
-                                    <thead><tr class="text-overline uppercase tracking-widest text-slate-400">
-                                        <th class="px-4 py-3">Bulan</th><th class="px-4 py-3">Akun</th><th class="px-4 py-3 text-right">Post</th><th class="px-4 py-3 text-right">Views</th><th class="px-4 py-3 text-right">Reach</th><th class="px-4 py-3 text-right">Likes</th><th class="px-4 py-3 text-right">Comments</th><th class="px-4 py-3 text-right">Shares</th><th class="px-4 py-3 text-right">Saves</th>
+                                    <thead><tr class="table-header-row">
+                                        <th class="table-header-cell">Bulan</th><th class="table-header-cell">Akun</th><th class="table-header-cell text-right">Post</th><th class="table-header-cell text-right">Views</th><th class="table-header-cell text-right">Reach</th><th class="table-header-cell text-right">Likes</th><th class="table-header-cell text-right">Comments</th><th class="table-header-cell text-right">Shares</th><th class="table-header-cell text-right">Saves</th>
                                     </tr></thead>
                                     <tbody>
                                         <tr v-for="row in metaFeedMonthlySummary" :key="`${row.month}-${row.account}`" class="border-t border-slate-50 hover:bg-slate-50/50">
@@ -52,17 +52,17 @@
                                     <div v-for="(row, idx) in metaFeedAccountLeaderboard" :key="row.account" class="flex items-center gap-3 p-2.5 rounded-xl border border-slate-100">
                                         <div class="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center text-body font-bold text-slate-500 shrink-0">{{ idx + 1 }}</div>
                                         <div class="flex-1 min-w-0"><p class="text-body font-bold text-slate-800 truncate">{{ row.account }}</p><p class="text-overline text-slate-400">{{ formatNumber(row.posts) }} post | {{ formatNumber(row.reach) }} reach</p></div>
-                                        <div class="text-right shrink-0"><p class="text-body font-bold text-blue-600">{{ formatNumber(row.views) }}</p><p class="text-overline-xs text-slate-400 uppercase">views</p></div>
+                                        <div class="text-right shrink-0"><p class="text-body font-bold text-amber">{{ formatNumber(row.views) }}</p><p class="text-overline-xs text-slate-400 uppercase">views</p></div>
                                     </div>
                                 </div>
                             </section>
                             <section v-if="metaFeedTop.length" class="bg-white radius-panel border border-slate-100 p-5">
-                                <h3 class="text-body font-bold text-slate-700 uppercase tracking-widest mb-3"><i class="fa-solid fa-trophy text-amber-400 mr-1"></i> Top Konten (Views)</h3>
+                                <h3 class="text-body font-bold text-slate-700 uppercase tracking-widest mb-3"><i class="fa-solid fa-trophy text-amber mr-1"></i> Top Konten (Views)</h3>
                                 <div class="space-y-2">
                                     <div v-for="(r, idx) in metaFeedTop" :key="'fts'+idx" class="flex items-center gap-3 p-2.5 rounded-xl border border-slate-100">
                                         <div class="w-7 h-7 rounded-lg bg-slate-50 flex items-center justify-center text-body font-bold text-slate-500 shrink-0">{{ idx + 1 }}</div>
                                         <div class="flex-1 min-w-0"><p class="text-body font-bold text-slate-800 truncate">{{ metaShortDesc(r) }}</p><p class="text-overline text-slate-400">{{ r.post_type }} | {{ r.account }} | {{ r.publish_time ? formatShortDate(r.publish_time) : '-' }}</p></div>
-                                        <div class="text-right shrink-0"><p class="text-body font-bold text-blue-600">{{ formatNumber(r.views) }}</p><p class="text-overline-xs text-slate-400 uppercase">views</p></div>
+                                        <div class="text-right shrink-0"><p class="text-body font-bold text-amber">{{ formatNumber(r.views) }}</p><p class="text-overline-xs text-slate-400 uppercase">views</p></div>
                                     </div>
                                 </div>
                             </section>
@@ -75,7 +75,7 @@
                                                 <i class="fa-solid fa-user-group text-body-sm text-slate-400"></i>
                                                 <span class="truncate">{{ metaFeedAccount || 'Semua Akun' }}</span>
                                                 <i v-if="metaFeedAccount" @click.stop="metaFeedAccount = ''"
-                                                    class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-red-500"></i>
+                                                    class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-danger"></i>
                                                 <i v-else class="fa-solid fa-chevron-down ml-auto text-overline text-slate-400"></i>
                                             </button>
                                             <transition name="fade">
@@ -101,27 +101,27 @@
                                             <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
                                             <template v-if="metaFeedDateFilter.start">{{ formatShortDate(metaFeedDateFilter.start) }}<span v-if="metaFeedDateFilter.end"> - {{ formatShortDate(metaFeedDateFilter.end) }}</span></template>
                                             <template v-else>Semua Tanggal</template>
-                                            <i v-if="metaFeedDateFilter.start" @click.stop="metaFeedDateFilter = { start: '', end: '' }" class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-red-500"></i>
+                                            <i v-if="metaFeedDateFilter.start" @click.stop="metaFeedDateFilter = { start: '', end: '' }" class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-danger"></i>
                                         </button>
                                         <label for="meta-feed-upload" class="primary-cta-button primary-cta-button--accent active:scale-95 cursor-pointer">
                                             <i :class="metaUploading ? 'fa-solid fa-spinner fa-spin' : 'fa-solid fa-upload'"></i> Upload CSV
                                             <input id="meta-feed-upload" name="meta_feed_upload" type="file" accept=".csv" class="hidden" aria-label="Upload CSV meta feed" @change="handleMetaFileInput($event, 'feed')" />
                                         </label>
-                                        <button @click="importMetaFolder('feed')" class="secondary-cta-button secondary-cta-neutral active:scale-95" :disabled="metaUploading">
+                                        <button @click="importMetaFolder('feed')" class="primary-cta-button primary-cta-button--neutral active:scale-95" :disabled="metaUploading">
                                             <i :class="metaUploading ? 'fa-solid fa-spinner fa-spin' : 'fa-solid fa-folder-open'"></i> Import Folder
                                         </button>
                                     </div>
                                 </div>
                                 <div class="overflow-x-auto"><table class="w-full text-body-sm text-left border-collapse min-w-[840px]">
-                                    <thead><tr class="text-overline uppercase tracking-widest text-slate-400">
-                                        <th class="px-4 py-3">Tanggal</th><th class="px-4 py-3">Tipe</th><th class="px-4 py-3">Akun</th><th class="px-4 py-3">Konten</th>
-                                        <th class="px-4 py-3 text-right">Views</th><th class="px-4 py-3 text-right">Reach</th><th class="px-4 py-3 text-right">Likes</th>
-                                        <th class="px-4 py-3 text-right">Komen</th><th class="px-4 py-3 text-right">Share</th><th class="px-4 py-3 text-right">Save</th>
+                                    <thead><tr class="table-header-row">
+                                        <th class="table-header-cell">Tanggal</th><th class="table-header-cell">Tipe</th><th class="table-header-cell">Akun</th><th class="table-header-cell">Konten</th>
+                                        <th class="table-header-cell text-right">Views</th><th class="table-header-cell text-right">Reach</th><th class="table-header-cell text-right">Likes</th>
+                                        <th class="table-header-cell text-right">Komen</th><th class="table-header-cell text-right">Share</th><th class="table-header-cell text-right">Save</th>
                                     </tr></thead>
                                     <tbody>
                                         <tr v-for="(r, idx) in filteredMetaFeed" :key="'ftr'+idx" class="border-t border-slate-50 hover:bg-slate-50/50">
                                             <td class="px-4 py-2.5 whitespace-nowrap text-slate-500">{{ r.publish_time ? formatShortDate(r.publish_time) : '-' }}</td>
-                                            <td class="px-4 py-2.5"><span class="px-2 py-0.5 rounded bg-blue-50 text-blue-600 text-overline font-bold uppercase">{{ r.post_type || '-' }}</span></td>
+                                            <td class="px-4 py-2.5"><span class="px-2 py-0.5 rounded bg-amber text-light text-overline font-bold uppercase">{{ r.post_type || '-' }}</span></td>
                                             <td class="px-4 py-2.5 whitespace-nowrap text-slate-500">{{ r.account || '-' }}</td>
                                             <td class="px-4 py-2.5 max-w-[260px]"><p class="truncate font-medium text-slate-700">{{ metaShortDesc(r) }}</p></td>
                                             <td class="px-4 py-2.5 text-right font-bold text-slate-800">{{ formatNumber(r.views) }}</td>

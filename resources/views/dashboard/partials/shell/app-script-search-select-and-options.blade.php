@@ -86,6 +86,9 @@
                 const unitKategoriOptions = computed(() => getKategoriOptions());
                 const unitBrandOptions = computed(() => getBrandOptions(unitDitanyaForm.value['KATEGORI']));
                 const nsSeriOptions = computed(() => getSeriOptions(unitDitanyaForm.value['KATEGORI'], unitDitanyaForm.value['BRAND']));
+                const hargaKategoriOptions = computed(() => getKategoriOptions());
+                const hargaBrandOptions = computed(() => getBrandOptions(hargaKompetitorForm.value.KATEGORI));
+                const hargaSeriOptions = computed(() => getSeriOptions(hargaKompetitorForm.value.KATEGORI, hargaKompetitorForm.value.BRAND));
                 const namaStockKategoriOptions = computed(() => resolveNamaStockSettingOptions(
                     ['Nama_Stock_Kategori', 'Kategori_Produk', 'Kategori'],
                     filteredUniqueFrom(namaStockRows.value, 'KATEGORI')
@@ -116,6 +119,9 @@
                     ['Unit_Ditanya_Size', 'Size_Produk', 'Size'],
                     filteredUniqueFrom(unitDitanyaData.value, 'SIZE')
                 ));
+                const hargaRAMOptions = computed(() => unitRAMOptions.value);
+                const hargaInternalOptions = computed(() => unitInternalOptions.value);
+                const hargaSizeOptions = computed(() => unitSizeOptions.value);
                 const sharedUnitTypeOptions = computed(() => {
                     const masterTypeOptions = uniqueMultiKeyFrom(namaStockRows.value, ['SERI']);
                     if (masterTypeOptions.length > 0) return mergeOptionValues(
@@ -178,6 +184,7 @@
                 const calendarMode = ref("form"); // 'form', 'filter', or 'published'
                 const currentPlatForDate = ref("");
                 const currentDateView = ref(new Date());
+                const calendarAnchorStyle = ref({});
                 const hoveredDate = ref("");
                 const monthNames = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
                 const keepBarangStatusOptions = computed(() => uniqueFrom(

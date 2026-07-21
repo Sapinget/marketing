@@ -50,7 +50,7 @@
 | Height | Components |
 |--------|-----------|
 | 32px | `table-action-compact`, `icon-utility-button` |
-| 36px | `primary-cta-button`, `secondary-cta-button`, `select-trigger-button`, `select-trigger-button-compact` |
+| 36px | `primary-cta-button`, `primary-cta-button`, `select-trigger-button`, `select-trigger-button-compact` |
 | 44px | `select-trigger-button-form`, `select-trigger-button-form-tight` |
 
 ### Border Radius Scale
@@ -98,7 +98,7 @@
 
 ---
 
-### 2. secondary-cta-button
+### 2. primary-cta-button
 
 **Dimensi:** h=36px, px=12px, radius=16px, font=`--fs-body` uppercase, fw=700
 
@@ -113,10 +113,10 @@
 
 | Variant | Class | Style |
 |---------|-------|-------|
-| Neutral | `.secondary-cta-neutral` | abu-abu standard |
-| Success | `.secondary-cta-success` | green tint |
-| Danger | `.secondary-cta-danger` | red tint |
-| Link | `.secondary-cta-link` | no background, underline |
+| Neutral | `.primary-cta-button--neutral` | abu-abu standard |
+| Success | `.primary-cta-button--success` | green tint |
+| Danger | `.primary-cta-button--danger` | red tint |
+| Link | `.primary-cta-button--link` | no background, underline |
 
 **Figma frames needed:**
 - [ ] default
@@ -609,7 +609,7 @@ overlay-backdrop (dim layer)
     │       └── form-section-copy
     └── modal-footer-bar
         └── modal-footer-actions
-            ├── secondary-cta-button (cancel)
+            ├── primary-cta-button (cancel)
             └── primary-cta-button (submit)
 ```
 
@@ -894,7 +894,7 @@ logo-breathe: scale:1 → scale:1.05 → scale:1
 | Komponen | Frame |
 |----------|-------|
 | primary-cta-button (4 states × 4 variants) | 16 |
-| secondary-cta-button (4 states × 4 variants) | 16 |
+| primary-cta-button (4 states × 4 variants) | 16 |
 | icon-utility-button (4 states × 4 variants) | 16 |
 | table-action-button (2 states × 5 variants) | 10 |
 | select-trigger-button (4 states × 4 variants) | 16 |
@@ -926,7 +926,7 @@ logo-breathe: scale:1 → scale:1.05 → scale:1
 
 ### Buttons
 - [ ] primary-cta-button (semua states + variants)
-- [ ] secondary-cta-button (semua states + variants)
+- [ ] primary-cta-button (semua states + variants)
 - [ ] icon-utility-button (semua states + variants)
 - [ ] table-action-button (semua states + variants)
 - [ ] select-trigger-button (semua states + variants)

@@ -17,14 +17,17 @@
                                     class="stat-card mobile-record-card mobile-data-card animate-fadeIn">
                                     <div class="mobile-data-card__header">
                                         <span
-                                            class="px-2.5 py-1 rounded-full text-overline font-bold uppercase tracking-wider bg-yellow-100 text-yellow-700">#{{ idx + 1 }}</span>
-                                        <span class="type-body-sm text-slate-400 font-bold uppercase tracking-widest">{{ row.platform }}</span>
+                                            class="px-2.5 py-1 rounded-full text-overline font-bold uppercase tracking-wider bg-warning text-dark">#{{ idx + 1 }}</span>
+                                        <div class="flex items-center gap-2">
+                                            <i :class="getPlatformIcon(row.platform) + ' text-body text-slate-400'"></i>
+                                            <span class="text-body font-bold text-slate-700">{{ platformDisplayName(row.platform) }}</span>
+                                        </div>
                                     </div>
                                     <div>
                                         <p class="mobile-data-card__title line-clamp-2">{{ row.title }}</p>
                                         <div class="mobile-data-card__meta mt-2">
                                             <span
-                                                class="px-2.5 py-1 rounded-lg bg-slate-100 text-slate-600 text-overline font-bold uppercase">{{ row.editor }}</span>
+                                                class="px-2.5 py-1 rounded-lg bg-secondary text-light text-overline font-bold uppercase">{{ row.editor }}</span>
                                         </div>
                                     </div>
                                     <div class="mobile-data-card__summary">
@@ -52,14 +55,14 @@
                                             <template v-else>Semua Tanggal</template>
                                             <i v-if="commonDateFilter.start"
                                                 @click.stop="commonDateFilter = { start: '', end: '' }"
-                                                class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-red-500"></i>
+                                                class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-danger"></i>
                                         </button>
                                         <div class="toolbar-actions">
                                             <button @click="exportExcel"
-                                                class="secondary-cta-button secondary-cta-success active:scale-95"><i
+                                                class="primary-cta-button primary-cta-button--success active:scale-95"><i
                                                     class="fa-solid fa-file-excel"></i><span class="ml-1">Excel</span></button>
                                             <button @click="exportPdf"
-                                                class="secondary-cta-button secondary-cta-danger active:scale-95"><i
+                                                class="primary-cta-button primary-cta-button--danger active:scale-95"><i
                                                     class="fa-solid fa-file-pdf"></i><span class="ml-1">PDF</span></button>
                                         </div>
                                     </div>
@@ -72,17 +75,16 @@
                                 <div class="overflow-x-auto">
                                     <table class="w-full text-body-sm text-left border-collapse min-w-[640px]">
                                         <thead>
-                                            <tr
-                                                class="text-body-sm font-bold uppercase tracking-widest text-slate-400 border-b border-slate-50">
-                                                <th class="px-6 py-3 text-center w-10">#</th>
-                                                <th class="px-6 py-3">Judul</th>
-                                                <th class="px-6 py-3 w-24">Platform</th>
-                                                <th class="px-6 py-3 w-24">Editor</th>
-                                                <th class="px-6 py-3 text-right w-24">Views</th>
-                                                <th class="px-6 py-3 text-right w-20">Likes</th>
-                                                <th class="px-6 py-3 text-right w-24">Comments</th>
-                                                <th class="px-6 py-3 text-right w-20">Shares</th>
-                                                <th class="px-6 py-3 text-center w-24">Tanggal</th>
+                                            <tr class="table-header-row">
+                                                <th class="table-header-cell text-center w-10">#</th>
+                                                <th class="table-header-cell">Judul</th>
+                                                <th class="table-header-cell w-24">Platform</th>
+                                                <th class="table-header-cell w-24">Editor</th>
+                                                <th class="table-header-cell text-right w-24">Views</th>
+                                                <th class="table-header-cell text-right w-20">Likes</th>
+                                                <th class="table-header-cell text-right w-24">Comments</th>
+                                                <th class="table-header-cell text-right w-20">Shares</th>
+                                                <th class="table-header-cell text-center w-24">Tanggal</th>
                                             </tr>
                                         </thead>
                                         <tbody class="divide-y divide-slate-50">
@@ -90,13 +92,17 @@
                                                 class="hover:bg-slate-50/50 transition-colors">
                                                 <td class="px-6 py-3 text-center">
                                                     <span
-                                                        :class="['inline-flex items-center justify-center w-6 h-6 rounded-full text-body-sm font-bold', idx === 0 ? 'bg-yellow-100 text-yellow-600' : idx === 1 ? 'bg-slate-100 text-slate-500' : idx === 2 ? 'bg-amber-50 text-amber-600' : 'text-slate-400']">{{ idx + 1 }}</span>
+                                                        :class="['inline-flex items-center justify-center w-6 h-6 rounded-full text-body-sm font-bold', idx === 0 ? 'bg-warning text-dark' : idx === 1 ? 'bg-secondary text-light' : idx === 2 ? 'bg-amber text-light' : 'text-slate-400']">{{ idx + 1 }}</span>
                                                 </td>
                                                 <td
                                                     class="px-6 py-3 text-body font-semibold text-slate-800 max-w-[200px] truncate">
                                                     {{ row.title }}</td>
-                                                <td class="px-6 py-3"><span
-                                                        class="px-2 py-0.5 rounded-lg bg-slate-100 text-slate-600 text-body-sm font-bold">{{ row.platform }}</span></td>
+                                                <td class="px-6 py-5 text-left">
+                                                    <div class="flex items-center gap-2">
+                                                        <i :class="getPlatformIcon(row.platform) + ' text-body text-slate-400'"></i>
+                                                        <span class="text-body font-bold text-slate-700">{{ platformDisplayName(row.platform) }}</span>
+                                                    </div>
+                                                </td>
                                                 <td class="px-6 py-3 text-body text-slate-600">{{ row.editor }}</td>
                                                 <td
                                                     class="px-6 py-3 text-right text-body font-semibold text-ppp-accent">
@@ -115,23 +121,25 @@
                             <div v-for="group in topContentByPlatform" :key="group.platform"
                                 class="hidden md:block section-card section-card-shell">
                                 <div class="px-6 py-4 border-b border-slate-50 flex items-center justify-between">
-                                    <h3 class="type-heading-sm font-semibold text-slate-900">{{ group.platform }}</h3>
+                                    <h3 class="flex items-center gap-2">
+                                        <i :class="getPlatformIcon(group.platform) + ' text-body text-slate-400'"></i>
+                                        <span class="text-body font-bold text-slate-700">{{ platformDisplayName(group.platform) }}</span>
+                                    </h3>
                                     <span class="type-body-sm text-slate-400">{{ group.rows.length }} konten</span>
                                 </div>
                                 <div class="overflow-x-auto">
                                     <table class="w-full text-body-sm text-left border-collapse min-w-[580px]">
                                         <thead>
-                                            <tr
-                                                class="text-body-sm font-bold uppercase tracking-widest text-slate-400 border-b border-slate-50">
-                                                <th class="px-6 py-3 text-center w-10">#</th>
-                                                <th class="px-6 py-3">Judul</th>
-                                                <th class="px-6 py-3 w-24">Editor</th>
-                                                <th class="px-6 py-3 text-right w-24">Views</th>
-                                                <th class="px-6 py-3 text-right w-20">Likes</th>
-                                                <th class="px-6 py-3 text-right w-24">Comments</th>
-                                                <th class="px-6 py-3 text-right w-20">Shares</th>
-                                                <th class="px-6 py-3 text-center w-24">Tanggal</th>
-                                                <th class="px-6 py-3 text-center w-16">Drive</th>
+                                            <tr class="table-header-row">
+                                                <th class="table-header-cell text-center w-10">#</th>
+                                                <th class="table-header-cell">Judul</th>
+                                                <th class="table-header-cell w-24">Editor</th>
+                                                <th class="table-header-cell text-right w-24">Views</th>
+                                                <th class="table-header-cell text-right w-20">Likes</th>
+                                                <th class="table-header-cell text-right w-24">Comments</th>
+                                                <th class="table-header-cell text-right w-20">Shares</th>
+                                                <th class="table-header-cell text-center w-24">Tanggal</th>
+                                                <th class="table-header-cell text-center w-16">Drive</th>
                                             </tr>
                                         </thead>
                                         <tbody class="divide-y divide-slate-50">
@@ -139,7 +147,7 @@
                                                 class="hover:bg-slate-50/50 transition-colors">
                                                 <td class="px-6 py-3 text-center">
                                                     <span
-                                                        :class="['inline-flex items-center justify-center w-6 h-6 rounded-full text-body-sm font-bold', idx === 0 ? 'bg-yellow-100 text-yellow-600' : idx === 1 ? 'bg-slate-100 text-slate-500' : idx === 2 ? 'bg-amber-50 text-amber-600' : 'text-slate-400']">{{ idx + 1 }}</span>
+                                                        :class="['inline-flex items-center justify-center w-6 h-6 rounded-full text-body-sm font-bold', idx === 0 ? 'bg-warning text-dark' : idx === 1 ? 'bg-secondary text-light' : idx === 2 ? 'bg-amber text-light' : 'text-slate-400']">{{ idx + 1 }}</span>
                                                 </td>
                                                 <td
                                                     class="px-6 py-3 text-body font-semibold text-slate-800 max-w-[200px] truncate">
@@ -154,7 +162,7 @@
                                                 <td class="px-6 py-3 text-center text-body text-slate-400">{{ formatShortDate(row.date) }}</td>
                                                 <td class="px-6 py-3 text-center">
                                                     <a v-if="row.driveLink" :href="row.driveLink" target="_blank" rel="noopener noreferrer"
-                                                        class="w-7 h-7 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center hover:bg-blue-500 hover:text-white transition-all mx-auto">
+                                                        class="w-7 h-7 rounded-lg bg-amber text-light flex items-center justify-center hover:bg-amber hover:text-white transition-all mx-auto">
                                                         <i class="fa-solid fa-folder-open text-body-sm"></i>
                                                     </a>
                                                     <span v-else class="text-slate-300 text-body-sm">-</span>
