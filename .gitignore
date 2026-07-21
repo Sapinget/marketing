@@ -46,6 +46,7 @@ storage/app-frame-expanded.html
 !/.opencode/AI_WORKSPACE.md
 /prompts.chat/
 /bootstrap/dev/
+/opencode-manager/
 
 # Vendor xlsx (pre-commit hook false positive on SheetJS internal error strings)
 /public/vendor/dashboard/xlsx/
