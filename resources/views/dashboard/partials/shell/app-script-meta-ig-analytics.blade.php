@@ -8,8 +8,32 @@
                 const metaStorySearch = ref('');
                 const metaFeedSearch = ref('');
                 const metaFeedAccount = ref('');
-                const metaStoryDateFilter = ref(getDefaultDateRange());
-                const metaFeedDateFilter = ref(getDefaultDateRange());
+                const metaFeedAccountSearch = ref('');
+                const metaStoryDateFilter = ref({ start: '', end: '' });
+                const metaFeedDateFilter = ref({ start: '', end: '' });
+                const metaFeedManualModalOpen = ref(false);
+                const createMetaFeedManualForm = () => ({
+                    post_id: '',
+                    account: '',
+                    publish_time: '',
+                    post_type: 'IG reel',
+                    description: '',
+                    views: 0,
+                    reach: 0,
+                    likes: 0,
+                    comments: 0,
+                    shares: 0,
+                    saves: 0,
+                });
+                const metaFeedManualForm = ref(createMetaFeedManualForm());
+                const metaFeedManualMetricFields = [
+                    { key: 'views', label: 'Views' },
+                    { key: 'reach', label: 'Reach' },
+                    { key: 'likes', label: 'Likes' },
+                    { key: 'comments', label: 'Komen' },
+                    { key: 'shares', label: 'Share' },
+                    { key: 'saves', label: 'Save' },
+                ];
                 const bonusConfigLoaded = ref(false);
                 const budgetConfigLoaded = ref(false);
                 const tabDataLoaded = ref({});
@@ -75,8 +99,41 @@
                 });
 
                 // CSV header (urutan bebas) -> key kanonik
-                const _META_KEYMAP = { 'post id': 'post_id', 'account username': 'account', 'account name': 'account_name', 'description': 'description', 'duration (sec)': 'duration', 'publish time': 'publish_time', 'permalink': 'permalink', 'post type': 'post_type', 'views': 'views', 'reach': 'reach', 'likes': 'likes', 'shares': 'shares', 'comments': 'comments', 'saves': 'saves', 'follows': 'follows', 'profile visits': 'profile_visits', 'replies': 'replies', 'navigation': 'navigation', 'link clicks': 'link_clicks', 'sticker taps': 'sticker_taps' };
+                const _META_KEYMAP = {
+                    'post id': 'post_id',
+                    'account username': 'account',
+                    'account name': 'account_name',
+                    'description': 'description',
+                    'duration (sec)': 'duration',
+                    'publish time': 'publish_time',
+                    'permalink': 'permalink',
+                    'post type': 'post_type',
+                    'views': 'views',
+                    'reach': 'reach',
+                    'likes': 'likes',
+                    'shares': 'shares',
+                    'comments': 'comments',
+                    'saves': 'saves',
+                    'follows': 'follows',
+                    'profile visits': 'profile_visits',
+                    'replies': 'replies',
+                    'navigation': 'navigation',
+                    'link clicks': 'link_clicks',
+                    'sticker taps': 'sticker_taps'
+                };
                 const _META_NUM = new Set(['views', 'reach', 'likes', 'shares', 'comments', 'saves', 'follows', 'profile_visits', 'replies', 'navigation', 'link_clicks', 'sticker_taps', 'duration']);
+                const _META_REQUIRED = new Set(['post id', 'account username', 'publish time']);
+                const _normalizeMetaHeaders = (headers) => headers.map(h => String(h || '').replace(/^﻿/, '').trim().toLowerCase()).filter(Boolean);
+                const _hasMetaRequiredHeaders = (headers) => Array.from(_META_REQUIRED).every(key => headers.includes(key));
+                const _inferMetaDataset = (headers) => {
+                    if (headers.includes('navigation') || headers.includes('sticker taps') || headers.includes('replies') || headers.includes('link clicks') || headers.includes('profile visits')) {
+                        return 'story';
+                    }
+                    if (headers.includes('comments') || headers.includes('saves') || headers.includes('shares') || headers.includes('reach') || headers.includes('views')) {
+                        return 'feed';
+                    }
+                    return null;
+                };
                 const _parseMetaDate = (s) => {
                     const m = String(s || '').trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})/);
                     if (!m) return null;
@@ -136,11 +193,23 @@
                         complete: (res) => {
                             try {
                                 const raw = res.data || [];
-                                const headers = ((res.meta && res.meta.fields) || []).map(h => String(h).trim().toLowerCase());
-                                const isStory = headers.includes('navigation') || headers.includes('sticker taps');
-                                const isFeed = headers.includes('comments') || headers.includes('saves');
-                                if (dataset === 'story' && !isStory) { metaUploading.value = false; showNotification('File ini bukan export Story IG (tidak ada kolom Navigation/Sticker taps).'); return; }
-                                if (dataset === 'feed' && !isFeed) { metaUploading.value = false; showNotification('File ini bukan export Feed (tidak ada kolom Comments/Saves).'); return; }
+                                const headers = _normalizeMetaHeaders((res.meta && res.meta.fields) || []);
+                                if (!_hasMetaRequiredHeaders(headers)) {
+                                    metaUploading.value = false;
+                                    showNotification('Header export Meta tidak cocok. Wajib ada: Post ID, Account username, Publish time.');
+                                    return;
+                                }
+                                const detectedDataset = _inferMetaDataset(headers);
+                                if (dataset === 'story' && detectedDataset !== 'story') {
+                                    metaUploading.value = false;
+                                    showNotification('File ini bukan export Story IG. Upload file Story yang punya metrik khas story seperti Navigation, Replies, Link Clicks, Profile Visits, atau Sticker Taps.');
+                                    return;
+                                }
+                                if (dataset === 'feed' && detectedDataset !== 'feed') {
+                                    metaUploading.value = false;
+                                    showNotification('File ini bukan export Feed IG. Upload file Feed yang punya metrik seperti Views, Reach, Likes, Comments, Shares, atau Saves.');
+                                    return;
+                                }
                                 const rows = raw.map(_normalizeMetaRow).filter(r => String(r.post_id || '').trim() !== '');
                                 if (!rows.length) { metaUploading.value = false; showNotification('Tidak ada baris valid (Post ID kosong).'); return; }
                                 const runner = ensureRunApi();
@@ -182,6 +251,70 @@
                         notifyError('Import folder gagal', err, 'Folder export-meta belum berhasil diproses.');
                     })[fn]({ overwrite });
                     executeImport(false);
+                };
+                const openMetaFeedManualModal = () => {
+                    metaFeedManualForm.value = createMetaFeedManualForm();
+                    metaFeedManualModalOpen.value = true;
+                };
+                const closeMetaFeedManualModal = () => {
+                    if (submitting.value) return;
+                    metaFeedManualModalOpen.value = false;
+                };
+                const toMetaManualNumber = (value) => {
+                    const parsed = parseInt(String(value ?? '').replace(/[^0-9-]/g, ''), 10);
+                    return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+                };
+                const toMetaManualDateTime = (value) => {
+                    const raw = String(value || '').trim();
+                    if (!raw) return '';
+                    return raw.length === 16 ? `${raw.replace('T', ' ')}:00` : raw.replace('T', ' ');
+                };
+                const buildMetaFeedManualRow = () => {
+                    const form = metaFeedManualForm.value || {};
+                    return {
+                        post_id: String(form.post_id || '').trim(),
+                        account: String(form.account || '').trim(),
+                        publish_time: toMetaManualDateTime(form.publish_time),
+                        post_type: String(form.post_type || '').trim() || 'IG reel',
+                        description: String(form.description || '').trim(),
+                        views: toMetaManualNumber(form.views),
+                        reach: toMetaManualNumber(form.reach),
+                        likes: toMetaManualNumber(form.likes),
+                        comments: toMetaManualNumber(form.comments),
+                        shares: toMetaManualNumber(form.shares),
+                        saves: toMetaManualNumber(form.saves),
+                    };
+                };
+                const saveMetaFeedManual = () => {
+                    if (submitting.value) return;
+                    const row = buildMetaFeedManualRow();
+                    if (!row.post_id) { showNotification('Post ID wajib diisi.'); return; }
+                    if (!row.account) { showNotification('Akun wajib diisi.'); return; }
+                    if (!row.publish_time) { showNotification('Tanggal publish wajib diisi.'); return; }
+
+                    const runner = ensureRunApi();
+                    const executeSave = (overwrite = false) => {
+                        submitting.value = true;
+                        runner.withSuccessHandler(result => {
+                            submitting.value = false;
+                            if (result?.requires_confirmation) {
+                                showConfirm(
+                                    'Data Feed Sudah Ada',
+                                    'Post ID ini sudah ada. Lanjutkan untuk menimpa data lama.',
+                                    () => executeSave(true),
+                                    'info'
+                                );
+                                return;
+                            }
+                            metaFeedManualModalOpen.value = false;
+                            showNotification('Data Feed berhasil ditambahkan.');
+                            refreshMetaDataset('feed');
+                        }).withFailureHandler(err => {
+                            submitting.value = false;
+                            notifyError('Simpan Feed gagal', err, 'Data Feed manual belum berhasil disimpan.');
+                        }).importMetaFeed([row], { overwrite });
+                    };
+                    executeSave(false);
                 };
 
 @endverbatim

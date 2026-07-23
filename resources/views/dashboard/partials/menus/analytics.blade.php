@@ -66,7 +66,7 @@
                 </div>
                 <div class="mobile-data-card__actions">
                     <div
-                        :class="['inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-overline font-bold text-white uppercase tracking-wider', getVelocity(row).class]">
+                        :class="['inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-overline font-bold text-white uppercase', getVelocity(row).class]">
                         <i :class="getVelocity(row).icon"></i>
                         {{ getVelocity(row).label }}
                     </div>
@@ -82,7 +82,7 @@
                 </div>
             </div>
             <div v-if="filteredAnalyticsData.length === 0"
-                class="table-empty-state text-slate-400 text-body uppercase tracking-widest">
+                class="table-empty-state text-slate-400 text-body uppercase">
                 Belum
                 ada data analitik</div>
         </div>
@@ -199,7 +199,7 @@
                         </td>
                         <td class="px-6 py-5 text-center">
                             <div
-                                :class="['inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-overline-xs font-bold text-white uppercase tracking-wider', getVelocity(row).class]">
+                                :class="['inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-overline-xs font-bold text-white uppercase', getVelocity(row).class]">
                                 <i :class="getVelocity(row).icon"></i>
                                 {{ getVelocity(row).label }}
                             </div>
@@ -207,7 +207,7 @@
                     </tr>
                     <tr v-if="filteredAnalyticsData.length === 0">
                         <td colspan="12"
-                            class="px-6 py-20 text-center text-slate-400 text-body uppercase tracking-widest">
+                            class="px-6 py-20 text-center text-slate-400 text-body uppercase">
                             Belum ada data analitik</td>
                     </tr>
                 </tbody>

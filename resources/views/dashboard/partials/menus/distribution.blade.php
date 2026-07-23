@@ -53,20 +53,21 @@
             </div>
             <div class="mobile-data-card__summary">
                 <div>
-                    <div class="type-body-sm text-slate-400 uppercase font-bold tracking-widest">
+                    <div class="type-body-sm text-slate-400 uppercase font-bold">
                         Tanggal Publish</div>
                     <div class="type-body font-medium text-slate-600">{{ formatShortDate(row.Tanggal_Publish) }}</div>
                 </div>
                 <div>
-                    <div class="type-body-sm text-slate-400 uppercase font-bold tracking-widest">
+                    <div class="type-body-sm text-slate-400 uppercase font-bold">
                         Link</div>
                     <div class="type-body font-medium text-slate-600">{{ row.Link ? 'Tersedia' : '-' }}</div>
                 </div>
             </div>
             <div class="mobile-data-card__actions">
                 <a :href="row.Link" target="_blank" rel="noopener noreferrer"
-                    class="primary-cta-button primary-cta-button--link">
-                    <i class="fa-solid fa-link"></i> Buka Link
+                    class="table-action-button table-action-compact table-action-link"
+                    title="Link Distribution" aria-label="Link Distribution">
+                    <i class="fa-solid fa-link text-body-sm"></i>
                 </a>
                 <div class="flex items-center gap-2">
                     <button @click="openDistModal(row)"
@@ -80,7 +81,7 @@
             </div>
         </div>
         <div v-if="filteredDistributionData.length === 0"
-            class="table-empty-state text-slate-400 text-body uppercase tracking-widest">
+            class="table-empty-state text-slate-400 text-body uppercase">
             Belum
             ada data distribusi</div>
     </div>
@@ -172,15 +173,15 @@
                     </td>
                     <td class="px-6 py-5 text-left">
                         <a :href="row.Link" target="_blank" rel="noopener noreferrer"
-                            class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-ppp-accent/5 text-ppp-accent text-body-sm font-bold hover:bg-ppp-accent hover:text-white transition-all">
-                            <i class="fa-solid fa-link"></i>
-                            Buka Link
+                            class="table-action-button table-action-compact table-action-link"
+                            title="Link Distribution" aria-label="Link Distribution">
+                            <i class="fa-solid fa-link text-body-sm"></i>
                         </a>
                     </td>
                 </tr>
                 <tr v-if="filteredDistributionData.length === 0">
                     <td colspan="6"
-                        class="px-6 py-20 text-center text-slate-400 text-body uppercase tracking-widest">
+                        class="px-6 py-20 text-center text-slate-400 text-body uppercase">
                         Belum ada data distribusi</td>
                 </tr>
             </tbody>

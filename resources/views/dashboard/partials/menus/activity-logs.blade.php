@@ -70,7 +70,7 @@
                                 </div>
                             </div>
                             <div class="px-4 py-2.5 border-b border-slate-100 bg-slate-50/60 flex items-center justify-between gap-2">
-                                    <span class="type-body-sm font-bold uppercase tracking-[0.18em] text-slate-400">Riwayat aktivitas</span>
+                                    <span class="type-body-sm font-bold uppercase text-slate-400">Riwayat aktivitas</span>
                                     <span class="status-pill status-pill--warm">
                                         {{ activityLogsLoaded ? 'terbaru' : 'memuat' }}
                                     </span>

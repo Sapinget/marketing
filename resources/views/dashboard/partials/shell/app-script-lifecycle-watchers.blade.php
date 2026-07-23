@@ -3,6 +3,7 @@
                     modalOpen.value ||
                     distModalOpen.value ||
                     analyticsModalOpen.value ||
+                    metaFeedManualModalOpen.value ||
                     storyModalOpen.value ||
                     unboxingModalOpen.value ||
                     orderanOnlineModalOpen.value ||
@@ -19,10 +20,13 @@
                     showNamaStockFormModal.value ||
                     settingsDetailModalOpen.value ||
                     calendarDayModalOpen.value ||
+                    chatOpen.value ||
+                    chatShowPicker.value ||
                     confirmModal.value.open
                 ));
 
                 let activityLogFilterDebounceId = null;
+                let handleChatVisibilityChange = null;
 
                 onMounted(async () => {
                     document.addEventListener("click", closeProfileMenu);
@@ -33,13 +37,36 @@
                     window.addEventListener("scroll", clampTableScrollBounds, true);
                     window.addEventListener("wheel", containTableHorizontalWheel, { passive: false, capture: true });
                     window.addEventListener("wheel", containRootHorizontalWheel, { passive: false, capture: true });
+                    window.addEventListener("wheel", markActivePanelScrollUserIntent, { passive: true, capture: true });
                     window.addEventListener("touchstart", rememberHorizontalPanStart, { passive: true, capture: true });
                     window.addEventListener("touchmove", containHorizontalTouchPan, { passive: false, capture: true });
+                    window.addEventListener("touchmove", markActivePanelScrollUserIntent, { passive: true, capture: true });
                     window.addEventListener("touchend", clearHorizontalPanStart, true);
                     window.addEventListener("touchcancel", clearHorizontalPanStart, true);
+                    window.addEventListener("click", markClientActivity, true);
+                    window.addEventListener("keydown", markClientActivity, true);
+                    window.addEventListener("keydown", markActivePanelScrollUserIntent, true);
+                    window.addEventListener("pointermove", markClientActivity, true);
+                    window.addEventListener("touchstart", markClientActivity, true);
                     window.addEventListener("resize", handleResize);
                     window.addEventListener("resize", updateCalendarAnchorPosition);
                     window.addEventListener("hashchange", handleHashChange);
+                    window.addEventListener("pageshow", handleBrowserPageShow);
+                    window.addEventListener("focus", handleBrowserFocus, true);
+                    handleChatVisibilityChange = () => {
+                        if (document.hidden) {
+                            chatStopPolling();
+                            return;
+                        }
+                        if (!authBootstrapPending.value && currentUser.value?.ID) {
+                            chatPollUnread();
+                            if (chatOpen.value && chatTargetUser.value?.ID) {
+                                chatStartPolling();
+                            }
+                        }
+                    };
+                    document.addEventListener("visibilitychange", handleChatVisibilityChange);
+                    sessionHeartbeatTimerId = window.setInterval(syncSessionHeartbeat, SESSION_HEARTBEAT_MS);
                     tableSortObserver = new MutationObserver(() => {
                         hydrateSortableTableHeaders();
                     });
@@ -66,6 +93,7 @@
                         handleError(error);
                     } finally {
                         authBootstrapPending.value = false;
+                        chatSessionConfirmed.value = !!currentUser.value?.ID;
                         resumeActiveTabAfterBootstrap();
                         if (window.innerWidth < 768) {
                             isSidebarOpen.value = false;
@@ -87,17 +115,31 @@
                     window.removeEventListener("scroll", clampTableScrollBounds, true);
                     window.removeEventListener("wheel", containTableHorizontalWheel, true);
                     window.removeEventListener("wheel", containRootHorizontalWheel, true);
+                    window.removeEventListener("wheel", markActivePanelScrollUserIntent, true);
                     window.removeEventListener("touchstart", rememberHorizontalPanStart, true);
                     window.removeEventListener("touchmove", containHorizontalTouchPan, true);
+                    window.removeEventListener("touchmove", markActivePanelScrollUserIntent, true);
                     window.removeEventListener("touchend", clearHorizontalPanStart, true);
                     window.removeEventListener("touchcancel", clearHorizontalPanStart, true);
+                    window.removeEventListener("click", markClientActivity, true);
+                    window.removeEventListener("keydown", markClientActivity, true);
+                    window.removeEventListener("keydown", markActivePanelScrollUserIntent, true);
+                    window.removeEventListener("pointermove", markClientActivity, true);
+                    window.removeEventListener("touchstart", markClientActivity, true);
                     window.removeEventListener("resize", handleResize);
                     window.removeEventListener("resize", updateCalendarAnchorPosition);
                     window.removeEventListener("hashchange", handleHashChange);
+                    window.removeEventListener("pageshow", handleBrowserPageShow);
+                    window.removeEventListener("focus", handleBrowserFocus, true);
+                    document.removeEventListener("visibilitychange", handleChatVisibilityChange);
                     tableSortObserver?.disconnect();
+                    if (sessionHeartbeatTimerId) {
+                        window.clearInterval(sessionHeartbeatTimerId);
+                    }
                     if (activityLogFilterDebounceId) {
                         window.clearTimeout(activityLogFilterDebounceId);
                     }
+                    chatStopPolling();
                     setDocumentScrollLock(false);
                 });
 
@@ -114,6 +156,12 @@
                 watch(hasBlockingOverlayOpen, (locked) => {
                     setDocumentScrollLock(locked);
                 }, { immediate: true });
+
+                watch(calendarOpen, (open) => {
+                    if (open) return;
+                    clearCalendarAnchorActive();
+                    calendarAnchorElement = null;
+                });
 
                 // Tab Navigation & Data Loading
                 watch(() => activeTab.value, (newTab) => {

@@ -1,18 +1,17 @@
 @verbatim
-<!-- Dashboard marketing lengkap berjalan di Laravel -->
 <div id="app" class="min-h-[100dvh]" v-cloak>
     <transition name="fade">
         <div v-if="appLoading"
             class="fixed inset-0 z-[9999] bg-white flex flex-col items-center justify-center gap-6">
             <div
-                class="loading-logo w-20 h-20 bg-white flex items-center justify-center p-3 border border-amber radius-panel">
+                class="loading-logo w-14 h-14 bg-white flex items-center justify-center p-2 border border-amber radius-panel">
                 <img src="/asset/images/logo.png"
                     class="w-full h-full object-contain" alt="Logo" />
             </div>
             <div class="text-center">
-                <div class="text-body font-medium text-ppp-nav-text tracking-[0.2em] uppercase">Pura Pura Ponsel
+                <div class="text-body font-medium text-ppp-nav-text uppercase">Pura Pura Ponsel
                 </div>
-                <div class="text-body-sm text-slate-400 uppercase tracking-widest mt-2">Menyiapkan Dashboard...</div>
+                <div class="text-body-sm text-slate-400 uppercase mt-2">Menyiapkan Dashboard...</div>
             </div>
         </div>
     </transition>
@@ -22,7 +21,7 @@
         <div class="flex items-start gap-3">
             <i class="fa-solid fa-triangle-exclamation mt-0.5"></i>
             <div class="min-w-0 flex-1">
-                <div class="text-body-sm font-medium uppercase tracking-widest">Sistem Error</div>
+                <div class="text-body-sm font-medium uppercase">Sistem Error</div>
                 <div class="text-body leading-relaxed break-words mt-0.5">{{ runtimeError }}</div>
             </div>
             <button @click="runtimeError = null" class="text-danger hover:text-danger">
@@ -33,35 +32,35 @@
 
     <transition name="toast">
         <div v-if="notification && notification.open"
-            :class="['fixed bottom-6 left-1/2 -translate-x-1/2 z-[10000] px-5 py-3 rounded-2xl text-body border flex items-center gap-3 min-w-[220px] max-w-[92vw]', notification.type === 'error' ? 'bg-danger text-light border-danger' : notification.type === 'warning' ? 'bg-amber text-light border-amber' : 'bg-success text-light border-success']">
+            :class="['fixed bottom-6 inset-x-0 mx-auto z-[10000] w-fit px-3 py-1.5 rounded-xl text-body-sm border flex items-center gap-2 min-w-[200px] max-w-[min(92vw,480px)] overflow-hidden', notification.type === 'error' ? 'bg-danger text-light border-danger' : notification.type === 'warning' ? 'bg-amber text-light border-amber' : 'bg-success text-light border-success']">
             <div
-                :class="['w-8 h-8 rounded-xl flex items-center justify-center shrink-0', notification.type === 'error' ? 'bg-danger text-light' : notification.type === 'warning' ? 'bg-amber text-light' : 'bg-success text-light']">
-                <i :class="['fa-solid text-[12px]', notification.icon]"></i>
+                :class="['w-6 h-6 rounded-lg flex items-center justify-center shrink-0', notification.type === 'error' ? 'bg-danger text-light' : notification.type === 'warning' ? 'bg-amber text-light' : 'bg-success text-light']">
+                <i :class="['fa-solid text-[10px]', notification.icon]"></i>
             </div>
-            <div class="min-w-0">
-                <div class="text-body-sm font-bold uppercase tracking-widest">
+            <div class="min-w-0 flex items-center gap-1.5 overflow-hidden whitespace-nowrap leading-none">
+                <div class="text-overline font-bold uppercase shrink-0">
                     {{ notification.type === 'error' ? 'Error' : notification.type === 'warning' ? 'Perhatian' : 'Berhasil' }}
                 </div>
-                <div class="mt-0.5 break-words leading-relaxed">{{ notification.message }}</div>
+                <div class="min-w-0 truncate leading-none text-body-sm">{{ notification.message }}</div>
             </div>
         </div>
     </transition>
 
     <transition name="fade">
         <div v-if="!currentUser && !appLoading"
-            class="min-h-[100dvh] bg-white flex items-center justify-center p-6">
-            <div class="w-full max-w-[360px] text-center">
-                <img src="/asset/images/logo.png" class="w-20 h-20 object-contain mx-auto mb-8"
+            class="min-h-[100dvh] bg-white flex items-center justify-center p-4">
+            <div class="w-full max-w-[320px] text-center">
+                <img src="/asset/images/logo.png" class="w-16 h-16 object-contain mx-auto mb-5"
                     alt="Logo" />
-                <h1 class="text-2xl font-semibold text-slate-900 mb-2">Selamat Datang</h1>
-                <p class="text-body text-slate-400 mb-8 uppercase tracking-[0.2em]">Login untuk membuka dashboard
+                <h1 class="text-xl font-semibold text-slate-900 mb-1">Selamat Datang</h1>
+                <p class="text-body-sm text-slate-400 mb-5 uppercase">Login untuk membuka dashboard
                 </p>
 
-                <form class="space-y-4 mb-8" @submit.prevent="handleLogin">
+                <form class="space-y-3 mb-5" @submit.prevent="handleLogin">
                     <div class="relative">
                         <label for="login-username" class="sr-only">Username</label>
                         <i
-                            class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                            class="fa-solid fa-user absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
                         <input id="login-username" name="username" v-model="loginForm.username" type="text" placeholder="Username"
                             autocomplete="username"
                             class="form-input-auth" />
@@ -69,7 +68,7 @@
                     <div class="relative">
                         <label for="login-pin" class="sr-only">PIN Akses</label>
                         <i
-                            class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                            class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
                         <input id="login-pin" name="pin" v-model="loginForm.pin" type="password" placeholder="PIN Akses"
                             autocomplete="current-password"
                             class="form-input-auth" @keyup.enter="handleLogin" />
@@ -77,16 +76,17 @@
                 </form>
 
                 <button @click="handleLogin" :disabled="submitting"
-                    class="w-full py-4 bg-slate-900 text-white rounded-2xl text-body font-medium uppercase tracking-[0.2em] hover:bg-black transition-all disabled:opacity-50">{{ submitting ? 'Mengecek...' : 'Masuk Ke Sistem' }}</button>
+                    class="w-full h-9 bg-slate-900 text-white rounded-xl text-body-sm font-bold uppercase hover:bg-black transition-all disabled:opacity-50">{{ submitting ? 'Mengecek...' : 'Masuk Ke Sistem' }}</button>
             </div>
         </div>
     </transition>
 
     <div v-if="currentUser && !appLoading" class="min-h-[100dvh] bg-slate-50">
         <div data-sidebar-backdrop @click="isSidebarOpen ? closeSidebar() : null"
-            :class="['fixed inset-0 z-[70] bg-slate-900/30 md:hidden transition-opacity duration-300 ease-out', isSidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none']">
+            :class="['fixed inset-0 z-[70] glass-backdrop md:hidden transition-opacity duration-300 ease-out', isSidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none']">
         </div>
 @endverbatim
+        @include('dashboard.partials.shell.chat-panel')
         @include('dashboard.partials.shell.app-frame-sidebar')
 @verbatim
         <div
@@ -115,6 +115,7 @@
                 @include('dashboard.partials.menus.analisa-insight')
                 @include('dashboard.partials.menus.meta-story')
                 @include('dashboard.partials.menus.meta-feed')
+                @include('dashboard.partials.menus.meta-followers')
                 @include('dashboard.partials.menus.unboxing')
                 @include('dashboard.partials.menus.top-content')
                 @include('dashboard.partials.menus.low-content')

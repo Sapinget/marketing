@@ -182,7 +182,7 @@
                             </tr>
                             <tr v-for="(row, idx) in pagedSellOutData" :key="row.ID || idx"
                                 class="border-b border-slate-50 hover:bg-slate-50/50 transition-colors group">
-                                <td class="px-5 py-3.5 text-body-sm text-slate-400 text-center table-freeze-index">{{ (sellOutPage - 1) * 20 + idx + 1 }}</td>
+                                <td class="px-5 py-3.5 text-body-sm text-slate-400 text-center table-freeze-index">{{ (sellOutPage - 1) * 15 + idx + 1 }}</td>
                                 <td class="px-5 py-3.5 text-left table-freeze-action">
                                     <div class="flex items-center gap-1.5">
                                         <button @click="openSellOutModal('edit', row)"

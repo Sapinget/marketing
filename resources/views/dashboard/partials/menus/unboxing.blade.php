@@ -61,9 +61,9 @@
                                         </button>
                                     </div>
                                     <div class="toolbar-actions">
+                                        <button @click="openUnboxingModal('create')" class="primary-cta-button primary-cta-button--accent active:scale-95"><i class="fa-solid fa-plus mr-2"></i>Tambah</button>
                                         <button @click="exportExcel" class="primary-cta-button primary-cta-button--success active:scale-95"><i class="fa-solid fa-file-excel"></i><span class="ml-1">Excel</span></button>
                                         <button @click="exportPdf" class="primary-cta-button primary-cta-button--danger active:scale-95"><i class="fa-solid fa-file-pdf"></i><span class="ml-1">PDF</span></button>
-                                        <button @click="openUnboxingModal('create')" class="primary-cta-button primary-cta-button--accent active:scale-95"><i class="fa-solid fa-plus mr-2"></i>Tambah</button>
                                     </div>
                                 </div>
                             </div>
@@ -76,10 +76,10 @@
                                 :style="getStaggerStyle(idx)">
                                 <div class="mobile-data-card__header">
                                     <span
-                                        :class="['px-2.5 py-1 rounded-full text-overline font-bold uppercase tracking-wider', row.Status ? getStatusColor(row.Status) : 'bg-secondary text-light']">
+                                        :class="['px-2.5 py-1 rounded-full text-overline font-bold uppercase', row.Status ? getStatusColor(row.Status) : 'bg-secondary text-light']">
                                         {{ row.Status || '-' }}
                                     </span>
-                                    <span class="type-body-sm text-slate-400 font-bold uppercase tracking-widest">
+                                    <span class="type-body-sm text-slate-400 font-bold uppercase">
                                         {{ row.Upload_Date ? formatShortDate(row.Upload_Date) : '-' }}
                                     </span>
                                 </div>
@@ -101,7 +101,10 @@
                                 </div>
                                 <div class="mobile-data-card__actions">
                                     <a v-if="row.Link" :href="row.Link" target="_blank" rel="noopener noreferrer"
-                                        class="primary-cta-button primary-cta-button--link">Link</a>
+                                        class="table-action-button table-action-compact table-action-link"
+                                        title="Link Unboxing" aria-label="Link Unboxing">
+                                        <i class="fa-solid fa-link text-body-sm"></i>
+                                    </a>
                                     <div class="flex items-center gap-2 ml-auto">
                                         <button @click="openUnboxingModal('edit', row)"
                                             class="table-action-button table-action-compact" title="Edit" aria-label="Edit"><i
@@ -150,6 +153,10 @@
                                         </button>
                                     </div>
                                     <div class="toolbar-actions">
+                                        <button @click="openUnboxingModal('create')"
+                                            class="primary-cta-button primary-cta-button--accent active:scale-95">
+                                            <i class="fa-solid fa-plus mr-2"></i>Tambah
+                                        </button>
                                         <button @click="exportExcel"
                                             class="primary-cta-button primary-cta-button--success active:scale-95"><i
                                                 class="fa-solid fa-file-excel"></i><span
@@ -158,10 +165,6 @@
                                             class="primary-cta-button primary-cta-button--danger active:scale-95"><i
                                                 class="fa-solid fa-file-pdf"></i><span
                                                 class="ml-1">PDF</span></button>
-                                        <button @click="openUnboxingModal('create')"
-                                            class="primary-cta-button primary-cta-button--accent active:scale-95">
-                                            <i class="fa-solid fa-plus mr-2"></i>Tambah
-                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -196,7 +199,7 @@
                                             </td>
                                             <td class="px-4 py-3 text-left">
                                                 <p
-                                                    class="text-body-sm font-semibold text-slate-900 uppercase tracking-tight break-words">
+                                                    class="text-body-sm font-semibold text-slate-900 uppercase break-words">
                                                     {{ row.Nama }}</p>
                                             </td>
                                             <td class="px-4 py-3 text-left">
@@ -220,8 +223,9 @@
                                             <td class="px-4 py-3 text-left text-body text-slate-500 whitespace-nowrap">{{ formatShortDate(row.Upload_Date) }}</td>
                                             <td class="px-4 py-3 text-right">
                                                 <a v-if="row.Link" :href="row.Link" target="_blank" rel="noopener noreferrer"
-                                                    class="primary-cta-button primary-cta-button--link">
-                                                    <i class="fa-solid fa-up-right-from-square text-[10px]"></i> Buka Link
+                                                    class="table-action-button table-action-compact table-action-link"
+                                                    title="Link Unboxing" aria-label="Link Unboxing">
+                                                    <i class="fa-solid fa-link text-body-sm"></i>
                                                 </a>
                                                 <span v-else class="text-slate-400 text-body">-</span>
                                             </td>
@@ -252,7 +256,7 @@
                             <div v-if="unboxingData.length === 0"
                                 class="flex flex-col items-center justify-center py-20 text-slate-400">
                                 <i class="fa-solid fa-box-open text-4xl mb-4 opacity-20"></i>
-                                <p class="text-body font-bold uppercase tracking-widest">Belum ada data unboxing</p>
+                                <p class="text-body font-bold uppercase">Belum ada data unboxing</p>
                             </div>
                         </div>
                     </div>

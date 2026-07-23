@@ -54,6 +54,9 @@
                                         </button>
                                     </div>
                                     <div class="toolbar-actions">
+                                        <button @click="openCreateModal"
+                                            class="primary-cta-button primary-cta-button--accent active:scale-95">
+                                            <i class="fa-solid fa-plus mr-2"></i>Tambah Plan </button>
                                         <button @click="exportExcel"
                                             class="primary-cta-button primary-cta-button--success active:scale-95"><i
                                                 class="fa-solid fa-file-excel"></i><span
@@ -62,9 +65,6 @@
                                             class="primary-cta-button primary-cta-button--danger active:scale-95"><i
                                                 class="fa-solid fa-file-pdf"></i><span
                                                 class="ml-1">PDF</span></button>
-                                        <button @click="openCreateModal"
-                                            class="primary-cta-button primary-cta-button--accent active:scale-95">
-                                            <i class="fa-solid fa-plus mr-2"></i>Tambah Plan </button>
                                     </div>
                                 </div>
                             </div>
@@ -97,6 +97,9 @@
                                         </button>
                                     </div>
                                     <div class="toolbar-actions">
+                                        <button @click="openCreateModal"
+                                            class="primary-cta-button primary-cta-button--accent active:scale-95">
+                                            <i class="fa-solid fa-plus mr-2"></i>Tambah Plan </button>
                                         <button @click="exportExcel"
                                             class="primary-cta-button primary-cta-button--success active:scale-95"><i
                                                 class="fa-solid fa-file-excel"></i><span
@@ -105,9 +108,6 @@
                                             class="primary-cta-button primary-cta-button--danger active:scale-95"><i
                                                 class="fa-solid fa-file-pdf"></i><span
                                                 class="ml-1">PDF</span></button>
-                                        <button @click="openCreateModal"
-                                            class="primary-cta-button primary-cta-button--accent active:scale-95">
-                                            <i class="fa-solid fa-plus mr-2"></i>Tambah Plan </button>
                                     </div>
                                 </div>
                             </div>
@@ -210,7 +210,7 @@
                                                 </div>
                                             </td>
                                             <td class="px-4 py-5 text-left">
-                                                <div class="flex flex-wrap gap-2">
+                                                <div class="flex flex-col items-start gap-1.5">
                                                     <span v-for="plat in (item.Platforms || '').split(',')" :key="plat"
                                                         class="flex items-center gap-2"
                                                         :title="(plat || '').trim()">
@@ -221,7 +221,7 @@
                                             </td>
                                             <td class="px-4 py-5 text-left">
                                                 <span
-                                                    :class="['inline-flex items-center px-2.5 py-1 rounded-full text-overline font-bold uppercase tracking-wider whitespace-nowrap', getStatusColor(item.Status)]">
+                                                    :class="['inline-flex items-center px-2.5 py-1 rounded-full text-overline font-bold uppercase whitespace-nowrap', getStatusColor(item.Status)]">
                                                     <span
                                                         class="w-1.5 h-1.5 rounded-full bg-current mr-1.5 opacity-70"></span>
                                                     {{ item.Status }}
@@ -247,7 +247,7 @@
                                                         <i class="fa-solid fa-folder-open"></i>
                                                     </div>
                                                     <div
-                                                        class="text-slate-400 text-body font-medium uppercase tracking-widest">
+                                                        class="text-slate-400 text-body font-medium uppercase">
                                                         Tidak ada data ditemukan</div>
                                                 </div>
                                             </td>
@@ -282,11 +282,11 @@
                                 :style="getStaggerStyle(idx)">
                                 <div class="mobile-data-card__header">
                                     <span
-                                        :class="['px-3 py-1.5 rounded-full text-overline font-bold uppercase tracking-wider', getStatusColor(item.Status)]">
+                                        :class="['px-3 py-1.5 rounded-full text-overline font-bold uppercase', getStatusColor(item.Status)]">
                                         <span class="w-1.5 h-1.5 rounded-full bg-current mr-2 opacity-70"></span>
                                         {{ item.Status }}
                                     </span>
-                                    <div class="text-body-sm text-slate-400 font-bold uppercase tracking-widest">{{ formatShortDate(item.Tanggal_Rencana) }}</div>
+                                    <div class="text-body-sm text-slate-400 font-bold uppercase">{{ formatShortDate(item.Tanggal_Rencana) }}</div>
                                 </div>
                                 <div>
                                     <div class="mobile-data-card__title">{{ item.Judul }}</div>
@@ -321,7 +321,7 @@
                                             <span class="text-body text-slate-700 font-semibold truncate max-w-[80px]">{{ personDisplayName(talent) }}</span>
                                         </div>
                                     </div>
-                                    <div class="mobile-data-card__meta mt-2">
+                                    <div class="mobile-data-card__meta mobile-data-card__meta--stacked mt-2">
                                         <span v-for="plat in (item.Platforms || '').split(',')" :key="plat"
                                             class="flex items-center gap-2"
                                             :title="(plat || '').trim()">
@@ -332,7 +332,7 @@
                                 </div>
                                 <div class="mobile-data-card__summary">
                                     <div>
-                                        <div class="type-body-sm text-slate-400 uppercase font-bold tracking-widest">Editor
+                                        <div class="type-body-sm text-slate-400 uppercase font-bold">Editor
                                         </div>
                                         <div class="flex items-center gap-2">
                                             <div
@@ -347,7 +347,7 @@
                                         </div>
                                     </div>
                                     <div>
-                                        <div class="type-body-sm text-slate-400 uppercase font-bold tracking-widest">Asset
+                                        <div class="type-body-sm text-slate-400 uppercase font-bold">Asset
                                         </div>
                                         <div class="type-body font-bold text-slate-700">{{ (item.Skrip === 'Ada' || item.Skrip === 'Ya') ? 'Skrip siap' : ((item.Caption === 'Ada' || item.Caption === 'Ya') ? 'Caption siap' : '-') }}</div>
                                     </div>
@@ -373,7 +373,7 @@
                             </div>
                             <div v-if="filteredMasterPlanData.length === 0"
                                 class="bg-white radius-panel border border-slate-100 p-10 text-center">
-                                <div class="text-slate-400 text-body-sm font-medium uppercase tracking-widest">Data
+                                <div class="text-slate-400 text-body-sm font-medium uppercase">Data
                                     Kosong</div>
                             </div>
                             <div v-if="masterTotalPages > 1"

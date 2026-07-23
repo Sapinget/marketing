@@ -15,6 +15,13 @@
                 };
 
                 let calendarAnchorElement = null;
+                let calendarAnchorShellElement = null;
+
+                const clearCalendarAnchorActive = () => {
+                    calendarAnchorElement?.classList?.remove('calendar-anchor-active');
+                    calendarAnchorShellElement?.classList?.remove('calendar-anchor-shell-active');
+                    calendarAnchorShellElement = null;
+                };
 
                 const updateCalendarAnchorPosition = () => {
                     if (!calendarOpen.value || !calendarAnchorElement || typeof calendarAnchorElement.getBoundingClientRect !== 'function') return;
@@ -25,7 +32,8 @@
                     const margin = 12;
                     const gap = 8;
                     const panelWidth = Math.min(Math.max(rect.width, 292), viewportWidth - (margin * 2), 340);
-                    const left = Math.min(Math.max(rect.left, margin), viewportWidth - panelWidth - margin);
+                    const preferredLeft = rect.right - panelWidth;
+                    const left = Math.min(Math.max(preferredLeft, margin), viewportWidth - panelWidth - margin);
                     const estimatedPanelHeight = calendarMode.value === 'filter' ? 386 : 356;
                     const belowTop = rect.bottom + gap;
                     const aboveTop = rect.top - estimatedPanelHeight - gap;
@@ -53,7 +61,11 @@
                     calendarMode.value = mode;
                     currentPlatForDate.value = plat;
                     calendarFormContext.value = formContext;
+                    clearCalendarAnchorActive();
                     calendarAnchorElement = event?.currentTarget || event?.target?.closest?.('button, input, [role="button"]') || null;
+                    calendarAnchorElement?.classList?.add('calendar-anchor-active');
+                    calendarAnchorShellElement = calendarAnchorElement?.closest?.('.modal-sheet-surface, .modal-sheet-surface-mobile-center, .mobile-sheet, .overlay-dialog-surface, .modal-dialog-surface, .modal-dialog-surface-scroll, .search-select-container') || null;
+                    calendarAnchorShellElement?.classList?.add('calendar-anchor-shell-active');
                     let initialDate = new Date();
 
                     if (mode === "form") {

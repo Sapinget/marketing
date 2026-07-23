@@ -30,6 +30,7 @@
                     submitting,
                     showNotification,
                     handleError,
+                    PAGE_SIZE,
                 });
                 const saveLpjk = () => {
                     return saveLpjkOperation();

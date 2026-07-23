@@ -20,7 +20,7 @@
             <button @click="changeCalendarMonth(-1)" aria-label="Bulan sebelumnya"
                 class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:bg-white hover:text-ppp-accent transition-all active:scale-95">
                 <i class="fa-solid fa-chevron-left text-body"></i></button>
-            <div class="px-4 min-w-[150px] text-center text-heading-sm font-bold text-slate-700 tracking-wide">
+            <div class="px-4 min-w-[150px] text-center text-heading-sm font-bold text-slate-700">
                 {{ monthNames[calendarActiveDate.getMonth()] }} {{ calendarActiveDate.getFullYear() }}</div>
             <button @click="changeCalendarMonth(1)" aria-label="Bulan berikutnya"
                 class="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 hover:bg-white hover:text-ppp-accent transition-all active:scale-95">
@@ -36,7 +36,7 @@
                     <div
                         :class="['flex flex-col items-center justify-center w-11 h-11 rounded-xl shrink-0', isTodayCalendar(day) ? 'bg-ppp-accent text-white' : 'bg-secondary text-light']">
                         <span class="text-heading-sm font-bold leading-none">{{ day }}</span>
-                        <span class="text-overline-xs font-bold uppercase tracking-wider opacity-70">{{ ['Min','Sen','Sel','Rab','Kam','Jum','Sab'][new Date(calendarActiveDate.getFullYear(), calendarActiveDate.getMonth(), day).getDay()] }}</span>
+                        <span class="text-overline-xs font-bold uppercase opacity-70">{{ ['Min','Sen','Sel','Rab','Kam','Jum','Sab'][new Date(calendarActiveDate.getFullYear(), calendarActiveDate.getMonth(), day).getDay()] }}</span>
                     </div>
                     <div class="flex-1 min-w-0 flex flex-wrap items-center gap-1.5">
                         <span v-if="getCalendarItems(day).filter(i => i.TYPE === 'content').length > 0"
@@ -60,7 +60,7 @@
         <div class="hidden md:block">
             <div class="grid grid-cols-7 mb-4">
                 <div v-for="day in ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab']" :key="day"
-                    class="text-center text-body-sm font-bold text-slate-400 uppercase tracking-widest py-2">
+                    class="text-center text-body-sm font-bold text-slate-400 uppercase py-2">
                     {{ day }}</div>
             </div>
             <div class="grid grid-cols-7 gap-4">
@@ -101,9 +101,9 @@
                         <div v-for="event in getCalendarItems(day).filter(i => i.TYPE === 'event')"
                             :key="'event-'+event.ID"
                             class="px-2 py-1 rounded-lg border border-amber bg-amber flex items-center gap-1.5 text-light">
-                            <i class="fa-solid fa-star text-overline-xs text-amber"></i>
+                            <i class="fa-solid fa-star text-overline-xs text-light"></i>
                             <div
-                                class="text-overline-xs font-black truncate uppercase tracking-tighter text-amber">
+                                class="text-overline-xs font-black truncate uppercase text-light">
                                 {{ event.Nama_Event }}</div>
                         </div>
                     </div>

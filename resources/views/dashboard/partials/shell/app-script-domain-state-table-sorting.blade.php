@@ -4,6 +4,7 @@
                 let tableSortObserver = null;
 
                 const nonSortableHeaderLabels = new Set(['aksi', '#', 'no']);
+                const nonSortableHeaderClasses = new Set(['table-header-index', 'table-header-action']);
                 const normalizeSortableValue = (value) => {
                     const raw = String(value || '').trim();
                     if (!raw) return { kind: 'string', value: '' };
@@ -80,7 +81,8 @@
                         if (headerCell.dataset.sortHydrated === 'true') return;
 
                         const label = String(headerCell.textContent || '').trim().toLowerCase();
-                        if (!label || nonSortableHeaderLabels.has(label) || headerCell.hasAttribute('colspan')) return;
+                        const hasNonSortableClass = Array.from(nonSortableHeaderClasses).some(className => headerCell.classList.contains(className));
+                        if (!label || nonSortableHeaderLabels.has(label) || hasNonSortableClass || headerCell.hasAttribute('colspan')) return;
 
                         headerCell.dataset.sortHydrated = 'true';
                         headerCell.classList.add('table-sortable');

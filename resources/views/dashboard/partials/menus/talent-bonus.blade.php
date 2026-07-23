@@ -63,7 +63,7 @@
                             </div>
                             <div>
                                 <h2 class="type-heading-sm font-bold text-slate-900">Talent Bonus</h2>
-                                <p class="text-body-sm text-amber uppercase tracking-widest font-bold mt-0.5">Full credit per talent</p>
+                                <p class="text-body-sm text-amber uppercase font-bold mt-0.5">Full credit per talent</p>
                             </div>
                         </div>
                         <div class="text-body-sm text-slate-400 font-medium">
@@ -71,26 +71,26 @@
                         </div>
                     </div>
                     <div class="mt-4 rounded-2xl border border-amber bg-amber/70 px-4 py-3">
-                        <p class="text-overline font-extrabold uppercase tracking-[0.18em] text-amber">Aturan Bonus Talent</p>
+                        <p class="text-overline font-extrabold uppercase text-amber">Aturan Bonus Talent</p>
                         <p class="mt-1 text-body leading-relaxed text-slate-600">
                             `1-2` video per hari dihitung `Rp150.000`. Jumlah genap di atas `2` dihitung langsung per pasangan video.
                             Jika total harian ganjil seperti `3`, `5`, atau `7`, maka sisa `1` video dibawa ke hari berikutnya sebagai carry-over.
                         </p>
                         <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3">
                             <div class="rounded-2xl border border-white/80 bg-white/80 px-3 py-3">
-                                <p class="text-overline font-extrabold uppercase tracking-[0.18em] text-slate-500">Contoh Dasar</p>
+                                <p class="text-overline font-extrabold uppercase text-slate-500">Contoh Dasar</p>
                                 <p class="mt-1 text-body font-bold text-slate-800">1-2 video dalam 1 hari</p>
                                 <p class="mt-1 text-body-sm leading-relaxed text-slate-500">Selama total harian masih 1 atau 2 video, bonus tetap 1 paket.</p>
                                 <p class="mt-2 text-body font-extrabold text-amber">Dibayar hari itu: Rp150.000</p>
                             </div>
                             <div class="rounded-2xl border border-white/80 bg-white/80 px-3 py-3">
-                                <p class="text-overline font-extrabold uppercase tracking-[0.18em] text-slate-500">Contoh 1</p>
+                                <p class="text-overline font-extrabold uppercase text-slate-500">Contoh 1</p>
                                 <p class="mt-1 text-body font-bold text-slate-800">3 video dalam 1 hari</p>
                                 <p class="mt-1 text-body-sm leading-relaxed text-slate-500">2 video pertama = `Rp150.000`, sisa 1 video dibawa ke hari berikutnya.</p>
                                 <p class="mt-2 text-body font-extrabold text-amber">Dibayar hari itu: Rp150.000</p>
                             </div>
                             <div class="rounded-2xl border border-white/80 bg-white/80 px-3 py-3">
-                                <p class="text-overline font-extrabold uppercase tracking-[0.18em] text-slate-500">Contoh 2</p>
+                                <p class="text-overline font-extrabold uppercase text-slate-500">Contoh 2</p>
                                 <p class="mt-1 text-body font-bold text-slate-800">Besok 5 video + carry 1</p>
                                 <p class="mt-1 text-body-sm leading-relaxed text-slate-500">Total efektif jadi 6 video, berarti 3 paket bonus.</p>
                                 <p class="mt-2 text-body font-extrabold text-amber">Dibayar hari itu: Rp450.000</p>
@@ -101,7 +101,7 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-5 gap-4">
                     <div class="lg:col-span-2 bg-white radius-panel border border-slate-100 p-5">
-                        <h3 class="text-body font-bold text-slate-700 uppercase tracking-widest mb-4 flex items-center gap-2">
+                        <h3 class="text-body font-bold text-slate-700 uppercase mb-4 flex items-center gap-2">
                             <i class="fa-solid fa-ranking-star text-amber"></i> Ranking Talent
                         </h3>
                         <div v-if="talentDashboardData.leaderboard.length === 0" class="text-center py-10 text-body text-slate-400">
@@ -125,7 +125,7 @@
 
                     <div class="lg:col-span-3 section-card section-card-shell">
                         <div class="px-5 py-4 border-b border-slate-50 flex items-center justify-between">
-                            <h3 class="text-body font-bold text-slate-700 uppercase tracking-widest flex items-center gap-2">
+                            <h3 class="text-body font-bold text-slate-700 uppercase flex items-center gap-2">
                                 <i class="fa-solid fa-address-card text-amber"></i> Detail Kredit Talent
                             </h3>
                             <span class="text-overline text-slate-400 font-bold">{{ talentDashboardData.rows.length }} baris</span>

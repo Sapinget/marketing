@@ -72,11 +72,9 @@
                                 </div>
                                 <div class="table-toolbar-shell__right">
                                     <div class="toolbar-actions">
+                                        <button @click="openKeepBarangModal('create')" class="primary-cta-button primary-cta-button--accent active:scale-95"><i class="fa-solid fa-plus mr-1.5"></i>Tambah</button>
                                         <button @click="exportKeepBarangToExcel" class="primary-cta-button primary-cta-button--success active:scale-95"><i class="fa-solid fa-file-excel"></i><span class="ml-1">Excel</span></button>
                                         <button @click="exportKeepBarangToPDF" class="primary-cta-button primary-cta-button--danger active:scale-95"><i class="fa-solid fa-file-pdf"></i><span class="ml-1">PDF</span></button>
-                                        <button @click="openKeepBarangModal('create')" class="primary-cta-button primary-cta-button--accent active:scale-95"><i class="fa-solid fa-plus mr-1.5"></i>Tambah</button>
-                                        <button @click="loadKeepBarangData" class="primary-cta-button primary-cta-button--neutral active:scale-95"><i class="fa-solid fa-rotate text-body-sm"></i> Muat Ulang</button>
-                                        <button @click="keepBarangSearch='';keepBarangStatusFilter='';keepBarangHandleByFilter=''" class="primary-cta-button primary-cta-button--neutral" title="Reset"><i class="fa-solid fa-rotate-left text-body-sm"></i><span>Reset</span></button>
                                     </div>
                                 </div>
                             </div>
@@ -90,10 +88,10 @@
                                     :style="getStaggerStyle(idx)">
                                     <div class="mobile-data-card__header">
                                         <span
-                                            :class="['px-2.5 py-1 rounded-full text-overline font-bold uppercase tracking-wider', keepBarangStatusClass(row.STATUS)]">
+                                            :class="['px-2.5 py-1 rounded-full text-overline font-bold uppercase', keepBarangStatusClass(row.STATUS)]">
                                             {{ row.STATUS || '-' }}
                                         </span>
-                                        <span class="type-body-sm text-slate-400 font-bold uppercase tracking-widest">
+                                        <span class="type-body-sm text-slate-400 font-bold uppercase">
                                             {{ row.SISA_HARI_PENGAMBILAN || '-' }} hari
                                         </span>
                                     </div>
@@ -169,16 +167,6 @@
                                     </div>
                                 </div>
                                 <div class="table-toolbar-shell__right">
-                                    <div class="toolbar-actions">
-                                        <button @click="exportKeepBarangToExcel"
-                                            class="primary-cta-button primary-cta-button--success active:scale-95"><i
-                                                class="fa-solid fa-file-excel"></i><span
-                                                class="ml-1">Excel</span></button>
-                                        <button @click="exportKeepBarangToPDF"
-                                            class="primary-cta-button primary-cta-button--danger active:scale-95"><i
-                                                class="fa-solid fa-file-pdf"></i><span
-                                                class="ml-1">PDF</span></button>
-                                    </div>
                                     <div class="relative search-select-container">
                                         <button type="button" @click="toggleSearchSelect($event, 'keep_status_filter')"
                                             class="select-trigger-button sm:w-40">
@@ -217,13 +205,14 @@
                                         <button @click="openKeepBarangModal('create')"
                                             class="primary-cta-button primary-cta-button--accent active:scale-95"><i
                                                 class="fa-solid fa-plus mr-1.5"></i>Tambah</button>
-                                        <button @click="loadKeepBarangData"
-                                            class="primary-cta-button primary-cta-button--neutral active:scale-95"><i
-                                                class="fa-solid fa-rotate text-body-sm"></i> Muat Ulang</button>
-                                        <button
-                                            @click="keepBarangSearch='';keepBarangStatusFilter='';keepBarangHandleByFilter=''"
-                                            class="primary-cta-button primary-cta-button--neutral" title="Reset"><i
-                                                class="fa-solid fa-rotate-left text-body-sm"></i><span>Reset</span></button>
+                                        <button @click="exportKeepBarangToExcel"
+                                            class="primary-cta-button primary-cta-button--success active:scale-95"><i
+                                                class="fa-solid fa-file-excel"></i><span
+                                                class="ml-1">Excel</span></button>
+                                        <button @click="exportKeepBarangToPDF"
+                                            class="primary-cta-button primary-cta-button--danger active:scale-95"><i
+                                                class="fa-solid fa-file-pdf"></i><span
+                                                class="ml-1">PDF</span></button>
                                     </div>
                                 </div>
                             </div>

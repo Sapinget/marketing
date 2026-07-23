@@ -41,7 +41,7 @@
                                 </label>
                                 <input id="avatar-upload-input" name="avatar_upload_input" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" :disabled="submittingAvatar" @change="uploadProfileAvatar" />
                                 <label for="avatar-upload-input"
-                                    class="mt-2 text-body-sm text-slate-400 font-bold uppercase tracking-widest cursor-pointer hover:text-ppp-accent transition-colors"
+                                    class="mt-2 text-body-sm text-slate-400 font-bold uppercase cursor-pointer hover:text-ppp-accent transition-colors"
                                     :class="submittingAvatar ? 'opacity-50 pointer-events-none' : ''">
                                     <i class="fa-solid fa-upload mr-1" :class="submittingAvatar ? 'fa-spin' : ''"></i>
                                     <span v-if="submittingAvatar">Mengunggah...</span>
@@ -50,24 +50,24 @@
                                 <h3 class="text-xl font-bold text-slate-900 mt-4">{{ currentUser?.nama || 'Guest User' }}
                                 </h3>
                                 <p
-                                    class="text-body font-bold text-light uppercase tracking-widest mt-2 px-4 py-1.5 bg-amber rounded-full">
+                                    class="text-body font-bold text-light uppercase mt-2 px-4 py-1.5 bg-amber rounded-full">
                                     {{ currentUser?.role || 'Marketing' }}</p>
 
                                 <div class="mt-8 w-full space-y-3">
                                     <div
                                         class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100">
                                         <span
-                                            class="text-body-sm text-slate-400 font-bold uppercase tracking-widest">Username</span>
+                                            class="text-body-sm text-slate-400 font-bold uppercase">Username</span>
                                         <span class="text-body font-bold text-slate-900">{{ currentUser?.username || '-' }}</span>
                                     </div>
                                     <div
                                         class="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-100">
                                         <span
-                                            class="text-body-sm text-slate-400 font-bold uppercase tracking-widest">Akses</span>
+                                            class="text-body-sm text-slate-400 font-bold uppercase">Akses</span>
                                         <div class="flex items-center gap-1.5">
                                             <div class="w-2 h-2 rounded-full bg-success animate-pulse"></div>
                                             <span
-                                                class="text-body-sm font-bold text-success uppercase tracking-widest">Aktif</span>
+                                                class="text-body-sm font-bold text-success uppercase">Aktif</span>
                                         </div>
                                     </div>
                                 </div>
@@ -86,10 +86,10 @@
                                 <div class="space-y-4 flex-1">
                                     <!-- class="type-meta font-bold text-slate-400 uppercase mb-1.5">Nama -->
                                     <!-- class="type-meta font-bold text-slate-400 uppercase mb-1.5">Tanggal -->
-                                    <!-- class="type-meta font-bold text-slate-400 uppercase tracking-widest mb-2">Vendor -->
+                                    <!-- class="type-meta font-bold text-slate-400 uppercase mb-2">Vendor -->
                                     <div>
                                         <label for="profile-nama-lengkap"
-                                            class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Nama
+                                            class="type-body-sm font-bold text-slate-400 uppercase mb-1.5 pl-1">Nama
                                             Lengkap</label>
                                         <input id="profile-nama-lengkap" name="profile_nama_lengkap" type="text" v-model="profileForm.namaLengkap" placeholder="Masukkan nama"
                                             autocomplete="name"
@@ -97,7 +97,7 @@
                                     </div>
                                     <div>
                                         <label for="profile-role"
-                                            class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Posisi
+                                            class="type-body-sm font-bold text-slate-400 uppercase mb-1.5 pl-1">Posisi
                                             / Role</label>
                                         <input id="profile-role" name="profile_role" type="text" :value="currentUser?.role || 'Marketing'" disabled
                                             class="form-input-disabled" />
@@ -131,7 +131,7 @@
                                 <div class="space-y-4 flex-1">
                                     <div>
                                         <label for="profile-old-pin"
-                                            class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">PIN
+                                            class="type-body-sm font-bold text-slate-400 uppercase mb-1.5 pl-1">PIN
                                             Saat Ini</label>
                                         <input id="profile-old-pin" name="profile_old_pin" type="password" v-model="profileForm.oldPin"
                                             placeholder="Masukkan PIN saat ini" autocomplete="current-password"
@@ -140,7 +140,7 @@
                                     <div class="grid grid-cols-2 gap-3">
                                         <div>
                                             <label for="profile-new-pin"
-                                                class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">PIN
+                                                class="type-body-sm font-bold text-slate-400 uppercase mb-1.5 pl-1">PIN
                                                 Baru</label>
                                             <input id="profile-new-pin" name="profile_new_pin" type="password" v-model="profileForm.newPin" placeholder="PIN Baru"
                                                 autocomplete="new-password"
@@ -148,7 +148,7 @@
                                         </div>
                                         <div>
                                             <label for="profile-confirm-pin"
-                                                class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Konfirmasi</label>
+                                                class="type-body-sm font-bold text-slate-400 uppercase mb-1.5 pl-1">Konfirmasi</label>
                                             <input id="profile-confirm-pin" name="profile_confirm_pin" type="password" v-model="profileForm.confirmPin"
                                                 placeholder="Ulangi PIN" autocomplete="new-password" class="form-input" />
                                         </div>

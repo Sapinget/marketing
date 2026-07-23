@@ -36,7 +36,7 @@
                             </div>
                             <div>
                                 <h2 class="type-heading-sm font-bold text-slate-900">Rancangan Anggaran</h2>
-                                <p class="text-body-sm text-slate-400 uppercase tracking-widest mt-0.5">Estimasi
+                                <p class="text-body-sm text-slate-400 uppercase mt-0.5">Estimasi
                                     Kebutuhan Topup Per Platform</p>
                             </div>
                         </div>
@@ -459,7 +459,7 @@
                         <div class="harga-kompetitor-info-card rounded-xl border border-slate-100 bg-slate-50 p-2.5">
                             <div class="flex items-start justify-between gap-2.5">
                                 <div class="min-w-0">
-                                    <div class="type-body-sm font-bold uppercase tracking-[0.18em] text-slate-400">Saran Harga</div>
+                                    <div class="type-body-sm font-bold uppercase text-slate-400">Saran Harga</div>
                                     <div class="mt-1 text-heading-sm font-bold text-slate-900">
                                         {{ hargaKompetitorSuggestion.canSuggest ? formatCurrency(hargaKompetitorSuggestion.suggestedPrice) : '-' }}
                                     </div>
@@ -518,7 +518,7 @@
                             </div>
                             <div>
                                 <div class="type-heading-sm font-bold text-slate-800">{{ adsModalType === 'create' ? 'Tambah Iklan' : 'Edit Iklan' }}</div>
-                                <div class="type-body-sm text-slate-400 uppercase tracking-widest">Ads Performance
+                                <div class="type-body-sm text-slate-400 uppercase">Ads Performance
                                     Log</div>
                             </div>
                         </div>
@@ -585,7 +585,7 @@
                             </div>
                         </div>
                         <div class="border-t border-slate-100 pt-4">
-                            <p class="text-body-sm font-bold text-slate-400 uppercase tracking-widest mb-3">
+                            <p class="text-body-sm font-bold text-slate-400 uppercase mb-3">
                                 Engagement Metrics</p>
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
@@ -618,7 +618,7 @@
                             </div>
                         </div>
                         <div class="border-t border-slate-100 pt-4">
-                            <p class="text-body-sm font-bold text-slate-400 uppercase tracking-widest mb-3">Keuangan
+                            <p class="text-body-sm font-bold text-slate-400 uppercase mb-3">Keuangan
                             </p>
                             <div class="grid grid-cols-2 gap-3">
                                 <div>
@@ -980,7 +980,7 @@
                             </div>
                             <div>
                                 <div class="type-heading-sm text-slate-900">{{ sellOutModalType === 'create' ? 'Tambah Target' : 'Edit Target' }}</div>
-                                <div class="type-body-sm text-slate-400 uppercase tracking-widest mt-0.5">Sell Out
+                                <div class="type-body-sm text-slate-400 uppercase mt-0.5">Sell Out
                                     Target</div>
                             </div>
                         </div>
@@ -992,7 +992,7 @@
                             <!-- Vendor -->
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Vendor</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Vendor</label>
                                 <div @click="toggleSearchSelect($event, 'sotVendor')"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
                                     <span
@@ -1024,7 +1024,7 @@
                             <!-- Kategori -->
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Kategori</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Kategori</label>
                                 <div @click="toggleSearchSelect($event, 'sotKategori')"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
                                     <span
@@ -1054,7 +1054,7 @@
                             <!-- Brand -->
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Brand</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Brand</label>
                                 <div @click="toggleSearchSelect($event, 'sotBrand')"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
                                     <span
@@ -1084,7 +1084,7 @@
                             <!-- Seri -->
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Seri</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Seri</label>
                                 <div @click="toggleSearchSelect($event, 'sotSeri')"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
                                     <span :class="sellOutForm.Seri ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ sellOutForm.Seri || 'Pilih / Ketik Seri' }}</span>
@@ -1117,7 +1117,7 @@
                             <!-- RAM -->
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">RAM</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">RAM</label>
                                 <div @click="toggleSearchSelect($event, 'sotRAM')"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
                                     <span :class="sellOutForm.RAM ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ sellOutForm.RAM || 'Pilih RAM' }}</span>
@@ -1146,7 +1146,7 @@
                             <!-- Internal -->
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Internal</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Internal</label>
                                 <div @click="toggleSearchSelect($event, 'sotInternal')"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
                                     <span
@@ -1176,7 +1176,7 @@
                             <!-- Size -->
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Ukuran</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Ukuran</label>
                                 <div @click="toggleSearchSelect($event, 'sotSize')"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
                                     <span :class="sellOutForm.Size ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ sellOutForm.Size || 'Pilih Ukuran' }}</span>
@@ -1205,7 +1205,7 @@
                             <!-- Kondisi -->
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Kondisi</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Kondisi</label>
                                 <div @click="toggleSearchSelect($event, 'sotKondisi')"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
                                     <span
@@ -1234,7 +1234,7 @@
                             </div>
                             <!-- Nama Produk (auto) -->
                             <div class="col-span-2">
-                                <label for="sell-out-nama-produk" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Nama
+                                <label for="sell-out-nama-produk" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Nama
                                     Produk <span class="text-ppp-accent">(auto)</span></label>
                                 <input id="sell-out-nama-produk" name="sell_out_nama_produk" v-model="sellOutForm.Nama_Produk" type="text" disabled
                                     class="w-full bg-slate-100 border border-slate-200 rounded-2xl px-4 py-3 text-body font-bold text-slate-500 outline-none cursor-not-allowed"
@@ -1242,14 +1242,14 @@
                             </div>
                             <!-- Target Unit -->
                             <div>
-                                <label for="sell-out-target-unit" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Target
+                                <label for="sell-out-target-unit" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Target
                                     Unit</label>
                                 <input id="sell-out-target-unit" name="sell_out_target_unit" v-model.number="sellOutForm.Target_Unit" type="number" min="0"
                                     class="form-input text-right" />
                             </div>
                             <!-- Bonus per Unit -->
                             <div>
-                                <label for="sell-out-bonus-nominal" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Bonus
+                                <label for="sell-out-bonus-nominal" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Bonus
                                     / Unit (Rp)</label>
                                 <input id="sell-out-bonus-nominal" name="sell_out_bonus_nominal" v-model.number="sellOutForm.Bonus_Nominal" type="number" min="0"
                                     class="form-input text-right" />
@@ -1257,7 +1257,7 @@
                             <!-- Realisasi -->
                             <div>
                                 <label for="sell-out-realisasi-unit"
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Realisasi
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Realisasi
                                     (unit terjual)</label>
                                 <input id="sell-out-realisasi-unit" name="sell_out_realisasi_unit" v-model.number="sellOutForm.Realisasi_Unit" type="number" min="0"
                                     class="form-input text-right" />
@@ -1265,13 +1265,13 @@
                             <!-- Preview bonus -->
                             <div
                                 class="bg-success border border-success rounded-2xl px-4 py-3 flex items-center justify-between">
-                                <span class="text-body-sm font-bold text-success uppercase tracking-widest">Est.
+                                <span class="text-body-sm font-bold text-success uppercase">Est.
                                     Bonus</span>
                                 <span class="text-heading-sm font-bold text-success">{{ formatCurrency((sellOutForm.Realisasi_Unit || 0) >= (sellOutForm.Target_Unit || 0) && (sellOutForm.Target_Unit || 0) > 0 ? (sellOutForm.Realisasi_Unit || 0) * (sellOutForm.Bonus_Nominal || 0) : 0) }}</span>
                             </div>
                             <!-- Periode Start -->
                             <div class="relative search-select-container">
-                                <label class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Periode
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Periode
                                     Mulai</label>
                                 <button type="button" @click="openCalendar($event, 'form', '', 'sotDate1')"
                                     class="select-trigger-button-form toolbar-trigger-field-form">
@@ -1282,7 +1282,7 @@
                             </div>
                             <!-- Periode End -->
                             <div class="relative search-select-container">
-                                <label class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Periode
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Periode
                                     Selesai</label>
                                 <button type="button" @click="openCalendar($event, 'form', '', 'sotDate2')"
                                     class="select-trigger-button-form toolbar-trigger-field-form">
@@ -1294,7 +1294,7 @@
                             <!-- Catatan -->
                             <div class="col-span-2">
                                 <label for="sell-out-catatan"
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Catatan</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Catatan</label>
                                 <textarea id="sell-out-catatan" name="sell_out_catatan" v-model="sellOutForm.Catatan" rows="2" placeholder="Catatan tambahan..."
                                     class="form-input resize-none"></textarea>
                             </div>
@@ -1351,7 +1351,7 @@
                             <div class="master-plan-form-grid grid grid-cols-1 md:grid-cols-2 gap-3">
                                 <!-- 1. Judul -->
                                 <div class="md:col-span-2">
-                                    <label for="master-plan-judul" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Judul
+                                    <label for="master-plan-judul" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Judul
                                         Konten <span class="text-danger">*</span></label>
                                     <input id="master-plan-judul" name="master_plan_judul" v-model="masterForm.Judul" type="text" placeholder="Contoh: Review iPhone 15 Pro"
                                         class="form-input-compact" />
@@ -1359,7 +1359,7 @@
 
                                 <!-- 2. Link Folder Drive -->
                                 <div class="md:col-span-2">
-                                    <label for="master-plan-link-drive" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Link
+                                    <label for="master-plan-link-drive" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Link
                                         Folder Drive (Materi/Raw)</label>
                                     <div class="relative">
                                         <i
@@ -1371,7 +1371,7 @@
 
                                 <!-- 3. Format & Status Side-by-side -->
                                 <div class="relative search-select-container">
-                                    <label class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Format
+                                    <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Format
                                         Konten <span class="text-danger">*</span></label>
                                     <div @click="toggleSearchSelect($event, 'format')"
                                         class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
@@ -1394,7 +1394,7 @@
                                                     :class="['popover-option', masterForm.Format_Konten === opt ? 'popover-option-active' : '']">
                                                     {{ opt }} </div>
                                                 <div v-if="filteredFormatOptions.length === 0"
-                                                    class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                    class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                     Tidak ditemukan</div>
                                             </div>
                                         </div>
@@ -1402,7 +1402,7 @@
                                 </div>
 
                                 <div class="relative search-select-container">
-                                    <label class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Status
+                                    <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Status
                                         <span class="text-danger">*</span></label>
                                     <div @click="toggleSearchSelect($event, 'status')"
                                         class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
@@ -1412,10 +1412,20 @@
                                     <transition name="fade">
                                         <div v-if="searchSelectOpen === 'status'" :style="popoverStyle"
                                             class="search-select-popover">
+                                            <div class="relative mb-2">
+                                                <i
+                                                    class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                                <input v-model="searchSelectQuery" type="text" name="status_search"
+                                                    autocomplete="off" aria-label="Cari status master plan" placeholder="Cari status..."
+                                                    class="form-input-popover" @click.stop />
+                                            </div>
                                             <div class="max-h-48 overflow-y-auto custom-scrollbar">
-                                                <div v-for="opt in statusOptions" :key="opt" @click="selectStatus(opt)"
+                                                <div v-for="opt in statusOptions.filter(opt => String(opt || '').toLowerCase().includes(searchSelectQuery.toLowerCase()))" :key="opt" @click="selectStatus(opt)"
                                                     :class="['popover-option', masterForm.Status === opt ? 'popover-option-active' : '']">
                                                     {{ opt }} </div>
+                                                <div v-if="statusOptions.filter(opt => String(opt || '').toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
+                                                    class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
+                                                    Tidak ditemukan</div>
                                             </div>
                                         </div>
                                     </transition>
@@ -1424,7 +1434,7 @@
                                 <!-- 6. Editor, Talent & Tanggal Rencana -->
                                 <div class="relative search-select-container">
                                     <label
-                                        class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Editor <span class="text-danger">*</span></label>
+                                        class="type-body-sm font-bold text-slate-400 uppercase mb-2">Editor <span class="text-danger">*</span></label>
                                     <div @click="toggleSearchSelect($event, 'editor')"
                                         class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
                                         <span :class="masterForm.Editor ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ masterForm.Editor || 'Pilih Editor' }}</span>
@@ -1446,7 +1456,7 @@
                                                     :class="['popover-option', masterForm.Editor === opt ? 'popover-option-active' : '']">
                                                     {{ opt }} </div>
                                                 <div v-if="filteredEditorOptions.length === 0"
-                                                    class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                    class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                     Tidak ditemukan</div>
                                             </div>
                                         </div>
@@ -1454,7 +1464,7 @@
                                 </div>
 
                                 <div class="relative search-select-container">
-                                    <label class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Tanggal
+                                    <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Tanggal
                                         Rencana</label>
                                     <button type="button" @click="openCalendar($event, 'form', '', 'master')"
                                         class="select-trigger-button-form toolbar-trigger-field-form">
@@ -1466,7 +1476,7 @@
 
                                 <div class="relative md:col-span-2 search-select-container">
                                     <label
-                                        class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Talent</label>
+                                        class="type-body-sm font-bold text-slate-400 uppercase mb-2">Talent</label>
                                     <div @click="toggleSearchSelect($event, 'talent')"
                                         class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form master-plan-multi-trigger">
                                         <div class="flex flex-wrap gap-1">
@@ -1501,7 +1511,7 @@
                                                     </div>
                                                 </div>
                                                 <div v-if="filteredTalentOptions.length === 0"
-                                                    class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                    class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                     Tidak ditemukan</div>
                                             </div>
                                         </div>
@@ -1520,7 +1530,7 @@
                                 <!-- 4. Platforms -->
                                 <div class="relative md:col-span-2 search-select-container">
                                     <label
-                                        class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Platforms</label>
+                                        class="type-body-sm font-bold text-slate-400 uppercase mb-2">Platforms</label>
                                     <div @click="toggleSearchSelect($event, 'platforms')"
                                         class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form master-plan-multi-trigger">
                                         <div class="flex flex-wrap gap-1">
@@ -1563,7 +1573,7 @@
                                 <!-- 5. Colab -->
                                 <div class="relative md:col-span-2 search-select-container">
                                     <label
-                                        class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Colab</label>
+                                        class="type-body-sm font-bold text-slate-400 uppercase mb-2">Colab</label>
                                     <div @click="toggleSearchSelect($event, 'colab')"
                                         class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form master-plan-multi-trigger">
                                         <div class="flex flex-wrap gap-1">
@@ -1598,7 +1608,7 @@
                                                     </div>
                                                 </div>
                                                 <div v-if="filteredColabOptions.length === 0"
-                                                    class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                    class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                     Tidak ditemukan</div>
                                             </div>
                                         </div>
@@ -1623,14 +1633,14 @@
                                                     <div class="master-plan-distribution-field">
                                                         <label
                                                             :for="`master-distribution-link-${String(plat).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`"
-                                                            class="block text-overline font-bold text-slate-400 uppercase tracking-widest mb-1.5">Link
+                                                            class="block text-overline font-bold text-slate-400 uppercase mb-1.5">Link
                                                             Post</label>
                                                         <input :id="`master-distribution-link-${String(plat).toLowerCase().replace(/[^a-z0-9]+/g, '-')}`" :name="`master_distribution_link_${String(plat).toLowerCase().replace(/[^a-z0-9]+/g, '_')}`" v-model="masterForm.Distribution_Meta[plat].link" type="text"
                                                             placeholder="https://..." class="form-input-compact" />
                                                     </div>
                                                     <div class="master-plan-distribution-field">
                                                         <label
-                                                            class="block text-overline font-bold text-slate-400 uppercase tracking-widest mb-1.5">Type</label>
+                                                            class="block text-overline font-bold text-slate-400 uppercase mb-1.5">Type</label>
                                                         <div @click="toggleSearchSelect($event, 'distType_'+plat)"
                                                             class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form relative search-select-container">
                                                             <span
@@ -1650,7 +1660,7 @@
                                                     </div>
                                                     <div class="master-plan-distribution-field">
                                                         <label
-                                                            class="block text-overline font-bold text-slate-400 uppercase tracking-widest mb-1.5">Tanggal
+                                                            class="block text-overline font-bold text-slate-400 uppercase mb-1.5">Tanggal
                                                             Publish</label>
                                                         <button type="button" @click="openCalendar($event, 'published', plat)"
                                                             class="select-trigger-button-form toolbar-trigger-field-form">
@@ -1671,7 +1681,7 @@
                                 <div>
                                     <div class="flex items-center justify-between mb-2">
                                         <label for="master-plan-skrip"
-                                            class="block text-body-sm font-bold text-slate-400 uppercase tracking-widest">Skrip</label>
+                                            class="block text-body-sm font-bold text-slate-400 uppercase">Skrip</label>
                                         <div
                                             class="master-plan-toggle-group">
                                             <button type="button" @click="masterForm.Skrip = ''"
@@ -1689,7 +1699,7 @@
                             <div>
                                     <div class="flex items-center justify-between mb-2">
                                         <label for="master-plan-caption"
-                                            class="block text-body-sm font-bold text-slate-400 uppercase tracking-widest">Caption</label>
+                                            class="block text-body-sm font-bold text-slate-400 uppercase">Caption</label>
                                         <div
                                             class="master-plan-toggle-group">
                                             <button type="button" @click="masterForm.Caption = ''"
@@ -1822,7 +1832,7 @@
                             </div>
                             <div>
                                 <div class="type-title text-slate-900">{{ namaStockFormMode === 'create' ? 'Tambah Nama Stock' : 'Edit Nama Stock' }}</div>
-                                <div class="type-body-sm text-slate-400 uppercase tracking-widest mt-0.5">Master Stock</div>
+                                <div class="type-body-sm text-slate-400 uppercase mt-0.5">Master Stock</div>
                             </div>
                         </div>
                         <button @click="closeNamaStockFormModal" class="icon-utility-button icon-utility-round">
@@ -1833,7 +1843,7 @@
                         <div class="flex-1 overflow-y-auto p-6 space-y-4">
                         <div class="space-y-1 relative search-select-container">
                             <label
-                                class="type-meta font-semibold text-slate-500 uppercase tracking-wide">Kategori</label>
+                                class="type-meta font-semibold text-slate-500 uppercase">Kategori</label>
                             <div @click="toggleSearchSelect($event, 'nama_stock_kategori')"
                                 class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white cursor-pointer flex items-center justify-between hover:bg-slate-50 transition-all">
                                 <span
@@ -1865,7 +1875,7 @@
                         </div>
                         <div class="space-y-1 relative search-select-container">
                             <label
-                                class="text-body-sm font-semibold text-slate-500 uppercase tracking-wide">Brand</label>
+                                class="text-body-sm font-semibold text-slate-500 uppercase">Brand</label>
                             <div @click="toggleSearchSelect($event, 'nama_stock_brand')"
                                 class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white cursor-pointer flex items-center justify-between hover:bg-slate-50 transition-all">
                                 <span
@@ -1896,7 +1906,7 @@
                             </transition>
                         </div>
                         <div class="space-y-1">
-                            <label for="nama-stock-seri" class="text-body-sm font-semibold text-slate-500 uppercase tracking-wide">Seri</label>
+                            <label for="nama-stock-seri" class="text-body-sm font-semibold text-slate-500 uppercase">Seri</label>
                             <input id="nama-stock-seri" name="nama_stock_seri" v-model.trim="namaStockForm.SERI" type="text" placeholder="Ketik seri"
                                 class="form-input-compact-white" />
                         </div>
@@ -1943,7 +1953,7 @@
                     <div class="p-6 space-y-5 flex-1 overflow-y-auto custom-scrollbar">
                         <div class="bg-slate-50 border border-slate-100 p-4 rounded-2xl">
                             <label
-                                class="block text-body-sm font-bold text-slate-500 uppercase tracking-widest mb-3 text-center">Kelompok
+                                class="block text-body-sm font-bold text-slate-500 uppercase mb-3 text-center">Kelompok
                                 Jadwal</label>
                             <div class="segmented-control segmented-control--ios segmented-control--equal w-full justify-center" :data-index="storyForm.is_genap === 'Genap' ? 1 : 0">
                                 <button type="button" @click="storyForm.is_genap = 'Ganjil'"
@@ -1955,7 +1965,7 @@
                         <div class="grid grid-cols-2 gap-3">
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Tanggal</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Tanggal</label>
                                 <button type="button" @click="openCalendar($event, 'form', '', 'story')"
                                     class="select-trigger-button-form toolbar-trigger-field-form">
                                     <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
@@ -1964,31 +1974,31 @@
                                 </button>
                             </div>
                             <div>
-                                <label for="story-jam" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Waktu
+                                <label for="story-jam" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Waktu
                                     Tayang (Jam) <span class="text-danger">*</span></label>
                                 <input id="story-jam" name="story_jam" v-model="storyForm.Jam" type="time" class="form-input" />
                             </div>
                         </div>
                         <div>
-                            <label for="story-konten" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Story
+                            <label for="story-konten" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Story
                                 (Konten) <span class="text-danger">*</span></label>
                             <input id="story-konten" name="story_konten" v-model="storyForm.Story" type="text" placeholder="Ketik ide konten..."
                                 class="form-input uppercase" />
                         </div>
                         <div>
-                            <label for="story-catatan" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Internal
+                            <label for="story-catatan" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Internal
                                 Note (Opsional)</label>
                             <textarea id="story-catatan" name="story_catatan" v-model="storyForm.Catatan" rows="3" placeholder="Catatan singkat..."
                                 class="form-input custom-scrollbar"></textarea>
                         </div>
                         <div>
-                            <label for="story-link" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Link
+                            <label for="story-link" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Link
                                 Reference (Opsional)</label>
                             <input id="story-link" name="story_link" v-model="storyForm.Link" type="url" placeholder="https://..." class="form-input" />
                         </div>
                         <div class="relative search-select-container">
                             <label
-                                class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Status</label>
+                                class="type-body-sm font-bold text-slate-400 uppercase mb-2">Status</label>
                             <div @click="toggleSearchSelect($event, 'storyStatus')"
                                 class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
                                 <span :class="storyForm.Status ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ storyForm.Status || 'Pilih Status' }}</span>
@@ -2039,7 +2049,7 @@
                             </div>
                             <div>
                                 <div class="type-heading-sm text-slate-900">{{ csModalType === 'create' ? 'Tambah' : 'Edit' }} Order Online</div>
-                                <div class="type-body-sm text-slate-400 uppercase tracking-widest mt-0.5">Customer
+                                <div class="type-body-sm text-slate-400 uppercase mt-0.5">Customer
                                     Service</div>
                             </div>
                         </div>
@@ -2050,7 +2060,7 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Tanggal</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Tanggal</label>
                                 <button type="button" @click="openCalendar($event, 'form', '', 'orderanOnline1')"
                                     class="select-trigger-button-form toolbar-trigger-field-form">
                                     <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
@@ -2060,7 +2070,7 @@
                             </div>
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Ecommerce</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Ecommerce</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'ecommerce')"
                                     :aria-expanded="searchSelectOpen === 'ecommerce' ? 'true' : 'false'"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
@@ -2086,7 +2096,7 @@
                                                 :class="['popover-option', orderanOnlineForm['ECOMMERCE'] === opt ? 'popover-option-active' : '']">
                                                 {{ opt }} </div>
                                             <div v-if="orderanEcommerceOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
-                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                 Tidak ditemukan
                                             </div>
                                         </div>
@@ -2095,7 +2105,7 @@
                             </div>
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Handle</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Handle</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'orderan_handle')"
                                     :aria-expanded="searchSelectOpen === 'orderan_handle' ? 'true' : 'false'"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
@@ -2121,7 +2131,7 @@
                                                 :class="['popover-option', orderanOnlineForm['HANDLE'] === opt ? 'popover-option-active' : '']">
                                                 {{ opt }} </div>
                                             <div v-if="orderanHandleOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
-                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                 Tidak ditemukan
                                             </div>
                                         </div>
@@ -2129,28 +2139,28 @@
                                 </transition>
                             </div>
                             <div>
-                                <label for="order-online-nama" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Nama
+                                <label for="order-online-nama" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Nama
                                     Customer</label>
                                 <input id="order-online-nama" name="order_online_nama" v-model="orderanOnlineForm['NAMA']" type="text" class="form-input" />
                             </div>
                             <div>
-                                <label for="order-online-hp" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">No
+                                <label for="order-online-hp" class="type-body-sm font-bold text-slate-400 uppercase mb-2">No
                                     HP</label>
                                 <input id="order-online-hp" name="order_online_hp" v-model="orderanOnlineForm['HP']" type="text" class="form-input" />
                             </div>
                             <div>
                                 <label for="order-online-username"
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Username</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Username</label>
                                 <input id="order-online-username" name="order_online_username" v-model="orderanOnlineForm['USERNAME']" type="text" class="form-input" />
                             </div>
                             <div>
-                                <label for="order-online-no-pesanan" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">No
+                                <label for="order-online-no-pesanan" class="type-body-sm font-bold text-slate-400 uppercase mb-2">No
                                     Pesanan</label>
                                 <input id="order-online-no-pesanan" name="order_online_no_pesanan" v-model="orderanOnlineForm['NO PESANAN']" type="text" class="form-input" />
                             </div>
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Pengiriman</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Pengiriman</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'pengiriman')"
                                     :aria-expanded="searchSelectOpen === 'pengiriman' ? 'true' : 'false'"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
@@ -2176,7 +2186,7 @@
                                                 :class="['popover-option', orderanOnlineForm['PENGIRIMAN'] === opt ? 'popover-option-active' : '']">
                                                 {{ opt }} </div>
                                             <div v-if="orderanPengirimanOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
-                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                 Tidak ditemukan
                                             </div>
                                         </div>
@@ -2184,12 +2194,12 @@
                                 </transition>
                             </div>
                             <div>
-                                <label for="order-online-no-resi" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">No
+                                <label for="order-online-no-resi" class="type-body-sm font-bold text-slate-400 uppercase mb-2">No
                                     Resi</label>
                                 <input id="order-online-no-resi" name="order_online_no_resi" v-model="orderanOnlineForm['NO RESI']" type="text" class="form-input" />
                             </div>
                             <div class="relative search-select-container">
-                                <label class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Type
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Type
                                     Unit / Produk</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'orderan_type_unit')"
                                     :aria-expanded="searchSelectOpen === 'orderan_type_unit' ? 'true' : 'false'"
@@ -2216,7 +2226,7 @@
                                                 :class="['popover-option', orderanOnlineForm['TYPE UNIT'] === opt ? 'popover-option-active' : '']">
                                                 {{ opt }} </div>
                                             <div v-if="sharedUnitTypeOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
-                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                 Tidak ditemukan
                                             </div>
                                         </div>
@@ -2224,36 +2234,36 @@
                                 </transition>
                             </div>
                             <div>
-                                <label for="order-online-imei-sn" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">IMEI
+                                <label for="order-online-imei-sn" class="type-body-sm font-bold text-slate-400 uppercase mb-2">IMEI
                                     / SN</label>
                                 <input id="order-online-imei-sn" name="order_online_imei_sn" v-model="orderanOnlineForm['IMEI/SN']" type="text" class="form-input" />
                             </div>
                             <div>
-                                <label for="order-online-no-nota" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">No
+                                <label for="order-online-no-nota" class="type-body-sm font-bold text-slate-400 uppercase mb-2">No
                                     Nota</label>
                                 <input id="order-online-no-nota" name="order_online_no_nota" v-model="orderanOnlineForm['NO NOTA']" type="text" class="form-input" />
                             </div>
                             <div>
-                                <label for="order-online-harga-online" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Harga
+                                <label for="order-online-harga-online" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Harga
                                     Online</label>
                                 <input id="order-online-harga-online" name="order_online_harga_online" v-model.number="orderanOnlineForm['HARGA ONLINE']" type="number"
                                     class="form-input" />
                             </div>
                             <div>
-                                <label for="order-online-nominal-cair" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Nominal
+                                <label for="order-online-nominal-cair" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Nominal
                                     Cair</label>
                                 <input id="order-online-nominal-cair" name="order_online_nominal_cair" v-model.number="orderanOnlineForm['NOMINAL CAIR']" type="number"
                                     class="form-input" />
                             </div>
                             <div>
-                                <label for="order-online-admin-persentase" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Admin
+                                <label for="order-online-admin-persentase" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Admin
                                     %</label>
                                 <input id="order-online-admin-persentase" name="order_online_admin_persentase" v-model="orderanOnlineForm['ADMIN %']" type="text" placeholder="2% / 3%"
                                     class="form-input" />
                             </div>
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Status</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Status</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'orderan_status')"
                                     :aria-expanded="searchSelectOpen === 'orderan_status' ? 'true' : 'false'"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
@@ -2302,7 +2312,7 @@
                             </div>
                             <div>
                                 <div class="type-heading-sm text-slate-900">{{ csModalType === 'create' ? 'Tambah' : 'Edit' }} Unit Ditanya</div>
-                                <div class="type-body-sm text-slate-400 uppercase tracking-widest mt-0.5">Customer
+                                <div class="type-body-sm text-slate-400 uppercase mt-0.5">Customer
                                     Service</div>
                             </div>
                         </div>
@@ -2313,7 +2323,7 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Tanggal</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Tanggal</label>
                                 <button type="button" @click="openCalendar($event, 'form', '', 'unitDitanya1')"
                                     class="select-trigger-button-form toolbar-trigger-field-form">
                                     <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
@@ -2323,7 +2333,7 @@
                             </div>
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Kategori</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Kategori</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'unit_kategori')"
                                     :aria-expanded="searchSelectOpen === 'unit_kategori' ? 'true' : 'false'"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
@@ -2348,7 +2358,7 @@
                                                 :class="['popover-option', unitDitanyaForm['KATEGORI'] === opt ? 'popover-option-active' : '']">
                                                 {{ opt }} </div>
                                             <div v-if="unitKategoriOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
-                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                 Tidak ditemukan
                                             </div>
                                         </div>
@@ -2357,7 +2367,7 @@
                             </div>
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Brand</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Brand</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'unit_brand')"
                                     :aria-expanded="searchSelectOpen === 'unit_brand' ? 'true' : 'false'"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
@@ -2382,7 +2392,7 @@
                                                 :class="['popover-option', unitDitanyaForm['BRAND'] === opt ? 'popover-option-active' : '']">
                                                 {{ opt }} </div>
                                             <div v-if="unitBrandOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
-                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                 Tidak ditemukan
                                             </div>
                                         </div>
@@ -2391,7 +2401,7 @@
                             </div>
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Seri</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Seri</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'unit_seri')"
                                     :aria-expanded="searchSelectOpen === 'unit_seri' ? 'true' : 'false'"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
@@ -2419,7 +2429,7 @@
                                                 :class="['popover-option', unitDitanyaForm['SERI'] === opt ? 'popover-option-active' : '']">
                                                 {{ opt }} </div>
                                             <div v-if="nsSeriOptions.length > 0 && nsSeriOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
-                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                 Tidak ditemukan
                                             </div>
                                         </div>
@@ -2428,7 +2438,7 @@
                             </div>
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">RAM</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">RAM</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'unit_ram')"
                                     :aria-expanded="searchSelectOpen === 'unit_ram' ? 'true' : 'false'"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
@@ -2453,7 +2463,7 @@
                                                 :class="['popover-option', unitDitanyaForm['RAM'] === opt ? 'popover-option-active' : '']">
                                                 {{ opt }} </div>
                                             <div v-if="unitRAMOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
-                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                 Tidak ditemukan
                                             </div>
                                         </div>
@@ -2462,7 +2472,7 @@
                             </div>
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Internal</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Internal</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'unit_internal')"
                                     :aria-expanded="searchSelectOpen === 'unit_internal' ? 'true' : 'false'"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
@@ -2488,7 +2498,7 @@
                                                 :class="['popover-option', unitDitanyaForm['INTERNAL'] === opt ? 'popover-option-active' : '']">
                                                 {{ opt }} </div>
                                             <div v-if="unitInternalOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
-                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                 Tidak ditemukan
                                             </div>
                                         </div>
@@ -2497,7 +2507,7 @@
                             </div>
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Size</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Size</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'unit_size')"
                                     :aria-expanded="searchSelectOpen === 'unit_size' ? 'true' : 'false'"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
@@ -2523,7 +2533,7 @@
                                                 :class="['popover-option', unitDitanyaForm['SIZE'] === opt ? 'popover-option-active' : '']">
                                                 {{ opt }} </div>
                                             <div v-if="unitSizeOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
-                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                 Tidak ditemukan
                                             </div>
                                         </div>
@@ -2532,12 +2542,12 @@
                             </div>
                             <div>
                                 <label for="unit-ditanya-warna"
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Warna</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Warna</label>
                                 <input id="unit-ditanya-warna" name="unit_ditanya_warna" v-model="unitDitanyaForm['WARNA']" type="text" class="form-input" />
                             </div>
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Kondisi</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Kondisi</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'kondisi')"
                                     :aria-expanded="searchSelectOpen === 'kondisi' ? 'true' : 'false'"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
@@ -2559,7 +2569,7 @@
                             </div>
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Tipe</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Tipe</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'unit_tipe')"
                                     :aria-expanded="searchSelectOpen === 'unit_tipe' ? 'true' : 'false'"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
@@ -2584,7 +2594,7 @@
                                                 :class="['popover-option', unitDitanyaForm['TIPE'] === opt ? 'popover-option-active' : '']">
                                                 {{ opt }} </div>
                                             <div v-if="sharedUnitTypeOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
-                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                 Tidak ditemukan
                                             </div>
                                         </div>
@@ -2592,14 +2602,14 @@
                                 </transition>
                             </div>
                             <div>
-                                <label for="unit-ditanya-ditanya" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Jumlah
+                                <label for="unit-ditanya-ditanya" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Jumlah
                                     Ditanya</label>
                                 <input id="unit-ditanya-ditanya" name="unit_ditanya_jumlah" v-model.number="unitDitanyaForm['DITANYA']" type="number" min="1"
                                     class="form-input" />
                             </div>
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Available</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Available</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'available')"
                                     :aria-expanded="searchSelectOpen === 'available' ? 'true' : 'false'"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
@@ -2648,7 +2658,7 @@
                             </div>
                             <div>
                                 <div class="type-heading-sm text-slate-900">{{ csModalType === 'create' ? 'Tambah' : 'Edit' }} Claim Garansi</div>
-                                <div class="type-body-sm text-slate-400 uppercase tracking-widest mt-0.5">Customer
+                                <div class="type-body-sm text-slate-400 uppercase mt-0.5">Customer
                                     Service</div>
                             </div>
                         </div>
@@ -2662,22 +2672,22 @@
                                 <div class="form-section-copy">Data pelanggan, kontak, dan timeline layanan.</div>
                             </div>
                             <div class="col-span-2">
-                                <label for="claim-nama-customer" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Nama
+                                <label for="claim-nama-customer" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Nama
                                     Customer</label>
                                 <input id="claim-nama-customer" name="claim_nama_customer" v-model="claimGaransiForm['NAMA_CUSTOMER']" type="text" class="form-input" />
                             </div>
                             <div>
-                                <label for="claim-no-service" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">No
+                                <label for="claim-no-service" class="type-body-sm font-bold text-slate-400 uppercase mb-2">No
                                     Service</label>
                                 <input id="claim-no-service" name="claim_no_service" v-model="claimGaransiForm['NO_SERVICE']" type="text" class="form-input" />
                             </div>
                             <div>
-                                <label for="claim-no-transaksi" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">No
+                                <label for="claim-no-transaksi" class="type-body-sm font-bold text-slate-400 uppercase mb-2">No
                                     Transaksi</label>
                                 <input id="claim-no-transaksi" name="claim_no_transaksi" v-model="claimGaransiForm['NO_TRANSAKSI']" type="text" class="form-input" />
                             </div>
                             <div class="relative search-select-container">
-                                <label class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Tanggal
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Tanggal
                                     Masuk</label>
                                 <button type="button" @click="openCalendar($event, 'form', '', 'claimGaransi1')"
                                     class="select-trigger-button-form toolbar-trigger-field-form">
@@ -2687,7 +2697,7 @@
                                 </button>
                             </div>
                             <div class="relative search-select-container">
-                                <label class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Tanggal
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Tanggal
                                     Estimasi</label>
                                 <button type="button" @click="openCalendar($event, 'form', '', 'claimGaransi3')"
                                     class="select-trigger-button-form toolbar-trigger-field-form">
@@ -2697,7 +2707,7 @@
                                 </button>
                             </div>
                             <div class="relative search-select-container">
-                                <label class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Tanggal
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Tanggal
                                     Diambil</label>
                                 <button type="button" @click="openCalendar($event, 'form', '', 'claimGaransi2')"
                                     class="select-trigger-button-form toolbar-trigger-field-form">
@@ -2707,13 +2717,13 @@
                                 </button>
                             </div>
                             <div>
-                                <label for="claim-wa-customer" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">WA
+                                <label for="claim-wa-customer" class="type-body-sm font-bold text-slate-400 uppercase mb-2">WA
                                     Customer</label>
                                 <input id="claim-wa-customer" name="claim_wa_customer" v-model="claimGaransiForm['WA_CUSTOMER']" type="text" placeholder="08xxx"
                                     class="form-input" />
                             </div>
                             <div>
-                                <label for="claim-wa2-customer" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">WA
+                                <label for="claim-wa2-customer" class="type-body-sm font-bold text-slate-400 uppercase mb-2">WA
                                     2 Customer</label>
                                 <input id="claim-wa2-customer" name="claim_wa2_customer" v-model="claimGaransiForm['WA2_CUSTOMER']" type="text"
                                     placeholder="08xxx (opsional)" class="form-input" />
@@ -2723,7 +2733,7 @@
                                 <div class="form-section-copy">Identitas unit, status klaim, dan detail kerusakan.</div>
                             </div>
                             <div class="relative search-select-container">
-                                <label class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Tipe
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Tipe
                                     Unit</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'claim_tipe')"
                                     :aria-expanded="searchSelectOpen === 'claim_tipe' ? 'true' : 'false'"
@@ -2749,7 +2759,7 @@
                                                 :class="['popover-option', claimGaransiForm['TIPE'] === opt ? 'popover-option-active' : '']">
                                                 {{ opt }} </div>
                                             <div v-if="sharedUnitTypeOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
-                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                 Tidak ditemukan
                                             </div>
                                         </div>
@@ -2758,12 +2768,12 @@
                             </div>
                             <div>
                                 <label for="claim-imei"
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">IMEI</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">IMEI</label>
                                 <input id="claim-imei" name="claim_imei" v-model="claimGaransiForm['IMEI']" type="text" class="form-input" />
                             </div>
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Seri</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Seri</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'claim_seri')"
                                     :aria-expanded="searchSelectOpen === 'claim_seri' ? 'true' : 'false'"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
@@ -2788,7 +2798,7 @@
                                                 :class="['popover-option', claimGaransiForm['SERI'] === opt ? 'popover-option-active' : '']">
                                                 {{ opt }} </div>
                                             <div v-if="claimSeriOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
-                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                 Tidak ditemukan
                                             </div>
                                         </div>
@@ -2797,7 +2807,7 @@
                             </div>
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Model</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Model</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'claim_model')"
                                     :aria-expanded="searchSelectOpen === 'claim_model' ? 'true' : 'false'"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
@@ -2822,7 +2832,7 @@
                                                 :class="['popover-option', claimGaransiForm['MODEL'] === opt ? 'popover-option-active' : '']">
                                                 {{ opt }} </div>
                                             <div v-if="sharedUnitTypeOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
-                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                 Tidak ditemukan
                                             </div>
                                         </div>
@@ -2830,17 +2840,17 @@
                                 </transition>
                             </div>
                             <div>
-                                <label for="claim-hp-pinjaman" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">HP
+                                <label for="claim-hp-pinjaman" class="type-body-sm font-bold text-slate-400 uppercase mb-2">HP
                                     Pinjaman</label>
                                 <input id="claim-hp-pinjaman" name="claim_hp_pinjaman" v-model="claimGaransiForm['HP_PINJAMAN']" type="text" class="form-input" />
                             </div>
                             <div>
-                                <label for="claim-imei-pinjaman" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">IMEI
+                                <label for="claim-imei-pinjaman" class="type-body-sm font-bold text-slate-400 uppercase mb-2">IMEI
                                     Pinjaman</label>
                                 <input id="claim-imei-pinjaman" name="claim_imei_pinjaman" v-model="claimGaransiForm['IMEI_PINJAMAN']" type="text" class="form-input" />
                             </div>
                             <div class="relative search-select-container">
-                                <label class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Lokasi
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Lokasi
                                     Klaim</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'lokasi_klaim')"
                                     :aria-expanded="searchSelectOpen === 'lokasi_klaim' ? 'true' : 'false'"
@@ -2866,7 +2876,7 @@
                                                 :class="['popover-option', claimGaransiForm['LOKASI_KLAIM'] === opt ? 'popover-option-active' : '']">
                                                 {{ opt }} </div>
                                             <div v-if="claimLokasiOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
-                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                 Tidak ditemukan
                                             </div>
                                         </div>
@@ -2875,7 +2885,7 @@
                             </div>
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Status</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Status</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'claim_status')"
                                     :aria-expanded="searchSelectOpen === 'claim_status' ? 'true' : 'false'"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
@@ -2897,7 +2907,7 @@
                             </div>
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Garansi</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Garansi</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'claim_garansi')"
                                     :aria-expanded="searchSelectOpen === 'claim_garansi' ? 'true' : 'false'"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
@@ -2919,13 +2929,13 @@
                             </div>
                             <div class="col-span-2">
                                 <label for="claim-kerusakan"
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Kerusakan</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Kerusakan</label>
                                 <textarea id="claim-kerusakan" name="claim_kerusakan" v-model="claimGaransiForm['KERUSAKAN']" rows="3"
                                     class="form-input resize-none"></textarea>
                             </div>
                             <div class="col-span-2">
                                 <label for="claim-keterangan"
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Keterangan</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Keterangan</label>
                                 <textarea id="claim-keterangan" name="claim_keterangan" v-model="claimGaransiForm['KETERANGAN']" rows="2"
                                     placeholder="Catatan tambahan..." class="form-input resize-none"></textarea>
                             </div>
@@ -2958,7 +2968,7 @@
                             </div>
                             <div>
                                 <div class="type-heading-sm text-slate-900">{{ keepBarangModalType === 'create' ? 'Tambah' : 'Edit' }} Barang Ditahan</div>
-                                <div class="type-body-sm text-slate-400 uppercase tracking-widest mt-0.5">Customer
+                                <div class="type-body-sm text-slate-400 uppercase mt-0.5">Customer
                                     Service</div>
                             </div>
                         </div>
@@ -2968,7 +2978,7 @@
                     <div class="p-6 overflow-y-auto space-y-4">
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <label class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Tanggal
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Tanggal
                                     Keep</label>
                                 <button type="button" @click="openCalendar($event, 'form', '', 'keepBarangTanggalKeep')"
                                     class="select-trigger-button-form toolbar-trigger-field-form">
@@ -2980,7 +2990,7 @@
                                 </button>
                             </div>
                             <div>
-                                <label class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Rencana
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Rencana
                                     Pengambilan</label>
                                 <button type="button"
                                     @click="openCalendar($event, 'form', '', 'keepBarangRencanaAmbil')"
@@ -2993,24 +3003,24 @@
                                 </button>
                             </div>
                             <div class="col-span-2">
-                                <label for="keep-nama-customer" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Nama
+                                <label for="keep-nama-customer" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Nama
                                     Customer</label>
                                 <input id="keep-nama-customer" name="keep_nama_customer" v-model="keepBarangForm['NAMA']" type="text" class="form-input" />
                             </div>
                             <div>
-                                <label for="keep-nomor-hp" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">No
+                                <label for="keep-nomor-hp" class="type-body-sm font-bold text-slate-400 uppercase mb-2">No
                                     HP</label>
                                 <input id="keep-nomor-hp" name="keep_nomor_hp" v-model="keepBarangForm['NOMOR_HP']" type="text" placeholder="08xxx"
                                     class="form-input" />
                             </div>
                             <div>
-                                <label for="keep-nomor-hp-2" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">No
+                                <label for="keep-nomor-hp-2" class="type-body-sm font-bold text-slate-400 uppercase mb-2">No
                                     HP 2</label>
                                 <input id="keep-nomor-hp-2" name="keep_nomor_hp_2" v-model="keepBarangForm['NOMOR_HP_2']" type="text" placeholder="08xxx (opsional)"
                                     class="form-input" />
                             </div>
                             <div class="relative search-select-container">
-                                <label class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Type
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Type
                                     HP</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'keep_type_hp')"
                                     :aria-expanded="searchSelectOpen === 'keep_type_hp' ? 'true' : 'false'"
@@ -3036,7 +3046,7 @@
                                                 :class="['popover-option', keepBarangForm['TYPE_HP'] === opt ? 'popover-option-active' : '']">
                                                 {{ opt }} </div>
                                             <div v-if="keepBarangTypeHpOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
-                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                 Belum ada opsi Type HP
                                             </div>
                                         </div>
@@ -3045,23 +3055,23 @@
                             </div>
                             <div>
                                 <label for="keep-imei-full"
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">IMEI</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">IMEI</label>
                                 <input id="keep-imei-full" name="keep_imei_full" v-model="keepBarangForm['IMEI_FULL']" type="text" class="form-input" />
                             </div>
                             <div>
-                                <label for="keep-dp-uang-muka" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">DP
+                                <label for="keep-dp-uang-muka" class="type-body-sm font-bold text-slate-400 uppercase mb-2">DP
                                     (Uang Muka)</label>
                                 <input id="keep-dp-uang-muka" name="keep_dp_uang_muka" v-model.number="keepBarangForm['DP_UANG_MUKA']" type="number" min="0"
                                     class="form-input" />
                             </div>
                             <div>
-                                <label for="keep-harga-jual" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Harga
+                                <label for="keep-harga-jual" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Harga
                                     Jual</label>
                                 <input id="keep-harga-jual" name="keep_harga_jual" v-model.number="keepBarangForm['HARGA_JUAL']" type="number" min="0"
                                     class="form-input" />
                             </div>
                             <div class="relative search-select-container">
-                                <label class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Handle
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Handle
                                     By</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'keep_handle_by')"
                                     :aria-expanded="searchSelectOpen === 'keep_handle_by' ? 'true' : 'false'"
@@ -3088,7 +3098,7 @@
                                                 :class="['popover-option', keepBarangForm['HANDLE_BY'] === opt ? 'popover-option-active' : '']">
                                                 {{ opt }} </div>
                                             <div v-if="keepBarangHandleByOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
-                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                 Tidak ditemukan
                                             </div>
                                         </div>
@@ -3096,7 +3106,7 @@
                                 </transition>
                             </div>
                             <div class="relative search-select-container">
-                                <label class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Kasir
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Kasir
                                     By</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'keep_kasir_by')"
                                     :aria-expanded="searchSelectOpen === 'keep_kasir_by' ? 'true' : 'false'"
@@ -3123,7 +3133,7 @@
                                                 :class="['popover-option', keepBarangForm['KASIR_BY'] === opt ? 'popover-option-active' : '']">
                                                 {{ opt }} </div>
                                             <div v-if="keepBarangKasirByOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
-                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                 Tidak ditemukan
                                             </div>
                                         </div>
@@ -3131,7 +3141,7 @@
                                 </transition>
                             </div>
                             <div class="relative search-select-container">
-                                <label class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Team
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Team
                                     Gudang</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'keep_team_gudang')"
                                     :aria-expanded="searchSelectOpen === 'keep_team_gudang' ? 'true' : 'false'"
@@ -3158,7 +3168,7 @@
                                                 :class="['popover-option', keepBarangForm['TEAM_GUDANG'] === opt ? 'popover-option-active' : '']">
                                                 {{ opt }} </div>
                                             <div v-if="keepBarangTeamGudangOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
-                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                 Tidak ditemukan
                                             </div>
                                         </div>
@@ -3167,7 +3177,7 @@
                             </div>
                             <div>
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Deadline
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Deadline
                                     Gudang</label>
                                 <button type="button"
                                     @click="openCalendar($event, 'form', '', 'keepBarangDeadlineGudang')"
@@ -3181,7 +3191,7 @@
                             </div>
                             <div class="col-span-2">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Status</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Status</label>
                                 <div class="relative search-select-container">
                                     <button type="button" @click="toggleSearchSelect($event, 'keep_form_status')"
                                         class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
@@ -3226,7 +3236,7 @@
                             </div>
                             <div>
                                 <div class="type-heading-sm text-slate-900">{{ promoModalType === 'create' ? 'Tambah Program' : 'Edit Program' }}</div>
-                                <div class="type-body-sm text-slate-400 uppercase tracking-widest mt-0.5">Program &
+                                <div class="type-body-sm text-slate-400 uppercase mt-0.5">Program &
                                     Promo</div>
                             </div>
                         </div>
@@ -3236,7 +3246,7 @@
                     <div class="p-6 overflow-y-auto flex-1 space-y-4">
                         <!-- Kategori -->
                         <div>
-                            <label class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Kategori
+                            <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Kategori
                                 Promo</label>
                             <div class="relative search-select-container">
                                 <div @click="toggleSearchSelect($event, 'promoKategori')"
@@ -3260,21 +3270,21 @@
                         </div>
                         <!-- Nama Program -->
                         <div>
-                            <label for="promo-program" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Nama
+                            <label for="promo-program" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Nama
                                 Program <span class="text-danger">*</span></label>
                             <input id="promo-program" name="promo_program" v-model="promoForm.Program" type="text" placeholder="Promo Cashback..."
                                 class="form-input" />
                         </div>
                         <!-- Varian -->
                         <div>
-                            <label for="promo-varian" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Varian
+                            <label for="promo-varian" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Varian
                                 / Unit</label>
                             <input id="promo-varian" name="promo_varian" v-model="promoForm.Warna" type="text" placeholder="Semua Tipe / Galaxy S25..."
                                 class="form-input" />
                         </div>
                         <!-- Harga -->
                         <div>
-                            <label for="promo-harga" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Nominal
+                            <label for="promo-harga" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Nominal
                                 Potongan (Rp)</label>
                             <input id="promo-harga" name="promo_harga" v-model.number="promoForm.Harga" type="number" min="0"
                                 class="form-input text-right" />
@@ -3282,7 +3292,7 @@
                         <!-- Periode -->
                         <div class="surface-panel-soft space-y-3">
                             <label
-                                class="block text-body-sm font-bold text-slate-400 uppercase tracking-widest text-center">Periode
+                                class="block text-body-sm font-bold text-slate-400 uppercase text-center">Periode
                                 Berlaku</label>
                             <div class="grid grid-cols-2 gap-2">
                                 <!-- Preset dropdown -->
@@ -3329,7 +3339,7 @@
                         </div>
                         <!-- Rules -->
                         <div>
-                            <label for="promo-rules" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">S&K
+                            <label for="promo-rules" class="type-body-sm font-bold text-slate-400 uppercase mb-2">S&K
                                 / Rules</label>
                             <textarea id="promo-rules" name="promo_rules" v-model="promoForm.Rules" rows="3" placeholder="Syarat dan ketentuan berlaku..."
                                 class="form-input resize-none"></textarea>
@@ -3337,7 +3347,7 @@
                         <!-- Benefit -->
                         <div>
                             <label for="promo-benefit"
-                                class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Benefit</label>
+                                class="type-body-sm font-bold text-slate-400 uppercase mb-2">Benefit</label>
                             <textarea id="promo-benefit" name="promo_benefit" v-model="promoForm.Benefit" rows="3" placeholder="Keuntungan yang didapat..."
                                 class="form-input resize-none"></textarea>
                         </div>
@@ -3370,7 +3380,7 @@
                             </div>
                             <div>
                                 <div class="type-heading-sm text-slate-900">{{ unboxingModalType === 'create' ? 'Tambah Unboxing' : 'Edit Unboxing' }}</div>
-                                <div class="type-body-sm text-slate-400 uppercase tracking-widest mt-0.5">Konten Module
+                                <div class="type-body-sm text-slate-400 uppercase mt-0.5">Konten Module
                                 </div>
                             </div>
                         </div>
@@ -3380,14 +3390,14 @@
                     <div class="p-6 overflow-y-auto custom-scrollbar flex-1">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div class="md:col-span-2">
-                                <label for="unboxing-judul" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Judul
+                                <label for="unboxing-judul" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Judul
                                     Unboxing <span class="text-danger">*</span></label>
                                 <input id="unboxing-judul" name="unboxing_judul" v-model="unboxingForm.Nama" type="text"
                                     placeholder="Contoh: Unboxing Samsung S24 Ultra" class="form-input" />
                             </div>
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Editor</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Editor</label>
                                 <div @click="toggleSearchSelect($event, 'unboxingEditor')"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
                                     <span
@@ -3410,7 +3420,7 @@
                                                 :class="['popover-option', unboxingForm.Editor === opt ? 'popover-option-active' : '']">
                                                 {{ opt }}</div>
                                             <div v-if="filteredEditorOptions.length === 0"
-                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                 Tidak ditemukan</div>
                                         </div>
                                     </div>
@@ -3418,7 +3428,7 @@
                             </div>
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Status</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Status</label>
                                 <div @click="toggleSearchSelect($event, 'unboxingStatus')"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
                                     <span
@@ -3438,7 +3448,7 @@
                                 </transition>
                             </div>
                             <div>
-                                <label class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Tanggal
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Tanggal
                                     Upload</label>
                                 <button type="button" @click="openCalendar($event, 'form', '', 'unboxingUploadDate')"
                                     class="select-trigger-button-form toolbar-trigger-field-form">
@@ -3450,7 +3460,7 @@
                                 </button>
                             </div>
                             <div class="md:col-span-2">
-                                <label for="unboxing-link-video" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Link
+                                <label for="unboxing-link-video" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Link
                                     Video</label>
                                 <input id="unboxing-link-video" name="unboxing_link_video" v-model="unboxingForm.Link" type="text" placeholder="https://..."
                                     class="form-input" />
@@ -3482,7 +3492,7 @@
                             </div>
                             <div>
                                 <div class="type-heading-sm text-slate-900">{{ distributionForm.ID ? 'Edit Distribusi' : 'Tambah Distribusi' }}</div>
-                                <div class="type-body-sm text-slate-400 uppercase tracking-widest mt-0.5">Konten Module
+                                <div class="type-body-sm text-slate-400 uppercase mt-0.5">Konten Module
                                 </div>
                             </div>
                         </div>
@@ -3492,14 +3502,14 @@
                     <div class="p-6 overflow-y-auto custom-scrollbar flex-1">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div class="md:col-span-2">
-                                <label for="distribution-judul" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Judul
+                                <label for="distribution-judul" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Judul
                                     <span class="text-danger">*</span></label>
                                 <input id="distribution-judul" name="distribution_judul" v-model="distributionForm.Judul" type="text" placeholder="Judul konten"
                                     class="form-input" />
                             </div>
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Platform</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Platform</label>
                                 <div @click="toggleSearchSelect($event, 'distPlatform')"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
                                     <span
@@ -3519,7 +3529,7 @@
                                 </transition>
                             </div>
                             <div>
-                                <label class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Tanggal
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Tanggal
                                     Publish</label>
                                 <button type="button" @click="openCalendar($event, 'form', '', 'distribution')"
                                     class="select-trigger-button-form toolbar-trigger-field-form">
@@ -3532,7 +3542,7 @@
                             </div>
                             <div class="md:col-span-2">
                                 <label for="distribution-link"
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Link</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Link</label>
                                 <input id="distribution-link" name="distribution_link" v-model="distributionForm.Link" type="text" placeholder="https://..."
                                     class="form-input" />
                             </div>
@@ -3564,7 +3574,7 @@
                             </div>
                             <div>
                                 <div class="type-heading-sm text-slate-900">{{ analyticsForm.ID ? 'Edit Analitik' : 'Tambah Analitik' }}</div>
-                                <div class="type-body-sm text-slate-400 uppercase tracking-widest mt-0.5">Konten Module
+                                <div class="type-body-sm text-slate-400 uppercase mt-0.5">Konten Module
                                 </div>
                             </div>
                         </div>
@@ -3574,14 +3584,14 @@
                     <div class="p-6 overflow-y-auto custom-scrollbar flex-1">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <div class="md:col-span-2">
-                                <label for="analytics-judul" class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Judul
+                                <label for="analytics-judul" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Judul
                                     <span class="text-danger">*</span></label>
                                 <input id="analytics-judul" name="analytics_judul" v-model="analyticsForm.Judul" type="text" placeholder="Judul konten"
                                     class="form-input" />
                             </div>
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Platform</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Platform</label>
                                 <div @click="toggleSearchSelect($event, 'analyticsPlatform')"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
                                     <span
@@ -3602,28 +3612,28 @@
                             </div>
                             <div>
                                 <label for="analytics-id-post"
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">ID Post</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">ID Post</label>
                                 <input id="analytics-id-post" name="analytics_id_post" v-model="analyticsForm.ID_Post" @input="queueAnalyticsIdPostSync($event.target.value)" type="text" placeholder="Post ID (sinkron dari Feed Konten)" class="form-input" />
                             </div>
                             <div>
                                 <label for="analytics-views"
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Views</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Views</label>
                                 <input id="analytics-views" name="analytics_views" v-model.number="analyticsForm.Views" type="number" min="0" class="form-input" />
                             </div>
                             <div>
                                 <label for="analytics-likes"
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Likes</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Likes</label>
                                 <input id="analytics-likes" name="analytics_likes" v-model.number="analyticsForm.Likes" type="number" min="0" class="form-input" />
                             </div>
                             <div>
                                 <label for="analytics-comments"
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Comments</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Comments</label>
                                 <input id="analytics-comments" name="analytics_comments" v-model.number="analyticsForm.Comments" type="number" min="0"
                                     class="form-input" />
                             </div>
                             <div>
                                 <label for="analytics-shares"
-                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-2">Shares</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Shares</label>
                                 <input id="analytics-shares" name="analytics_shares" v-model.number="analyticsForm.Shares" type="number" min="0" class="form-input" />
                             </div>
                         </div>
@@ -3648,7 +3658,7 @@
                     <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-white">
                         <div>
                             <h3 class="text-sm font-bold text-slate-900">Jadwal & Event</h3>
-                            <p class="text-body-sm text-slate-400 font-medium mt-0.5 uppercase tracking-widest">{{ calendarDayModalDate }}</p>
+                            <p class="text-body-sm text-slate-400 font-medium mt-0.5 uppercase">{{ calendarDayModalDate }}</p>
                         </div>
                         <button @click="calendarDayModalOpen = false" aria-label="Tutup modal"
                             class="icon-utility-button icon-utility-round">
@@ -3659,7 +3669,7 @@
                         <div v-if="calendarDayModalItems.length === 0"
                             class="flex flex-col items-center justify-center py-10 text-slate-300">
                             <i class="fa-solid fa-calendar-xmark text-3xl mb-3 opacity-20"></i>
-                            <p class="text-body font-bold uppercase tracking-widest">Tidak ada jadwal</p>
+                            <p class="text-body font-bold uppercase">Tidak ada jadwal</p>
                         </div>
                         <div v-else class="space-y-3">
                             <div v-for="item in calendarDayModalItems" :key="item.ID || item.Nama_Event"
@@ -3706,7 +3716,7 @@
                                         <div class="flex items-center gap-2">
                                             <i class="fa-solid fa-clapperboard text-xs text-danger"></i>
                                             <span
-                                                class="text-body-sm font-bold text-danger uppercase tracking-widest">Story</span>
+                                                class="text-body-sm font-bold text-danger uppercase">Story</span>
                                         </div>
                                         <span v-if="item.Status"
                                             class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap bg-danger text-light uppercase">{{ item.Status }}</span>
@@ -3737,7 +3747,7 @@
                                         </div>
                                         <div>
                                             <span
-                                                class="text-overline font-black uppercase tracking-widest text-amber">Hari Raya</span>
+                                                class="text-overline font-black uppercase text-amber">Hari Raya</span>
                                             <h4 class="text-[12px] font-bold text-slate-900 leading-[1.2] mb-1 uppercase">{{ item.Nama_Event }}</h4>
                                         </div>
                                     </div>

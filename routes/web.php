@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ChatMessage;
 use App\Support\MasterPlanDistributionSync;
 use App\Support\DashboardAuth;
 use App\Support\MetaIgImportNormalizer;
@@ -7,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use App\Support\MarketingDashboardShell;
 use Illuminate\Validation\Rule;
@@ -316,6 +318,14 @@ Route::get('/api/auth/session', function (DashboardAuth $dashboardAuth) {
         ]);
     }
 
+    if (! $dashboardAuth->ensureActiveSession(request())) {
+        return response()->json([
+            'authenticated' => false,
+            'user' => null,
+            ...$dashboardAuth->sessionFailurePayload(),
+        ]);
+    }
+
     return response()->json([
         'authenticated' => true,
         'user' => $dashboardAuth->userPayload(auth()->user()),
@@ -443,6 +453,66 @@ Route::prefix('__db')->group(function (): void {
     });
 });
 
+
+Route::any('/8090/{path?}', function (MarketingDashboardShell $dashboardShell, ?string $path = null) {
+    $publicBaseUrl = request()->getSchemeAndHttpHost().'/8090';
+    URL::forceRootUrl($publicBaseUrl);
+
+    $normalizedPath = trim((string) $path, '/');
+
+    if ($normalizedPath === '') {
+        return response()
+            ->view('dashboard.index', $dashboardShell->build($publicBaseUrl), 200)
+            ->header('Content-Type', 'text/html; charset=UTF-8')
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache');
+    }
+
+    $publicFile = public_path($normalizedPath);
+    if (is_file($publicFile)) {
+        $extension = strtolower(pathinfo($publicFile, PATHINFO_EXTENSION));
+        $contentType = match ($extension) {
+            'css' => 'text/css; charset=UTF-8',
+            'js', 'mjs' => 'text/javascript; charset=UTF-8',
+            'json' => 'application/json; charset=UTF-8',
+            'svg' => 'image/svg+xml',
+            'png' => 'image/png',
+            'jpg', 'jpeg' => 'image/jpeg',
+            'gif' => 'image/gif',
+            'ico' => 'image/x-icon',
+            'woff' => 'font/woff',
+            'woff2' => 'font/woff2',
+            default => mime_content_type($publicFile) ?: 'application/octet-stream',
+        };
+
+        return response()->file($publicFile, ['Content-Type' => $contentType]);
+    }
+
+    $targetPath = '/'.$normalizedPath;
+    $query = request()->getQueryString();
+    $targetUri = $targetPath.($query ? '?'.$query : '');
+    $server = request()->server->all();
+    $server['REQUEST_URI'] = $targetUri;
+    $server['PATH_INFO'] = $targetPath;
+
+    $subRequest = Request::create(
+        $targetUri,
+        request()->method(),
+        request()->query->all(),
+        request()->cookies->all(),
+        request()->files->all(),
+        $server,
+        request()->getContent()
+    );
+
+    foreach (request()->headers->all() as $name => $values) {
+        $subRequest->headers->set($name, $values);
+    }
+
+    return app(\Illuminate\Contracts\Http\Kernel::class)->handle($subRequest);
+})->where('path', '.*');
+
+
 Route::get('/', function (MarketingDashboardShell $dashboardShell) {
     $backendUrl = rtrim(url('/'), '/');
 
@@ -510,6 +580,219 @@ Route::middleware('dashboard.auth')->group(function () use (
         abort_unless($user instanceof \App\Models\User, 401);
         abort_unless(app(DashboardAuth::class)->canImportAnalytics($user), 403, 'Forbidden');
     };
+
+Route::post('/api/auth/heartbeat', function (DashboardAuth $dashboardAuth) {
+    $user = auth()->user();
+    abort_unless($user instanceof \App\Models\User, 401);
+
+    $updatedUser = $dashboardAuth->touchPresence($user);
+
+    return response()->json([
+        'status' => 'success',
+        'user' => $dashboardAuth->userPayload($updatedUser),
+    ]);
+});
+
+Route::get('/api/chat/users', function (DashboardAuth $dashboardAuth) {
+    $user = auth()->user();
+    abort_unless($user instanceof \App\Models\User, 401);
+
+    $users = \App\Models\User::query()
+        ->whereKeyNot($user->getKey())
+        ->orderByRaw('is_online desc, COALESCE(last_seen_at, created_at) desc')
+        ->limit(50)
+        ->get()
+        ->map(fn (\App\Models\User $member): array => $dashboardAuth->userPayload($member))
+        ->values();
+
+    return response()->json([
+        'data' => $users,
+    ]);
+});
+
+Route::get('/api/chat/recent', function (DashboardAuth $dashboardAuth) {
+    $authUser = auth()->user();
+    abort_unless($authUser instanceof \App\Models\User, 401);
+
+    $messages = ChatMessage::query()
+        ->where('sender_id', $authUser->getKey())
+        ->orWhere('receiver_id', $authUser->getKey())
+        ->orderByDesc('created_at')
+        ->limit(200)
+        ->get();
+
+    $recent = $messages
+        ->map(function (ChatMessage $message) use ($authUser) {
+            $contactId = (int) ($message->sender_id === $authUser->getKey() ? $message->receiver_id : $message->sender_id);
+            return [
+                'contact_id' => $contactId,
+                'message' => $message->message,
+                'created_at' => optional($message->created_at)?->toIso8601String(),
+            ];
+        })
+        ->unique('contact_id')
+        ->values();
+
+    $contacts = \App\Models\User::query()
+        ->whereIn('id', $recent->pluck('contact_id')->all())
+        ->get()
+        ->keyBy('id');
+
+    $unreadByUser = ChatMessage::query()
+        ->select('sender_id', DB::raw('count(*) as unread_count'))
+        ->where('receiver_id', $authUser->getKey())
+        ->whereNull('read_at')
+        ->groupBy('sender_id')
+        ->pluck('unread_count', 'sender_id');
+
+    return response()->json([
+        'data' => $recent
+            ->map(function (array $row) use ($contacts, $dashboardAuth, $unreadByUser) {
+                $contact = $contacts->get($row['contact_id']);
+                if (! $contact instanceof \App\Models\User) {
+                    return null;
+                }
+
+                return [
+                    'user' => $dashboardAuth->userPayload($contact),
+                    'last_message' => $row['message'],
+                    'last_message_at' => $row['created_at'],
+                    'unread_count' => (int) ($unreadByUser[$contact->getKey()] ?? 0),
+                ];
+            })
+            ->filter()
+            ->values(),
+    ]);
+});
+
+Route::get('/api/chat/messages/{user}', function (\App\Models\User $user, DashboardAuth $dashboardAuth) {
+    $authUser = auth()->user();
+    abort_unless($authUser instanceof \App\Models\User, 401);
+    abort_if($authUser->is($user), 422, 'Tidak bisa chat ke akun sendiri.');
+
+    ChatMessage::query()
+        ->where('sender_id', $user->getKey())
+        ->where('receiver_id', $authUser->getKey())
+        ->whereNull('read_at')
+        ->update(['read_at' => now()]);
+
+    $messages = ChatMessage::query()
+        ->where(function ($query) use ($authUser, $user) {
+            $query->where('sender_id', $authUser->getKey())
+                ->where('receiver_id', $user->getKey());
+        })
+        ->orWhere(function ($query) use ($authUser, $user) {
+            $query->where('sender_id', $user->getKey())
+                ->where('receiver_id', $authUser->getKey());
+        })
+        ->orderBy('created_at')
+        ->limit(100)
+        ->get()
+        ->map(function (ChatMessage $message) use ($authUser) {
+            return [
+                'id' => $message->getKey(),
+                'message' => $message->message,
+                'sender_id' => $message->sender_id,
+                'receiver_id' => $message->receiver_id,
+                'is_mine' => (int) $message->sender_id === (int) $authUser->getKey(),
+                'read_at' => optional($message->read_at)?->toIso8601String(),
+                'created_at' => optional($message->created_at)?->toIso8601String(),
+            ];
+        })
+        ->values();
+
+    return response()->json([
+        'user' => $dashboardAuth->userPayload($user),
+        'data' => $messages,
+    ]);
+});
+
+Route::post('/api/chat/messages', function (Request $request, DashboardAuth $dashboardAuth) {
+    $authUser = auth()->user();
+    abort_unless($authUser instanceof \App\Models\User, 401);
+
+    $payload = $request->validate([
+        'receiver_id' => ['required', 'integer', 'exists:users,id'],
+        'message' => ['required', 'string', 'max:1000'],
+    ], [
+        'receiver_id.required' => 'Penerima wajib dipilih.',
+        'receiver_id.exists' => 'Penerima tidak valid.',
+        'message.required' => 'Pesan wajib diisi.',
+        'message.max' => 'Pesan maksimal 1000 karakter.',
+    ]);
+
+    $receiver = \App\Models\User::query()->findOrFail((int) $payload['receiver_id']);
+    abort_if($authUser->is($receiver), 422, 'Tidak bisa chat ke akun sendiri.');
+
+    $message = trim(strip_tags((string) $payload['message']));
+    abort_if($message === '', 422, 'Pesan wajib diisi.');
+
+    $chatMessage = ChatMessage::query()->create([
+        'sender_id' => $authUser->getKey(),
+        'receiver_id' => $receiver->getKey(),
+        'message' => $message,
+    ]);
+
+    return response()->json([
+        'status' => 'success',
+        'user' => $dashboardAuth->userPayload($receiver),
+        'data' => [
+            'id' => $chatMessage->getKey(),
+            'message' => $chatMessage->message,
+            'sender_id' => $chatMessage->sender_id,
+            'receiver_id' => $chatMessage->receiver_id,
+            'is_mine' => true,
+            'read_at' => null,
+            'created_at' => optional($chatMessage->created_at)?->toIso8601String(),
+        ],
+    ]);
+})->middleware('throttle:30,1');
+
+Route::get('/api/chat/unread', function () {
+    $authUser = auth()->user();
+    abort_unless($authUser instanceof \App\Models\User, 401);
+
+    $total = ChatMessage::query()
+        ->where('receiver_id', $authUser->getKey())
+        ->whereNull('read_at')
+        ->count();
+
+    $byUser = ChatMessage::query()
+        ->select('sender_id', DB::raw('count(*) as unread_count'))
+        ->where('receiver_id', $authUser->getKey())
+        ->whereNull('read_at')
+        ->groupBy('sender_id')
+        ->pluck('unread_count', 'sender_id')
+        ->mapWithKeys(fn ($count, $senderId) => [(int) $senderId => (int) $count]);
+
+    return response()->json([
+        'total' => $total,
+        'by_user' => $byUser,
+    ]);
+});
+
+Route::post('/api/chat/typing/{user}', function (\App\Models\User $user) {
+    $authUser = auth()->user();
+    abort_unless($authUser instanceof \App\Models\User, 401);
+    abort_if($authUser->is($user), 422);
+
+    cache()->put(
+        'chat_typing_' . $user->getKey() . '_from_' . $authUser->getKey(),
+        true,
+        now()->addSeconds(5)
+    );
+
+    return response()->json(['status' => 'ok']);
+});
+
+Route::get('/api/chat/typing/{user}', function (\App\Models\User $user) {
+    $authUser = auth()->user();
+    abort_unless($authUser instanceof \App\Models\User, 401);
+
+    $isTyping = cache()->get('chat_typing_' . $authUser->getKey() . '_from_' . $user->getKey(), false);
+
+    return response()->json(['typing' => $isTyping]);
+});
 
 Route::get('/api/auth/users', function (DashboardAuth $dashboardAuth) use ($assertUserManagementAccess) {
     $assertUserManagementAccess();
@@ -1136,6 +1419,67 @@ Route::delete('/api/meta-posts/{dataset}', function (string $dataset) use ($asse
         'row_count' => $beforeCount,
     ], null);
 
+    return response()->json(['status' => 'success']);
+});
+
+Route::get('/api/meta-followers', function () {
+    $rows = DB::table('meta_ig_followers')->orderByDesc('follow_date')->get()->map(function ($r) {
+        return [
+            'id' => $r->id,
+            'follow_date' => $r->follow_date,
+            'count' => (int) $r->primary_count,
+            'raw_payload' => $r->raw_payload ? json_decode($r->raw_payload, true) : null,
+            'imported_at' => $r->imported_at,
+        ];
+    });
+    return response()->json(['data' => $rows]);
+});
+
+Route::post('/api/meta-followers/import', function () use ($assertAnalyticsImportAccess, $logCrudActivity) {
+    $assertAnalyticsImportAccess();
+    $rawRows = request()->input('rows', []);
+    abort_unless(is_array($rawRows), 422, 'rows harus berupa array.');
+    $overwrite = filter_var(request()->input('overwrite', false), FILTER_VALIDATE_BOOLEAN);
+    $inserted = 0;
+    $updated = 0;
+    $now = now();
+    foreach ($rawRows as $row) {
+        $date = $row['date'] ?? null;
+        if (!$date) continue;
+        $count = max(0, (int) ($row['count'] ?? 0));
+        $existing = DB::table('meta_ig_followers')->where('follow_date', $date)->first();
+        if ($existing) {
+            if (!$overwrite) continue;
+            DB::table('meta_ig_followers')->where('id', $existing->id)->update([
+                'primary_count' => $count,
+                'raw_payload' => json_encode($row),
+                'imported_at' => $now,
+                'updated_at' => $now,
+            ]);
+            $updated++;
+        } else {
+            DB::table('meta_ig_followers')->insert([
+                'follow_date' => $date,
+                'primary_count' => $count,
+                'raw_payload' => json_encode($row),
+                'imported_at' => $now,
+                'created_at' => $now,
+                'updated_at' => $now,
+            ]);
+            $inserted++;
+        }
+    }
+    if (($inserted + $updated) > 0) {
+        $logCrudActivity('meta_ig_followers', 'update', 'followers', null, null, ['inserted' => $inserted, 'updated' => $updated]);
+    }
+    return response()->json(['status' => 'success', 'inserted' => $inserted, 'updated' => $updated]);
+});
+
+Route::post('/api/meta-followers/delete-all', function () use ($assertAnalyticsImportAccess, $logCrudActivity) {
+    $assertAnalyticsImportAccess();
+    $beforeCount = DB::table('meta_ig_followers')->count();
+    DB::table('meta_ig_followers')->delete();
+    $logCrudActivity('meta_ig_followers', 'delete', 'followers', null, ['row_count' => $beforeCount], null);
     return response()->json(['status' => 'success']);
 });
 

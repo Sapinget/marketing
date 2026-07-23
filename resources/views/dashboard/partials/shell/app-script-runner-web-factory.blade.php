@@ -46,6 +46,9 @@
                                 status: 'ok',
                                 mode: 'web-proxy',
                                 user: payload && payload.authenticated ? payload.user || null : null,
+                                expired: payload?.expired === true,
+                                superseded: payload?.superseded === true,
+                                message: payload?.message || '',
                             }));
                         },
                         login(username, pin) {
@@ -59,6 +62,12 @@
                         },
                         logout() {
                             return jsonApi('/api/auth/logout', {
+                                method: 'POST',
+                                body: JSON.stringify({}),
+                            });
+                        },
+                        heartbeat() {
+                            return jsonApi('/api/auth/heartbeat', {
                                 method: 'POST',
                                 body: JSON.stringify({}),
                             });
@@ -224,6 +233,9 @@
                         importMetaFeed(rows, options = {}) { return jsonApi('/api/meta-posts/feed/import', { method: 'POST', body: JSON.stringify({ rows, overwrite: !!options.overwrite }) }); },
                         importMetaStoryFolder(options = {}) { return jsonApi('/api/meta-posts/story/import-folder', { method: 'POST', body: JSON.stringify({ overwrite: !!options.overwrite }) }); },
                         importMetaFeedFolder(options = {}) { return jsonApi('/api/meta-posts/feed/import-folder', { method: 'POST', body: JSON.stringify({ overwrite: !!options.overwrite }) }); },
+                        getMetaFollowers() { return fetchJson_('/api/meta-followers').then(r => Array.isArray(r.data) ? r.data : []); },
+                        importMetaFollowers(rows, options = {}) { return jsonApi('/api/meta-followers/import', { method: 'POST', body: JSON.stringify({ rows, overwrite: !!options.overwrite }) }); },
+                        deleteMetaFollowers() { return jsonApi('/api/meta-followers/delete-all', { method: 'POST', body: JSON.stringify({}) }); },
                         updateUserNama(username, nama) {
                             return jsonApi('/api/auth/profile', {
                                 method: 'PUT',

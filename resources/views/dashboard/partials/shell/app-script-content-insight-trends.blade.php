@@ -39,7 +39,7 @@
                             platform,
                             date: rawDate,
                             views, likes, comments, shares, score,
-                            driveLink: mRow?.Link_Drive || ''
+                            distributionLink: dRow?.Link || ''
                         });
                     });
 
@@ -58,11 +58,59 @@
                     topContentByPlatform.value.flatMap(g => g.rows)
                         .sort((a, b) => b.views - a.views || b.score - a.score).slice(0, 5)
                 );
+                const topContentView = ref('all');
+                const topContentTabs = computed(() => [
+                    { key: 'all', label: 'Gabungan', count: topContentCombined.value.length },
+                    ...topContentByPlatform.value.map(group => ({
+                        key: group.platform,
+                        label: platformDisplayName(group.platform),
+                        count: group.rows.length
+                    }))
+                ]);
+                const topContentActiveGroup = computed(() =>
+                    topContentByPlatform.value.find(group => group.platform === topContentView.value) || null
+                );
+                const topContentActiveRows = computed(() =>
+                    topContentView.value === 'all'
+                        ? topContentCombined.value
+                        : (topContentActiveGroup.value?.rows || [])
+                );
+
                 const lowContentByPlatform = computed(() => buildContentRanking('low'));
                 const lowContentCombined = computed(() =>
                     lowContentByPlatform.value.flatMap(g => g.rows)
                         .sort((a, b) => a.views - b.views || a.score - b.score).slice(0, 5)
                 );
+                const lowContentView = ref('all');
+                const lowContentTabs = computed(() => [
+                    { key: 'all', label: 'Gabungan', count: lowContentCombined.value.length },
+                    ...lowContentByPlatform.value.map(group => ({
+                        key: group.platform,
+                        label: platformDisplayName(group.platform),
+                        count: group.rows.length
+                    }))
+                ]);
+                const lowContentActiveGroup = computed(() =>
+                    lowContentByPlatform.value.find(group => group.platform === lowContentView.value) || null
+                );
+                const lowContentActiveRows = computed(() =>
+                    lowContentView.value === 'all'
+                        ? lowContentCombined.value
+                        : (lowContentActiveGroup.value?.rows || [])
+                );
+
+                watch(topContentByPlatform, (groups) => {
+                    if (topContentView.value !== 'all' && !groups.some(group => group.platform === topContentView.value)) {
+                        topContentView.value = 'all';
+                    }
+                });
+
+                watch(lowContentByPlatform, (groups) => {
+                    if (lowContentView.value !== 'all' && !groups.some(group => group.platform === lowContentView.value)) {
+                        lowContentView.value = 'all';
+                    }
+                });
+
 
                 // Insight and Tren
                 const analisaInsightTab = ref('konten');

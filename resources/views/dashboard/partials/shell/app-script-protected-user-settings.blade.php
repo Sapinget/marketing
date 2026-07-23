@@ -74,13 +74,16 @@
                                 },
                             });
                             if (!response.ok) {
-                                if (response.status === 401) {
-                                    const unauthorizedError = new Error('Sesi login berakhir. Silakan login kembali.');
-                                    unauthorizedError.status = 401;
-                                    throw unauthorizedError;
-                                }
                                 let payload = null;
                                 try { payload = await response.json(); } catch (error) { payload = null; }
+                                if (response.status === 401) {
+                                    const unauthorizedError = new Error((payload && payload.message) || 'Sesi login berakhir. Silakan login kembali.');
+                                    unauthorizedError.status = 401;
+                                    unauthorizedError.payload = payload;
+                                    unauthorizedError.expired = payload?.expired === true;
+                                    unauthorizedError.superseded = payload?.superseded === true;
+                                    throw unauthorizedError;
+                                }
                                 const errorMessages = payload && payload.errors && typeof payload.errors === 'object'
                                     ? Object.values(payload.errors).flat().filter(Boolean)
                                     : [];
@@ -148,6 +151,42 @@
                                 .some((value) => String(value || '').toLowerCase().includes(q));
                         });
                 });
+                const activeTeamUsers = computed(() => {
+                    const chatOnline = Array.isArray(chatOnlineUsers.value) && chatOnlineUsers.value.length
+                        ? chatOnlineUsers.value.filter((user) => user?.is_online === true)
+                        : [];
+                    const sourceUsers = Array.isArray(authUsers.value) && authUsers.value.length
+                        ? authUsers.value
+                        : [];
+                    const usersByKey = new Map();
+
+                    // Prefer chat online users (always fresh, excludes self)
+                    chatOnline.forEach((user) => {
+                        const key = String(user?.username || user?.email || user?.nama || '').trim().toLowerCase();
+                        if (!key || usersByKey.has(key)) return;
+                        usersByKey.set(key, user);
+                    });
+
+                    // Fallback: auth users filtered for online + not self
+                    if (!usersByKey.size) {
+                        sourceUsers
+                            .filter(Boolean)
+                            .filter((user) => {
+                                const username = String(user?.username || '').trim().toLowerCase();
+                                const currentUsername = String(currentUser.value?.username || '').trim().toLowerCase();
+                                return user?.is_online === true && username !== currentUsername;
+                            })
+                            .forEach((user) => {
+                                const key = String(user?.username || user?.email || user?.nama || '').trim().toLowerCase();
+                                if (!key || usersByKey.has(key)) return;
+                                usersByKey.set(key, user);
+                            });
+                    }
+
+                    return Array.from(usersByKey.values());
+                });
+                const visibleActiveTeamUsers = computed(() => activeTeamUsers.value.slice(0, 5));
+                const hiddenActiveTeamUsersCount = computed(() => Math.max(0, activeTeamUsers.value.length - visibleActiveTeamUsers.value.length));
                 const filteredAuthUserRoleOptions = computed(() => {
                     const q = String(searchSelectQuery.value || '').trim().toLowerCase();
                     return authUserRoleOptions.filter((option) => {

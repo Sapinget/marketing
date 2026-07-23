@@ -77,10 +77,10 @@
                             :style="getStaggerStyle(idx)">
                             <div class="mobile-data-card__header">
                                 <span
-                                    class="px-2.5 py-1 rounded-full text-overline font-bold uppercase tracking-wider bg-amber text-light">
+                                    class="px-2.5 py-1 rounded-full text-overline font-bold uppercase bg-amber text-light">
                                     {{ row.Kategori || '-' }}
                                 </span>
-                                <span class="type-body-sm text-slate-400 font-bold uppercase tracking-widest">
+                                <span class="type-body-sm text-slate-400 font-bold uppercase">
                                     {{ row.Tanggal ? formatShortDate(row.Tanggal) : '-' }}
                                 </span>
                             </div>
@@ -197,7 +197,7 @@
                                 </tr>
                                 <tr v-for="(row, idx) in pagedAdsData" :key="row.ID"
                                     class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                                    <td class="px-4 py-3 text-center text-body text-slate-400 table-freeze-index">{{ (adsPage - 1) * 20 + idx + 1 }}</td>
+                                    <td class="px-4 py-3 text-center text-body text-slate-400 table-freeze-index">{{ (adsPage - 1) * 15 + idx + 1 }}</td>
                                     <td class="px-4 py-3 table-freeze-action">
                                         <div class="flex items-center gap-1.5">
                                             <button @click="openAdsModal('edit', row)"

@@ -15,10 +15,10 @@
                         (r.imei || '').toLowerCase().includes(q)
                     );
                 });
-                const aviTotalPages = computed(() => Math.max(1, Math.ceil(filteredAviData.value.length / 20)));
+                const aviTotalPages = computed(() => Math.max(1, Math.ceil(filteredAviData.value.length / PAGE_SIZE)));
                 const pagedAviData = computed(() => {
                     const p = aviPage.value;
-                    return filteredAviData.value.slice((p - 1) * 20, p * 20);
+                    return filteredAviData.value.slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE);
                 });
                 const aviUniqueVendors = computed(() => {
                     const s = new Set(); aviData.value.forEach(r => { if (r.vendor) s.add(r.vendor); }); return s.size;

@@ -59,10 +59,10 @@
                             :style="getStaggerStyle(idx)">
                             <div class="mobile-data-card__header">
                                 <span
-                                    :class="['px-2.5 py-1 rounded-full text-overline font-bold uppercase tracking-wider', getStatusColor(row.Status)]">
+                                    :class="['px-2.5 py-1 rounded-full text-overline font-bold uppercase', getStatusColor(row.Status)]">
                                     {{ row.Status || '-' }}
                                 </span>
-                                <span class="type-body-sm text-slate-400 font-bold uppercase tracking-widest">
+                                <span class="type-body-sm text-slate-400 font-bold uppercase">
                                     {{ row.Tanggal ? formatShortDate(row.Tanggal) : '-' }}
                                 </span>
                             </div>
@@ -127,7 +127,7 @@
                                 class="fa-solid fa-angles-right text-body-sm"></i></button>
                     </div>
                 </div>
-                <div class="hidden md:block section-card section-card-shell">
+                <div class="hidden md:block section-card section-card-shell lpjk-table-card">
                     <div class="table-toolbar-shell">
                         <div class="table-toolbar-shell__left">
                             <div class="relative">
@@ -151,12 +151,12 @@
                         </div>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-body-sm text-left border-collapse min-w-[900px]">
+                        <table class="w-full text-body-sm text-left border-collapse min-w-[1040px]">
                             <thead>
                                 <tr class="table-header-row">
                                     <th class="table-header-cell table-header-index table-freeze-index">#</th>
                                     <th class="table-header-cell table-header-action table-freeze-action">Aksi</th>
-                                    <th class="table-header-cell">Event</th>
+                                    <th class="table-header-cell lpjk-event-cell">Event</th>
                                     <th class="table-header-cell text-center w-28">Tanggal</th>
                                     <th class="table-header-cell text-center w-28">Budget</th>
                                     <th class="table-header-cell text-center w-28">Realisasi</th>
@@ -171,7 +171,7 @@
                                 </tr>
                                 <tr v-for="(row, idx) in pagedLpjkData" :key="row.ID"
                                     class="border-b border-slate-50 hover:bg-slate-50 transition-colors">
-                                    <td class="px-4 py-3 text-center text-body text-slate-400 table-freeze-index">{{ (lpjkPage - 1) * 20 + idx + 1 }}</td>
+                                    <td class="px-4 py-3 text-center text-body text-slate-400 table-freeze-index">{{ (lpjkPage - 1) * 15 + idx + 1 }}</td>
                                     <td class="px-4 py-3 table-freeze-action">
                                         <div class="flex items-center gap-1.5">
                                             <button @click="openLpjkDetail(row)"
@@ -187,7 +187,7 @@
                                                     class="fa-solid fa-trash-can text-body-sm"></i></button>
                                         </div>
                                     </td>
-                                    <td class="px-4 py-3">
+                                    <td class="px-4 py-3 lpjk-event-cell">
                                         <p class="font-semibold text-slate-800 uppercase text-body-sm">{{ row.Nama_Event }}</p>
                                         <p v-if="row.Keterangan" class="text-body-sm text-slate-400 mt-0.5 line-clamp-1">
                                             {{ row.Keterangan }}</p>

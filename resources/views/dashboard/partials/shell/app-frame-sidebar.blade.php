@@ -16,7 +16,7 @@
                             class="w-full h-full object-contain" alt="Logo" />
                     </div>
                     <div>
-                        <div class="text-body-sm font-medium text-ppp-nav-text tracking-widest uppercase">Pura Pura
+                        <div class="text-body-sm font-medium text-ppp-nav-text uppercase">Pura Pura
                             Ponsel</div>
                         <div class="text-overline text-slate-400 uppercase">Marketing Dashboard</div>
                     </div>

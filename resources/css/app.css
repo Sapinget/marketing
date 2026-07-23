@@ -208,7 +208,7 @@ button {
     display: block;
     font-size: var(--fs-body-sm);
     font-weight: 600;
-    letter-spacing: 0.18em;
+    letter-spacing: 0;
     text-transform: uppercase;
 }
 
@@ -217,7 +217,7 @@ button {
     color: var(--ppp-muted);
     display: block;
     font-size: var(--fs-overline);
-    letter-spacing: 0.12em;
+    letter-spacing: 0;
     margin-top: 8px;
     text-transform: uppercase;
 }
@@ -255,7 +255,7 @@ button {
 .alert-title {
     font-size: var(--fs-body-sm);
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0;
     text-transform: uppercase;
 }
 
@@ -316,7 +316,7 @@ button {
 .login-panel p {
     color: var(--ppp-muted);
     font-size: var(--fs-body);
-    letter-spacing: 0.18em;
+    letter-spacing: 0;
     margin: 0 0 32px;
     text-transform: uppercase;
 }
@@ -375,7 +375,7 @@ button {
     border-radius: 16px;
     font-size: var(--fs-body);
     font-weight: 600;
-    letter-spacing: 0.18em;
+    letter-spacing: 0;
     margin-top: 16px;
     padding: 16px 18px;
     text-transform: uppercase;
@@ -588,7 +588,7 @@ button {
     color: var(--ppp-muted);
     display: block;
     font-size: var(--fs-overline);
-    letter-spacing: 0.12em;
+    letter-spacing: 0;
     margin-top: 2px;
     text-transform: uppercase;
 }
@@ -792,7 +792,7 @@ button {
     color: #64748b;
     display: block;
     font-size: var(--fs-body-sm);
-    letter-spacing: 0.14em;
+    letter-spacing: 0;
     text-transform: uppercase;
 }
 
@@ -830,7 +830,7 @@ button {
     color: #64748b;
     display: block;
     font-size: var(--fs-body-sm);
-    letter-spacing: 0.12em;
+    letter-spacing: 0;
     text-transform: uppercase;
 }
 
@@ -894,7 +894,7 @@ button {
     color: #64748b;
     font-size: var(--fs-body);
     font-weight: 600;
-    letter-spacing: 0.08em;
+    letter-spacing: 0;
     text-transform: uppercase;
 }
 
@@ -921,7 +921,7 @@ button {
     color: #64748b;
     font-size: var(--fs-body-sm);
     font-weight: 700;
-    letter-spacing: 0.12em;
+    letter-spacing: 0;
     text-transform: uppercase;
 }
 
@@ -957,7 +957,7 @@ button {
     color: #64748b;
     font-size: var(--fs-body-sm);
     font-weight: 800;
-    letter-spacing: 0.12em;
+    letter-spacing: 0;
     padding: var(--space-3) var(--space-4);
     text-align: left;
     text-transform: uppercase;
@@ -975,7 +975,7 @@ button {
     display: inline-flex;
     font-size: var(--fs-body-sm);
     font-weight: 800;
-    letter-spacing: 0.08em;
+    letter-spacing: 0;
     padding: 5px 9px;
     text-transform: uppercase;
 }

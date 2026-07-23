@@ -101,7 +101,7 @@
                                         <template v-for="(row, idx) in pagedPromoRows" :key="row.ID || idx">
                                             <tr v-if="row.isCategoryHeader" class="bg-slate-50">
                                                 <td colspan="8"
-                                                    class="px-5 py-2 text-body-sm font-bold text-slate-500 uppercase tracking-widest border-y border-slate-100">
+                                                    class="px-5 py-2 text-body-sm font-bold text-slate-500 uppercase border-y border-slate-100">
                                                     <i class="fa-solid fa-layer-group mr-2 text-ppp-accent"></i>{{ row.name }}
                                                 </td>
                                             </tr>
@@ -122,7 +122,7 @@
                                                 </td>
                                                 <td class="px-5 py-3.5">
                                                     <p
-                                                        class="text-body-sm font-bold text-slate-900 uppercase tracking-tight leading-tight">
+                                                        class="text-body-sm font-bold text-slate-900 uppercase leading-tight">
                                                         {{ row.Program }}</p>
                                                 </td>
                                                 <td
@@ -168,7 +168,7 @@
                                 Belum ada data program promo</div>
                             <template v-for="(row, idx) in pagedPromoRows" :key="'mpr'+idx">
                                 <div v-if="row.isCategoryHeader"
-                                    class="px-2 py-1 text-overline font-bold text-slate-400 uppercase tracking-widest">
+                                    class="px-2 py-1 text-overline font-bold text-slate-400 uppercase">
                                     <i class="fa-solid fa-layer-group mr-1 text-ppp-accent"></i>{{ row.name }}
                                 </div>
                                 <div v-else class="bg-white radius-panel border border-slate-100 p-4 space-y-2">

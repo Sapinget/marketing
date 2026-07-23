@@ -59,7 +59,7 @@
                     </div>
                 </div>
                 <span v-if="story.Status"
-                    class="text-overline font-bold uppercase tracking-widest px-2 py-1 rounded-full bg-secondary text-light">{{ story.Status }}</span>
+                    class="text-overline font-bold uppercase px-2 py-1 rounded-full bg-secondary text-light">{{ story.Status }}</span>
             </div>
             <h4
                 class="text-heading-sm font-bold text-slate-900 leading-tight group-hover:text-danger transition-colors uppercase">
@@ -68,8 +68,9 @@
                 class="text-body text-slate-500 bg-slate-50 p-2 rounded-lg italic">{{ story.Catatan }}</p>
             <div class="flex items-center gap-2 pt-2 border-t border-slate-50">
                 <a v-if="story.Link" :href="story.Link" target="_blank" rel="noopener noreferrer"
-                    class="primary-cta-button primary-cta-button--link">
-                    <i class="fa-solid fa-up-right-from-square text-[9px]"></i> Buka Link
+                    class="table-action-button table-action-compact table-action-link"
+                    title="Link Story" aria-label="Link Story">
+                    <i class="fa-solid fa-link text-body-sm"></i>
                 </a>
                 <div class="flex items-center gap-1.5 ml-auto">
                     <button @click="openEditStoryModal(story)"
@@ -85,7 +86,7 @@
         <div v-if="filteredStories.length === 0"
             class="bg-white radius-card border border-dashed border-slate-200 p-16 flex flex-col items-center justify-center text-slate-400">
             <i class="fa-solid fa-clapperboard text-3xl mb-3 opacity-20"></i>
-            <p class="text-body font-bold uppercase tracking-widest">Belum ada jadwal story ({{ storyTab }})</p>
+            <p class="text-body font-bold uppercase">Belum ada jadwal story ({{ storyTab }})</p>
         </div>
     </div>
 
@@ -116,12 +117,12 @@
                         <td class="px-6 py-4 text-center text-body-sm font-bold text-slate-400 tabular-nums table-freeze-index">{{ idx + 1 }}</td>
                         <td class="px-6 py-4 table-freeze-action">
                             <div class="flex items-center gap-2">
-                                <button @click="openEditStoryModal(story)"
-                                    class="w-8 h-8 rounded-lg border border-slate-100 flex items-center justify-center text-slate-400 hover:text-ppp-accent transition-all"><i
+                                <button @click="openEditStoryModal(story)" class="table-action-button table-action-compact"
+                                    title="Edit" aria-label="Edit"><i
                                         class="fa-solid fa-pen-to-square text-body-sm"></i></button>
                                 <button @click="deleteStory(story.ID)"
-                                    class="w-8 h-8 rounded-lg border border-slate-100 flex items-center justify-center text-slate-400 hover:text-danger transition-all"><i
-                                        class="fa-solid fa-trash-can text-body-sm"></i></button>
+                                    class="table-action-button table-action-compact table-action-danger" title="Hapus"
+                                    aria-label="Hapus"><i class="fa-solid fa-trash-can text-body-sm"></i></button>
                             </div>
                         </td>
                         <td
@@ -135,13 +136,14 @@
                                 class="text-body-sm font-semibold text-slate-800 uppercase leading-tight">
                                 {{ story.Story_Schedule || story.Story }}</div>
                             <a v-if="story.Link" :href="story.Link" target="_blank" rel="noopener noreferrer"
-                                class="primary-cta-button primary-cta-button--link mt-1">
-                                <i class="fa-solid fa-up-right-from-square text-[9px]"></i> Buka Link
+                                class="table-action-button table-action-compact table-action-link mt-1"
+                                title="Link Story" aria-label="Link Story">
+                                <i class="fa-solid fa-link text-body-sm"></i>
                             </a>
                         </td>
                         <td class="px-6 py-4 text-center">
                             <span v-if="story.Status"
-                                class="text-overline font-bold uppercase tracking-widest px-2.5 py-1 rounded-full bg-secondary text-light">{{ story.Status }}</span>
+                                class="text-overline font-bold uppercase px-2.5 py-1 rounded-full bg-secondary text-light">{{ story.Status }}</span>
                             <span v-else class="text-slate-300 text-body">-</span>
                         </td>
                         <td class="px-6 py-4">
@@ -152,7 +154,7 @@
                     </tr>
                     <tr v-if="filteredStories.length === 0">
                         <td colspan="7"
-                            class="px-6 py-20 text-center text-slate-400 text-body uppercase tracking-widest">
+                            class="px-6 py-20 text-center text-slate-400 text-body uppercase">
                             Belum ada jadwal story ({{ storyTab }})</td>
                     </tr>
                 </tbody>

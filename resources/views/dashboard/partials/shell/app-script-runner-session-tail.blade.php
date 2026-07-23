@@ -37,6 +37,114 @@
                 };
 
                 const refreshDashboard = () => Promise.resolve();
+                const SESSION_IDLE_TIMEOUT_MS = 15 * 60 * 1000;
+                const SESSION_HEARTBEAT_MS = 60 * 1000;
+                let lastClientActivityAt = Date.now();
+                let sessionHeartbeatTimerId = null;
+
+                const clearSessionState = (message = "Anda sudah logout", type = "success") => {
+                    localStorage.removeItem("ppp_user");
+                    currentUser.value = null;
+                    chatSessionConfirmed.value = false;
+                    masterPlanData.value = [];
+                    analyticsData.value = [];
+                    distributionData.value = [];
+                    storyData.value = [];
+                    if (message) showNotification(message, type);
+                };
+
+                const markClientActivity = () => {
+                    lastClientActivityAt = Date.now();
+                };
+
+                const verifyCurrentSession = (message = "") => {
+                    if (!currentUser.value || !ensureRunApi().isWebProxy) {
+                        return Promise.resolve(false);
+                    }
+
+                    return new Promise((resolve) => {
+                        ensureRunApi()
+                            .withSuccessHandler((result) => {
+                                if (result?.user) {
+                                    currentUser.value = result.user;
+                                    chatSessionConfirmed.value = true;
+                                    localStorage.setItem("ppp_user", JSON.stringify(result.user));
+                                    resolve(true);
+                                    return;
+                                }
+
+                                if (result?.superseded) {
+                                    clearSessionState("anda sudah login di perangkat lain", "warning");
+                                    resolve(false);
+                                    return;
+                                }
+
+                                clearSessionState(message, "warning");
+                                resolve(false);
+                            })
+                            .withFailureHandler((error) => {
+                                if (error?.superseded) {
+                                    clearSessionState("anda sudah login di perangkat lain", "warning");
+                                    resolve(false);
+                                    return;
+                                }
+                                if (error?.status === 401 || error?.expired) {
+                                    clearSessionState(message || "Sesi login berakhir. Silakan login kembali.", "warning");
+                                    resolve(false);
+                                    return;
+                                }
+
+                                notifyError('', error, 'Gagal memverifikasi session login.');
+                                resolve(false);
+                            })
+                            .ensureDatabase();
+                    });
+                };
+
+                const handleBrowserPageShow = (event) => {
+                    if (!event?.persisted && !currentUser.value) {
+                        return;
+                    }
+
+                    verifyCurrentSession("Sesi login sudah berakhir. Silakan login kembali.");
+                };
+
+                const handleBrowserFocus = () => {
+                    verifyCurrentSession();
+                };
+
+                const syncSessionHeartbeat = () => {
+                    if (!currentUser.value || !ensureRunApi().isWebProxy) {
+                        return;
+                    }
+
+                    const idleFor = Date.now() - lastClientActivityAt;
+                    const runner = ensureRunApi();
+
+                    runner
+                        .withSuccessHandler((result) => {
+                            if (result?.user) {
+                                currentUser.value = result.user;
+                                chatSessionConfirmed.value = true;
+                                localStorage.setItem("ppp_user", JSON.stringify(result.user));
+                            }
+                            if (idleFor >= SESSION_IDLE_TIMEOUT_MS) {
+                                clearSessionState("Sesi login berakhir karena tidak ada aktivitas selama 15 menit.", "warning");
+                            }
+                        })
+                        .withFailureHandler((error) => {
+                            if (error?.superseded) {
+                                clearSessionState("anda sudah login di perangkat lain", "warning");
+                                return;
+                            }
+                            if (error?.status === 401 || error?.expired) {
+                                clearSessionState("Sesi login berakhir karena tidak ada aktivitas selama 15 menit.", "warning");
+                                return;
+                            }
+                            notifyError('', error, 'Gagal memperbarui status online.');
+                        })
+                        .heartbeat();
+                };
 
                 const handleLogin = () => {
                     if (!loginForm.value.username || !loginForm.value.pin) {
@@ -50,7 +158,9 @@
                     ensureRunApi()
                         .withSuccessHandler(async (result) => {
                             currentUser.value = result.user;
+                            chatSessionConfirmed.value = true;
                             localStorage.setItem("ppp_user", JSON.stringify(result.user));
+                            markClientActivity();
                             loginForm.value = { username: "", pin: "" };
                             if (isTeknisi.value) {
                                 activeTab.value = 'claim_garansi_asuransi';
@@ -69,16 +179,6 @@
                 };
 
                 const logout = () => {
-                    const clearSessionState = () => {
-                        localStorage.removeItem("ppp_user");
-                        currentUser.value = null;
-                        masterPlanData.value = [];
-                        analyticsData.value = [];
-                        distributionData.value = [];
-                        storyData.value = [];
-                        showNotification("Anda sudah logout");
-                    };
-
                     const runner = ensureRunApi();
 
                     if (runner.isWebProxy) {
@@ -127,6 +227,9 @@
                     if (tab === 'meta_feed' && !metaFeedLoaded.value) {
                         loadMetaFeed();
                     }
+                    if (tab === 'meta_followers' && !metaFollowersLoaded.value) {
+                        loadMetaFollowers();
+                    }
                     if (tab === 'budgeting' && !budgetConfigLoaded.value) {
                         loadBudgetingConfig();
                     }
@@ -149,7 +252,7 @@
                     if (tab === 'auth_users' && canManageUsers.value) {
                         loadAuthUsers();
                     }
-                    if ((tab === 'master' || tab === 'ideation') && canManageUsers.value && !authUsersLoaded.value) {
+                    if (['master', 'ideation', 'top_content_platform', 'low_content_platform', 'editor_performance', 'talent_bonus', 'bonus_report', 'unboxing', 'budgeting'].includes(tab) && canManageUsers.value && !authUsersLoaded.value) {
                         loadAuthUsers();
                     }
                     if (tab === 'master' || tab === 'ideation' || tab === 'top_content_platform' || tab === 'low_content_platform') {

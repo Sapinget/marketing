@@ -58,10 +58,9 @@
                                         </button>
                                     </div>
                                     <div class="toolbar-actions">
+                                        <button @click="openUnitDitanyaModal('create')" class="primary-cta-button primary-cta-button--accent active:scale-95"><i class="fa-solid fa-plus mr-2"></i>Tambah</button>
                                         <button @click="exportExcel" class="primary-cta-button primary-cta-button--success active:scale-95"><i class="fa-solid fa-file-excel"></i><span class="ml-1">Excel</span></button>
                                         <button @click="exportPdf" class="primary-cta-button primary-cta-button--danger active:scale-95"><i class="fa-solid fa-file-pdf"></i><span class="ml-1">PDF</span></button>
-                                        <button @click="openUnitDitanyaModal('create')" class="primary-cta-button primary-cta-button--accent active:scale-95"><i class="fa-solid fa-plus mr-2"></i>Tambah</button>
-                                        <button @click="unitDitanyaSearch='';unitDitanyaDateRange = getDefaultDateRange();unitDitanyaAvailableFilter=''" class="primary-cta-button primary-cta-button--neutral" title="Reset"><i class="fa-solid fa-rotate-left text-body-sm"></i><span>Reset</span></button>
                                     </div>
                                 </div>
                             </div>
@@ -75,10 +74,10 @@
                                     :style="getStaggerStyle(idx)">
                                     <div class="mobile-data-card__header">
                                         <span
-                                            :class="(row.AVAILABLE||'').toUpperCase() === 'TERSEDIA' ? 'px-2.5 py-1 rounded-full text-overline font-bold uppercase tracking-wider bg-success text-light' : 'px-2.5 py-1 rounded-full text-overline font-bold uppercase tracking-wider bg-danger text-light'">
+                                            :class="(row.AVAILABLE||'').toUpperCase() === 'TERSEDIA' ? 'px-2.5 py-1 rounded-full text-overline font-bold uppercase bg-success text-light' : 'px-2.5 py-1 rounded-full text-overline font-bold uppercase bg-danger text-light'">
                                             {{ row.AVAILABLE || '-' }}
                                         </span>
-                                        <span class="type-body-sm text-slate-400 font-bold uppercase tracking-widest">
+                                        <span class="type-body-sm text-slate-400 font-bold uppercase">
                                             {{ row.TANGGAL ? formatShortDate(row.TANGGAL) : '-' }}
                                         </span>
                                     </div>
@@ -160,16 +159,6 @@
                                                 class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-danger"></i>
                                         </button>
                                     </div>
-                                    <div class="toolbar-actions">
-                                        <button @click="exportExcel"
-                                            class="primary-cta-button primary-cta-button--success active:scale-95"><i
-                                                class="fa-solid fa-file-excel"></i><span
-                                                class="ml-1">Excel</span></button>
-                                        <button @click="exportPdf"
-                                            class="primary-cta-button primary-cta-button--danger active:scale-95"><i
-                                                class="fa-solid fa-file-pdf"></i><span
-                                                class="ml-1">PDF</span></button>
-                                    </div>
                                     <div class="relative search-select-container">
                                         <button @click="toggleSearchSelect($event, 'filter_available')"
                                             class="select-trigger-button toolbar-trigger-field">
@@ -198,10 +187,14 @@
                                         <button @click="openUnitDitanyaModal('create')"
                                             class="primary-cta-button primary-cta-button--accent active:scale-95"><i
                                                 class="fa-solid fa-plus mr-2"></i>Tambah</button>
-                                        <button
-                                            @click="unitDitanyaSearch='';unitDitanyaDateRange = getDefaultDateRange();unitDitanyaAvailableFilter=''"
-                                            class="primary-cta-button primary-cta-button--neutral" title="Reset"><i
-                                                class="fa-solid fa-rotate-left text-body-sm"></i><span>Reset</span></button>
+                                        <button @click="exportExcel"
+                                            class="primary-cta-button primary-cta-button--success active:scale-95"><i
+                                                class="fa-solid fa-file-excel"></i><span
+                                                class="ml-1">Excel</span></button>
+                                        <button @click="exportPdf"
+                                            class="primary-cta-button primary-cta-button--danger active:scale-95"><i
+                                                class="fa-solid fa-file-pdf"></i><span
+                                                class="ml-1">PDF</span></button>
                                     </div>
                                 </div>
                             </div>
@@ -284,7 +277,7 @@
                             <div v-if="unitDitanyaData.length === 0"
                                 class="flex flex-col items-center justify-center py-20 text-slate-400">
                                 <i class="fa-solid fa-circle-question text-4xl mb-4 opacity-20"></i>
-                                <p class="text-body font-bold uppercase tracking-widest">Belum ada data unit ditanya
+                                <p class="text-body font-bold uppercase">Belum ada data unit ditanya
                                 </p>
                             </div>
                         </div>

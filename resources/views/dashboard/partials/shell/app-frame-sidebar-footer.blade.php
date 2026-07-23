@@ -7,7 +7,7 @@
                     <div class="min-w-0">
                         <div class="type-body font-medium text-slate-800 truncate">{{ currentUser?.username || 'User' }}
                         </div>
-                        <div class="type-overline-xs text-slate-400 uppercase tracking-widest">{{ currentUser?.role || '-' }}
+                        <div class="type-overline-xs text-slate-400 uppercase">{{ currentUser?.role || '-' }}
                         </div>
                     </div>
                 </div>

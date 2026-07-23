@@ -6,7 +6,7 @@
                                 <div class="flex-shrink-0">
                                     <div class="flex items-start justify-between gap-3">
                                         <div>
-                                            <p class="type-body-sm uppercase tracking-[0.24em]">Global Settings</p>
+                                            <p class="type-body-sm uppercase">Global Settings</p>
                                             <h2 class="type-body mt-1 font-bold text-slate-900">Workspace Pengaturan</h2>
                                             <p class="mt-1 text-body leading-relaxed text-slate-500">Cari kategori cepat, lihat item kosong, lalu edit dari panel kanan.</p>
                                         </div>
@@ -38,11 +38,11 @@
 
                                     <div class="mt-4 grid grid-cols-2 gap-2">
                                         <div class="metric-chip-card">
-                                            <div class="type-body-sm uppercase tracking-[0.2em]">Kategori Tampil</div>
+                                            <div class="type-body-sm uppercase">Kategori Tampil</div>
                                             <div class="mt-1 text-body font-bold text-slate-800">{{ filteredSettingsTabCount }}</div>
                                         </div>
                                         <div class="metric-chip-card metric-chip-card--align-end">
-                                            <div class="type-body-sm uppercase tracking-[0.2em]">Belum Disimpan</div>
+                                            <div class="type-body-sm uppercase">Belum Disimpan</div>
                                             <div class="mt-1 text-body font-bold" :class="settingsDirtyTabCount ? 'text-amber' : 'text-slate-500'">{{ settingsDirtyTabCount }}</div>
                                         </div>
                                     </div>
@@ -51,7 +51,7 @@
                                 <div class="mt-4 space-y-4 md:flex-1 md:min-h-0 md:overflow-y-auto md:pr-1">
                                     <div v-for="group in filteredSettingsMenuGroups" :key="group.label" class="space-y-1.5">
                                         <div class="flex items-center justify-between px-1">
-                                            <div class="type-body-sm uppercase tracking-[0.24em]">{{ group.label }}</div>
+                                            <div class="type-body-sm uppercase">{{ group.label }}</div>
                                             <div class="type-body-sm">{{ group.keys.length }}</div>
                                         </div>
                                         <button
@@ -67,7 +67,7 @@
                                                 <div class="min-w-0 flex-1">
                                                     <div class="flex items-center gap-2">
                                                         <span class="text-body font-bold leading-snug break-words">{{ getSettingTabLabel(key) }}</span>
-                                                        <span v-if="isSettingTabDirty(key)" :class="activeSettingTab === key ? 'bg-amber/20 text-light' : 'bg-amber text-light'" class="inline-flex items-center rounded-full px-2 py-0.5 text-overline-xs font-bold uppercase tracking-[0.16em]">Edit</span>
+                                                        <span v-if="isSettingTabDirty(key)" :class="activeSettingTab === key ? 'bg-amber/20 text-light' : 'bg-amber text-light'" class="inline-flex items-center rounded-full px-2 py-0.5 text-overline-xs font-bold uppercase">Edit</span>
                                                     </div>
                                                     <div class="mt-1 flex items-center gap-2 type-body">
                                                         <span :class="activeSettingTab === key ? 'text-white/80' : 'text-slate-500'">{{ getSettingFilledCount(key) }} isi</span>
@@ -94,7 +94,7 @@
                                                     <i class="fa-solid fa-sliders text-body"></i>
                                                 </div>
                                                 <div>
-                                                    <p class="type-body-sm uppercase tracking-[0.22em]">Kategori Aktif</p>
+                                                    <p class="type-body-sm uppercase">Kategori Aktif</p>
                                                     <h3 class="type-body mt-1 font-bold text-slate-900">{{ getSettingTabLabel(activeSettingTab) }}</h3>
                                                     <p class="mt-1 text-body leading-relaxed text-slate-500">Key: <span class="font-semibold text-slate-600">{{ activeSettingTab }}</span> | {{ getSettingTabCount(activeSettingTab) }} total opsi | {{ getSettingFilledCount(activeSettingTab) }} terisi</p>
                                                 </div>
@@ -139,15 +139,15 @@
                                             </div>
                                             <div class="mini-stat-chip-row">
                                                 <span class="mini-stat-chip">
-                                                    <span class="text-body-sm font-semibold uppercase tracking-wider text-slate-500">Total</span>
+                                                    <span class="text-body-sm font-semibold uppercase text-slate-500">Total</span>
                                                     <span class="text-body font-bold text-slate-800">{{ getSettingTabCount(activeSettingTab) }}</span>
                                                 </span>
                                                 <span class="mini-stat-chip">
-                                                    <span class="text-body-sm font-semibold uppercase tracking-wider text-slate-500">Kosong</span>
+                                                    <span class="text-body-sm font-semibold uppercase text-slate-500">Kosong</span>
                                                     <span class="text-body font-bold text-amber">{{ getSettingEmptyCount(activeSettingTab) }}</span>
                                                 </span>
                                                 <span class="mini-stat-chip">
-                                                    <span class="text-body-sm font-semibold uppercase tracking-wider text-slate-500">Edit</span>
+                                                    <span class="text-body-sm font-semibold uppercase text-slate-500">Edit</span>
                                                     <span class="text-body font-bold" :class="isSettingTabDirty(activeSettingTab) ? 'text-amber' : 'text-slate-500'">{{ isSettingTabDirty(activeSettingTab) ? 'Yes' : 'No' }}</span>
                                                 </span>
                                             </div>
@@ -156,7 +156,7 @@
                                         <div v-if="showSettingsBulkAdd &amp;&amp; !isSettingTabObject(activeSettingTab)" class="mt-4 rounded-3xl border border-slate-200 bg-slate-50 p-3">
                                             <div class="flex items-center justify-between gap-3">
                                                 <div>
-                                                    <div class="text-body-sm font-bold uppercase tracking-[0.16em] text-slate-500">Tambah Banyak</div>
+                                                    <div class="text-body-sm font-bold uppercase text-slate-500">Tambah Banyak</div>
                                                     <p class="mt-1 text-body text-slate-500">Satu baris satu opsi. Baris duplikat atau kosong akan dibuang.</p>
                                                 </div>
                                                 <button @click="showSettingsBulkAdd = false" class="icon-utility-button icon-utility-bordered">
@@ -197,7 +197,7 @@
                                                             v-for="item in section.items"
                                                             :key="section.title + '-' + item.label"
                                                             class="settings-panel-item">
-                                                            <div class="text-overline-xs font-bold uppercase tracking-[0.16em] text-slate-400">{{ item.label }}</div>
+                                                            <div class="text-overline-xs font-bold uppercase text-slate-400">{{ item.label }}</div>
                                                             <div class="mt-1 text-body font-semibold leading-relaxed text-slate-700 whitespace-pre-wrap break-words">{{ item.value }}</div>
                                                         </div>
                                                     </div>
@@ -214,7 +214,7 @@
                                                         {{ entry.idx + 1 }}
                                                     </div>
                                                     <div class="min-w-0 flex-1 space-y-2">
-                                                        <span v-if="!String(entry.value || '').trim()" class="rounded-full bg-amber px-2 py-0.5 text-overline-xs font-bold uppercase tracking-[0.15em] text-light">Kosong</span>
+                                                        <span v-if="!String(entry.value || '').trim()" class="rounded-full bg-amber px-2 py-0.5 text-overline-xs font-bold uppercase text-light">Kosong</span>
                                                         <input
                                                             :id="`settings-option-${activeSettingTab}-${entry.idx}`"
                                                             :name="`settings_option_${activeSettingTab}_${entry.idx}`"
@@ -243,7 +243,7 @@
                                     <div class="shrink-0 border-t border-slate-100 bg-white/95 px-4 py-3 backdrop-blur md:px-5">
                                         <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                                             <div>
-                                                <div class="text-body-sm font-bold uppercase tracking-[0.18em]" :class="settingsDirty ? 'text-amber' : 'text-slate-400'">{{ settingsDirty ? 'Perubahan Belum Disimpan' : 'Semua Perubahan Aman' }}</div>
+                                                <div class="text-body-sm font-bold uppercase" :class="settingsDirty ? 'text-amber' : 'text-slate-400'">{{ settingsDirty ? 'Perubahan Belum Disimpan' : 'Semua Perubahan Aman' }}</div>
                                                 <p class="mt-1 text-body text-slate-500">{{ settingsDirty ? settingsDirtyTabCount + ' kategori berubah, ' + settingsDirtyValueCount + ' nilai berbeda dari data tersimpan.' : 'Belum ada perubahan pada settings.' }}</p>
                                             </div>
                                             <div class="grid grid-cols-2 gap-2 md:flex">
@@ -281,7 +281,7 @@
                                                 <i class="fa-solid fa-sliders text-body"></i>
                                             </div>
                                             <div>
-                                                <div class="type-body-sm uppercase tracking-[0.22em] text-slate-400">Kategori Aktif</div>
+                                                <div class="type-body-sm uppercase text-slate-400">Kategori Aktif</div>
                                                 <div class="type-body mt-1 font-bold text-slate-900">{{ getSettingTabLabel(activeSettingTab) }}</div>
                                                 <div class="mt-1 text-body leading-relaxed text-slate-500">Key: <span class="font-semibold text-slate-600">{{ activeSettingTab }}</span> | {{ getSettingTabCount(activeSettingTab) }} total opsi | {{ getSettingFilledCount(activeSettingTab) }} terisi</div>
                                             </div>
@@ -313,15 +313,15 @@
 
                                         <div class="mini-stat-chip-row">
                                             <span class="mini-stat-chip mini-stat-chip--outlined">
-                                                <span class="text-body-sm font-semibold uppercase tracking-wider text-slate-500">Total</span>
+                                                <span class="text-body-sm font-semibold uppercase text-slate-500">Total</span>
                                                 <span class="text-body font-bold text-slate-800">{{ getSettingTabCount(activeSettingTab) }}</span>
                                             </span>
                                             <span class="mini-stat-chip mini-stat-chip--outlined">
-                                                <span class="text-body-sm font-semibold uppercase tracking-wider text-slate-500">Kosong</span>
+                                                <span class="text-body-sm font-semibold uppercase text-slate-500">Kosong</span>
                                                 <span class="text-body font-bold text-amber">{{ getSettingEmptyCount(activeSettingTab) }}</span>
                                             </span>
                                             <span class="mini-stat-chip mini-stat-chip--outlined">
-                                                <span class="text-body-sm font-semibold uppercase tracking-wider text-slate-500">Edit</span>
+                                                <span class="text-body-sm font-semibold uppercase text-slate-500">Edit</span>
                                                 <span class="text-body font-bold" :class="isSettingTabDirty(activeSettingTab) ? 'text-amber' : 'text-slate-500'">{{ isSettingTabDirty(activeSettingTab) ? 'Yes' : 'No' }}</span>
                                             </span>
                                         </div>
@@ -342,7 +342,7 @@
                                         <div v-if="showSettingsBulkAdd &amp;&amp; !isSettingTabObject(activeSettingTab)" class="settings-entry-card">
                                             <div class="flex items-center justify-between gap-3">
                                                 <div>
-                                                    <div class="text-body-sm font-bold uppercase tracking-[0.16em] text-slate-500">Tambah Banyak</div>
+                                                    <div class="text-body-sm font-bold uppercase text-slate-500">Tambah Banyak</div>
                                                     <p class="mt-1 text-body text-slate-500">Satu baris satu opsi.</p>
                                                 </div>
                                                 <button @click="showSettingsBulkAdd = false" class="icon-utility-button icon-utility-bordered">
@@ -378,7 +378,7 @@
                                                     </div>
                                                     <div class="mt-3 space-y-2">
                                                         <div v-for="item in section.items" :key="'mobile-' + section.title + '-' + item.label" class="settings-panel-item">
-                                                            <div class="text-overline-xs font-bold uppercase tracking-[0.16em] text-slate-400">{{ item.label }}</div>
+                                                            <div class="text-overline-xs font-bold uppercase text-slate-400">{{ item.label }}</div>
                                                             <div class="mt-1 text-body font-semibold leading-relaxed text-slate-700 whitespace-pre-wrap break-words">{{ item.value }}</div>
                                                         </div>
                                                     </div>
@@ -390,7 +390,7 @@
                                                 <div class="flex items-center gap-3">
                                                     <div class="h-8 w-8 shrink-0 rounded-2xl bg-slate-100 flex items-center justify-center text-body-sm font-bold text-slate-500 self-start">{{ entry.idx + 1 }}</div>
                                                     <div class="min-w-0 flex-1 space-y-2">
-                                                        <span v-if="!String(entry.value || '').trim()" class="rounded-full bg-amber px-2 py-0.5 text-overline-xs font-bold uppercase tracking-[0.15em] text-light">Kosong</span>
+                                                        <span v-if="!String(entry.value || '').trim()" class="rounded-full bg-amber px-2 py-0.5 text-overline-xs font-bold uppercase text-light">Kosong</span>
                                                         <input
                                                             :id="`settings-option-mobile-${activeSettingTab}-${entry.idx}`"
                                                             :name="`settings_option_mobile_${activeSettingTab}_${entry.idx}`"
@@ -419,7 +419,7 @@
                                     <div class="modal-footer-bar radius-sheet-bottom">
                                         <div class="flex items-center justify-between gap-3">
                                             <div class="min-w-0">
-                                                <div class="text-body-sm font-bold uppercase tracking-[0.18em]" :class="settingsDirty ? 'text-amber' : 'text-slate-400'">{{ settingsDirty ? 'Perubahan Belum Disimpan' : 'Semua Perubahan Aman' }}</div>
+                                                <div class="text-body-sm font-bold uppercase" :class="settingsDirty ? 'text-amber' : 'text-slate-400'">{{ settingsDirty ? 'Perubahan Belum Disimpan' : 'Semua Perubahan Aman' }}</div>
                                                 <p class="mt-1 text-body text-slate-500 line-clamp-2">{{ settingsDirty ? settingsDirtyTabCount + ' kategori berubah, ' + settingsDirtyValueCount + ' nilai berbeda.' : 'Belum ada perubahan pada settings.' }}</p>
                                             </div>
                                             <div class="flex items-center gap-2">

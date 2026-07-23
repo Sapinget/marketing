@@ -34,10 +34,10 @@
                     return data;
                 });
 
-                const adsTotalPages = computed(() => Math.max(1, Math.ceil(filteredAdsData.value.length / 20)));
+                const adsTotalPages = computed(() => Math.max(1, Math.ceil(filteredAdsData.value.length / PAGE_SIZE)));
                 const pagedAdsData = computed(() => {
-                    const start = (adsPage.value - 1) * 20;
-                    return filteredAdsData.value.slice(start, start + 20);
+                    const start = (adsPage.value - 1) * PAGE_SIZE;
+                    return filteredAdsData.value.slice(start, start + PAGE_SIZE);
                 });
 
                 const openAdsModal = (type = 'create', row = null) => {

@@ -8,7 +8,7 @@
                     <div class="flex items-center gap-3 relative z-10">
                         <i
                             class="fa-solid fa-gauge text-body w-4 text-center transition-transform duration-300 group-hover:scale-110"></i>
-                        <span class="type-body font-medium tracking-wide">Dashboard</span>
+                        <span class="type-body font-medium">Dashboard</span>
                     </div>
                 </div>
 
@@ -19,7 +19,7 @@
                         <div class="flex items-center gap-3">
                             <i
                                 class="fa-solid fa-folder-open text-body w-4 text-center transition-transform duration-300 group-hover:scale-110"></i>
-                            <span class="type-body font-medium tracking-wide">Konten</span>
+                            <span class="type-body font-medium">Konten</span>
                         </div>
                         <i
                             :class="['fa-solid fa-chevron-down text-body-sm transition-transform duration-300', kontenOpen ? 'rotate-180' : '']"></i>
@@ -34,7 +34,7 @@
                                 </div>
                                 <i
                                     class="fa-solid fa-layer-group text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium tracking-wide relative z-10">Master Plan</span>
+                                <span class="type-body-sm font-medium relative z-10">Master Plan</span>
                             </div>
                             <div @click="switchTab('unboxing')"
                                 :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'unboxing' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
@@ -43,7 +43,7 @@
                                 </div>
                                 <i
                                     class="fa-solid fa-box-open text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium tracking-wide relative z-10">Unboxing</span>
+                                <span class="type-body-sm font-medium relative z-10">Unboxing</span>
                             </div>
                             <div @click="switchTab('ideation')"
                                 :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'ideation' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
@@ -52,7 +52,7 @@
                                 </div>
                                 <i
                                     class="fa-solid fa-lightbulb text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium tracking-wide relative z-10">Ideation</span>
+                                <span class="type-body-sm font-medium relative z-10">Ideation</span>
                             </div>
                             <div @click="switchTab('distribution')"
                                 :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'distribution' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
@@ -61,7 +61,7 @@
                                 </div>
                                 <i
                                     class="fa-solid fa-share-nodes text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium tracking-wide relative z-10">Distribution</span>
+                                <span class="type-body-sm font-medium relative z-10">Distribution</span>
                             </div>
                             <div @click="switchTab('analytics')"
                                 :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'analytics' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
@@ -70,7 +70,7 @@
                                 </div>
                                 <i
                                     class="fa-solid fa-chart-line text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium tracking-wide relative z-10">Analytics</span>
+                                <span class="type-body-sm font-medium relative z-10">Analytics</span>
                             </div>
                             <div @click="switchTab('calendar')"
                                 :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'calendar' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
@@ -79,7 +79,7 @@
                                 </div>
                                 <i
                                     class="fa-solid fa-calendar-days text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium tracking-wide relative z-10">Kalender</span>
+                                <span class="type-body-sm font-medium relative z-10">Kalender</span>
                             </div>
                             <div @click="switchTab('story')"
                                 :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'story' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
@@ -88,7 +88,7 @@
                                 </div>
                                 <i
                                     class="fa-solid fa-clapperboard text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium tracking-wide relative z-10">Jadwal Story</span>
+                                <span class="type-body-sm font-medium relative z-10">Jadwal Story</span>
                             </div>
                         </div>
                     </transition>

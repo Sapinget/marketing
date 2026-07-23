@@ -20,10 +20,10 @@
                     }
                     return data;
                 });
-                const hargaKompetitorTotalPages = computed(() => Math.max(1, Math.ceil(filteredHargaKompetitorData.value.length / 20)));
+                const hargaKompetitorTotalPages = computed(() => Math.max(1, Math.ceil(filteredHargaKompetitorData.value.length / PAGE_SIZE)));
                 const pagedHargaKompetitorData = computed(() => {
                     const p = hargaKompetitorPage.value;
-                    return filteredHargaKompetitorData.value.slice((p - 1) * 20, p * 20);
+                    return filteredHargaKompetitorData.value.slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE);
                 });
                 const hargaKompetitorSuggestion = computed(() => {
                     const form = hargaKompetitorForm.value;

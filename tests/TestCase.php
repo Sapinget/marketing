@@ -32,8 +32,19 @@ abstract class TestCase extends BaseTestCase
     protected function actingAsDashboardUser(array $attributes = []): User
     {
         $user = User::factory()->create($attributes);
+        $now = now();
 
         $this->actingAs($user);
+        $this->withSession([
+            'dashboard_last_activity_at' => $now->timestamp,
+            'dashboard_active_session_id' => 'test-dashboard-session-' . $user->getKey(),
+        ]);
+        $user->forceFill([
+            'is_online' => true,
+            'last_seen_at' => $now,
+            'session_expires_at' => $now->copy()->addMinutes(15),
+            'active_session_id' => 'test-dashboard-session-' . $user->getKey(),
+        ])->save();
 
         return $user;
     }

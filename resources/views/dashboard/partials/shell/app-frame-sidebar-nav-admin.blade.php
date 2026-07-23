@@ -7,7 +7,7 @@
                     </div>
                     <i
                         class="fa-solid fa-shield-heart text-body w-4 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                    <span class="type-body font-medium tracking-wide relative z-10">Claim Garansi</span>
+                    <span class="type-body font-medium relative z-10">Claim Garansi</span>
                 </div>
 
                 <!-- Performa Accordion -->
@@ -17,7 +17,7 @@
                         <div class="flex items-center gap-3">
                             <i
                                 class="fa-solid fa-chart-pie text-body w-4 text-center transition-transform duration-300 group-hover:scale-110"></i>
-                            <span class="type-body font-medium tracking-wide">Performa</span>
+                            <span class="type-body font-medium">Performa</span>
                         </div>
                         <i
                             :class="['fa-solid fa-chevron-down text-body-sm transition-transform duration-300', performaOpen ? 'rotate-180' : '']"></i>
@@ -31,7 +31,7 @@
                                 </div>
                                 <i
                                     class="fa-solid fa-coins text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium tracking-wide relative z-10">Bonus Report</span>
+                                <span class="type-body-sm font-medium relative z-10">Bonus Report</span>
                             </div>
                             <div @click="switchTab('talent_bonus')"
                                 :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'talent_bonus' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
@@ -40,7 +40,7 @@
                                 </div>
                                 <i
                                     class="fa-solid fa-user-tag text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium tracking-wide relative z-10">Talent Bonus</span>
+                                <span class="type-body-sm font-medium relative z-10">Talent Bonus</span>
                             </div>
                             <div @click="switchTab('editor_performance')"
                                 :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'editor_performance' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
@@ -49,7 +49,7 @@
                                 </div>
                                 <i
                                     class="fa-solid fa-clapperboard text-[11px] w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium tracking-wide relative z-10">Editor
+                                <span class="type-body-sm font-medium relative z-10">Editor
                                     Performance</span>
                             </div>
                         </div>
@@ -64,7 +64,7 @@
                     </div>
                     <i
                         class="fa-solid fa-tags text-body w-4 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                    <span class="type-body font-medium tracking-wide relative z-10">Harga & Kompetitor</span>
+                    <span class="type-body font-medium relative z-10">Harga & Kompetitor</span>
                 </div>
 
 
@@ -76,7 +76,7 @@
                     </div>
                     <i
                         class="fa-solid fa-calendar-check text-body w-4 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                    <span class="type-body font-medium tracking-wide relative z-10">Laporan Event</span>
+                    <span class="type-body font-medium relative z-10">Laporan Event</span>
                 </div>
 
                 <!-- Settings Group -->
@@ -86,7 +86,7 @@
                         <div class="flex items-center gap-3">
                             <i
                                 class="fa-solid fa-sliders text-body w-4 text-center transition-transform duration-300 group-hover:scale-110"></i>
-                            <span class="type-body font-medium tracking-wide">Settings</span>
+                            <span class="type-body font-medium">Settings</span>
                         </div>
                         <i
                             :class="['fa-solid fa-chevron-down text-body-sm transition-transform duration-300', settingsGroupOpen ? 'rotate-180' : '']"></i>
@@ -100,7 +100,7 @@
                                 </div>
                                 <i
                                     class="fa-solid fa-sliders text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium tracking-wide relative z-10">Settings</span>
+                                <span class="type-body-sm font-medium relative z-10">Settings</span>
                             </div>
                             <div @click="switchTab('nama_stock')"
                                 :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'nama_stock' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
@@ -109,7 +109,7 @@
                                 </div>
                                 <i
                                     class="fa-solid fa-tag text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium tracking-wide relative z-10">Nama Stock</span>
+                                <span class="type-body-sm font-medium relative z-10">Nama Stock</span>
                             </div>
                             <div v-if="canManageUsers" @click="switchTab('auth_users')"
                                 :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'auth_users' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
@@ -118,7 +118,7 @@
                                 </div>
                                 <i
                                     class="fa-solid fa-users-gear text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium tracking-wide relative z-10">Manajemen User</span>
+                                <span class="type-body-sm font-medium relative z-10">Manajemen User</span>
                             </div>
                             <div @click="switchTab('activity_logs')"
                                 :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'activity_logs' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
@@ -127,7 +127,7 @@
                                 </div>
                                 <i
                                     class="fa-solid fa-clock-rotate-left text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium tracking-wide relative z-10">Activity Logs</span>
+                                <span class="type-body-sm font-medium relative z-10">Activity Logs</span>
                             </div>
                         </div>
                     </transition>

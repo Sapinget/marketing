@@ -8,6 +8,11 @@
                         (!q || String(r.description || '').toLowerCase().includes(q) || String(r.post_id || '').includes(q)));
                 });
                 const metaFeedAccounts = computed(() => Array.from(new Set((metaFeedData.value || []).map(r => r.account).filter(Boolean))).sort());
+                const filteredMetaFeedAccounts = computed(() => {
+                    const q = String(metaFeedAccountSearch.value || '').trim().toLowerCase();
+                    if (!q) return metaFeedAccounts.value;
+                    return metaFeedAccounts.value.filter(account => String(account || '').toLowerCase().includes(q));
+                });
                 const filteredMetaFeed = computed(() => {
                     const q = metaFeedSearch.value.trim().toLowerCase();
                     const acc = metaFeedAccount.value;
@@ -52,6 +57,10 @@
                 const metaStoryTotalPages = computed(() => Math.max(1, Math.ceil(filteredMetaStory.value.length / PAGE_SIZE)));
                 const pagedMetaStory = computed(() => filteredMetaStory.value.slice((metaStoryPage.value - 1) * PAGE_SIZE, metaStoryPage.value * PAGE_SIZE));
                 watch([() => metaStorySearch.value, () => metaStoryDateFilter.value?.start, () => metaStoryDateFilter.value?.end], () => { metaStoryPage.value = 1; });
+                const metaFeedPage = ref(1);
+                const metaFeedTotalPages = computed(() => Math.max(1, Math.ceil(filteredMetaFeed.value.length / PAGE_SIZE)));
+                const pagedMetaFeed = computed(() => filteredMetaFeed.value.slice((metaFeedPage.value - 1) * PAGE_SIZE, metaFeedPage.value * PAGE_SIZE));
+                watch([() => metaFeedSearch.value, () => metaFeedAccount.value, () => metaFeedDateFilter.value?.start, () => metaFeedDateFilter.value?.end], () => { metaFeedPage.value = 1; });
                 const metaStoryTop = computed(() => [...filteredMetaStory.value].sort((a, b) => (Number(b.views) || 0) - (Number(a.views) || 0)).slice(0, 5));
                 const metaFeedTop = computed(() => [...filteredMetaFeed.value].sort((a, b) => (Number(b.views) || 0) - (Number(a.views) || 0)).slice(0, 8));
                 const _metaDaily = (rows, mode = 'total') => {

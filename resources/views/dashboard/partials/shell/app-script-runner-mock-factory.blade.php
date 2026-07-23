@@ -40,6 +40,9 @@
                             }
                             throw new Error("Username atau PIN salah.");
                         },
+                        heartbeat() {
+                            return { status: "success" };
+                        },
 
                         getMasterPlanData() {
                             return mockState.masterPlan;

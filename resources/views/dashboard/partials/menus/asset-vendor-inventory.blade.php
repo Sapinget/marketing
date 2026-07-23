@@ -104,7 +104,7 @@
                             </div>
                             <div>
                                 <h2 class="type-heading-sm font-bold text-slate-900">Asset Vendor Inventory</h2>
-                                <p class="text-body-sm text-slate-400 uppercase tracking-widest mt-0.5">Data inventory dari vendor &amp; supplier</p>
+                                <p class="text-body-sm text-slate-400 uppercase mt-0.5">Data inventory dari vendor &amp; supplier</p>
                             </div>
                         </div>
                         <div class="mobile-toolbar-stack">
@@ -133,10 +133,10 @@
                             class="stat-card mobile-record-card mobile-data-card motion-stagger-item"
                             :style="getStaggerStyle(idx)">
                             <div class="mobile-data-card__header">
-                                <span class="px-2.5 py-1 rounded-full text-overline font-bold uppercase tracking-wider bg-success text-light">
+                                <span class="px-2.5 py-1 rounded-full text-overline font-bold uppercase bg-success text-light">
                                     {{ row.vendor || '-' }}
                                 </span>
-                                <span class="type-body-sm text-slate-400 font-bold uppercase tracking-widest">
+                                <span class="type-body-sm text-slate-400 font-bold uppercase">
                                     {{ row.brand || '-' }}
                                 </span>
                             </div>
@@ -214,7 +214,7 @@
                             <tbody class="divide-y divide-slate-50">
                                 <tr v-for="(row, idx) in pagedAviData" :key="'avi-' + (row.ID || idx)"
                                     class="hover:bg-slate-50/50 transition-colors duration-150">
-                                    <td class="px-4 py-3 text-center text-slate-400 font-mono text-body-sm table-freeze-index">{{ (aviPage - 1) * 20 + idx + 1 }}</td>
+                                    <td class="px-4 py-3 text-center text-slate-400 font-mono text-body-sm table-freeze-index">{{ (aviPage - 1) * 15 + idx + 1 }}</td>
                                     <td class="px-4 py-3 table-freeze-action">
                                         <div class="flex items-center gap-1">
                                             <button @click="openAviModal('edit', row)"

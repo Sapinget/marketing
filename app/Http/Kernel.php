@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\EncryptCookies;
+use App\Http\Middleware\ApplyPublicPathPrefix;
 use App\Http\Middleware\EnsureDashboardAccess;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\SetSecurityHeaders;
@@ -15,6 +16,7 @@ class Kernel extends HttpKernel
 {
     protected $middleware = [
         TrustProxies::class,
+        ApplyPublicPathPrefix::class,
         \Illuminate\Http\Middleware\HandleCors::class,
         SetSecurityHeaders::class,
         PreventRequestsDuringMaintenance::class,

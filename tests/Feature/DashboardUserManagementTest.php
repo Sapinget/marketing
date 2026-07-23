@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Illuminate\Support\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
@@ -108,6 +109,43 @@ class DashboardUserManagementTest extends TestCase
                 'nama' => 'Kasir',
                 'email' => 'kasir@example.com',
             ]);
+    }
+
+    public function test_user_listing_prunes_expired_online_presence(): void
+    {
+        Carbon::setTestNow('2026-07-22 10:20:00');
+        $this->actingAsDashboardUser([
+            'role' => 'super_admin',
+        ]);
+
+        User::factory()->create([
+            'username' => 'stale-user',
+            'name' => 'Stale User',
+            'email' => 'stale@example.com',
+            'is_online' => true,
+            'last_seen_at' => '2026-07-22 10:00:00',
+            'session_expires_at' => '2026-07-22 10:15:00',
+        ]);
+
+        $this->getJson('/api/auth/users')
+            ->assertOk()
+            ->assertJsonFragment([
+                'username' => 'stale-user',
+                'is_online' => false,
+            ]);
+
+        $this->assertDatabaseHas('users', [
+            'username' => 'stale-user',
+            'is_online' => false,
+            'session_expires_at' => null,
+        ]);
+        $this->assertDatabaseHas('activity_logs', [
+            'table_name' => 'auth_sessions',
+            'action' => 'timeout',
+            'record_key' => 'stale-user',
+        ]);
+
+        Carbon::setTestNow();
     }
 
     public function test_non_super_admin_cannot_list_dashboard_users(): void

@@ -6,7 +6,7 @@
                         <div class="flex items-center gap-3">
                             <i
                                 class="fa-solid fa-bullseye text-body w-4 text-center transition-transform duration-300 group-hover:scale-110"></i>
-                            <span class="type-body font-medium tracking-wide">Market</span>
+                            <span class="type-body font-medium">Market</span>
                         </div>
                         <i
                             :class="['fa-solid fa-chevron-down text-body-sm transition-transform duration-300', marketingOpen ? 'rotate-180' : '']"></i>
@@ -20,7 +20,7 @@
                                 </div>
                                 <i
                                     class="fa-solid fa-bullhorn text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium tracking-wide relative z-10">Program Promo</span>
+                                <span class="type-body-sm font-medium relative z-10">Program Promo</span>
                             </div>
                             <div @click="switchTab('sell_out')"
                                 :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'sell_out' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
@@ -29,7 +29,7 @@
                                 </div>
                                 <i
                                     class="fa-solid fa-arrow-trend-up text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium tracking-wide relative z-10">Sell Out
+                                <span class="type-body-sm font-medium relative z-10">Sell Out
                                     Target</span>
                             </div>
                             <div @click="switchTab('ads_log')"
@@ -39,7 +39,7 @@
                                 </div>
                                 <i
                                     class="fa-solid fa-rectangle-ad text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium tracking-wide relative z-10">Ads Log</span>
+                                <span class="type-body-sm font-medium relative z-10">Ads Log</span>
                             </div>
                             <div @click="switchTab('budgeting')"
                                 :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'budgeting' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
@@ -48,7 +48,7 @@
                                 </div>
                                 <i
                                     class="fa-solid fa-wallet text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium tracking-wide relative z-10">Budgeting</span>
+                                <span class="type-body-sm font-medium relative z-10">Budgeting</span>
                             </div>
                         </div>
                     </transition>

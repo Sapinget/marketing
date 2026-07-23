@@ -387,8 +387,8 @@ const sellOutSummary = computed(() => {
     return { totalTargets: rows.length, achieved, totalBonus, totalQty };
 });
 
-const sellOutTotalPages = computed(() => Math.max(1, Math.ceil(filteredSellOutData.value.length / 20)));
-const pagedSellOutData = computed(() => filteredSellOutData.value.slice((sellOutPage.value - 1) * 20, sellOutPage.value * 20));
+const sellOutTotalPages = computed(() => Math.max(1, Math.ceil(filteredSellOutData.value.length / PAGE_SIZE)));
+const pagedSellOutData = computed(() => filteredSellOutData.value.slice((sellOutPage.value - 1) * PAGE_SIZE, sellOutPage.value * PAGE_SIZE));
 
 const loadSellOutData = () => new Promise(resolve => {
     ensureRunApi()

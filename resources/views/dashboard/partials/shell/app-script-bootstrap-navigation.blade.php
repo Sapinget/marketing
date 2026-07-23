@@ -29,6 +29,7 @@
                     analisa_insight: { label: 'Insight & Tren', category: 'Analisa Konten' },
                     meta_story: { label: 'Story IG', category: 'Analisa Konten' },
                     meta_feed: { label: 'Feed Konten', category: 'Analisa Konten' },
+                    meta_followers: { label: 'Followers IG', category: 'Analisa Konten' },
                     orderan_online: { label: 'Order Online', category: 'Customer Service' },
                     unit_ditanya: { label: 'Unit Ditanya', category: 'Customer Service' },
                     claim_garansi_asuransi: { label: 'Claim Garansi', category: 'Customer Service' },
@@ -57,7 +58,7 @@
                 const isMobileViewport = ref(window.innerWidth < 768);
                 const isSidebarOpen = ref(window.innerWidth >= 768);
                 const kontenOpen = ref(['master', 'ideation', 'distribution', 'analytics', 'calendar', 'story', 'unboxing'].includes(localStorage.getItem("ppp_active_tab")));
-                const analisaKontenOpen = ref(['top_content_platform', 'low_content_platform', 'analisa_insight', 'meta_story', 'meta_feed'].includes(localStorage.getItem("ppp_active_tab")));
+                const analisaKontenOpen = ref(['top_content_platform', 'low_content_platform', 'analisa_insight', 'meta_story', 'meta_feed', 'meta_followers'].includes(localStorage.getItem("ppp_active_tab")));
                 const csOpen = ref(['orderan_online', 'unit_ditanya', 'claim_garansi_asuransi', 'keep_barang'].includes(localStorage.getItem("ppp_active_tab")));
                 const settingsGroupOpen = ref(['settings', 'nama_stock', 'auth_users', 'activity_logs'].includes(localStorage.getItem("ppp_active_tab")));
                 const performaOpen = ref(['bonus_report', 'talent_bonus', 'editor_performance'].includes(localStorage.getItem("ppp_active_tab")));
@@ -73,7 +74,7 @@
                 const menuGroupTabs = {
                     konten: ['master', 'ideation', 'distribution', 'analytics', 'calendar', 'story', 'unboxing'],
                     marketing: ['program_promo', 'sell_out', 'ads_log', 'budgeting'],
-                    analisa: ['top_content_platform', 'low_content_platform', 'analisa_insight', 'meta_story', 'meta_feed'],
+                    analisa: ['top_content_platform', 'low_content_platform', 'analisa_insight', 'meta_story', 'meta_feed', 'meta_followers'],
                     cs: ['orderan_online', 'unit_ditanya', 'claim_garansi_asuransi', 'keep_barang'],
                     performa: ['bonus_report', 'talent_bonus', 'editor_performance'],
                     settings: ['settings', 'nama_stock', 'auth_users', 'activity_logs'],

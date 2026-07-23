@@ -97,7 +97,7 @@
                                     </div>
                                     <div>
                                         <h2 class="type-heading-sm font-bold text-slate-900">Bonus Report</h2>
-                                        <p class="text-body-sm text-slate-400 uppercase tracking-widest mt-0.5">Kalkulasi
+                                        <p class="text-body-sm text-slate-400 uppercase mt-0.5">Kalkulasi
                                             bonus performa konten</p>
                                     </div>
                                 </div>
@@ -160,13 +160,13 @@
                         <section v-if="showBonusSettings"
                             class="section-card section-card-body animate-fadeIn">
                             <h3
-                                class="text-body font-bold text-slate-700 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                class="text-body font-bold text-slate-700 uppercase mb-4 flex items-center gap-2">
                                 <i class="fa-solid fa-sliders text-ppp-accent"></i> Konfigurasi Bonus Matrix
                             </h3>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                                 <!-- Non-Colab -->
                                 <div>
-                                    <p class="text-overline font-bold text-slate-400 uppercase tracking-widest mb-3"><i
+                                    <p class="text-overline font-bold text-slate-400 uppercase mb-3"><i
                                             class="fa-solid fa-video text-amber mr-1"></i> Views Non-Colab</p>
                                     <div class="space-y-2">
                                         <div v-for="(tier, idx) in bonusConfig.reelsNonColab" :key="'nc'+idx"
@@ -188,7 +188,7 @@
                                 </div>
                                 <!-- Colab -->
                                 <div>
-                                    <p class="text-overline font-bold text-slate-400 uppercase tracking-widest mb-3"><i
+                                    <p class="text-overline font-bold text-slate-400 uppercase mb-3"><i
                                             class="fa-solid fa-handshake text-slate-400 mr-1"></i> Views Colab</p>
                                     <div class="space-y-2">
                                         <div v-for="(tier, idx) in bonusConfig.reelsColab" :key="'c'+idx"
@@ -210,7 +210,7 @@
                                 </div>
                                 <!-- Engagement -->
                                 <div>
-                                    <p class="text-overline font-bold text-slate-400 uppercase tracking-widest mb-3"><i
+                                    <p class="text-overline font-bold text-slate-400 uppercase mb-3"><i
                                             class="fa-solid fa-medal text-amber mr-1"></i> Engagement Fixed</p>
                                     <div class="space-y-2">
                                         <div class="bg-slate-50 border border-slate-100 rounded-xl p-2.5">
@@ -268,7 +268,7 @@
                             </div>
                             <div class="flex justify-end mt-5">
                                 <button @click="saveBonusConfig"
-                                    class="px-6 py-2.5 bg-ppp-accent text-white rounded-xl text-body-sm font-bold uppercase tracking-widest hover:bg-amber transition-all active:scale-95">
+                                    class="px-6 py-2.5 bg-ppp-accent text-white rounded-xl text-body-sm font-bold uppercase hover:bg-amber transition-all active:scale-95">
                                     <i class="fa-solid fa-floppy-disk mr-1.5"></i> Simpan Matrix
                                 </button>
                             </div>
@@ -315,9 +315,8 @@
                                         <td class="px-5 py-3.5 text-center table-freeze-action">
                                             <button v-if="row.masterPlan && row.masterPlan.ID"
                                                 @click.stop="openEditModal(row.masterPlan)"
-                                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-ppp-accent/10 text-ppp-accent hover:bg-ppp-accent hover:text-white transition-all text-body-sm font-semibold">
-                                                <i class="fa-solid fa-pen-to-square text-overline"></i>
-                                                Edit
+                                                class="table-action-button table-action-compact" title="Edit" aria-label="Edit">
+                                                <i class="fa-solid fa-pen-to-square text-body-sm"></i>
                                             </button>
                                         </td>
                                         <td class="px-5 py-3.5">

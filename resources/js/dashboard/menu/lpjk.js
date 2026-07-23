@@ -17,6 +17,7 @@ export function createLpjkOperations(deps) {
         submitting,
         showNotification,
         handleError,
+        PAGE_SIZE,
     } = deps;
 
     const filteredLpjkData = computed(() => {
@@ -25,11 +26,11 @@ export function createLpjkOperations(deps) {
         return lpjkData.value.filter(r => (r.Nama_Event || '').toLowerCase().includes(q));
     });
 
-    const lpjkTotalPages = computed(() => Math.max(1, Math.ceil(filteredLpjkData.value.length / 20)));
+    const lpjkTotalPages = computed(() => Math.max(1, Math.ceil(filteredLpjkData.value.length / PAGE_SIZE)));
 
     const pagedLpjkData = computed(() => {
         const p = lpjkPage.value;
-        return filteredLpjkData.value.slice((p - 1) * 20, p * 20);
+        return filteredLpjkData.value.slice((p - 1) * PAGE_SIZE, p * PAGE_SIZE);
     });
 
     const lpjkDetailGrouped = computed(() => {

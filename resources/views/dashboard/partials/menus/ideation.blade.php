@@ -43,7 +43,9 @@
 
     <div v-if="ideationViewMode === 'board'" class="space-y-4">
         <div class="md:hidden">
-            <div class="segmented-control w-full">
+            <div class="segmented-control segmented-control--ios segmented-control--equal w-full"
+                data-count="3"
+                :data-index="ideationBoardMobileTab === 'In Progress' ? 1 : ideationBoardMobileTab === 'Done' ? 2 : 0">
                 <button @click="ideationBoardMobileTab = ideationDraftLabel"
                     :class="['segmented-control__item flex-1 text-center', ideationBoardMobileTab === ideationDraftLabel ? 'segmented-control__item--active' : '']">{{ ideationDraftLabel }}</button>
                 <button @click="ideationBoardMobileTab = 'In Progress'"
@@ -62,7 +64,7 @@
                         <div
                             :class="['w-2 h-2 rounded-full', status === ideationDraftLabel ? 'bg-amber' : status === 'In Progress' ? 'bg-amber' : 'bg-success']">
                         </div>
-                        <h3 class="text-body font-bold text-slate-700 uppercase tracking-widest">
+                        <h3 class="text-body font-bold text-slate-700 uppercase">
                             {{ status }}</h3>
                         <span
                             class="px-2 py-0.5 rounded-full bg-secondary text-light text-body-sm font-bold">{{ items.length }}</span>
@@ -98,7 +100,7 @@
                             {{ item.Judul }}</div>
                         <div class="flex items-center gap-1.5 mb-2">
                             <span
-                                class="px-1.5 py-0.5 rounded-md bg-slate-50 border border-slate-100 text-slate-500 text-overline-xs font-medium uppercase tracking-wide">
+                                class="px-1.5 py-0.5 rounded-md bg-slate-50 border border-slate-100 text-slate-500 text-overline-xs font-medium uppercase">
                                 {{ getIdeaAgeLabel(item) }}
                             </span>
                         </div>
@@ -119,7 +121,7 @@
                             class="w-12 h-12 rounded-2xl bg-slate-50 flex items-center justify-center mb-3">
                             <i class="fa-solid fa-box-open text-xl text-slate-300"></i>
                         </div>
-                        <div class="text-body-sm font-bold uppercase tracking-widest text-slate-400">
+                        <div class="text-body-sm font-bold uppercase text-slate-400">
                             Belum ada ide</div>
                     </div>
                 </div>
@@ -195,7 +197,7 @@
                 </div>
             </div>
             <div v-if="filteredMasterPlanData.length === 0"
-                class="table-empty-state text-slate-400 text-body uppercase tracking-widest">
+                class="table-empty-state text-slate-400 text-body uppercase">
                 Data
                 Kosong</div>
         </div>
@@ -270,7 +272,7 @@
                             </div>
                         </td>
                         <td class="px-6 py-5">
-                            <div class="flex flex-wrap gap-2 max-w-[160px]">
+                            <div class="flex flex-col items-start gap-1.5 max-w-[160px]">
                                 <span v-for="plat in (item.Platforms || '').split(',')" :key="plat"
                                     class="flex items-center gap-2">
                                     <i :class="getPlatformIcon(plat) + ' text-body text-slate-400'"></i>
@@ -280,12 +282,12 @@
                         </td>
                         <td class="px-6 py-5 text-center">
                             <span
-                                :class="['px-2.5 py-1 rounded-full text-overline font-bold uppercase tracking-wider', getStatusColor(item.Status)]">{{ item.Status }}</span>
+                                :class="['px-2.5 py-1 rounded-full text-overline font-bold uppercase', getStatusColor(item.Status)]">{{ item.Status }}</span>
                         </td>
                     </tr>
                     <tr v-if="filteredMasterPlanData.length === 0">
                         <td colspan="7"
-                            class="px-6 py-20 text-center text-slate-400 text-body uppercase tracking-widest">
+                            class="px-6 py-20 text-center text-slate-400 text-body uppercase">
                             Data Kosong</td>
                     </tr>
                 </tbody>

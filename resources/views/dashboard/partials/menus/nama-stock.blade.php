@@ -80,7 +80,7 @@
                                                         {{ opt }}
                                                     </div>
                                                     <div v-if="namaStockFilterKategoriOptions.filter(o => !searchSelectQuery || String(o || '').toLowerCase().includes(String(searchSelectQuery || '').toLowerCase())).length === 0"
-                                                        class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                        class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                         Tidak ditemukan
                                                     </div>
                                                 </div>
@@ -115,7 +115,7 @@
                                                         {{ opt }}
                                                     </div>
                                                     <div v-if="namaStockFilterBrandOptions.filter(o => !searchSelectQuery || String(o || '').toLowerCase().includes(String(searchSelectQuery || '').toLowerCase())).length === 0"
-                                                        class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                        class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                         Tidak ditemukan
                                                     </div>
                                                 </div>
@@ -134,10 +134,10 @@
                                     :style="getStaggerStyle(idx)">
                                     <div class="mobile-data-card__header">
                                         <span
-                                            class="px-2.5 py-1 rounded-full text-overline font-bold uppercase tracking-wider bg-secondary text-light">
+                                            class="px-2.5 py-1 rounded-full text-overline font-bold uppercase bg-secondary text-light">
                                             {{ row.KATEGORI || '-' }}
                                         </span>
-                                        <span class="type-body-sm text-slate-400 font-bold uppercase tracking-widest">
+                                        <span class="type-body-sm text-slate-400 font-bold uppercase">
                                             Stock
                                         </span>
                                     </div>

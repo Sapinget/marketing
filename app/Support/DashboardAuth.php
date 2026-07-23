@@ -4,18 +4,27 @@ namespace App\Support;
 
 use App\Models\User;
 use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
+use Illuminate\Support\Carbon;
 
 class DashboardAuth
 {
+    public const SESSION_IDLE_TIMEOUT_MINUTES = 15;
+    public const SESSION_SUPERSEDED_MESSAGE = 'anda sudah login di perangkat lain';
     public const ROLE_SUPER_ADMIN = 'super_admin';
     public const ROLE_ADMIN = 'admin';
     public const ROLE_KASIR = 'kasir';
     public const ROLE_OPERASIONAL = 'operasional';
     public const ROLE_BRAND_AMBASADOR = 'brand_ambasador';
     public const ROLE_TALENT = 'talent';
+    protected const ACTIVE_SESSION_KEY = 'dashboard_active_session_id';
+
+    protected ?string $sessionFailureReason = null;
 
     protected function allowsConfiguredAdminBootstrap(): bool
     {
@@ -95,6 +104,7 @@ class DashboardAuth
 
         Auth::login($user);
         request()->session()->regenerate();
+        $this->touchPresence($user, 'login');
 
         return $user->refresh();
     }
@@ -174,14 +184,183 @@ class DashboardAuth
 
         $user = Auth::user();
 
+        if ($user instanceof User) {
+            $this->touchPresence($user, 'login');
+        }
+
         return $user instanceof User ? $user : null;
     }
 
     public function logout(): void
     {
+        $user = Auth::user();
+
+        if ($user instanceof User) {
+            $activeSessionId = (string) ($user->active_session_id ?? '');
+            $currentSessionId = (string) request()->session()->get(self::ACTIVE_SESSION_KEY, '');
+
+            if ($activeSessionId === '' || hash_equals($activeSessionId, $currentSessionId)) {
+                $this->markOffline($user, 'logout');
+            }
+        }
+
         Auth::guard('web')->logout();
         request()->session()->invalidate();
         request()->session()->regenerateToken();
+    }
+
+    public function ensureActiveSession(Request $request): bool
+    {
+        $this->sessionFailureReason = null;
+        $user = Auth::user();
+
+        if (! $user instanceof User) {
+            return false;
+        }
+
+        $now = now();
+        $currentSessionId = (string) $request->session()->get(self::ACTIVE_SESSION_KEY, '');
+        $activeSessionId = (string) ($user->active_session_id ?? '');
+        $lastActivityTimestamp = $request->session()->get('dashboard_last_activity_at');
+        $sessionExpiresAt = $user->session_expires_at;
+
+        if ($activeSessionId !== '' && ! hash_equals($activeSessionId, $currentSessionId)) {
+            $this->supersedeSession($request, $user);
+
+            return false;
+        }
+
+        if (is_numeric($lastActivityTimestamp)) {
+            $lastActivity = now()->setTimestamp((int) $lastActivityTimestamp);
+            if ($lastActivity->diffInSeconds($now, false) > self::SESSION_IDLE_TIMEOUT_MINUTES * 60) {
+                $this->expireSession($request, $user);
+
+                return false;
+            }
+        } elseif ($sessionExpiresAt && $sessionExpiresAt->lte($now)) {
+            $this->expireSession($request, $user);
+
+            return false;
+        }
+
+        $this->touchPresence($user);
+
+        return true;
+    }
+
+    public function touchPresence(User $user, string $event = 'heartbeat'): User
+    {
+        $now = now();
+        $expiresAt = $now->copy()->addMinutes(self::SESSION_IDLE_TIMEOUT_MINUTES);
+        $activeSessionId = (string) request()->session()->get(self::ACTIVE_SESSION_KEY, '');
+
+        if ($event === 'login' || $activeSessionId === '') {
+            $activeSessionId = Str::random(64);
+            request()->session()->put(self::ACTIVE_SESSION_KEY, $activeSessionId);
+        }
+
+        request()->session()->put('dashboard_last_activity_at', $now->timestamp);
+
+        $user->forceFill([
+            'is_online' => true,
+            'last_seen_at' => $now,
+            'session_expires_at' => $expiresAt,
+            'active_session_id' => $activeSessionId,
+        ])->save();
+
+        if ($event === 'login') {
+            $this->logSessionEvent($user, $event, [
+                'session_expires_at' => $expiresAt->toIso8601String(),
+            ]);
+        }
+
+        return $user->refresh();
+    }
+
+    public function markOffline(User $user, string $event): User
+    {
+        $user->forceFill([
+            'is_online' => false,
+            'session_expires_at' => null,
+            'active_session_id' => null,
+            'last_seen_at' => now(),
+        ])->save();
+
+        request()->session()->forget('dashboard_last_activity_at');
+        request()->session()->forget(self::ACTIVE_SESSION_KEY);
+        $this->logSessionEvent($user, $event);
+
+        return $user->refresh();
+    }
+
+    protected function expireSession(Request $request, User $user): void
+    {
+        $this->sessionFailureReason = 'expired';
+        $this->markOffline($user, 'timeout');
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+    }
+
+    protected function supersedeSession(Request $request, User $user): void
+    {
+        $this->sessionFailureReason = 'superseded';
+        $this->logSessionEvent($user, 'superseded', [
+            'replaced_by_session' => $user->active_session_id,
+        ]);
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+    }
+
+    public function sessionFailurePayload(): array
+    {
+        if ($this->sessionFailureReason === 'superseded') {
+            return [
+                'message' => self::SESSION_SUPERSEDED_MESSAGE,
+                'superseded' => true,
+            ];
+        }
+
+        if ($this->sessionFailureReason === 'expired') {
+            return [
+                'message' => 'Sesi login berakhir karena tidak ada aktivitas selama 15 menit.',
+                'expired' => true,
+            ];
+        }
+
+        return [
+            'message' => 'Unauthenticated.',
+        ];
+    }
+
+    public function pruneExpiredPresence(): void
+    {
+        User::query()
+            ->where('is_online', true)
+            ->whereNotNull('session_expires_at')
+            ->where('session_expires_at', '<=', now())
+            ->get()
+            ->each(fn (User $user) => $this->markOffline($user, 'timeout'));
+    }
+
+    protected function logSessionEvent(User $user, string $event, ?array $payload = null): void
+    {
+        if (! Schema::hasTable('activity_logs')) {
+            return;
+        }
+
+        DB::table('activity_logs')->insert([
+            'user_id' => $user->getKey(),
+            'actor_label' => $user->username ?: $user->email ?: $user->name,
+            'table_name' => 'auth_sessions',
+            'action' => $event,
+            'record_key' => (string) ($user->username ?: $user->email ?: $user->getKey()),
+            'record_id' => $user->getKey(),
+            'before_payload' => null,
+            'after_payload' => $payload === null ? null : json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            'created_at' => now(),
+        ]);
     }
 
     public function createUser(string $username, string $pin, ?string $name = null, ?string $email = null, ?string $role = null): User
@@ -236,6 +415,8 @@ class DashboardAuth
 
     public function listUsers(): array
     {
+        $this->pruneExpiredPresence();
+
         return User::query()
             ->orderBy('username')
             ->get()
@@ -302,7 +483,21 @@ class DashboardAuth
             'role' => $this->roleLabel($user->role),
             'role_key' => (string) $user->role,
             'avatar_url' => $this->avatarUrl($user),
+            'is_online' => (bool) $user->is_online,
+            'last_seen_at' => $this->serializeDateTime($user->last_seen_at),
+            'session_expires_at' => $this->serializeDateTime($user->session_expires_at),
             'outlet_id' => 'LOCAL-WEB',
         ];
+    }
+
+    protected function serializeDateTime(mixed $value): ?string
+    {
+        if ($value === null || $value === '') {
+            return null;
+        }
+
+        return $value instanceof \DateTimeInterface
+            ? Carbon::instance($value)->toIso8601String()
+            : Carbon::parse($value)->toIso8601String();
     }
 }

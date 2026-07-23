@@ -3,7 +3,7 @@
                         <div class="section-card section-card-body">
                             <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                                 <div>
-                                    <div class="type-meta uppercase tracking-[0.2em] text-slate-400 mb-2">Ringkasan
+                                    <div class="type-meta uppercase text-slate-400 mb-2">Ringkasan
                                     </div>
                                     <h2 class="text-xl font-semibold text-slate-900">Dashboard Operasional</h2>
                                     <p class="type-body text-slate-500 mt-2">Dashboard marketing lengkap berjalan di
@@ -65,7 +65,7 @@
                             <section class="section-card section-card-body dashboard-latest-content xl:col-span-2">
                                 <div class="dashboard-panel-heading flex items-center justify-between mb-5">
                                     <div>
-                                        <div class="type-body-sm uppercase tracking-[0.2em] text-slate-400">Master Plan
+                                        <div class="type-body-sm uppercase text-slate-400">Master Plan
                                         </div>
                                         <h3 class="text-sm font-semibold text-slate-900 mt-1">Konten Terbaru</h3>
                                     </div>
@@ -88,7 +88,7 @@
 
                             <section class="section-card section-card-body dashboard-info-panel">
                                 <div class="dashboard-panel-heading mb-5">
-                                    <div class="type-body-sm uppercase tracking-[0.2em] text-slate-400">Status Akun
+                                    <div class="type-body-sm uppercase text-slate-400">Status Akun
                                     </div>
                                     <h3 class="text-sm font-semibold text-slate-900 mt-1">Info Dashboard</h3>
                                 </div>
@@ -108,7 +108,7 @@
                                     <div class="dashboard-info-panel__item rounded-2xl bg-slate-50 flex items-center justify-between gap-3">
                                         <span class="type-body text-slate-500">Status</span>
                                         <span
-                                            class="text-overline font-bold text-light bg-success px-2.5 py-1 rounded-full uppercase tracking-widest">Aktif</span>
+                                            class="text-overline font-bold text-light bg-success px-2.5 py-1 rounded-full uppercase">Aktif</span>
                                     </div>
                                 </div>
                             </section>

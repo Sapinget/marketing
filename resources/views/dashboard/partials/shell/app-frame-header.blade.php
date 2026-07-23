@@ -8,8 +8,33 @@
                     <i class="fa-solid fa-bars text-lg"></i>
                 </button>
 
-                <!-- Profile Dropdown -->
-                <div class="relative" id="profile-menu-wrapper">
+                <div class="flex items-center gap-2 md:gap-3 min-w-0">
+                    <div class="active-team-chip active-team-chip--avatars-only" aria-label="Team aktif">
+                        <div class="active-team-avatar-stack">
+                            <div v-for="member in visibleActiveTeamUsers" :key="member.username || member.email || member.nama"
+                                class="active-team-avatar-item">
+                                <div class="active-team-avatar cursor-pointer"
+                                    @click.stop="chatOpenConversation(member)" :title="'Chat dengan ' + (member?.nama || member?.username || 'User')">
+                                    <img v-if="resolveAvatarUrl(member?.avatar_url)" :src="resolveAvatarUrl(member.avatar_url)"
+                                        class="w-full h-full object-cover rounded-full" alt="Foto Team" />
+                                    <span v-else>{{ ((member?.nama || member?.username || 'T')[0]) }}</span>
+                                </div>
+                                <span v-if="chatUnreadByUser?.[member.ID] > 0"
+                                    class="absolute -top-1 -right-0.5 min-w-[14px] h-3.5 px-0.5 rounded-full bg-danger text-white text-[8px] font-bold flex items-center justify-center leading-none shadow-sm z-10">
+                                    {{ chatUnreadByUser[member.ID] > 9 ? '9+' : chatUnreadByUser[member.ID] }}
+                                </span>
+                            </div>
+                            <div v-if="hiddenActiveTeamUsersCount > 0" class="active-team-avatar-item">
+                                <div class="active-team-avatar active-team-avatar--count"
+                                    :title="hiddenActiveTeamUsersCount + ' user online lainnya'">
+                                    +{{ hiddenActiveTeamUsersCount > 9 ? '9' : hiddenActiveTeamUsersCount }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Profile Dropdown -->
+                    <div class="relative" id="profile-menu-wrapper">
                     <button @click="profileMenuOpen = !profileMenuOpen"
                         class="flex items-center gap-2.5 px-2 py-1.5 transition-colors group" id="profile-menu-btn">
                         <div
@@ -20,7 +45,7 @@
                             <div
                                 class="text-body font-semibold text-slate-800 group-hover:text-ppp-accent leading-tight transition-colors">
                                 {{ currentUser?.nama || currentUser?.username || 'User' }}</div>
-                            <div class="type-micro text-slate-400 uppercase tracking-widest">{{ currentUser?.role || '-' }}</div>
+                            <div class="type-micro text-slate-400 uppercase">{{ currentUser?.role || '-' }}</div>
                         </div>
                         <i class="fa-solid fa-chevron-down text-overline-xs text-slate-400 hidden sm:block transition-transform duration-200"
                             :class="profileMenuOpen ? 'rotate-180' : ''"></i>
@@ -38,13 +63,21 @@
                             id="profile-dropdown">
                             <!-- Menu Items -->
                             <div class="py-1.5">
-                                <button @click="openProfileSetting"
-                                    class="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-slate-50 transition-colors group"
-                                    id="btn-profile-setting">
-                                    <div
-                                        class="w-7 h-7 rounded-xl bg-amber text-ppp-accent flex items-center justify-center flex-shrink-0">
-                                        <i class="fa-solid fa-user text-body-sm"></i>
+                                <button @click="chatOpenPicker(); profileMenuOpen = false"
+                                    class="w-full flex items-center justify-between gap-3 px-4 py-2.5 text-left hover:bg-slate-50 transition-colors group"
+                                    id="btn-profile-chat">
+                                    <div>
+                                        <div class="text-body font-medium text-slate-700">Chat</div>
+                                        <div class="text-overline text-slate-400">Lihat user online & pesan baru</div>
                                     </div>
+                                    <span v-if="chatUnreadTotal > 0"
+                                        class="min-w-[18px] h-[18px] px-1 rounded-full bg-danger text-white text-[9px] font-bold flex items-center justify-center leading-none shrink-0">
+                                        {{ chatUnreadTotal > 99 ? '99+' : chatUnreadTotal }}
+                                    </span>
+                                </button>
+                                <button @click="openProfileSetting"
+                                    class="w-full px-4 py-2.5 text-left hover:bg-slate-50 transition-colors group"
+                                    id="btn-profile-setting">
                                     <div>
                                         <div class="text-body font-medium text-slate-700">Profile Setting</div>
                                         <div class="text-overline text-slate-400">Ubah data & PIN akses</div>
@@ -55,17 +88,14 @@
                             <!-- Divider + Logout -->
                             <div class="border-t border-slate-100 py-1.5">
                                 <button @click="logout"
-                                    class="w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-danger transition-colors group"
+                                    class="w-full px-4 py-2.5 text-left text-danger hover:text-white hover:bg-danger transition-colors"
                                     id="btn-dropdown-logout">
-                                    <div
-                                        class="w-7 h-7 rounded-xl bg-danger text-light flex items-center justify-center flex-shrink-0">
-                                        <i class="fa-solid fa-right-from-bracket text-body-sm"></i>
-                                    </div>
-                                    <div class="text-body font-medium text-danger">Logout</div>
+                                    <div class="text-body font-medium">Logout</div>
                                 </button>
                             </div>
                         </div>
                     </transition>
+                    </div>
                 </div>
             </header>
 @endverbatim

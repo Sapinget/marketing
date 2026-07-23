@@ -55,7 +55,7 @@
                                         </div>
                                         <div class="mobile-data-card__summary">
                                             <div>{{ user?.email || 'Email belum diisi' }}</div>
-                                            <div class="type-body-sm text-slate-400 uppercase tracking-widest mt-2">Role: {{ user?.role || '-' }}</div>
+                                            <div class="type-body-sm text-slate-400 uppercase mt-2">Role: {{ user?.role || '-' }}</div>
                                         </div>
                                         <div class="mobile-data-card__actions">
                                             <div class="type-body-sm text-slate-400 line-clamp-1">@{{ user?.username || '-' }}</div>
@@ -130,7 +130,7 @@
                                     <template v-if="filteredAuthUsers.length > 0">{{ filteredAuthUsers.length }} dari {{ authUsers.length }} user</template>
                                     <template v-else>0 user</template>
                                 </div>
-                                <span class="type-body-sm text-slate-400 uppercase tracking-widest">Daftar user</span>
+                                <span class="type-body-sm text-slate-400 uppercase">Daftar user</span>
                             </div>
                         </section>
 
@@ -149,7 +149,7 @@
                                             </div>
                                             <div>
                                                 <div class="type-heading-sm text-slate-900">{{ authUserFormMode === 'edit' ? 'Edit User' : 'Tambah User' }}</div>
-                                                <div class="type-body-sm text-slate-400 uppercase tracking-widest mt-0.5">Manajemen User</div>
+                                                <div class="type-body-sm text-slate-400 uppercase mt-0.5">Manajemen User</div>
                                             </div>
                                         </div>
                                         <button @click="closeAuthUserModal" class="icon-utility-button icon-utility-round">
@@ -170,7 +170,7 @@
                                                     </div>
                                                 </label>
                                                 <input id="auth-user-avatar-input" name="auth_user_avatar_input" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" :disabled="submittingAuthUserAvatar" @change="uploadAuthUserAvatar" />
-                                                <label for="auth-user-avatar-input" class="text-body-sm text-slate-400 font-bold uppercase tracking-widest cursor-pointer hover:text-ppp-accent transition-colors"
+                                                <label for="auth-user-avatar-input" class="text-body-sm text-slate-400 font-bold uppercase cursor-pointer hover:text-ppp-accent transition-colors"
                                                     :class="submittingAuthUserAvatar ? 'opacity-50 pointer-events-none' : ''">
                                                     <i class="fa-solid fa-upload mr-1" :class="submittingAuthUserAvatar ? 'fa-spin' : ''"></i>
                                                     <span v-if="submittingAuthUserAvatar">Mengunggah...</span>
@@ -185,14 +185,14 @@
                                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                                 <div>
                                                     <label for="auth-user-username"
-                                                        class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Username <span class="text-danger">*</span></label>
+                                                        class="type-body-sm font-bold text-slate-400 uppercase mb-1.5 pl-1">Username <span class="text-danger">*</span></label>
                                                     <input id="auth-user-username" name="auth_user_username"
                                                         v-model="authUserForm.username" type="text" placeholder="mis. kasir"
                                                         autocomplete="off" minlength="3" class="form-input font-bold" />
                                                 </div>
                                                 <div>
                                                     <label for="auth-user-nama"
-                                                        class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Nama <span class="text-danger">*</span></label>
+                                                        class="type-body-sm font-bold text-slate-400 uppercase mb-1.5 pl-1">Nama <span class="text-danger">*</span></label>
                                                     <input id="auth-user-nama" name="auth_user_nama"
                                                         v-model="authUserForm.nama" type="text" placeholder="Nama lengkap"
                                                         autocomplete="off" class="form-input" />
@@ -200,14 +200,14 @@
                                             </div>
                                             <div>
                                                 <label for="auth-user-email"
-                                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Email</label>
+                                                    class="type-body-sm font-bold text-slate-400 uppercase mb-1.5 pl-1">Email</label>
                                                     <input id="auth-user-email" name="auth_user_email"
                                                         v-model="authUserForm.email" type="email" placeholder="opsional"
                                                         autocomplete="off" class="form-input" />
                                             </div>
                                             <div class="relative search-select-container">
                                                 <label for="auth-user-role"
-                                                    class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Role <span class="text-danger">*</span></label>
+                                                    class="type-body-sm font-bold text-slate-400 uppercase mb-1.5 pl-1">Role <span class="text-danger">*</span></label>
                                                 <div @click="toggleSearchSelect($event, 'authUserRole')"
                                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
                                                     <span :class="authUserForm.role ? 'text-slate-800 font-medium' : 'text-slate-400'">
@@ -231,7 +231,7 @@
                                                                 {{ option.label }}
                                                             </div>
                                                             <div v-if="filteredAuthUserRoleOptions.length === 0"
-                                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase tracking-widest">
+                                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
                                                                 Tidak ditemukan
                                                             </div>
                                                         </div>
@@ -241,14 +241,14 @@
                                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                                 <div>
                                                     <label for="auth-user-pin"
-                                                        class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Password <span class="text-danger">*</span></label>
+                                                        class="type-body-sm font-bold text-slate-400 uppercase mb-1.5 pl-1">Password <span class="text-danger">*</span></label>
                                                     <input id="auth-user-pin" name="auth_user_pin"
                                                         v-model="authUserForm.pin" type="password" :placeholder="authUserFormMode === 'edit' ? 'Kosongkan jika tidak diubah' : 'Password login'"
                                                         autocomplete="new-password" minlength="6" class="form-input" />
                                                 </div>
                                                 <div>
                                                     <label for="auth-user-confirm-pin"
-                                                        class="type-body-sm font-bold text-slate-400 uppercase tracking-widest mb-1.5 pl-1">Konfirmasi <span class="text-danger">*</span></label>
+                                                        class="type-body-sm font-bold text-slate-400 uppercase mb-1.5 pl-1">Konfirmasi <span class="text-danger">*</span></label>
                                                     <input id="auth-user-confirm-pin" name="auth_user_confirm_pin"
                                                         v-model="authUserForm.confirmPin" type="password" :placeholder="authUserFormMode === 'edit' ? 'Ulangi password baru' : 'Ulangi Password'"
                                                         autocomplete="new-password" minlength="6" class="form-input" />

@@ -79,7 +79,7 @@
                             </div>
                             <div>
                                 <h2 class="type-heading-sm font-bold text-slate-900">Editor Performance</h2>
-                                <p class="text-body-sm text-amber uppercase tracking-widest font-bold mt-0.5">
+                                <p class="text-body-sm text-amber uppercase font-bold mt-0.5">
                                     Creative Command | Live Metrics</p>
                             </div>
                         </div>
@@ -128,7 +128,7 @@
                     <!-- Leaderboard -->
                     <div class="lg:col-span-2 bg-white radius-panel border border-slate-100 p-5">
                         <h3
-                            class="text-body font-bold text-slate-700 uppercase tracking-widest mb-4 flex items-center gap-2">
+                            class="text-body font-bold text-slate-700 uppercase mb-4 flex items-center gap-2">
                             <i class="fa-solid fa-ranking-star text-ppp-accent"></i> Editor Ranking
                         </h3>
                         <div v-if="editorDashboardData.leaderboard.length === 0"
@@ -157,7 +157,7 @@
                     <div class="lg:col-span-3 section-card section-card-shell">
                         <div class="px-5 py-4 border-b border-slate-50 flex items-center justify-between">
                             <h3
-                                class="text-body font-bold text-slate-700 uppercase tracking-widest flex items-center gap-2">
+                                class="text-body font-bold text-slate-700 uppercase flex items-center gap-2">
                                 <i class="fa-solid fa-book-open text-ppp-accent"></i> Project Ledger
                             </h3>
                             <span class="text-overline text-slate-400 font-bold">{{ editorDashboardData.videoList.length }} proyek</span>
@@ -192,9 +192,11 @@
                                             <p
                                                 class="text-body font-semibold text-slate-800 leading-tight line-clamp-2">
                                                 {{ video.Judul }}</p>
-                                            <div class="mt-1 flex items-center gap-2">
-                                                <i :class="getPlatformIcon((video.Platforms || '').split(',')[0]) + ' text-body text-slate-400'"></i>
-                                                <span class="text-body font-bold text-slate-700">{{ platformDisplayName(video.Platforms) }}</span>
+                                            <div class="mt-1 flex flex-col items-start gap-1.5">
+                                                <span v-for="plat in (video.Platforms || '').split(',')" :key="plat" class="flex items-center gap-2">
+                                                    <i :class="getPlatformIcon(plat) + ' text-body text-slate-400'"></i>
+                                                    <span class="text-body font-bold text-slate-700">{{ platformDisplayName(plat) }}</span>
+                                                </span>
                                             </div>
                                         </td>
                                         <td class="px-5 py-3 text-left">
