@@ -143,4 +143,23 @@
                 const sellOutModalOpen = ref(false);
                 const sellOutModalType = ref('create');
                 const sellOutForm = ref({ ID: null, Vendor: '', Kategori: '', Brand: '', Seri: '', RAM: '', Internal: '', Size: '', Kondisi: '', Nama_Produk: '', Target_Unit: 0, Bonus_Nominal: 0, Realisasi_Unit: 0, Periode_Start: '', Periode_End: '', Catatan: '' });
+
+                // Market Intelligence (from BOT SQLite)
+                const pasarData = ref({ total: 0, by_source: {}, bali_competitor: [], competitors: [], sources: [], updated_at: null });
+                const intelijenHargaData = ref({ summary: {}, rows: [] });
+                const puraPriceChangesData = ref({ summary: {}, rows: [] });
+                const auditHargaData = ref({ summary: {}, rows: [] });
+                const eksternalData = ref({ rows: [], sources: [], brands: [], by_source: {}, total: 0 });
+                const eksternalChangesData = ref({ rows: [], total: 0 });
+                const ihFilter = ref('');
+                const puraPriceChangesDirection = ref('all');
+                const eksternalChangesDirection = ref('all');
+                const eksternalSourceFilter = ref('');
+                const eksternalBrandFilter = ref('');
+                const eksternalBrandDebounce = ref(null);
+                const marketIntelijenHargaPage = ref(1);
+                const marketIntelijenHargaAuditPage = ref(1);
+                const marketAuditHargaPage = ref(1);
+                const marketEksternalRowsPage = ref(1);
+                const marketEksternalChangesPage = ref(1);
 @endverbatim

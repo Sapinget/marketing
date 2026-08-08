@@ -67,6 +67,38 @@
                     <span class="type-body font-medium relative z-10">Harga & Kompetitor</span>
                 </div>
 
+                <!-- Katalog Pricelist (Android) -->
+                <div v-if="!isTeknisi" @click="switchTab('pricelist_katalog')"
+                    :class="['flex items-center gap-3 px-5 py-3 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'pricelist_katalog' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
+                    <div v-if="activeTab === 'pricelist_katalog'"
+                        class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
+                    </div>
+                    <i
+                        class="fa-solid fa-book-open text-body w-4 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
+                    <span class="type-body font-medium relative z-10">Katalog Android</span>
+                </div>
+
+                <!-- Katalog Apple -->
+                <div v-if="!isTeknisi" @click="switchTab('apple_katalog')"
+                    :class="['flex items-center gap-3 px-5 py-3 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'apple_katalog' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
+                    <div v-if="activeTab === 'apple_katalog'"
+                        class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
+                    </div>
+                    <i
+                        class="fa-brands fa-apple text-body w-4 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
+                    <span class="type-body font-medium relative z-10">Katalog Apple</span>
+                </div>
+
+                <!-- Repo Gambar -->
+                <div v-if="canManageSettings" @click="switchTab('img_repo')"
+                    :class="['flex items-center gap-3 px-5 py-3 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'img_repo' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
+                    <div v-if="activeTab === 'img_repo'"
+                        class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
+                    </div>
+                    <i
+                        class="fa-solid fa-images text-body w-4 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
+                    <span class="type-body font-medium relative z-10">Repo Gambar</span>
+                </div>
 
                 <!-- Laporan Event -->
                 <div v-if="!isTeknisi" @click="switchTab('laporan_event')"

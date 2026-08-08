@@ -169,6 +169,10 @@
                             }
                         }
                     } catch (error) {
+                        if (error?.status === 401) {
+                            chatStopUnreadPolling();
+                            clearSessionState(error?.message || 'Sesi login berakhir. Silakan login kembali.', 'warning');
+                        }
                     }
                 };
 

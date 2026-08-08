@@ -24,6 +24,13 @@
                     sell_out: { label: 'Sell Out Target', category: 'Marketing' },
                     ads_log: { label: 'Ads Log', category: 'Marketing' },
                     budgeting: { label: 'Budgeting', category: 'Marketing' },
+                    market_pasar: { label: 'Pasar', breadcrumb: ['Marketing', 'Intelijen Pasar', 'Pasar'] },
+                    market_intelijen_harga: { label: 'Intelijen Harga', breadcrumb: ['Marketing', 'Intelijen Pasar', 'Intelijen Harga'] },
+                    market_audit_harga: { label: 'Audit Harga', breadcrumb: ['Marketing', 'Intelijen Pasar', 'Audit Harga'] },
+                    market_eksternal: { label: 'Semua Kompetitor', breadcrumb: ['Marketing', 'Intelijen Pasar', 'Kompetitor', 'Semua'] },
+                    market_ext_goodponsel: { label: 'Good Ponsel', breadcrumb: ['Marketing', 'Intelijen Pasar', 'Kompetitor', 'Good Ponsel'] },
+                    market_ext_devstore: { label: 'Devstore', breadcrumb: ['Marketing', 'Intelijen Pasar', 'Kompetitor', 'Devstore'] },
+                    market_ext_rumahgadget: { label: 'Rumah Gadget Bali', breadcrumb: ['Marketing', 'Intelijen Pasar', 'Kompetitor', 'Rumah Gadget Bali'] },
                     top_content_platform: { label: 'Top Konten', category: 'Analisa Konten' },
                     low_content_platform: { label: 'Low Konten', category: 'Analisa Konten' },
                     analisa_insight: { label: 'Insight & Tren', category: 'Analisa Konten' },
@@ -42,6 +49,7 @@
                     auth_users: { label: 'Manajemen User', category: 'Settings' },
                     activity_logs: { label: 'Activity Logs', category: 'Settings' },
                     harga_kompetitor: { label: 'Harga & Kompetitor', category: null },
+                    pricelist_katalog: { label: 'Katalog Pricelist', category: null },
                     laporan_event: { label: 'Laporan Event', category: null },
                     asset_vendor_inventory: { label: 'Asset Inventory', category: 'Inventory' },
                     profile: { label: 'Profile', category: null }
@@ -49,6 +57,9 @@
 
                 const breadcrumbItems = computed(() => {
                     const config = tabConfig[activeTab.value] || { label: activeTab.value, category: null };
+                    if (Array.isArray(config.breadcrumb) && config.breadcrumb.length) {
+                        return config.breadcrumb;
+                    }
                     const items = ['Marketing'];
                     if (config.category) items.push(config.category);
                     items.push(config.label.replace(/_/g, ' '));
@@ -63,9 +74,14 @@
                 const settingsGroupOpen = ref(['settings', 'nama_stock', 'auth_users', 'activity_logs'].includes(localStorage.getItem("ppp_active_tab")));
                 const performaOpen = ref(['bonus_report', 'talent_bonus', 'editor_performance'].includes(localStorage.getItem("ppp_active_tab")));
                 const marketingOpen = ref(['program_promo', 'sell_out', 'ads_log', 'budgeting'].includes(localStorage.getItem("ppp_active_tab")));
+                const marketExternalTabs = ['market_eksternal', 'market_ext_goodponsel', 'market_ext_devstore', 'market_ext_rumahgadget'];
+                const intelijenPasarTabs = ['market_pasar', 'market_intelijen_harga', 'market_audit_harga', ...marketExternalTabs];
+                const intelijenPasarOpen = ref(intelijenPasarTabs.includes(localStorage.getItem("ppp_active_tab")));
+                const marketExternalOpen = ref(marketExternalTabs.includes(localStorage.getItem("ppp_active_tab")));
                 const menuGroups = {
                     konten: kontenOpen,
                     marketing: marketingOpen,
+                    intelijenPasar: intelijenPasarOpen,
                     analisa: analisaKontenOpen,
                     cs: csOpen,
                     performa: performaOpen,
@@ -74,6 +90,7 @@
                 const menuGroupTabs = {
                     konten: ['master', 'ideation', 'distribution', 'analytics', 'calendar', 'story', 'unboxing'],
                     marketing: ['program_promo', 'sell_out', 'ads_log', 'budgeting'],
+                    intelijenPasar: intelijenPasarTabs,
                     analisa: ['top_content_platform', 'low_content_platform', 'analisa_insight', 'meta_story', 'meta_feed', 'meta_followers'],
                     cs: ['orderan_online', 'unit_ditanya', 'claim_garansi_asuransi', 'keep_barang'],
                     performa: ['bonus_report', 'talent_bonus', 'editor_performance'],

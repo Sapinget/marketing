@@ -138,6 +138,29 @@
                         getPromoData() { return fetchJson_('/api/program-promo').then(r => r.data || []); },
                         getSellOutTargetData() { return fetchJson_('/api/sell-out-targets').then(r => r.data || []); },
                         getHargaKompetitorData() { return fetchJson_('/api/harga-kompetitor').then(r => r.data || []); },
+                        getPricelistProducts() { return fetchJson_('/api/pricelist-products').then(r => r.data || []); },
+                        syncPricelistProducts() { return jsonApi('/api/pricelist-products/sync', { method: 'POST', body: JSON.stringify({}) }); },
+                        updatePricelistProduct(id, updates) { return jsonApi(`/api/pricelist-products/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify(updates) }); },
+                        getCatalogTemplates() { return fetchJson_('/api/catalog-templates').then(r => r.data || []); },
+                        saveCatalogTemplate(data) {
+                            const id = data.ID; const url = id ? `/api/catalog-templates/${encodeURIComponent(id)}` : '/api/catalog-templates';
+                            return jsonApi(url, { method: id ? 'PUT' : 'POST', body: JSON.stringify(data) });
+                        },
+                        deleteCatalogTemplate(id) { return jsonApi(`/api/catalog-templates/${encodeURIComponent(id)}`, { method: 'DELETE' }); },
+                        uploadCatalogBackground(file, id) {
+                            const formData = new FormData();
+                            formData.append('background', file);
+                            const cookie = document.cookie.split('; ').find((row) => row.startsWith('XSRF-TOKEN='));
+                            const token = cookie ? decodeURIComponent(cookie.split('=')[1]) : '';
+                            return fetch(resolveAppUrl(`/api/catalog-templates/${encodeURIComponent(id)}/background`), {
+                                method: 'POST',
+                                headers: {
+                                    'Accept': 'application/json',
+                                    ...(token ? { 'X-XSRF-TOKEN': token } : {}),
+                                },
+                                body: formData,
+                            }).then(r => { if (!r.ok) return r.json().then(e => { throw e; }); return r.json(); });
+                        },
                         saveStory(data) {
                             const id = data.ID; const url = id ? `/api/story-schedules/${encodeURIComponent(id)}` : '/api/story-schedules';
                             return jsonApi(url, { method: id ? 'PUT' : 'POST', body: JSON.stringify(data) });

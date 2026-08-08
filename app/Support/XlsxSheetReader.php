@@ -125,7 +125,9 @@ class XlsxSheetReader
         foreach ($rels->Relationship as $relationship) {
             if ((string) $relationship['Id'] === $sheetRelId) {
                 $target = (string) $relationship['Target'];
-                return 'xl/'.ltrim($target, '/');
+                $target = ltrim($target, '/');
+
+                return str_starts_with($target, 'xl/') ? $target : 'xl/'.$target;
             }
         }
 

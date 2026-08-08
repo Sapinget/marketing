@@ -234,10 +234,20 @@
         }
 
         .dashboard-sidebar-shell {
-            --sidebar-active: var(--ppp-nav-text);
+            --sidebar-active-text: var(--ppp-nav-text);
+            --sidebar-active-indicator: var(--ppp-accent);
+            --sidebar-sub-active-text: var(--sidebar-active-text);
+            --sidebar-active: var(--sidebar-active-text);
             --sidebar-active-rgb: var(--ppp-nav-rgb);
             --sidebar-muted: #98a6ba;
             --sidebar-line: #e5ebf3;
+            --sidebar-active-bg: rgb(var(--sidebar-active-rgb) / 0.08);
+            --sidebar-line-width: 1px;
+            --sidebar-active-line-width: 0.24rem;
+            --sidebar-active-line-height: 0.8rem;
+            --sidebar-active-x-root: 0.875rem;
+            --sidebar-active-x-sub: 0.375rem;
+            --sidebar-active-x-sub2: 0.5rem;
             backface-visibility: hidden;
             contain: layout paint;
             background: #ffffff !important;
@@ -262,7 +272,7 @@
         }
 
         .dashboard-sidebar-shell .text-ppp-nav-text {
-            color: var(--sidebar-active) !important;
+            color: var(--sidebar-active-text) !important;
         }
 
         .dashboard-sidebar-nav {
@@ -315,27 +325,27 @@
 
         .dashboard-sidebar-shell .nav-accordion-active {
             position: relative;
-            background: transparent !important;
+            background: var(--sidebar-active-bg) !important;
             box-shadow: none !important;
             color: var(--sidebar-active) !important;
         }
 
         .dashboard-sidebar-shell .nav-accordion-active::before,
         .dashboard-sidebar-shell .sidebar-nav-item-active::before {
-            background: var(--sidebar-active);
+            background: var(--sidebar-active-indicator);
             border-radius: 0 4px 4px 0;
             content: "";
-            height: 0.8rem;
+            height: var(--sidebar-active-line-height);
             left: 0;
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            width: 0.24rem;
+            width: var(--sidebar-active-line-width);
         }
 
         .dashboard-sidebar-shell .nav-accordion-active::before,
         .dashboard-sidebar-nav > .sidebar-nav-item-active::before {
-            left: 0.625rem;
+            left: var(--sidebar-active-x-root);
         }
 
         .dashboard-sidebar-shell .nav-accordion-active,
@@ -351,47 +361,91 @@
             color: var(--sidebar-active) !important;
         }
 
-        .dashboard-sidebar-shell .nav-accordion-active,
-        .dashboard-sidebar-shell .nav-accordion-active .type-body,
-        .dashboard-sidebar-shell .nav-accordion-active .type-body-sm,
-        .dashboard-sidebar-shell .nav-accordion-active span,
         .dashboard-sidebar-shell .sidebar-nav-item-active,
         .dashboard-sidebar-shell .sidebar-nav-item-active .type-body,
         .dashboard-sidebar-shell .sidebar-nav-item-active .type-body-sm,
         .dashboard-sidebar-shell .sidebar-nav-item-active span {
-            font-weight: 400 !important;
+            font-weight: 600 !important;
+        }
+
+        .dashboard-sidebar-shell .nav-accordion-active,
+        .dashboard-sidebar-shell .nav-accordion-active .type-body,
+        .dashboard-sidebar-shell .nav-accordion-active .type-body-sm,
+        .dashboard-sidebar-shell .nav-accordion-active span {
+            font-weight: 600 !important;
         }
 
         .dashboard-sidebar-shell .sidebar-nav-item-active {
-            background: transparent !important;
+            background: var(--sidebar-active-bg) !important;
             box-shadow: none !important;
         }
 
         .dashboard-sidebar-shell .sidebar-accordion-panel {
-            margin-left: 1.25rem;
-            padding: 0.15rem 0 0.35rem 1rem;
+            border-left: var(--sidebar-line-width) solid var(--sidebar-line);
+            margin-left: 1.75rem;
+            padding: 0;
             position: relative;
         }
 
         .dashboard-sidebar-shell .sidebar-accordion-panel::before {
-            background: var(--sidebar-line);
-            border-radius: 999px;
-            bottom: 0.9rem;
-            content: "";
-            left: 0;
-            position: absolute;
-            top: 0.45rem;
-            width: 0.12rem;
+            content: none;
         }
 
         .dashboard-sidebar-shell .sidebar-accordion-panel > div {
             border-radius: 0;
-            margin: 0;
-            padding-left: 1rem !important;
+            gap: 0.5rem !important;
+            margin: 0 0 0 0.375rem !important;
+            padding: 0.55rem 1rem 0.55rem 0.75rem !important;
         }
 
         .dashboard-sidebar-shell .sidebar-accordion-panel > div::before {
-            left: 0.1rem;
+            left: var(--sidebar-active-x-sub);
+        }
+
+        .dashboard-sidebar-shell .sidebar-accordion-panel > div.sidebar-nav-item-active::before {
+            left: var(--sidebar-active-x-sub);
+        }
+
+        .dashboard-sidebar-shell .sidebar-accordion-panel [class*="pl-14"] {
+            margin-left: 1.5rem !important;
+            padding-left: 0 !important;
+        }
+
+        .dashboard-sidebar-shell .sidebar-accordion-panel [class*="pl-14"] > div {
+            border-color: var(--sidebar-line) !important;
+            border-left-width: var(--sidebar-line-width) !important;
+            padding-left: 0 !important;
+        }
+
+        .dashboard-sidebar-shell .sidebar-accordion-panel [class*="pl-14"] > div > div {
+            border-radius: 0 !important;
+            margin: 0 !important;
+            padding: 0.4rem 1rem 0.4rem 0.875rem !important;
+            position: relative;
+        }
+
+        .dashboard-sidebar-shell .sidebar-accordion-panel [class*="pl-14"] > div > div.sidebar-sub-nav-item-active {
+            background: var(--sidebar-active-bg) !important;
+            color: var(--sidebar-sub-active-text) !important;
+            font-weight: 600 !important;
+        }
+
+        .dashboard-sidebar-shell .sidebar-accordion-panel [class*="pl-14"] > div > div.sidebar-sub-nav-item-active,
+        .dashboard-sidebar-shell .sidebar-accordion-panel [class*="pl-14"] > div > div.sidebar-sub-nav-item-active span,
+        .dashboard-sidebar-shell .sidebar-accordion-panel [class*="pl-14"] > div > div.sidebar-sub-nav-item-active i {
+            color: var(--sidebar-sub-active-text) !important;
+        }
+
+        .dashboard-sidebar-shell .sidebar-accordion-panel [class*="pl-14"] > div > div.sidebar-sub-nav-item-active::before {
+            background: var(--sidebar-active-indicator);
+            border-radius: 0 4px 4px 0;
+            content: "";
+            height: var(--sidebar-active-line-height);
+            left: var(--sidebar-active-x-sub2);
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: var(--sidebar-active-line-width);
         }
 
         .dashboard-sidebar-shell .fa-chevron-down {
@@ -991,6 +1045,16 @@
         .icon-utility-button.icon-utility-danger:hover {
             background: rgb(254 242 242);
             color: var(--ppp-danger);
+        }
+
+        .icon-utility-button.icon-utility-active {
+            background: var(--ppp-accent);
+            color: #ffffff;
+        }
+
+        .icon-utility-button.icon-utility-active:hover {
+            background: color-mix(in srgb, var(--ppp-accent) 85%, black);
+            color: #ffffff;
         }
 
         .primary-cta-button {
@@ -3547,3 +3611,14 @@
         .text-body-sm     { font-size: var(--fs-body-sm); }
         .text-overline    { font-size: var(--fs-overline); }
         .text-overline-xs { font-size: var(--fs-overline-xs); }
+
+        /* ─── Image Repo – detail panel slide-in ───────────── */
+        .slide-right-enter-active,
+        .slide-right-leave-active {
+            transition: transform 0.22s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.22s ease;
+        }
+        .slide-right-enter-from,
+        .slide-right-leave-to {
+            transform: translateX(100%);
+            opacity: 0;
+        }

@@ -134,10 +134,17 @@
                 @include('dashboard.partials.menus.editor-performance')
                 @include('dashboard.partials.menus.sell-out')
                 @include('dashboard.partials.menus.harga-kompetitor')
+                @include('dashboard.partials.menus.pricelist-katalog')
+                @include('dashboard.partials.menus.apple-katalog')
+                @include('dashboard.partials.menus.img-repo')
                 @include('dashboard.partials.menus.asset-vendor-inventory')
                 @include('dashboard.partials.menus.laporan-event')
                 @include('dashboard.partials.menus.ads-log')
                 @include('dashboard.partials.menus.budgeting')
+                @include('dashboard.partials.menus.market-pasar')
+                @include('dashboard.partials.menus.market-intelijen-harga')
+                @include('dashboard.partials.menus.market-audit-harga')
+                @include('dashboard.partials.menus.market-eksternal')
 @verbatim
             </main>
         </div>

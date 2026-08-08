@@ -102,11 +102,20 @@
                 };
 
                 const handleBrowserPageShow = (event) => {
+                    if (event?.persisted && ensureRunApi().isWebProxy && !localStorage.getItem("ppp_user")) {
+                        clearSessionState("", "warning");
+                        appLoading.value = false;
+                        return;
+                    }
                     if (!event?.persisted && !currentUser.value) {
                         return;
                     }
 
-                    verifyCurrentSession("Sesi login sudah berakhir. Silakan login kembali.");
+                    appLoading.value = true;
+                    verifyCurrentSession("Sesi login sudah berakhir. Silakan login kembali.")
+                        .finally(() => {
+                            appLoading.value = false;
+                        });
                 };
 
                 const handleBrowserFocus = () => {
@@ -121,15 +130,28 @@
                     const idleFor = Date.now() - lastClientActivityAt;
                     const runner = ensureRunApi();
 
+                    if (idleFor >= SESSION_IDLE_TIMEOUT_MS) {
+                        runner
+                            .withSuccessHandler(() => {
+                                clearSessionState("Sesi login berakhir karena tidak ada aktivitas selama 15 menit.", "warning");
+                            })
+                            .withFailureHandler((error) => {
+                                if (error?.superseded) {
+                                    clearSessionState("anda sudah login di perangkat lain", "warning");
+                                    return;
+                                }
+                                clearSessionState("Sesi login berakhir karena tidak ada aktivitas selama 15 menit.", "warning");
+                            })
+                            .logout();
+                        return;
+                    }
+
                     runner
                         .withSuccessHandler((result) => {
                             if (result?.user) {
                                 currentUser.value = result.user;
                                 chatSessionConfirmed.value = true;
                                 localStorage.setItem("ppp_user", JSON.stringify(result.user));
-                            }
-                            if (idleFor >= SESSION_IDLE_TIMEOUT_MS) {
-                                clearSessionState("Sesi login berakhir karena tidak ada aktivitas selama 15 menit.", "warning");
                             }
                         })
                         .withFailureHandler((error) => {
@@ -272,6 +294,15 @@
                     if (tab === 'activity_logs') {
                         loadActivityLogs();
                     }
+                    if (tab === 'pricelist_katalog') {
+                        loadPricelistCatalogData();
+                    }
+                    if (tab === 'apple_katalog') {
+                        loadAppleData();
+                    }
+                    if (tab === 'img_repo') {
+                        imgRepoBrowse(imgRepoPath.value || '');
+                    }
                     if (tab === 'distribution') {
                         loadDistributionData();
                     }
@@ -294,6 +325,18 @@
                     };
                     const dataKey = TAB_DATA_MAP[tab];
                     if (dataKey) loadTabData(dataKey);
+
+                    // Market Intelligence — direct fetch to Laravel API (not Apps Script)
+                    if (tab === 'market_pasar') loadMarketPasar();
+                    if (tab === 'market_intelijen_harga') { loadMarketIntelijenHarga(); loadMarketAuditHarga(); }
+                    if (tab === 'market_audit_harga') loadMarketAuditHarga();
+                    if (['market_eksternal', 'market_ext_goodponsel', 'market_ext_devstore', 'market_ext_rumahgadget'].includes(tab)) {
+                        const srcKey = _marketEksternalTabSourceMap[tab] || '';
+                        eksternalSourceFilter.value = srcKey;
+                        eksternalChangesDirection.value = 'all';
+                        loadMarketEksternal();
+                        loadMarketEksternalChanges();
+                    }
                 };
                 const resumeActiveTabAfterBootstrap = () => {
                     if (!currentUser.value) {

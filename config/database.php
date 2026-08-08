@@ -43,6 +43,17 @@ return [
             'transaction_mode' => 'DEFERRED',
         ],
 
+        'sqlite_bot' => [
+            'driver' => 'sqlite',
+            'database' => env('BOT_DB_DATABASE'),
+            'prefix' => '',
+            'foreign_key_constraints' => false,
+            'busy_timeout' => 5000,
+            'journal_mode' => 'WAL',
+            'synchronous' => 'NORMAL',
+            'transaction_mode' => 'DEFERRED',
+        ],
+
         'mysql' => [
             'driver' => 'mysql',
             'url' => env('DB_URL'),

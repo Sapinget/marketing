@@ -4,6 +4,9 @@ use App\Models\ChatMessage;
 use App\Support\MasterPlanDistributionSync;
 use App\Support\DashboardAuth;
 use App\Support\MetaIgImportNormalizer;
+use App\Support\AppleSheetImporter;
+use App\Support\PricelistSheetImporter;
+use App\Support\XlsxSheetReader;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -1713,6 +1716,47 @@ $fromDb = fn ($row, array $override = []) => array_merge(
     $override
 );
 
+$catalogTemplatePayload = function ($row): array {
+    $layoutConfig = json_decode($row->layout_config ?? '{}', true) ?: [];
+
+    return [
+        'ID' => $row->source_id,
+        'name' => $row->name,
+        'format' => $row->format,
+        'background_path' => $row->background_path,
+        'background_url' => filled($row->background_path) ? '/api/catalog-templates/background/'.rawurlencode((string) $row->background_path) : null,
+        'canvas_width' => (int) $row->canvas_width,
+        'canvas_height' => (int) $row->canvas_height,
+        'layout_config' => $layoutConfig,
+        'is_active' => (bool) $row->is_active,
+    ];
+};
+
+$pricelistProductPayload = function ($row): array {
+    return [
+        'ID' => $row->source_id,
+        'source_sheet' => $row->source_sheet,
+        'source_row' => (int) $row->source_row,
+        'urut' => $row->urut === null ? null : (int) $row->urut,
+        'kategori' => $row->kategori,
+        'brand' => $row->brand,
+        'nama_produk' => $row->nama_produk,
+        'storage' => $row->storage,
+        'ram' => $row->ram,
+        'warna' => $row->warna,
+        'harga_nasional' => $row->harga_nasional === null ? null : (int) $row->harga_nasional,
+        'special_price' => $row->special_price === null ? null : (int) $row->special_price,
+        'harga_spesial' => $row->harga_spesial === null ? null : (int) $row->harga_spesial,
+        'harga_srp' => $row->harga_srp === null ? null : (int) $row->harga_srp,
+        'harga_jual' => $row->harga_jual === null ? null : (int) $row->harga_jual,
+        'harga_online' => $row->harga_online === null ? null : (int) $row->harga_online,
+        'harga_modal' => $row->harga_modal === null ? null : (int) $row->harga_modal,
+        'harga_lainnya' => json_decode($row->harga_lainnya ?? '{}', true) ?: [],
+        'is_active' => (bool) $row->is_active,
+        'raw_payload' => json_decode($row->raw_payload ?? '{}', true) ?: [],
+    ];
+};
+
 Route::get('/api/unboxing', function () use ($fromDb) {
     return response()->json(['data' => DB::table('unboxing')->orderByDesc('upload_date')->get()->map(fn ($r) => $fromDb($r, [
         'Nama'        => $r->nama,
@@ -1874,6 +1918,648 @@ Route::put('/api/harga-kompetitor/{sourceId}', $genericUpdate('harga_kompetitor'
     return ['nama_produk' => $p['Nama_Produk'] ?? null, 'kategori' => $p['KATEGORI'] ?? null, 'brand' => $p['BRAND'] ?? null, 'seri' => $p['SERI'] ?? null, 'ram' => $p['RAM'] ?? null, 'internal' => $p['INTERNAL'] ?? null, 'size' => $p['SIZE'] ?? null, 'warna' => $p['WARNA'] ?? null, 'harga_distributor_1' => (int) ($p['Harga_Distributor_1'] ?? 0), 'harga_distributor_2' => (int) ($p['Harga_Distributor_2'] ?? 0), 'harga_kompetitor' => (int) ($p['Harga_Kompetitor'] ?? 0), 'margin_profit' => (int) ($p['Margin_Profit'] ?? 0), 'harga_rencana_jual' => (int) ($p['Harga_Rencana_Jual'] ?? 0), 'tanggal_cek' => $nullableDate($p['Tanggal_Cek'] ?? null), 'catatan' => $p['Catatan'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()];
 }));
 Route::delete('/api/harga-kompetitor/{sourceId}', $genericDelete('harga_kompetitor'));
+
+// Market Intelligence (reads from BOT SQLite — read-only)
+
+$marketBrandFamilyMap = [
+    'APPLE' => 'Apple', 'IPHONE' => 'Apple', 'IPAD' => 'Apple', 'MACBOOK' => 'Apple',
+    'AW' => 'Apple', 'AIRPODS' => 'Apple', 'APPLE WATCH' => 'Apple', 'APPLE PENCIL' => 'Apple',
+    'SAMSUNG' => 'Samsung', 'GALAXY' => 'Samsung',
+    'XIAOMI' => 'Xiaomi', 'REDMI' => 'Xiaomi', 'POCO' => 'Xiaomi',
+    'OPPO' => 'Oppo', 'VIVO' => 'Vivo', 'REALME' => 'Realme',
+    'INFINIX' => 'Infinix', 'TECNO' => 'Tecno', 'ITEL' => 'Itel',
+    'NUBIA' => 'Nubia', 'HONOR' => 'Honor', 'HUAWEI' => 'Huawei',
+    'NOKIA' => 'Nokia', 'GOOGLE' => 'Google', 'PIXEL' => 'Google', 'MOTOROLA' => 'Motorola',
+];
+
+$marketCanonicalBrand = function (?string $value) use ($marketBrandFamilyMap): string {
+    $first = strtoupper(trim(preg_split('/[\s\[]/u', trim((string) $value))[0] ?? ''));
+    if ($first === '') {
+        return '';
+    }
+
+    return $marketBrandFamilyMap[$first] ?? ucfirst(strtolower($first));
+};
+
+$marketNormalizeProductPart = function (?string $value) use ($marketBrandFamilyMap): string {
+    $text = trim((string) $value);
+    if ($text === '') {
+        return '';
+    }
+
+    $text = str_replace(['_', '|'], ' ', $text);
+    $text = preg_replace_callback('/\s*[\[\(]\s*([^\]\)]+)\s*[\]\)]/u', function ($matches) use ($marketBrandFamilyMap) {
+        $tag = strtoupper(trim($matches[1] ?? ''));
+        if (isset($marketBrandFamilyMap[$tag])) {
+            return '';
+        }
+        if (preg_match('/\b(IPAD\s*&\s*TAB|TABLET|SMARTPHONE)\b/u', $tag)) {
+            return '';
+        }
+
+        $tag = preg_replace('/\b(BRAND\s+NEW|NEW|BARU|REGULER)\b/u', '', $tag);
+        $tag = preg_replace('/\s+/', ' ', trim($tag));
+
+        return $tag === '' ? '' : ' ' . $tag . ' ';
+    }, $text);
+    $text = preg_replace('/[^\p{L}\p{N}\s\/,+\-.&]/u', ' ', $text);
+    $text = preg_replace('/\s+/', ' ', trim($text));
+    $text = strtoupper($text);
+    $text = preg_replace('/\bGIFT\s+BOX\b/u', 'GIFTBOX', $text);
+    $text = preg_replace('/\b(\d+)\s*\/\s*(\d+)\s*(GB|TB|MB)\b/u', '$1$3/$2$3', $text);
+    $text = preg_replace('/\b(\d+)\s*\/\s*(\d+)(GB|TB|MB)\b/u', '$1$3/$2$3', $text);
+    $text = preg_replace('/\b(\d+)(GB|TB|MB)\s+(\d+)(GB|TB|MB)\b/u', '$1$2/$3$4', $text);
+
+    $tokens = preg_split('/(\s+|[\/,+-])/', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
+    $normalized = array_map(function ($token) {
+        $upper = strtoupper(trim($token));
+        if ($upper === '' || preg_match('/^(\s+|[\/,+-])$/', $token)) {
+            return $token;
+        }
+        if (preg_match('/^\d+(GB|TB|MB)$/i', $token) || preg_match('/^\d+G$/i', $token)) {
+            return $upper;
+        }
+        if (preg_match('/^(\d{1,2})(PROMAX|PRO|PLUS|MAX|MINI)$/i', $token, $matches)) {
+            return $matches[1] . ' ' . strtoupper($matches[2] === 'PROMAX' ? 'PRO MAX' : $matches[2]);
+        }
+        if (preg_match('/^(S\d{2})(ULTRA|PLUS|FE)$/i', $token, $matches)) {
+            return strtoupper($matches[1]) . ' ' . strtoupper($matches[2]);
+        }
+
+        return $upper;
+    }, $tokens ?: []);
+
+    return preg_replace('/\s+/', ' ', trim(implode('', $normalized)));
+};
+
+$marketNormalizeConditionPart = function (?string $kondisi, ?string $kondisiDetail = null) use ($marketNormalizeProductPart): string {
+    $condition = $marketNormalizeProductPart(trim((string) $kondisi . ' ' . (string) $kondisiDetail));
+    $condition = preg_replace('/\bNEW\b/u', 'BARU', $condition);
+    $condition = preg_replace('/\bREGULER\b/u', '', $condition);
+    $condition = preg_replace('/\s+/', ' ', trim(str_replace('-', ' ', $condition)));
+    $tokens = array_values(array_unique(array_filter(explode(' ', $condition), fn ($token) => $token !== '')));
+
+    return implode(' ', $tokens);
+};
+
+$marketInferConditionFromName = function (?string $nama) use ($marketNormalizeConditionPart): string {
+    $name = strtoupper((string) $nama);
+    if (preg_match('/\b(BRAND\s+NEW|NEW|BARU)\b/u', $name)) {
+        return 'BARU';
+    }
+    if (preg_match('/\b(SECOND|BEKAS|SEKEN|EX)\b/u', $name)) {
+        return $marketNormalizeConditionPart('SECOND');
+    }
+
+    return '';
+};
+
+$marketProductLabel = function (?string $nama, ?string $varian = null, ?string $kondisi = null, ?string $kondisiDetail = null) use ($marketNormalizeProductPart, $marketNormalizeConditionPart, $marketInferConditionFromName): string {
+    $parts = [
+        $marketNormalizeProductPart($nama),
+        $marketNormalizeProductPart($varian),
+        $marketNormalizeConditionPart(trim($marketInferConditionFromName($nama) . ' ' . (string) $kondisi), $kondisiDetail),
+    ];
+
+    $segments = [];
+    foreach ($parts as $part) {
+        if ($part === '') {
+            continue;
+        }
+        $alreadyIncluded = false;
+        foreach ($segments as $segment) {
+            if ($segment === $part || str_contains($segment, $part) || str_contains($part, $segment)) {
+                $alreadyIncluded = true;
+                break;
+            }
+        }
+        if (! $alreadyIncluded) {
+            $segments[] = $part;
+        }
+    }
+
+    return $segments !== [] ? implode(' · ', $segments) : '-';
+};
+
+$marketBrandFromProduct = function (?string $nama) use ($marketCanonicalBrand): string {
+    $brand = $marketCanonicalBrand($nama);
+    return $brand !== '' ? $brand : '-';
+};
+
+Route::get('/api/market/pasar', function () {
+    $brandFamilyMap = [
+        'APPLE' => 'Apple', 'IPHONE' => 'Apple', 'IPAD' => 'Apple', 'MACBOOK' => 'Apple',
+        'AW' => 'Apple', 'AIRPODS' => 'Apple', 'APPLE WATCH' => 'Apple', 'APPLE PENCIL' => 'Apple',
+        'SAMSUNG' => 'Samsung', 'GALAXY' => 'Samsung',
+        'XIAOMI' => 'Xiaomi', 'REDMI' => 'Xiaomi', 'POCO' => 'Xiaomi',
+        'OPPO' => 'Oppo', 'VIVO' => 'Vivo', 'REALME' => 'Realme',
+        'INFINIX' => 'Infinix', 'TECNO' => 'Tecno', 'ITEL' => 'Itel',
+        'NUBIA' => 'Nubia', 'HONOR' => 'Honor', 'HUAWEI' => 'Huawei',
+        'NOKIA' => 'Nokia', 'GOOGLE' => 'Google', 'MOTOROLA' => 'Motorola',
+    ];
+    $canonicalBrand = function (string $nama) use ($brandFamilyMap): string {
+        $first = strtoupper(trim(preg_split('/[\s\[]/u', trim($nama))[0] ?? ''));
+        return $brandFamilyMap[$first] ?? ucfirst(strtolower($first));
+    };
+    $medianFn = function ($rows) {
+        $sorted = $rows->sortBy('harga')->pluck('harga')->values();
+        $cnt = $sorted->count();
+        if ($cnt === 0) return 0;
+        $mid = intdiv($cnt, 2);
+        return (float) ($cnt % 2 === 0 ? ($sorted[$mid - 1] + $sorted[$mid]) / 2 : $sorted[$mid]);
+    };
+
+    $botDb  = DB::connection('sqlite_bot');
+    $sources = $botDb->table('external_market_sources')->get();
+    $prices  = $botDb->table('external_market_prices')->get();
+
+    // Group by source for KPI cards
+    $bySource = $prices->groupBy('sumber')->map(fn ($rows) => [
+        'count'        => $rows->count(),
+        'min_harga'    => $rows->min('harga'),
+        'max_harga'    => $rows->max('harga'),
+        'avg_harga'    => round($rows->avg('harga')),
+        'median_harga' => round($medianFn($rows)),
+    ]);
+
+    // Group by canonical brand (matches bot's bali_competitor logic)
+    $byBrand = $prices->groupBy(fn ($r) => $canonicalBrand($r->nama ?? ''))
+        ->filter(fn ($rows, $brand) => $brand !== '')
+        ->map(fn ($rows, $brand) => [
+            'brand'        => $brand,
+            'count'        => $rows->count(),
+            'median_harga' => round($medianFn($rows)),
+        ])
+        ->sortByDesc('count')
+        ->take(10)
+        ->values();
+
+    // StatCounter market share data
+    $botDbPath = env('BOT_DB_DATABASE', '');
+    $marketGlobal    = [];
+    $marketIndonesia = [];
+    if ($botDbPath) {
+        $botDir = dirname(dirname(dirname($botDbPath)));
+        $wwFile = $botDir . '/runtime/cache/market/statcounter_ww.json';
+        $idFile = $botDir . '/runtime/cache/market/statcounter_id.json';
+        if (file_exists($wwFile)) {
+            $ww = json_decode(file_get_contents($wwFile), true) ?: [];
+            $marketGlobal = array_slice($ww['items'] ?? [], 0, 10);
+        }
+        if (file_exists($idFile)) {
+            $id = json_decode(file_get_contents($idFile), true) ?: [];
+            $marketIndonesia = array_slice($id['items'] ?? [], 0, 10);
+        }
+    }
+
+    // kita_mix: brand sales mix from bot SQLite sales table
+    $kitaMix = [];
+    try {
+        $placeholder = ['', 'BARU', 'SECOND', 'NEW', 'BEKAS', 'SEKEN', 'LAINNYA'];
+        $salesRows = $botDb->table('sales')
+            ->selectRaw('brand, COUNT(*) as qty')
+            ->groupBy('brand')
+            ->orderByDesc('qty')
+            ->limit(50)
+            ->get()
+            ->filter(fn ($sr) => !in_array(strtoupper(trim($sr->brand ?? '')), $placeholder));
+        $byNormBrand = [];
+        foreach ($salesRows as $sr) {
+            $nb = $canonicalBrand($sr->brand ?? '');
+            if ($nb) {
+                $byNormBrand[$nb] = ($byNormBrand[$nb] ?? 0) + (int) $sr->qty;
+            }
+        }
+        arsort($byNormBrand);
+        $byNormBrand = array_slice($byNormBrand, 0, 15, true);
+        $totalQty = array_sum($byNormBrand);
+        foreach ($byNormBrand as $brand => $qty) {
+            $kitaMix[] = ['brand' => $brand, 'qty' => $qty, 'pct' => $totalQty > 0 ? round($qty / $totalQty * 100, 2) : 0];
+        }
+    } catch (\Exception $e) {
+        $kitaMix = [];
+    }
+
+    return response()->json([
+        'sources'          => $sources,
+        'by_source'        => $bySource,
+        'bali_competitor'  => $byBrand,
+        'competitors'      => $byBrand,
+        'total'            => $prices->count(),
+        'updated_at'       => $prices->max('captured_at') ?? null,
+        'market_global'    => $marketGlobal,
+        'market_indonesia' => $marketIndonesia,
+        'kita_mix'         => $kitaMix,
+    ]);
+});
+
+Route::get('/api/market/intelijen-harga', function () use ($marketProductLabel) {
+    $botDb = DB::connection('sqlite_bot');
+    $latestBatch = $botDb->table('pura_price_snapshots')->orderByDesc('_id')->value('batch_id');
+    $snapshots = $latestBatch
+        ? $botDb->table('pura_price_snapshots')->where('batch_id', $latestBatch)->get()
+        : collect();
+    $extPrices = $botDb->table('external_market_prices')
+        ->orderBy('nama')
+        ->get();
+    $byNameSrc = $extPrices->groupBy(fn ($r) => strtolower(trim($r->nama ?? '')))->map(
+        fn ($rows) => $rows->groupBy(fn ($r) => strtolower(trim($r->sumber ?? '')))->map(fn ($g) => $g->min('harga'))
+    );
+    $compared = $snapshots->map(function ($snap) use ($byNameSrc, $marketProductLabel) {
+        $key     = strtolower(trim($snap->nama ?? ''));
+        $srcMap  = $byNameSrc->get($key, collect());
+        $hargaGood  = $srcMap->get('good ponsel');
+        $hargaRumah = $srcMap->get('rumah gadget bali');
+        $hargaDev   = $srcMap->get('devstore');
+        $allExt  = array_filter([$hargaGood, $hargaRumah, $hargaDev], fn ($v) => $v !== null);
+        $extMin  = count($allExt) > 0 ? min($allExt) : null;
+        $puraHarga = (float) ($snap->harga ?? 0);
+        $gap    = $extMin !== null ? $puraHarga - $extMin : null;
+        $gapPct = ($extMin !== null && $extMin > 0) ? round(($puraHarga - $extMin) / $extMin * 100, 1) : null;
+        $prioritas = match (true) {
+            $gapPct !== null && $gapPct > 5  => 'Mahal',
+            $gapPct !== null && $gapPct < -5 => 'Murah',
+            $gapPct !== null                 => 'OK',
+            default                          => null,
+        };
+        return [
+            'nama'               => $snap->nama,
+            'varian'             => $snap->varian ?? '',
+            'kondisi'            => $snap->kondisi ?? '',
+            'produk'             => $marketProductLabel($snap->nama ?? '', $snap->varian ?? '', $snap->kondisi ?? ''),
+            'harga_pura'         => $puraHarga,
+            'harga_goodponsel'   => $hargaGood   !== null ? (int) round($hargaGood) : null,
+            'harga_rumahgadget'  => $hargaRumah  !== null ? (int) round($hargaRumah) : null,
+            'harga_devstore'     => $hargaDev    !== null ? (int) round($hargaDev) : null,
+            'harga_ext_min'      => $extMin,
+            'selisih'            => $gap !== null ? (int) round($gap) : null,
+            'gap_pct'            => $gapPct,
+            'prioritas'          => $prioritas,
+        ];
+    })->filter(fn ($r) => $r['harga_ext_min'] !== null)->values();
+    $tooExpensive = $compared->filter(fn ($r) => $r['gap_pct'] > 5)->count();
+    $tooCheap     = $compared->filter(fn ($r) => $r['gap_pct'] < -5)->count();
+    $matched      = $compared->filter(fn ($r) => abs($r['gap_pct']) <= 5)->count();
+    return response()->json([
+        'summary' => [
+            'too_expensive' => $tooExpensive,
+            'too_cheap'     => $tooCheap,
+            'matched'       => $matched,
+            'total'         => $compared->count(),
+        ],
+        'rows' => $compared->values(),
+    ]);
+});
+
+Route::get('/api/market/pura-price-changes', function () use ($marketProductLabel) {
+    $botDb     = DB::connection('sqlite_bot');
+    $direction = request('direction', 'all');
+    $query     = $botDb->table('pura_price_changes')->orderByDesc('detected_at');
+    if ($direction === 'naik')  $query->where('selisih', '>', 0);
+    if ($direction === 'turun') $query->where('selisih', '<', 0);
+    $changes = $query->limit(500)->get()->map(fn ($r) => [
+        'nama'        => $r->nama,
+        'varian'      => $r->varian ?? '',
+        'kondisi'     => $r->kondisi ?? '',
+        'produk'      => $marketProductLabel($r->nama ?? '', $r->varian ?? '', $r->kondisi ?? ''),
+        'gudang'      => $r->gudang ?? '',
+        'harga_lama'  => (int) ($r->harga_lama ?? 0),
+        'harga_baru'  => (int) ($r->harga_baru ?? 0),
+        'selisih'     => (int) ($r->selisih ?? 0),
+        'selisih_pct' => (float) ($r->selisih_pct ?? 0),
+        'detected_at' => $r->detected_at ?? null,
+    ]);
+    $allChanges = $botDb->table('pura_price_changes')->get();
+    return response()->json([
+        'summary' => [
+            'total' => $allChanges->count(),
+            'naik'  => $allChanges->where('selisih', '>', 0)->count(),
+            'turun' => $allChanges->where('selisih', '<', 0)->count(),
+        ],
+        'rows' => $changes->values(),
+    ]);
+});
+
+Route::get('/api/market/audit-harga', function () use ($marketProductLabel) {
+    $botDbPath = env('BOT_DB_DATABASE', '');
+    $botRoot = $botDbPath ? dirname(dirname(dirname($botDbPath))) : '';
+    $downloadDir = $botRoot ? $botRoot.'/Download' : '';
+    $files = $downloadDir && is_dir($downloadDir)
+        ? glob($downloadDir.'/AUDIT_HARGA_*.xlsx')
+        : [];
+
+    if (! $files) {
+        return response()->json([
+            'summary_text' => 'AUDIT HARGA PURA\nBelum ada cache audit harga ERP.',
+            'summary' => [
+                'diff_count' => 0,
+                'web_diff_count' => 0,
+                'sheet_diff_count' => 0,
+            ],
+            'rows' => [],
+        ]);
+    }
+
+    usort($files, fn ($a, $b) => filemtime($b) <=> filemtime($a));
+    $path = $files[0];
+    $reader = new XlsxSheetReader();
+    $sheetNames = $reader->sheetNames($path);
+    $sheetName = in_array('AUDIT HARGA', $sheetNames, true) ? 'AUDIT HARGA' : ($sheetNames[0] ?? '');
+    $rows = $sheetName ? collect($reader->rows($path, $sheetName))->take(500)->map(function ($row) use ($marketProductLabel) {
+        $normalizeNumber = fn ($value) => $value === null || $value === ''
+            ? null
+            : (int) round((float) $value);
+        $normalizePct = fn ($value) => $value === null || $value === ''
+            ? null
+            : (float) $value;
+
+        $product = $marketProductLabel($row['Produk'] ?? '', $row['Varian'] ?? '', $row['Kondisi'] ?? '');
+
+        return [
+            'Produk'             => $product,
+            'Varian'             => $row['Varian'] ?? '',
+            'Kondisi'            => $row['Kondisi'] ?? '',
+            'Toko'               => $row['Toko'] ?? '',
+            'H. Dashboard'       => $normalizeNumber($row['H. Dashboard'] ?? null),
+            'H. Website'         => $normalizeNumber($row['H. Website'] ?? null),
+            'H. Spreadsheet'     => $normalizeNumber($row['H. Spreadsheet'] ?? null),
+            'Selisih Web (Rp)'   => $normalizeNumber($row['Selisih Web (Rp)'] ?? null),
+            'Selisih Web (%)'    => $normalizePct($row['Selisih Web (%)'] ?? null),
+            'Selisih Sheet (Rp)' => $normalizeNumber($row['Selisih Sheet (Rp)'] ?? null),
+            'Selisih Sheet (%)'  => $normalizePct($row['Selisih Sheet (%)'] ?? null),
+        ];
+    })->values() : collect();
+
+    return response()->json([
+        'summary_text' => 'AUDIT HARGA PURA\nData dari cache audit ERP terakhir.',
+        'generated_at' => date('Y-m-d H:i:s', filemtime($path)),
+        'summary' => [
+            'diff_count' => $rows->count(),
+            'web_diff_count' => $rows->filter(fn ($row) => $row['Selisih Web (Rp)'] !== null)->count(),
+            'sheet_diff_count' => $rows->filter(fn ($row) => $row['Selisih Sheet (Rp)'] !== null)->count(),
+        ],
+        'rows' => $rows,
+    ]);
+});
+
+Route::get('/api/market/eksternal', function () use ($marketProductLabel, $marketBrandFromProduct) {
+    $botDb  = DB::connection('sqlite_bot');
+    $sourceInput = request('source', request('market_source', ''));
+    $sourceMap = [
+        'goodponsel'       => 'Good Ponsel',
+        'goodponselbali'   => 'Good Ponsel',
+        'devstore'         => 'Devstore',
+        'rumahgadget'      => 'Rumah Gadget Bali',
+        'rumahgadgetbali'  => 'Rumah Gadget Bali',
+    ];
+    $sourceKey = strtolower(preg_replace('/[^a-z0-9]+/', '', (string) $sourceInput));
+    $requestedSource = $sourceInput !== '' ? ($sourceMap[$sourceKey] ?? (string) $sourceInput) : '';
+    $requestedBrand = strtoupper(trim((string) request('brand', request('market_brand', ''))));
+    $requestedPriceBand = trim((string) request('price_band', request('market_price_band', '')));
+    $extractModel = function (?string $text): string {
+        $raw = strtoupper((string) $text);
+        $patterns = [
+            '/(IPHONE\s+\d+(?:\s+(?:PRO\s+MAX|PRO|PLUS|MINI|MAX))?)/u',
+            '/(SAMSUNG\s+(?:GALAXY\s+)?[A-Z]\d+\+?)/u',
+            '/(REDMI\s+NOTE\s+\d+\+?)/u',
+            '/(XIAOMI\s+\d+[A-Z0-9\s]*)/u',
+            '/(POCO\s+[A-Z0-9\s]+)/u',
+            '/(INFINIX\s+[A-Z0-9\s]+)/u',
+            '/(TECNO\s+[A-Z0-9\s]+)/u',
+            '/(VIVO\s+[A-Z0-9\s]+)/u',
+            '/(OPPO\s+[A-Z0-9\s]+)/u',
+            '/(REALME\s+[A-Z0-9\s]+)/u',
+        ];
+        foreach ($patterns as $pattern) {
+            if (preg_match($pattern, $raw, $match)) {
+                return preg_replace('/\s+/', ' ', trim($match[1]));
+            }
+        }
+
+        return '';
+    };
+    $cleanModelName = function (?string $name) use ($extractModel, $marketProductLabel): string {
+        $clean = preg_replace('/\s*\[.*?\]\s*/u', ' ', (string) $name);
+        $clean = preg_replace('/\b(brand\s*new|baru|new|second|seken|bekas|used|garansi\s*resmi|garansi\s*on|garansi\s*off|official|original)\b/iu', ' ', $clean);
+        $clean = preg_replace('/\s*[-:]+\s*/u', ' ', $clean);
+        $clean = preg_replace('/\s+/', ' ', trim(strtoupper($clean)));
+
+        return $extractModel($clean) ?: ($clean ?: $marketProductLabel($name));
+    };
+    $brandFromModel = function (?string $model): string {
+        $text = strtoupper(trim((string) $model));
+        foreach (['IPHONE', 'SAMSUNG', 'OPPO', 'VIVO', 'XIAOMI', 'REDMI', 'POCO', 'REALME', 'INFINIX', 'TECNO', 'ITEL', 'NOKIA', 'HUAWEI', 'HONOR'] as $token) {
+            if (preg_match('/(^|[^A-Z0-9])'.preg_quote($token, '/').'([^A-Z0-9]|$)/u', $text)) {
+                return $token;
+            }
+        }
+        $clean = preg_replace('/^(BARU|BEKAS|SECOND|NEW|BNIB|EX DISPLAY)\s*[-:]*\s*/u', '', $text);
+        $parts = preg_split('/\s+/', trim($clean));
+
+        return $parts[0] ?? '-';
+    };
+    $priceBand = function (float $harga): string {
+        if ($harga < 5_000_000) return '<5jt';
+        if ($harga < 10_000_000) return '5-10jt';
+        if ($harga < 15_000_000) return '10-15jt';
+        if ($harga < 20_000_000) return '15-20jt';
+        return '20jt+';
+    };
+    $conditionDetail = function (?string $kondisi, ?string $detail): string {
+        $condition = strtoupper(trim((string) $kondisi));
+        $conditionDetail = strtoupper(trim((string) $detail));
+        if ($conditionDetail !== '') return $conditionDetail;
+        return match ($condition) {
+            'SECOND_RESMI' => 'EX_IBOX',
+            'SECOND_BEACUKAI' => 'BEACUKAI',
+            'SECOND' => 'SECOND',
+            'NEW_OFFICIAL' => 'GARANSI_RESMI',
+            'NEW' => 'NEW',
+            default => '-',
+        };
+    };
+    $allRows = $botDb->table('external_market_prices')->orderBy('nama')->orderBy('varian')->get()
+        ->map(function ($r) use ($cleanModelName, $brandFromModel, $priceBand, $conditionDetail) {
+            $harga = (float) ($r->harga ?? 0);
+            $model = $cleanModelName($r->nama ?? '');
+            $kondisi = strtoupper(trim((string) ($r->kondisi ?? ''))) ?: '-';
+
+            return [
+                'model' => $model,
+                'brand' => $brandFromModel($model ?: ($r->nama ?? '')),
+                'harga' => $harga,
+                'sumber' => trim((string) ($r->sumber ?? '-')),
+                'varian' => trim((string) ($r->varian ?? '')),
+                'kondisi' => $kondisi,
+                'kondisi_raw' => $kondisi,
+                'kondisi_detail' => $conditionDetail($kondisi, $r->kondisi_detail ?? ''),
+                'raw_name' => preg_replace('/\s+/', ' ', trim(strtoupper((string) ($r->nama ?? '')))),
+                'raw_condition' => mb_substr((string) ($r->raw_condition ?? ''), 0, 120),
+                'price_band' => $priceBand($harga),
+                'captured_at' => $r->captured_at ?? null,
+            ];
+        })
+        ->filter(fn ($row) => $row['harga'] > 0 && $row['model'] !== '')
+        ->values();
+    $baseFilterRows = $allRows;
+    if ($requestedSource !== '') {
+        $baseFilterRows = $baseFilterRows->filter(fn ($row) => strtolower($row['sumber']) === strtolower($requestedSource))->values();
+    }
+    if ($requestedPriceBand !== '') {
+        $baseFilterRows = $baseFilterRows->filter(fn ($row) => $row['price_band'] === $requestedPriceBand)->values();
+    }
+    $filterOptions = [
+        'brands' => $baseFilterRows->pluck('brand')->filter(fn ($v) => trim((string) $v) !== '' && $v !== '-')->unique()->sort()->take(100)->values(),
+        'sources' => $allRows->pluck('sumber')->filter(fn ($v) => trim((string) $v) !== '' && $v !== '-')->unique()->sort()->take(20)->values(),
+        'kondisi_details' => $baseFilterRows->pluck('kondisi_detail')->filter(fn ($v) => trim((string) $v) !== '' && $v !== '-')->unique()->sort()->take(20)->values(),
+        'price_bands' => ['<5jt', '5-10jt', '10-15jt', '15-20jt', '20jt+'],
+    ];
+    $filteredRows = $requestedBrand !== ''
+        ? $baseFilterRows->filter(fn ($row) => strtoupper($row['brand']) === $requestedBrand)->values()
+        : $baseFilterRows;
+    $sources = $filteredRows->pluck('sumber')->unique()->sort()->values();
+    $brands = $filteredRows->pluck('brand')->filter(fn ($v) => trim((string) $v) !== '' && $v !== '-')->unique()->sort()->values();
+    $bySource = $filteredRows->groupBy('sumber')->map(fn ($g) => $g->count());
+    $median = function ($rows): float {
+        $values = $rows->pluck('harga')->sort()->values();
+        $count = $values->count();
+        if ($count === 0) return 0;
+        $mid = intdiv($count, 2);
+        return $count % 2 === 0 ? (((float) $values[$mid - 1] + (float) $values[$mid]) / 2) : (float) $values[$mid];
+    };
+    $topModels = $filteredRows->groupBy('model')
+        ->map(fn ($g, $model) => ['label' => $model, 'nilai' => $g->count(), 'value' => $g->count(), 'median_price' => (int) round($median($g))])
+        ->sortBy([['nilai', 'desc'], ['median_price', 'desc']])
+        ->take(10)
+        ->values();
+    $topBrands = $filteredRows->groupBy('brand')
+        ->filter(fn ($g, $brand) => trim((string) $brand) !== '')
+        ->map(fn ($g, $brand) => ['label' => $brand, 'nilai' => $g->count(), 'value' => $g->count(), 'median_price' => (int) round($median($g))])
+        ->sortBy([['nilai', 'desc'], ['median_price', 'desc']])
+        ->take(10)
+        ->values();
+    $priceBands = $filteredRows->groupBy('price_band')
+        ->map(fn ($g, $band) => ['label' => $band, 'nilai' => $g->count(), 'value' => $g->count()])
+        ->sortBy(fn ($row) => array_search($row['label'], ['<5jt', '5-10jt', '10-15jt', '15-20jt', '20jt+'], true))
+        ->values();
+    $newEntries = $filteredRows->sortBy([
+            ['harga', 'desc'],
+            ['model', 'asc'],
+        ])
+        ->unique(fn ($row) => implode('|', [$row['model'], $row['sumber'], $row['varian'], $row['kondisi']]))
+        ->map(fn ($row) => [
+            'nama' => $row['model'],
+            'model' => $row['model'],
+            'produk' => $marketProductLabel($row['model'], $row['varian'], $row['kondisi']),
+            'brand' => $row['brand'],
+            'sumber' => $row['sumber'],
+            'harga' => (int) round($row['harga']),
+            'kondisi' => $row['kondisi'],
+            'kondisi_raw' => $row['kondisi_raw'],
+            'kondisi_detail' => $row['kondisi_detail'],
+            'varian' => $row['varian'],
+            'updated_at' => $row['captured_at'],
+        ])
+        ->values();
+    $sourceRows = $bySource->map(fn ($count, $source) => [
+        'source' => $source,
+        'count' => $count,
+        'ok' => $count > 0,
+        'cache' => null,
+        'error' => null,
+    ])->values();
+    $summary = [
+        'data_scope' => 'external_only',
+        'internal_sources_used' => [],
+        'listing_count' => $filteredRows->count(),
+        'source_count' => $sources->count(),
+        'brand_count' => $brands->count(),
+        'model_count' => $filteredRows->pluck('model')->unique()->count(),
+        'active_filters' => [
+            'brand' => $requestedBrand ?: null,
+            'source' => $requestedSource ?: null,
+            'price_band' => $requestedPriceBand ?: null,
+        ],
+    ];
+    $externalReport = [
+        'summary' => $summary,
+        'top_models' => $topModels,
+        'top_brands' => $topBrands,
+        'price_bands' => $priceBands,
+        'new_entries' => $newEntries,
+        'sources' => $sourceRows,
+        'filters' => $filterOptions,
+    ];
+    return response()->json([
+        'rows'      => $newEntries,
+        'sources'   => $sources,
+        'brands'    => $brands,
+        'by_source' => $bySource,
+        'source_rows' => $sourceRows,
+        'summary' => $summary,
+        'top_models' => $topModels,
+        'top_brands' => $topBrands,
+        'price_bands' => $priceBands,
+        'new_entries' => $newEntries,
+        'filters' => $filterOptions,
+        'external_market_report' => $externalReport,
+        'total'     => $filteredRows->count(),
+    ]);
+});
+
+Route::get('/api/market/eksternal-changes', function () use ($marketProductLabel) {
+    $botDb     = DB::connection('sqlite_bot');
+    $source    = request('source', '');
+    $direction = request('direction', 'all');
+    $limit     = max(1, min(500, (int) request('limit', 100)));
+    $ackRaw    = request('acknowledged', 'all');
+    $query     = $botDb->table('external_market_price_changes')->orderByDesc('detected_at');
+    if ($ackRaw !== '' && $ackRaw !== 'all') {
+        $query->where('acknowledged', (int) ($ackRaw === '1'));
+    }
+    if ($source !== '') {
+        $sourceMap  = ['goodponsel' => 'goodponsel', 'goodponselbali' => 'goodponsel', 'devstore' => 'devstore', 'rumahgadget' => 'rumahgadgetbali', 'rumahgadgetbali' => 'rumahgadgetbali'];
+        $sourceKey = $sourceMap[strtolower(preg_replace('/[^a-z0-9]+/', '', (string) $source))] ?? strtolower(preg_replace('/[^a-z0-9]+/', '', (string) $source));
+        $query->where('source_key', $sourceKey);
+    }
+    if ($direction === 'naik')  $query->where('selisih', '>', 0);
+    if ($direction === 'turun') $query->where('selisih', '<', 0);
+    $fetchLimit = max($limit, min($limit * 20, 5000));
+    $seen = [];
+    $rows = $query->limit($fetchLimit)->get()->map(function ($r) use ($marketProductLabel, &$seen) {
+        $dedupeKey = implode('|', [
+            strtoupper(trim((string) ($r->nama ?? ''))),
+            strtoupper(trim((string) ($r->varian ?? ''))),
+            strtolower(trim((string) ($r->kondisi ?? ''))),
+            strtolower(trim((string) ($r->sumber ?? ''))),
+        ]);
+        if (isset($seen[$dedupeKey])) {
+            return null;
+        }
+        $seen[$dedupeKey] = true;
+
+        return [
+            'id'              => (int) ($r->_id ?? 0),
+            'source_key'      => $r->source_key ?? '',
+            'nama'            => $marketProductLabel($r->nama ?? '', $r->varian ?? '', $r->kondisi ?? ''),
+            'produk'          => $marketProductLabel($r->nama ?? '', $r->varian ?? '', $r->kondisi ?? ''),
+            'varian'          => $r->varian ?? '',
+            'kondisi'         => $r->kondisi ?? '',
+            'kondisi_detail'  => $r->kondisi_detail ?? '',
+            'sumber'          => $r->sumber ?? '',
+            'harga_lama'      => (int) ($r->harga_lama ?? 0),
+            'harga_baru'      => (int) ($r->harga_baru ?? 0),
+            'selisih'         => (int) ($r->selisih ?? 0),
+            'selisih_pct'     => (float) ($r->selisih_pct ?? 0),
+            'detected_at'     => $r->detected_at ?? null,
+            'acknowledged'    => (int) ($r->acknowledged ?? 0),
+        ];
+    })->filter()->take($limit)->values();
+    return response()->json([
+        'rows'  => $rows->values(),
+        'total' => $rows->count(),
+    ]);
+});
 
 // Customer service tables
 
@@ -2116,6 +2802,428 @@ Route::put('/api/asset-vendor-inventory/{sourceId}', $genericUpdate('asset_vendo
     ];
 }));
 Route::delete('/api/asset-vendor-inventory/{sourceId}', $genericDelete('asset_vendor_inventory'));
+
+Route::get('/api/pricelist-products', function () use ($pricelistProductPayload) {
+    $query = DB::table('pricelist_products')
+        ->orderBy('source_sheet')
+        ->orderBy('urut')
+        ->orderBy('nama_produk');
+
+    return response()->json(['data' => $query->get()->map(fn ($row) => $pricelistProductPayload($row))->values()]);
+});
+
+Route::post('/api/pricelist-products/sync', function (PricelistSheetImporter $importer) use ($logCrudActivity) {
+    $beforeCount = DB::table('pricelist_products')->count();
+    $summary = $importer->import();
+    $afterCount = DB::table('pricelist_products')->count();
+
+    $logCrudActivity('pricelist_products', 'sync', 'google-sheet-pricelist', null, [
+        'count' => $beforeCount,
+    ], [
+        'count' => $afterCount,
+        'summary' => $summary,
+    ]);
+
+    return response()->json($summary);
+});
+
+Route::put('/api/pricelist-products/{sourceId}', function (string $sourceId) use ($logCrudActivity) {
+    $payload = request()->validate([
+        'is_active' => ['nullable', 'boolean'],
+        'harga_nasional' => ['nullable', 'integer'],
+        'special_price' => ['nullable', 'integer'],
+    ]);
+    $before = DB::table('pricelist_products')->where('source_id', $sourceId)->first();
+    abort_unless($before !== null, 404);
+
+    $updates = ['updated_at' => now()];
+    foreach (['is_active', 'harga_nasional', 'special_price'] as $field) {
+        if (array_key_exists($field, $payload)) {
+            $updates[$field] = $payload[$field];
+        }
+    }
+
+    DB::table('pricelist_products')->where('source_id', $sourceId)->update($updates);
+    $stored = DB::table('pricelist_products')->where('source_id', $sourceId)->first();
+    $logCrudActivity('pricelist_products', 'update', $sourceId, is_numeric($stored->id ?? null) ? (int) $stored->id : null, (array) $before, (array) $stored);
+
+    return response()->json(['status' => 'success', 'data' => $stored]);
+});
+
+Route::get('/api/catalog-templates', function () use ($catalogTemplatePayload) {
+    return response()->json(['data' => DB::table('catalog_templates')->orderBy('format')->orderBy('name')->get()->map(fn ($row) => $catalogTemplatePayload($row))->values()]);
+});
+
+Route::post('/api/catalog-templates', function () use ($catalogTemplatePayload, $logCrudActivity, $makeSourceId) {
+    $payload = request()->validate([
+        'name' => ['required', 'string', 'max:120'],
+        'format' => ['required', Rule::in(['story', 'feed', 'a4'])],
+        'layout_config' => ['nullable', 'array'],
+    ]);
+    $width = $payload['format'] === 'a4' ? 1240 : 1080;
+    $height = $payload['format'] === 'a4' ? 1754 : ($payload['format'] === 'feed' ? 1350 : 1920);
+    $row = [
+        'source_id' => $makeSourceId('CT', null),
+        'name' => $payload['name'],
+        'format' => $payload['format'],
+        'canvas_width' => $width,
+        'canvas_height' => $height,
+        'layout_config' => json_encode($payload['layout_config'] ?? [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        'is_active' => true,
+        'created_at' => now(),
+        'updated_at' => now(),
+    ];
+    DB::table('catalog_templates')->insert($row);
+    $stored = DB::table('catalog_templates')->where('source_id', $row['source_id'])->first();
+    $logCrudActivity('catalog_templates', 'create', $row['source_id'], is_numeric($stored->id ?? null) ? (int) $stored->id : null, null, (array) $stored);
+
+    return response()->json(['status' => 'success', 'data' => $catalogTemplatePayload($stored)], 201);
+});
+
+Route::put('/api/catalog-templates/{sourceId}', function (string $sourceId) use ($catalogTemplatePayload, $logCrudActivity) {
+    $payload = request()->validate([
+        'name' => ['required', 'string', 'max:120'],
+        'format' => ['required', Rule::in(['story', 'feed', 'a4'])],
+        'layout_config' => ['nullable', 'array'],
+        'is_active' => ['nullable', 'boolean'],
+    ]);
+    $before = DB::table('catalog_templates')->where('source_id', $sourceId)->first();
+    abort_unless($before !== null, 404);
+    $width = $payload['format'] === 'a4' ? 1240 : 1080;
+    $height = $payload['format'] === 'a4' ? 1754 : ($payload['format'] === 'feed' ? 1350 : 1920);
+    DB::table('catalog_templates')->where('source_id', $sourceId)->update([
+        'name' => $payload['name'],
+        'format' => $payload['format'],
+        'canvas_width' => $width,
+        'canvas_height' => $height,
+        'layout_config' => json_encode($payload['layout_config'] ?? [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+        'is_active' => (bool) ($payload['is_active'] ?? true),
+        'updated_at' => now(),
+    ]);
+    $stored = DB::table('catalog_templates')->where('source_id', $sourceId)->first();
+    $logCrudActivity('catalog_templates', 'update', $sourceId, is_numeric($stored->id ?? null) ? (int) $stored->id : null, (array) $before, (array) $stored);
+
+    return response()->json(['status' => 'success', 'data' => $catalogTemplatePayload($stored)]);
+});
+
+Route::delete('/api/catalog-templates/{sourceId}', $genericDelete('catalog_templates'));
+
+Route::post('/api/catalog-templates/{sourceId}/background', function (string $sourceId, Request $request) use ($catalogTemplatePayload, $logCrudActivity) {
+    $payload = $request->validate([
+        'background' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192'],
+    ]);
+    $before = DB::table('catalog_templates')->where('source_id', $sourceId)->first();
+    abort_unless($before !== null, 404);
+    $extension = strtolower((string) $payload['background']->getClientOriginalExtension());
+    $filename = 'catalog-'.$sourceId.'-'.Str::lower(Str::random(12)).'.'.$extension;
+    $directory = storage_path('app/public/catalog-templates');
+
+    if (! File::isDirectory($directory)) {
+        File::ensureDirectoryExists($directory);
+    }
+
+    $payload['background']->move($directory, $filename);
+
+    if (filled($before->background_path)) {
+        $oldPath = $directory.DIRECTORY_SEPARATOR.$before->background_path;
+        if (File::exists($oldPath)) {
+            File::delete($oldPath);
+        }
+    }
+
+    DB::table('catalog_templates')->where('source_id', $sourceId)->update([
+        'background_path' => $filename,
+        'updated_at' => now(),
+    ]);
+    $stored = DB::table('catalog_templates')->where('source_id', $sourceId)->first();
+    $logCrudActivity('catalog_templates', 'upload_background', $sourceId, is_numeric($stored->id ?? null) ? (int) $stored->id : null, (array) $before, (array) $stored);
+
+    return response()->json(['status' => 'success', 'data' => $catalogTemplatePayload($stored)]);
+});
+
+Route::get('/api/catalog-templates/background/{filename}', function (string $filename) {
+    abort_unless(preg_match('/^[A-Za-z0-9._-]+$/', $filename) === 1, 404);
+    $path = storage_path('app/public/catalog-templates/'.$filename);
+    abort_unless(File::exists($path), 404);
+
+    return response()->file($path, ['Cache-Control' => 'public, max-age=86400']);
+});
+
+// Apple Catalog
+
+$appleProductPayload = function ($row): array {
+    $kondisi = [];
+    if (filled($row->harga_kondisi)) {
+        $decoded = json_decode($row->harga_kondisi, true);
+        if (is_array($decoded)) {
+            $kondisi = $decoded;
+        }
+    }
+    return [
+        'ID'             => $row->source_id,
+        'source_sheet'   => $row->source_sheet,
+        'urut'           => $row->urut,
+        'model'          => $row->model,
+        'storage'        => $row->storage,
+        'harga_nasional' => $row->harga_nasional,
+        'special_price'  => $row->special_price,
+        'harga_kondisi'  => $kondisi,
+        'is_active'      => (bool) $row->is_active,
+    ];
+};
+
+Route::get('/api/apple-products', function () use ($appleProductPayload) {
+    $sheet = request()->query('sheet');
+    $query = DB::table('apple_products')->orderBy('source_sheet')->orderBy('urut');
+    if ($sheet) {
+        $query->where('source_sheet', strtoupper($sheet));
+    }
+    return response()->json(['data' => $query->get()->map(fn ($r) => $appleProductPayload($r))->values()]);
+});
+
+Route::post('/api/apple-products/sync', function (AppleSheetImporter $importer) use ($logCrudActivity) {
+    $before = DB::table('apple_products')->count();
+    $summary = $importer->import();
+    $after = DB::table('apple_products')->count();
+    $logCrudActivity('apple_products', 'sync', 'google-sheet-apple', null, ['count' => $before], ['count' => $after, 'summary' => $summary]);
+    return response()->json(['status' => $summary['status'], 'data' => $summary]);
+});
+
+Route::get('/api/apple-images/{category}', function (string $category) {
+    $base = base_path('resources/img/APPLE/'.strtoupper($category));
+    if (! is_dir($base)) {
+        return response()->json(['data' => []]);
+    }
+    $models = [];
+    foreach (scandir($base) ?: [] as $entry) {
+        if ($entry === '.' || $entry === '..') {
+            continue;
+        }
+        $modelDir = $base.'/'.$entry;
+        if (is_dir($modelDir)) {
+            $images = array_values(array_filter(scandir($modelDir) ?: [], fn ($f) => preg_match('/\.(png|jpg|jpeg|webp)$/i', $f)));
+            if ($images) {
+                sort($images);
+                $catEncoded   = rawurlencode(strtoupper($category));
+                $modelEncoded = rawurlencode($entry);
+                $entryUpper   = strtoupper($entry);
+                $prefix       = $entryUpper.' ';
+                // sub-model: images inside this dir are product-named (contain digits/GEN after prefix)
+                $isSubmodel = false;
+                foreach ($images as $imgFile) {
+                    $fileUpper = strtoupper(pathinfo($imgFile, PATHINFO_FILENAME));
+                    if (str_starts_with($fileUpper, $prefix)) {
+                        $suffix = substr($fileUpper, strlen($prefix));
+                        if (preg_match('/\d|GEN/', $suffix)) {
+                            $isSubmodel = true;
+                            break;
+                        }
+                    }
+                }
+                if ($isSubmodel) {
+                    foreach ($images as $imgFile) {
+                        $imgUrl = '/api/apple-image/'.$catEncoded.'/'.$modelEncoded.'/'.rawurlencode($imgFile);
+                        $models[] = ['model' => pathinfo($imgFile, PATHINFO_FILENAME), 'images' => [$imgUrl]];
+                    }
+                } else {
+                    $imageUrls = array_map(fn ($f) => '/api/apple-image/'.$catEncoded.'/'.$modelEncoded.'/'.rawurlencode($f), $images);
+                    $models[] = ['model' => $entry, 'images' => $imageUrls];
+                }
+            }
+        } elseif (preg_match('/\.(png|jpg|jpeg|webp)$/i', $entry)) {
+            $urlPath = rawurlencode(strtoupper($category)).'/'.rawurlencode($entry);
+            $models[] = ['model' => pathinfo($entry, PATHINFO_FILENAME), 'images' => ['/api/apple-image/'.$urlPath]];
+        }
+    }
+    return response()->json(['data' => $models]);
+});
+
+Route::get('/api/apple-image/{encodedPath}', function (string $encodedPath) {
+    $relative = rawurldecode($encodedPath);
+    $base = realpath(base_path('resources/img/APPLE'));
+    if (! $base) {
+        abort(404);
+    }
+    $resolved = realpath($base.'/'.$relative);
+    if (! $resolved || ! str_starts_with($resolved, $base.DIRECTORY_SEPARATOR)) {
+        abort(404);
+    }
+    abort_unless(File::exists($resolved), 404);
+    $ext = strtolower(pathinfo($resolved, PATHINFO_EXTENSION));
+    $mime = match ($ext) {
+        'jpg', 'jpeg' => 'image/jpeg',
+        'webp'        => 'image/webp',
+        default       => 'image/png',
+    };
+    return response()->file($resolved, ['Content-Type' => $mime, 'Cache-Control' => 'public, max-age=86400']);
+})->where('encodedPath', '.+');
+
+Route::get('/api/android-images/{brand}', function (string $brand) {
+    $base = realpath(base_path('resources/img/ANDROID/'.strtoupper($brand)));
+    if (! $base || ! is_dir($base)) {
+        return response()->json(['data' => []]);
+    }
+
+    $models = [];
+    $scan = function (string $dir, string $rel = '') use (&$scan, &$models, $brand): void {
+        foreach (scandir($dir) ?: [] as $entry) {
+            if ($entry === '.' || $entry === '..') continue;
+            $full = $dir.DIRECTORY_SEPARATOR.$entry;
+            $path = $rel === '' ? $entry : $rel.'/'.$entry;
+            if (is_dir($full)) {
+                $scan($full, $path);
+                continue;
+            }
+            if (! preg_match('/\.(png|jpg|jpeg|webp)$/i', $entry)) continue;
+            $model = pathinfo($entry, PATHINFO_FILENAME);
+            $urlPath = rawurlencode(strtoupper($brand)).'/'.collect(explode('/', $path))->map(fn ($p) => rawurlencode($p))->implode('/');
+            $models[] = ['model' => $model, 'images' => ['/api/android-image/'.$urlPath]];
+        }
+    };
+    $scan($base);
+
+    return response()->json(['data' => $models]);
+});
+
+Route::get('/api/android-image/{encodedPath}', function (string $encodedPath) {
+    $relative = rawurldecode($encodedPath);
+    $base = realpath(base_path('resources/img/ANDROID'));
+    if (! $base) abort(404);
+    $resolved = realpath($base.'/'.$relative);
+    if (! $resolved || ! str_starts_with($resolved, $base.DIRECTORY_SEPARATOR)) abort(404);
+    abort_unless(File::exists($resolved), 404);
+    $ext = strtolower(pathinfo($resolved, PATHINFO_EXTENSION));
+    $mime = match ($ext) {
+        'jpg', 'jpeg' => 'image/jpeg',
+        'webp' => 'image/webp',
+        default => 'image/png',
+    };
+    return response()->file($resolved, ['Content-Type' => $mime, 'Cache-Control' => 'public, max-age=86400']);
+})->where('encodedPath', '.+');
+
+// ── Image Repository ────────────────────────────────────────────────────────
+$imgBase = realpath(base_path('resources/img'));
+
+$imgRepoGuard = function () {
+    $user = auth()->user();
+    abort_unless($user && app(\App\Support\DashboardAuth::class)->canManageSettings($user), 403, 'Forbidden');
+};
+
+$imgRepoResolvePath = function (string $rel) use ($imgBase): string {
+    if ($imgBase === false) abort(500, 'Image base directory not found');
+    $rel = ltrim(str_replace(['..', '//'], ['', '/'], $rel), '/');
+    $full = $rel === '' ? $imgBase : $imgBase.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $rel);
+    $resolved = realpath($full) ?: $full;
+    if (!str_starts_with(realpath($resolved) ?: $resolved, $imgBase)) abort(403, 'Path tidak diizinkan');
+    return $resolved;
+};
+
+Route::get('/api/img-repo/browse', function () use ($imgRepoGuard, $imgRepoResolvePath) {
+    $imgRepoGuard();
+    $rel = (string) request()->query('path', '');
+    $dir = $imgRepoResolvePath($rel);
+    if (!is_dir($dir)) abort(404, 'Bukan direktori');
+    $items = [];
+    foreach (scandir($dir) as $name) {
+        if ($name === '.' || $name === '..') continue;
+        $full = $dir.DIRECTORY_SEPARATOR.$name;
+        $isDir = is_dir($full);
+        $itemRel = $rel === '' ? $name : $rel.'/'.$name;
+        $items[] = [
+            'name' => $name,
+            'path' => $itemRel,
+            'type' => $isDir ? 'dir' : 'file',
+            'size' => $isDir ? null : filesize($full),
+            'ext'  => $isDir ? null : strtolower(pathinfo($name, PATHINFO_EXTENSION)),
+        ];
+    }
+    usort($items, fn($a, $b) => ($a['type'] === $b['type'] ? strnatcasecmp($a['name'], $b['name']) : ($a['type'] === 'dir' ? -1 : 1)));
+    return response()->json(['path' => $rel, 'items' => $items]);
+});
+
+Route::get('/api/img-repo/serve', function () use ($imgRepoResolvePath) {
+    $rel = (string) request()->query('path', '');
+    $file = $imgRepoResolvePath($rel);
+    abort_unless(File::exists($file) && is_file($file), 404);
+    $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+    $mime = match ($ext) {
+        'jpg', 'jpeg' => 'image/jpeg',
+        'webp'        => 'image/webp',
+        'gif'         => 'image/gif',
+        'svg'         => 'image/svg+xml',
+        default       => 'image/png',
+    };
+    return response()->file($file, ['Content-Type' => $mime, 'Cache-Control' => 'public, max-age=3600']);
+});
+
+Route::post('/api/img-repo/mkdir', function () use ($imgRepoGuard, $imgRepoResolvePath) {
+    $imgRepoGuard();
+    $parent = (string) request()->input('path', '');
+    $name   = trim((string) request()->input('name', ''));
+    if ($name === '' || preg_match('/[\/\\\\]/', $name)) abort(422, 'Nama folder tidak valid');
+    $dir = $imgRepoResolvePath($parent === '' ? $name : $parent.'/'.$name);
+    if (is_dir($dir)) abort(422, 'Folder sudah ada');
+    mkdir($dir, 0755, true);
+    return response()->json(['status' => 'success', 'path' => ($parent === '' ? $name : $parent.'/'.$name)]);
+});
+
+Route::post('/api/img-repo/rename', function () use ($imgRepoGuard, $imgRepoResolvePath) {
+    $imgRepoGuard();
+    $oldPath = (string) request()->input('path', '');
+    $newName = trim((string) request()->input('name', ''));
+    if ($newName === '' || preg_match('/[\/\\\\]/', $newName)) abort(422, 'Nama tidak valid');
+    $src = $imgRepoResolvePath($oldPath);
+    abort_unless(file_exists($src), 404, 'Item tidak ditemukan');
+    $parentDir  = dirname($src);
+    $dst        = $parentDir.DIRECTORY_SEPARATOR.$newName;
+    if (file_exists($dst)) abort(422, 'Nama sudah dipakai');
+    rename($src, $dst);
+    $parentRel = dirname($oldPath);
+    $newRel = ($parentRel === '.' || $parentRel === '') ? $newName : $parentRel.'/'.$newName;
+    return response()->json(['status' => 'success', 'path' => $newRel]);
+});
+
+Route::delete('/api/img-repo/delete', function () use ($imgRepoGuard, $imgRepoResolvePath) {
+    $imgRepoGuard();
+    $rel = (string) request()->input('path', '');
+    $target = $imgRepoResolvePath($rel);
+    abort_unless(file_exists($target), 404, 'Item tidak ditemukan');
+    if (is_dir($target)) {
+        $rii = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($target, \FilesystemIterator::SKIP_DOTS), \RecursiveIteratorIterator::CHILD_FIRST);
+        foreach ($rii as $f) { $f->isDir() ? rmdir($f->getRealPath()) : unlink($f->getRealPath()); }
+        rmdir($target);
+    } else {
+        unlink($target);
+    }
+    return response()->json(['status' => 'success']);
+});
+
+Route::post('/api/img-repo/upload', function () use ($imgRepoGuard, $imgRepoResolvePath) {
+    $imgRepoGuard();
+    $parent = (string) request()->input('path', '');
+    $dir = $imgRepoResolvePath($parent);
+    abort_unless(is_dir($dir), 404, 'Direktori tidak ditemukan');
+    $files = request()->file('files');
+    if (!$files) abort(422, 'Tidak ada file');
+    if (!is_array($files)) $files = [$files];
+    $saved = [];
+    foreach ($files as $file) {
+        abort_unless($file->isValid(), 422, 'File tidak valid');
+        $ext      = strtolower($file->getClientOriginalExtension());
+        $allowed  = ['png', 'jpg', 'jpeg', 'webp', 'gif'];
+        abort_unless(in_array($ext, $allowed, true), 422, 'Ekstensi tidak diizinkan: '.$ext);
+        $name = $file->getClientOriginalName();
+        if (file_exists($dir.DIRECTORY_SEPARATOR.$name)) {
+            $base = pathinfo($name, PATHINFO_FILENAME);
+            $name = $base.'_'.time().'.'.$ext;
+        }
+        $file->move($dir, $name);
+        $rel = $parent === '' ? $name : $parent.'/'.$name;
+        $saved[] = $rel;
+    }
+    return response()->json(['status' => 'success', 'saved' => $saved]);
+})->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
+// ────────────────────────────────────────────────────────────────────────────
 
 Route::get('/api/bonus-config', function () {
     $row = DB::table('marketing_settings')->where('key', 'BONUS_CONFIG')->first(['values']);

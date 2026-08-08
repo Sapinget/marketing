@@ -3154,6 +3154,8 @@ HTML, $html);
         $this->assertHtmlContains('const SESSION_IDLE_TIMEOUT_MS = 15 * 60 * 1000;', $html);
         $this->assertHtmlContains('const SESSION_HEARTBEAT_MS = 60 * 1000;', $html);
         $this->assertHtmlContains('const syncSessionHeartbeat = () => {', $html);
+        $this->assertHtmlContains('if (idleFor >= SESSION_IDLE_TIMEOUT_MS) {', $html);
+        $this->assertHtmlContains('.logout();', $html);
         $this->assertHtmlContains(".heartbeat();", $html);
         $this->assertHtmlContains("jsonApi('/api/auth/heartbeat'", $html);
         $this->assertHtmlContains('window.addEventListener("keydown", markClientActivity, true);', $html);
@@ -3161,6 +3163,9 @@ HTML, $html);
         $this->assertHtmlContains('Sesi login berakhir karena tidak ada aktivitas selama 15 menit.', $html);
         $this->assertHtmlContains('const verifyCurrentSession = (message = "") => {', $html);
         $this->assertHtmlContains('const handleBrowserPageShow = (event) => {', $html);
+        $this->assertHtmlContains('if (event?.persisted && ensureRunApi().isWebProxy && !localStorage.getItem("ppp_user")) {', $html);
+        $this->assertHtmlContains('appLoading.value = true;', $html);
+        $this->assertHtmlContains('.finally(() => {', $html);
         $this->assertHtmlContains('window.addEventListener("pageshow", handleBrowserPageShow);', $html);
         $this->assertHtmlContains('window.addEventListener("focus", handleBrowserFocus, true);', $html);
         $this->assertHtmlContains('window.removeEventListener("pageshow", handleBrowserPageShow);', $html);
@@ -4273,5 +4278,56 @@ HTML, $html);
         $this->assertHtmlContains("if (tab === 'activity_logs') {", $html);
         $this->assertHtmlContains('loadActivityLogs();', $html);
         $this->assertHtmlContains('getActivityLogs(filters = {})', $html);
+    }
+
+    public function test_dashboard_shell_includes_pricelist_catalog_menu_and_runner(): void
+    {
+        $html = $this->renderDashboardHtmlWithShellCss();
+        $assemblyPartial = file_get_contents(resource_path('views/dashboard/partials/shell/body-app-assembly.blade.php'));
+        $sidebarNavAdminPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-frame-sidebar-nav-admin.blade.php'));
+
+        $this->assertIsString($assemblyPartial);
+        $this->assertIsString($sidebarNavAdminPartial);
+        $this->assertHtmlContains('Katalog Pricelist', $html);
+        $this->assertHtmlContains("switchTab('pricelist_katalog')", $sidebarNavAdminPartial);
+        $this->assertHtmlContains("activeTab === 'pricelist_katalog'", $html);
+        $this->assertHtmlContains("pricelist_katalog: { label: 'Katalog Pricelist', category: null }", $html);
+        $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-pricelist-katalog-operations')", $assemblyPartial);
+        $this->assertHtmlContains('getPricelistProducts()', $html);
+        $this->assertHtmlContains('syncPricelistProducts()', $html);
+        $this->assertHtmlContains('uploadCatalogBackground(file, id)', $html);
+        $this->assertHtmlContains('generateCatalogPreview', $html);
+        $this->assertHtmlContains('const fillRoundedRect = (ctx, x, y, width, height, radius) => {', $html);
+        $this->assertHtmlContains('const catalogProductType = (row) => {', $html);
+        $this->assertHtmlContains('const formatCatalogPrice = (value) => {', $html);
+        $this->assertHtmlContains('NORMAL PRICE', $html);
+        $this->assertHtmlContains('SPECIAL PRICE', $html);
+        $this->assertHtmlContains('catalogTemplateForm.layout_config.headerHeight', $html);
+        $this->assertHtmlContains('catalogTemplateForm.layout_config.titleFontSize', $html);
+        $this->assertHtmlContains('catalogTemplateForm.layout_config.titleGap', $html);
+        $this->assertHtmlContains('catalogTemplateForm.layout_config.titleColor', $html);
+        $this->assertHtmlContains("{ key: 'headerColor', label: 'Warna header (latar)' }", $html);
+        $this->assertHtmlContains("{ key: 'headerTextColor', label: 'Warna teks header' }", $html);
+        $this->assertHtmlContains("{ key: 'textColor', label: 'Warna teks produk' }", $html);
+        $this->assertHtmlContains("{ key: 'normalPriceColor', label: 'Warna normal price' }", $html);
+        $this->assertHtmlContains("{ key: 'specialPriceColor', label: 'Warna special price' }", $html);
+        $this->assertHtmlContains("{ key: 'rowOddColor', label: 'Warna row ganjil' }", $html);
+        $this->assertHtmlContains("{ key: 'rowEvenColor', label: 'Warna row genap' }", $html);
+        $this->assertHtmlContains('type="color"', $html);
+        $this->assertHtmlContains('catalogTemplateForm.layout_config[colorField.key]', $html);
+        $this->assertHtmlContains('catalogApplyColor(colorField.key, $event)', $html);
+        $this->assertHtmlContains('const catalogColorFields = [', $html);
+        $this->assertHtmlContains('const catalogApplyColor = (key, event) => {', $html);
+        $this->assertHtmlContains('catalogLayoutDragStart($event, catalogTemplateForm)', $html);
+        $this->assertHtmlContains('const catalogLayoutDragMove = (event) => {', $html);
+        $this->assertHtmlContains('Drag posisi tabel', $html);
+        $this->assertHtmlContains('Drag judul brand', $html);
+        $this->assertHtmlContains("catalogLayoutDragStart(\$event, catalogTemplateForm, 'title')", $html);
+        $this->assertHtmlContains('catalogTemplateForm.layout_config.titleX', $html);
+        $this->assertHtmlContains('catalogTemplateForm.layout_config.titleY', $html);
+        $this->assertHtmlContains('CENTER', $html);
+        $this->assertHtmlContains('const centerX = (drag.canvasWidth - drag.tableWidth) / 2;', $html);
+        $this->assertHtmlContains('catalogTemplateForm.layout_config.rowHeight', $html);
+        $this->assertHtmlContains('catalogTemplateForm.layout_config.priceFontSize', $html);
     }
 }
