@@ -2452,6 +2452,10 @@
             width: 100%;
         }
 
+        .catalog-control-field .select-trigger-button-compact {
+            width: 100%;
+        }
+
         .catalog-control-label {
             font-size: var(--fs-overline-xs);
             font-weight: 700;
