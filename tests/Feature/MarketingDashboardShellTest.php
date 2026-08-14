@@ -4341,6 +4341,8 @@ HTML, $html);
         $this->assertHtmlContains('.catalog-control-field .select-trigger-button-compact {'."\n".'            width: 100%;', $html);
         $this->assertHtmlContains('.catalog-segment-group {', $html);
         $this->assertHtmlContains('.catalog-segment-group {'."\n".'            box-sizing: border-box;'."\n".'            height: 36px;', $html);
+        $this->assertHtmlContains('border-radius: 12px;', $html);
+        $this->assertHtmlContains('.catalog-segment-button {'."\n".'            min-width: 0;'."\n".'            min-height: 28px;'."\n".'            border-radius: 8px;', $html);
         $this->assertHtmlContains('.catalog-segment-button.catalog-segment-button--active {', $html);
         $this->assertHtmlContains("catalogOutputMode === 'list' ? 'catalog-segment-button--active' : ''", $html);
         $this->assertHtmlContains("catalogPriceKey === opt.key ? 'catalog-segment-button--active' : ''", $html);
