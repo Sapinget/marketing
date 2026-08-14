@@ -4337,6 +4337,7 @@ HTML, $html);
 
         $this->assertHtmlContains('.catalog-control-grid {', $html);
         $this->assertHtmlContains('.catalog-control-field {', $html);
+        $this->assertHtmlContains('.catalog-control-field .search-select-container {'."\n".'            width: 100%;', $html);
         $this->assertHtmlContains('.catalog-segment-group {', $html);
         $this->assertHtmlContains('.catalog-segment-group {'."\n".'            box-sizing: border-box;'."\n".'            height: 36px;', $html);
         $this->assertHtmlContains('.catalog-segment-button.catalog-segment-button--active {', $html);
