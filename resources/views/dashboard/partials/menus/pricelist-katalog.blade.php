@@ -112,17 +112,17 @@
                 </div>
             </div>
 
-            <div class="section-card p-4 space-y-4">
-                <div>
+            <div class="section-card p-4 catalog-control-stack">
+                <div class="catalog-control-field">
                     <p class="text-overline text-slate-400 uppercase">Pengaturan Output</p>
-                    <div class="mt-2 flex gap-1.5">
-                        <button @click="catalogOutputMode = 'list'" :class="['toolbar-segment-button flex-1', catalogOutputMode === 'list' ? 'bg-ppp-accent text-white border-ppp-accent' : 'bg-white text-slate-500 border-slate-200']">List (Tabel)</button>
-                        <button @click="catalogOutputMode = 'katalog'" :class="['toolbar-segment-button flex-1', catalogOutputMode === 'katalog' ? 'bg-ppp-accent text-white border-ppp-accent' : 'bg-white text-slate-500 border-slate-200']">Katalog (Card)</button>
+                    <div class="catalog-segment-group">
+                        <button @click="catalogOutputMode = 'list'" :class="['catalog-segment-button', catalogOutputMode === 'list' ? 'catalog-segment-button--active' : '']">List (Tabel)</button>
+                        <button @click="catalogOutputMode = 'katalog'" :class="['catalog-segment-button', catalogOutputMode === 'katalog' ? 'catalog-segment-button--active' : '']">Katalog (Card)</button>
                     </div>
                 </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div class="space-y-1 min-w-0">
-                        <p class="type-micro text-slate-400">Template</p>
+                <div class="catalog-control-grid">
+                    <div class="catalog-control-field">
+                        <p class="catalog-control-label">Template</p>
                         <div class="relative group search-select-container min-w-0">
                             <button type="button" @click="toggleSearchSelect($event, 'catalog_template')" :aria-expanded="searchSelectOpen === 'catalog_template' ? 'true' : 'false'" class="select-trigger-button select-trigger-button-compact select-trigger-button-form toolbar-trigger-field-form w-full">
                                 <span class="min-w-0 truncate">{{ currentCatalogTemplateLabel }}</span>
@@ -144,8 +144,8 @@
                             </transition>
                         </div>
                     </div>
-                    <div class="space-y-1 min-w-0">
-                        <p class="type-micro text-slate-400">Brand</p>
+                    <div class="catalog-control-field">
+                        <p class="catalog-control-label">Brand</p>
                         <div class="relative group search-select-container min-w-0">
                             <button type="button" @click="toggleSearchSelect($event, 'catalog_sheet')" :aria-expanded="searchSelectOpen === 'catalog_sheet' ? 'true' : 'false'" class="select-trigger-button select-trigger-button-compact select-trigger-button-form toolbar-trigger-field-form w-full">
                                 <span class="min-w-0 truncate">{{ currentCatalogSheetLabel }}</span>
@@ -165,11 +165,17 @@
                             </transition>
                         </div>
                     </div>
-                    <input v-model="catalogUrutStart" class="form-input-compact" placeholder="URUT awal" />
-                    <input v-model="catalogUrutEnd" class="form-input-compact" placeholder="URUT akhir" />
+                    <div class="catalog-control-field">
+                        <p class="catalog-control-label">URUT awal</p>
+                        <input v-model="catalogUrutStart" class="form-input-compact" placeholder="Awal" />
+                    </div>
+                    <div class="catalog-control-field">
+                        <p class="catalog-control-label">URUT akhir</p>
+                        <input v-model="catalogUrutEnd" class="form-input-compact" placeholder="Akhir" />
+                    </div>
                 </div>
-                <div v-if="catalogOutputMode === 'katalog'" class="space-y-1">
-                    <p class="type-micro text-slate-400">Kolom per baris</p>
+                <div v-if="catalogOutputMode === 'katalog'" class="catalog-control-field">
+                    <p class="catalog-control-label">Kolom per baris</p>
                     <div class="search-select-container">
                         <button @click="toggleSearchSelect($event, 'catalog-columns-per-row')" type="button" :aria-expanded="searchSelectOpen === 'catalog-columns-per-row'" class="select-trigger-button select-trigger-button-compact select-trigger-button-form toolbar-trigger-field-form w-full">
                             <span class="truncate">{{ catalogColumnsPerRowLabel }}</span>
@@ -182,12 +188,12 @@
                         </div>
                     </div>
                 </div>
-                <div>
-                    <p class="type-micro text-slate-400 mb-1">Kolom harga</p>
-                    <div class="flex gap-1.5">
+                <div class="catalog-control-field">
+                    <p class="catalog-control-label">Kolom harga</p>
+                    <div class="catalog-segment-group">
                         <button v-for="opt in [{ key: 'special_price', label: 'Special Price' }, { key: 'harga_jual', label: 'Harga Jual' }]" :key="opt.key"
                             @click="catalogPriceKey = opt.key"
-                            :class="['toolbar-segment-button flex-1', catalogPriceKey === opt.key ? 'bg-ppp-accent text-white border-ppp-accent' : 'bg-white text-slate-500 border-slate-200']">
+                            :class="['catalog-segment-button', catalogPriceKey === opt.key ? 'catalog-segment-button--active' : '']">
                             {{ opt.label }}
                         </button>
                     </div>
