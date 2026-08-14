@@ -95,15 +95,15 @@
                 </div>
                 <div class="flex gap-1 bg-slate-100 rounded-lg p-1">
                     <button @click="eksternalChangesDirection = 'all'; loadMarketEksternalChanges()"
-                        :class="['px-3 py-1 text-body-sm font-semibold rounded-md transition-all', eksternalChangesDirection === 'all' ? 'bg-white shadow text-slate-700' : 'text-slate-500 hover:text-slate-700']">
+                        :class="['toolbar-segment-button rounded-md border-transparent', eksternalChangesDirection === 'all' ? 'bg-white shadow text-slate-700' : 'text-slate-500 hover:text-slate-700']">
                         Semua
                     </button>
                     <button @click="eksternalChangesDirection = 'naik'; loadMarketEksternalChanges()"
-                        :class="['px-3 py-1 text-body-sm font-semibold rounded-md transition-all', eksternalChangesDirection === 'naik' ? 'bg-white shadow text-red-600' : 'text-slate-500 hover:text-slate-700']">
+                        :class="['toolbar-segment-button rounded-md border-transparent', eksternalChangesDirection === 'naik' ? 'bg-white shadow text-red-600' : 'text-slate-500 hover:text-slate-700']">
                         Naik
                     </button>
                     <button @click="eksternalChangesDirection = 'turun'; loadMarketEksternalChanges()"
-                        :class="['px-3 py-1 text-body-sm font-semibold rounded-md transition-all', eksternalChangesDirection === 'turun' ? 'bg-white shadow text-emerald-600' : 'text-slate-500 hover:text-slate-700']">
+                        :class="['toolbar-segment-button rounded-md border-transparent', eksternalChangesDirection === 'turun' ? 'bg-white shadow text-emerald-600' : 'text-slate-500 hover:text-slate-700']">
                         Turun
                     </button>
                 </div>

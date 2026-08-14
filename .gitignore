@@ -40,6 +40,22 @@ bonus_*.txt
 storage/app-frame-expanded.html
 *.png
 
+# Local/private marketing data exports
+docs/konten/*.csv
+export-meta/*.csv
+*.xlsx
+*.xls
+*.sqlite
+*.db
+*.sql
+*.dump
+*.zip
+*.7z
+*.rar
+*.pem
+*.p12
+*.pfx
+
 # Dev tooling
 /.opencode/*
 !/.opencode/

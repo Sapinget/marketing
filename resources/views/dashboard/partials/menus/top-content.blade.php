@@ -70,7 +70,7 @@
                                 <div class="flex items-center gap-1.5 px-6 py-3 border-b border-slate-50 overflow-x-auto">
                                     <button v-for="tab in topContentTabs" :key="tab.key"
                                         @click="topContentView = tab.key"
-                                        :class="['px-3 py-1.5 rounded-lg text-body-sm font-bold uppercase transition-all whitespace-nowrap', topContentView === tab.key ? 'bg-ppp-accent text-light shadow-sm' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50']">
+                                        :class="['toolbar-tab-button border-transparent', topContentView === tab.key ? 'bg-ppp-accent text-light shadow-sm' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50']">
                                         {{ tab.label }}
                                         <span class="ml-1.5 opacity-60">({{ tab.count }})</span>
                                     </button>

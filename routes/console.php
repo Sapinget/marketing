@@ -134,7 +134,7 @@ Artisan::command('marketing:sync-google-sheet
     {spreadsheetId?}
     {--output=storage/app/marketing/google-sheet.xlsx}
     {--truncate}', function (XlsxSheetReader $reader): int {
-    $spreadsheetId = trim((string) ($this->argument('spreadsheetId') ?: env('MARKETING_GOOGLE_SHEET_ID', '1kt_r6PvRNO_p_2u1Dm1QpU3SLMehirJL')));
+    $spreadsheetId = trim((string) ($this->argument('spreadsheetId') ?: env('MARKETING_GOOGLE_SHEET_ID', '')));
     $outputOption = trim((string) $this->option('output'));
     $outputPath = str_starts_with($outputOption, DIRECTORY_SEPARATOR) ? $outputOption : base_path($outputOption);
 

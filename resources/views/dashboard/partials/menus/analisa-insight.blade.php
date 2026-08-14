@@ -30,11 +30,11 @@
                             </div>
                             <div class="flex items-center gap-1.5 px-6 py-3 overflow-x-auto border-b border-slate-50">
                                 <button @click="analisaInsightTab = 'konten'"
-                                    :class="['px-3 py-1.5 rounded-lg text-body-sm font-bold uppercase transition-all whitespace-nowrap', analisaInsightTab === 'konten' ? 'bg-ppp-accent text-light shadow-sm' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50']">
+                                    :class="['toolbar-tab-button border-transparent', analisaInsightTab === 'konten' ? 'bg-ppp-accent text-light shadow-sm' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50']">
                                     Konten
                                 </button>
                                 <button @click="analisaInsightTab = 'sales'"
-                                    :class="['px-3 py-1.5 rounded-lg text-body-sm font-bold uppercase transition-all whitespace-nowrap', analisaInsightTab === 'sales' ? 'bg-ppp-accent text-light shadow-sm' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50']">
+                                    :class="['toolbar-tab-button border-transparent', analisaInsightTab === 'sales' ? 'bg-ppp-accent text-light shadow-sm' : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50']">
                                     Sales & CS
                                 </button>
                             </div>

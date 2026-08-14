@@ -1,29 +1,28 @@
 {{-- Image Repository – Google Drive-style --}}
 <div v-show="activeTab === 'img_repo'"
-    class="flex bg-white overflow-hidden"
-    style="margin: -0.75rem -0.75rem 0; min-height: calc(100dvh - 64px);">
+    class="img-repo-shell flex bg-white overflow-hidden">
 
     {{-- ── Left Sidebar ──────────────────────────────────── --}}
     <aside class="w-56 shrink-0 flex flex-col gap-1 pt-4 pb-6 border-r border-slate-200 bg-white">
 
         {{-- New button --}}
         <div class="px-3 mb-2">
-            <div class="relative" x-data="{ open: false }" @click.outside="open = false">
+            <div class="relative">
                 <button @click="imgRepoNewMenuOpen = !imgRepoNewMenuOpen"
-                    class="flex items-center gap-3 px-4 py-3 rounded-2xl shadow-md bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-all w-full font-medium text-body-sm">
+                    class="menu-action-button rounded-2xl shadow-md bg-white border-slate-200 text-slate-700 hover:bg-slate-50 transition-all font-medium">
                     <i class="fa-solid fa-plus text-slate-500"></i>
                     <span>Baru</span>
                     <i class="fa-solid fa-caret-down text-slate-400 text-xs ml-auto"></i>
                 </button>
                 <div v-if="imgRepoNewMenuOpen"
                     class="absolute left-0 top-full mt-1 w-44 bg-white border border-slate-200 rounded-xl shadow-lg z-30 py-1 overflow-hidden">
-                    <label class="flex items-center gap-3 px-4 py-2.5 text-body-sm text-slate-700 hover:bg-slate-50 cursor-pointer transition-colors">
+                    <label class="menu-action-button border-transparent text-slate-700 hover:bg-slate-50 cursor-pointer transition-colors">
                         <i class="fa-solid fa-upload text-slate-400 w-4 text-center"></i>
                         <span>Upload File</span>
                         <input type="file" multiple accept="image/*" class="hidden" @change="imgRepoUploadFiles($event); imgRepoNewMenuOpen=false">
                     </label>
                     <button @click="imgRepoMkdirOpen=true; imgRepoMkdirName=''; imgRepoNewMenuOpen=false"
-                        class="w-full flex items-center gap-3 px-4 py-2.5 text-body-sm text-slate-700 hover:bg-slate-50 transition-colors">
+                        class="menu-action-button border-transparent text-slate-700 hover:bg-slate-50 transition-colors">
                         <i class="fa-solid fa-folder-plus text-slate-400 w-4 text-center"></i>
                         <span>Folder Baru</span>
                     </button>
@@ -33,7 +32,7 @@
 
         {{-- Nav items --}}
         <button @click="imgRepoBrowse('')"
-            :class="['flex items-center gap-3 mx-2 px-4 py-2 rounded-full text-body-sm font-medium transition-colors',
+            :class="['menu-action-button mx-2 rounded-full border-transparent font-medium transition-colors',
                 imgRepoPath === '' ? 'bg-blue-100 text-blue-700' : 'text-slate-700 hover:bg-slate-100']">
             <i class="fa-solid fa-hard-drive w-4 text-center"></i>
             <span>Repo Gambar</span>
@@ -43,13 +42,13 @@
         <div class="mt-2 px-3">
             <p class="text-overline text-slate-400 px-1 mb-1">FOLDER UTAMA</p>
             <button @click="imgRepoBrowse('APPLE')"
-                :class="['w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-body-sm transition-colors text-left',
+                :class="['menu-action-button rounded-lg border-transparent transition-colors',
                     imgRepoPath === 'APPLE' || imgRepoPath.startsWith('APPLE/') ? 'bg-blue-50 text-blue-700 font-medium' : 'text-slate-600 hover:bg-slate-50']">
                 <i class="fa-brands fa-apple text-xs w-4 text-center"></i>
                 APPLE
             </button>
             <button @click="imgRepoBrowse('ANDROID')"
-                :class="['w-full flex items-center gap-2 px-3 py-1.5 rounded-lg text-body-sm transition-colors text-left',
+                :class="['menu-action-button rounded-lg border-transparent transition-colors',
                     imgRepoPath === 'ANDROID' || imgRepoPath.startsWith('ANDROID/') ? 'bg-blue-50 text-blue-700 font-medium' : 'text-slate-600 hover:bg-slate-50']">
                 <i class="fa-brands fa-android text-xs w-4 text-center"></i>
                 ANDROID
@@ -72,12 +71,12 @@
                 <template v-for="(crumb, idx) in imgRepoBreadcrumbs" :key="crumb.path">
                     <button v-if="idx < imgRepoBreadcrumbs.length - 1"
                         @click="imgRepoBrowse(crumb.path)"
-                        class="px-2 py-1 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors shrink-0 font-medium">
+                        class="toolbar-segment-button border-transparent rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors shrink-0 font-medium">
                         @{{ crumb.label }}
                     </button>
                     <span v-if="idx < imgRepoBreadcrumbs.length - 1" class="text-slate-300 text-sm shrink-0">/</span>
                     <span v-if="idx === imgRepoBreadcrumbs.length - 1"
-                        class="px-2 py-1 rounded-lg text-slate-800 font-semibold shrink-0 truncate" style="max-width:200px">
+                        class="img-repo-breadcrumb-current px-2 py-1 rounded-lg text-slate-800 font-semibold shrink-0 truncate">
                         @{{ crumb.label }}
                     </span>
                 </template>
@@ -93,18 +92,18 @@
             {{-- View toggle --}}
             <div class="flex items-center rounded-lg border border-slate-200 overflow-hidden shrink-0">
                 <button @click="imgRepoViewMode='grid'"
-                    :class="['px-2.5 py-1.5 transition-colors', imgRepoViewMode==='grid' ? 'bg-blue-50 text-blue-600' : 'text-slate-500 hover:bg-slate-50']">
+                    :class="['icon-toolbar-button transition-colors', imgRepoViewMode==='grid' ? 'bg-blue-50 text-blue-600' : 'text-slate-500 hover:bg-slate-50']">
                     <i class="fa-solid fa-grip text-sm"></i>
                 </button>
                 <button @click="imgRepoViewMode='list'"
-                    :class="['px-2.5 py-1.5 transition-colors border-l border-slate-200', imgRepoViewMode==='list' ? 'bg-blue-50 text-blue-600' : 'text-slate-500 hover:bg-slate-50']">
+                    :class="['icon-toolbar-button transition-colors border-l border-slate-200', imgRepoViewMode==='list' ? 'bg-blue-50 text-blue-600' : 'text-slate-500 hover:bg-slate-50']">
                     <i class="fa-solid fa-list text-sm"></i>
                 </button>
             </div>
 
             {{-- Refresh --}}
             <button @click="imgRepoBrowse(imgRepoPath)" :disabled="imgRepoLoading"
-                class="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors disabled:opacity-40 shrink-0">
+                class="icon-toolbar-button rounded-lg text-slate-500 hover:bg-slate-100 transition-colors disabled:opacity-40 shrink-0">
                 <i :class="['fa-solid fa-arrows-rotate text-sm', imgRepoLoading ? 'animate-spin' : '']"></i>
             </button>
         </div>
@@ -121,7 +120,7 @@
 
             {{-- Loading --}}
             <div v-if="imgRepoLoading && !imgRepoItems.length"
-                style="display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:0.5rem; margin-top:0.5rem">
+                class="img-repo-grid img-repo-grid--loading">
                 <div v-for="n in 16" :key="n"
                     class="aspect-video rounded-xl bg-slate-100 animate-pulse"></div>
             </div>
@@ -140,7 +139,7 @@
                 {{-- Folders section --}}
                 <div v-if="imgRepoDirs.length">
                     <p class="text-overline text-slate-400 mb-2">FOLDER</p>
-                    <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:0.5rem; margin-bottom:1.5rem">
+                    <div class="img-repo-grid img-repo-grid--folders">
                         <template v-for="item in imgRepoDirs" :key="'d-'+item.path">
 
                             {{-- Rename inline --}}
@@ -175,7 +174,7 @@
                 {{-- Files section --}}
                 <div v-if="imgRepoFiles.length">
                     <p class="text-overline text-slate-400 mb-2">FILE</p>
-                    <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:0.5rem">
+                    <div class="img-repo-grid img-repo-grid--files">
                         <template v-for="item in imgRepoFiles" :key="'f-'+item.path">
 
                             {{-- Rename inline --}}
@@ -296,8 +295,8 @@
 
             {{-- Preview --}}
             <div class="flex items-center justify-between px-4 pt-4 pb-3 border-b border-slate-200">
-                <p class="text-body font-semibold text-slate-800 truncate" style="max-width:180px">@{{ imgRepoSelected.name }}</p>
-                <button @click="imgRepoSelected=null" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg hover:bg-slate-200 transition-colors ml-2 shrink-0">
+                <p class="img-repo-detail-title text-body font-semibold text-slate-800 truncate">@{{ imgRepoSelected.name }}</p>
+                <button @click="imgRepoSelected=null" class="icon-toolbar-button text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-200 transition-colors ml-2 shrink-0">
                     <i class="fa-solid fa-xmark text-sm"></i>
                 </button>
             </div>
@@ -341,17 +340,17 @@
             <div class="px-4 py-3 border-t border-slate-200 flex flex-col gap-2">
                 <button v-if="imgRepoSelected.type === 'dir'"
                     @click="imgRepoBrowse(imgRepoSelected.path)"
-                    class="flex items-center gap-2 px-4 py-2 rounded-xl text-body-sm font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors">
+                    class="menu-action-button rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-colors font-medium">
                     <i class="fa-solid fa-folder-open"></i>
                     <span>Buka Folder</span>
                 </button>
                 <button @click="imgRepoStartRename(imgRepoSelected)"
-                    class="flex items-center gap-2 px-4 py-2 rounded-xl text-body-sm font-medium bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors">
+                    class="menu-action-button rounded-xl bg-white border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors font-medium">
                     <i class="fa-solid fa-pencil text-slate-400"></i>
                     <span>Rename</span>
                 </button>
                 <button @click="imgRepoDelete(imgRepoSelected)"
-                    class="flex items-center gap-2 px-4 py-2 rounded-xl text-body-sm font-medium bg-white border border-red-200 text-red-600 hover:bg-red-50 transition-colors" aria-label="Hapus">
+                    class="menu-action-button rounded-xl bg-white border-red-200 text-red-600 hover:bg-red-50 transition-colors font-medium" aria-label="Hapus">
                     <i class="fa-solid fa-trash text-red-400"></i>
                 </button>
             </div>
@@ -365,18 +364,18 @@
         @click.stop>
         <button v-if="imgRepoContextMenu.item.type === 'dir'"
             @click="imgRepoBrowse(imgRepoContextMenu.item.path); imgRepoContextMenu=null"
-            class="w-full flex items-center gap-3 px-4 py-2 text-body-sm text-slate-700 hover:bg-slate-50 transition-colors">
+            class="menu-action-button border-transparent text-slate-700 hover:bg-slate-50 transition-colors">
             <i class="fa-solid fa-folder-open text-slate-400 w-4 text-center"></i>
             <span>Buka</span>
         </button>
         <button @click="imgRepoStartRename(imgRepoContextMenu.item); imgRepoContextMenu=null"
-            class="w-full flex items-center gap-3 px-4 py-2 text-body-sm text-slate-700 hover:bg-slate-50 transition-colors">
+            class="menu-action-button border-transparent text-slate-700 hover:bg-slate-50 transition-colors">
             <i class="fa-solid fa-pencil text-slate-400 w-4 text-center"></i>
             <span>Rename</span>
         </button>
         <div class="my-1 border-t border-slate-100"></div>
         <button @click="imgRepoDelete(imgRepoContextMenu.item); imgRepoContextMenu=null"
-            class="w-full flex items-center gap-3 px-4 py-2 text-body-sm text-red-600 hover:bg-red-50 transition-colors" aria-label="Hapus">
+            class="menu-action-button border-transparent text-red-600 hover:bg-red-50 transition-colors" aria-label="Hapus">
             <i class="fa-solid fa-trash w-4 text-center"></i>
         </button>
     </div>
@@ -404,7 +403,7 @@
                             </div>
                         </div>
                         <button @click="imgRepoMkdirOpen=false"
-                            class="w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors">
+                            class="icon-toolbar-button rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
@@ -416,7 +415,7 @@
                             @keydown.enter="imgRepoMkdir"
                             @keydown.escape="imgRepoMkdirOpen=false"
                             placeholder="Contoh: SAMSUNG, IPHONE 16, dll..."
-                            class="w-full border border-slate-300 rounded-xl px-4 py-3 text-body outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
+                            class="form-input-compact w-full border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
                             autofocus>
                         <p class="mt-2 text-body-sm text-slate-400">Gunakan huruf kapital sesuai konvensi folder yang ada.</p>
                     </div>

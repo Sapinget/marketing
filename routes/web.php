@@ -1246,7 +1246,7 @@ Route::middleware('dashboard.auth')->group(function () use (
 
     Route::post('/api/google-sheet-claim/sync', function () {
         set_time_limit(180);
-        $spreadsheetId = trim((string) env('MARKETING_GOOGLE_SHEET_ID', '1kt_r6PvRNO_p_2u1Dm1QpU3SLMehirJL'));
+        $spreadsheetId = trim((string) env('MARKETING_GOOGLE_SHEET_ID', ''));
         $exitCode = Artisan::call('marketing:sync-google-sheet', [
             'spreadsheetId' => $spreadsheetId,
             '--truncate' => true,

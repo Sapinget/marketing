@@ -49,6 +49,14 @@
                 try { catalogBrandPriceKeys.value = JSON.parse(localStorage.getItem('ppp_pricelist_brand_price_keys') || '{}'); } catch (e) {}
                 const catalogOutputMode = ref(localStorage.getItem('ppp_pricelist_output_mode') || 'list'); // 'list' | 'katalog'
                 const catalogColumnsPerRow = ref(Number(localStorage.getItem('ppp_pricelist_columns_per_row') || 3));
+                const catalogTemplateFormatOptions = [
+                    { key: 'story', label: 'Story 1080x1920' },
+                    { key: 'feed', label: 'Feed 1080x1350' },
+                    { key: 'a4', label: 'A4 1240x1754' },
+                ];
+                const catalogColumnOptions = [2, 3, 4, 5];
+                const catalogTemplateFormatLabel = computed(() => catalogTemplateFormatOptions.find((opt) => opt.key === catalogTemplateForm.value.format)?.label || 'Pilih format');
+                const catalogColumnsPerRowLabel = computed(() => `${catalogColumnsPerRow.value || 3} kolom`);
                 const defaultCatalogCardConfig = () => ({
                     imageHeight: 100,
                     modelFontSize: 13,
@@ -77,6 +85,13 @@
                 const androidImageMap = ref({});
 
                 const pricelistBrandSheets = ['SAMSUNG', 'XIAOMI', 'OPPO', 'VIVO', 'HUAWEI', 'TECNO', 'INFINIX', 'NUBIA', 'REALME', 'ITEL', 'HONOR'];
+                const filteredPricelistBrandSheetOptions = computed(() => {
+                    const query = String(searchSelectQuery.value || '').toLowerCase();
+                    return pricelistBrandSheets.filter((sheet) => sheet.toLowerCase().includes(query));
+                });
+                const filteredCatalogBrandSheetOptions = computed(() => filteredPricelistBrandSheetOptions.value);
+                const currentPricelistSheetFilterLabel = computed(() => pricelistSheetFilter.value === 'all' ? 'Semua Brand' : pricelistSheetFilter.value);
+                const currentCatalogSheetLabel = computed(() => catalogSelectedSheet.value === 'all' ? 'Semua Brand' : catalogSelectedSheet.value);
 
                 watch(catalogCardCfg, (cfg) => {
                     localStorage.setItem('ppp_pricelist_card_cfg', JSON.stringify(cfg));
@@ -261,9 +276,13 @@
                     layout_config: defaultCatalogLayoutConfig(),
                     is_active: true,
                 });
-                const catalogSelectedTemplate = computed(() => catalogSelectedTemplateId.value === 'a4_auto'
-                    ? catalogA4AutoTemplate()
-                    : (catalogTemplates.value.find((template) => template.ID === catalogSelectedTemplateId.value) || null));
+                const catalogTemplateOptions = computed(() => [catalogA4AutoTemplate(), ...catalogTemplates.value]);
+                const filteredCatalogTemplateOptions = computed(() => {
+                    const query = String(searchSelectQuery.value || '').toLowerCase();
+                    return catalogTemplateOptions.value.filter((template) => String(template.name || '').toLowerCase().includes(query));
+                });
+                const catalogSelectedTemplate = computed(() => catalogTemplateOptions.value.find((template) => template.ID === catalogSelectedTemplateId.value) || null);
+                const currentCatalogTemplateLabel = computed(() => catalogSelectedTemplate.value?.name || 'A4 Auto');
                 const catalogRowsForGeneration = computed(() => {
                     const start = Number(catalogUrutStart.value || 0);
                     const end = Number(catalogUrutEnd.value || 0);
@@ -273,6 +292,16 @@
                         .filter((row) => !start || Number(row.urut || 0) >= start)
                         .filter((row) => !end || Number(row.urut || 0) <= end)
                         .sort((a, b) => String(a.source_sheet).localeCompare(String(b.source_sheet)) || Number(a.urut || 0) - Number(b.urut || 0)));
+                });
+                const catalogPreviewRows = computed(() => {
+                    const fallbackRows = [
+                        { source_sheet: 'SAMPLE', nama_produk: 'IPHONE 15 PRO', ram: '8GB', storage: '256GB', harga_nasional: 18999000, special_price: 17999000, harga_jual: 17999000 },
+                        { source_sheet: 'SAMPLE', nama_produk: 'SAMSUNG S24 ULTRA', ram: '12GB', storage: '512GB', harga_nasional: 21999000, special_price: 20499000, harga_jual: 20499000 },
+                        { source_sheet: 'SAMPLE', nama_produk: 'OPPO RENO 12', ram: '12GB', storage: '256GB', harga_nasional: 6999000, special_price: 6499000, harga_jual: 6499000 },
+                        { source_sheet: 'SAMPLE', nama_produk: 'VIVO V30', ram: '12GB', storage: '256GB', harga_nasional: 5999000, special_price: 5599000, harga_jual: 5599000 },
+                        { source_sheet: 'SAMPLE', nama_produk: 'XIAOMI 14T', ram: '12GB', storage: '512GB', harga_nasional: 7999000, special_price: 7499000, harga_jual: 7499000 },
+                    ];
+                    return (catalogRowsForGeneration.value.length ? catalogRowsForGeneration.value : fallbackRows).slice(0, 5);
                 });
 
                 const catalogPriceKeyForSheet = (sheet = null) => {
@@ -406,6 +435,7 @@
                         canvasHeight,
                         tableWidth: width,
                         rectWidth: rect.width,
+                        rectHeight: rect.height,
                     };
                     event.preventDefault();
                     event.stopPropagation?.();
@@ -415,9 +445,10 @@
                     const drag = catalogLayoutDrag.value;
                     if (!drag) return;
 
-                    const scale = drag.canvasWidth / drag.rectWidth;
-                    const deltaX = (event.clientX - drag.startX) * scale;
-                    const deltaY = (event.clientY - drag.startY) * scale;
+                    const scaleX = drag.canvasWidth / drag.rectWidth;
+                    const scaleY = drag.canvasHeight / drag.rectHeight;
+                    const deltaX = (event.clientX - drag.startX) * scaleX;
+                    const deltaY = (event.clientY - drag.startY) * scaleY;
 
                     const x = Math.round(drag.originX + deltaX);
                     const y = Math.max(0, Math.round(drag.originY + deltaY));
@@ -447,9 +478,12 @@
                     const fontSize = Number(cfg.titleFontSize || 34);
 
                     return {
-                        left: `${((titleX - (fontSize * 3.2)) / canvasWidth) * 100}%`,
-                        top: `${((titleY - (fontSize * 0.7)) / canvasHeight) * 100}%`,
-                        width: `${((fontSize * 6.4) / canvasWidth) * 100}%`,
+                        left: `${(titleX / canvasWidth) * 100}%`,
+                        top: `${(titleY / canvasHeight) * 100}%`,
+                        transform: 'translate(-50%, -50%)',
+                        fontSize: `${Math.max(9, (fontSize / canvasHeight) * 640)}px`,
+                        lineHeight: '1',
+                        color: cfg.titleColor || '#ffffff',
                     };
                 };
 
@@ -498,6 +532,67 @@
                         left: `${((Number(cfg.x || 64)) / canvasWidth) * 100}%`,
                         top: `${((Number(cfg.y || 255)) / canvasHeight) * 100}%`,
                         width: `${(width / canvasWidth) * 100}%`,
+                        height: `${(height / canvasHeight) * 100}%`,
+                        borderRadius: `${(Number(cfg.borderRadius || 10) / canvasHeight) * 100}%`,
+                    };
+                };
+
+                const catalogTableHeaderPreviewStyle = (template) => {
+                    const cfg = template?.layout_config || defaultCatalogLayoutConfig();
+                    const height = Number(cfg.headerHeight || 34) + (Number(cfg.maxItems || 10) * Number(cfg.rowHeight || 28));
+                    const canvasHeight = Number(template?.canvas_height || (template?.format === 'feed' ? 1350 : 1920));
+
+                    return {
+                        height: `${(Number(cfg.headerHeight || 34) / height) * 100}%`,
+                        backgroundColor: cfg.headerColor || '#3f3f3f',
+                        color: cfg.headerTextColor || '#ffffff',
+                        fontSize: `${Math.max(7, (Number(cfg.headerFontSize || 13) / canvasHeight) * 640)}px`,
+                        fontWeight: 700,
+                        textTransform: 'uppercase',
+                    };
+                };
+
+                const catalogTableRowsPreviewStyle = (template) => {
+                    const cfg = template?.layout_config || defaultCatalogLayoutConfig();
+                    const height = Number(cfg.headerHeight || 34) + (Number(cfg.maxItems || 10) * Number(cfg.rowHeight || 28));
+
+                    return {
+                        height: `${((Number(cfg.maxItems || 10) * Number(cfg.rowHeight || 28)) / height) * 100}%`,
+                    };
+                };
+
+                const catalogTableRowPreviewStyle = (template, index = 0) => {
+                    const cfg = template?.layout_config || defaultCatalogLayoutConfig();
+                    const canvasHeight = Number(template?.canvas_height || (template?.format === 'feed' ? 1350 : 1920));
+
+                    const maxItems = Math.max(1, Number(cfg.maxItems || 10));
+
+                    return {
+                        height: `${100 / maxItems}%`,
+                        backgroundColor: index % 2 === 0 ? (cfg.rowEvenColor || 'rgba(255,255,255,0.08)') : (cfg.rowOddColor || 'rgba(255,255,255,0.55)'),
+                        color: cfg.textColor || '#3f3f3f',
+                        fontSize: `${Math.max(7, (Number(cfg.bodyFontSize || 13) / canvasHeight) * 640)}px`,
+                        fontWeight: 600,
+                    };
+                };
+
+                const catalogPreviewMeasureCtx = document.createElement('canvas').getContext('2d');
+
+                const catalogPreviewStrikeStyle = (template, value) => {
+                    const cfg = template?.layout_config || defaultCatalogLayoutConfig();
+                    const canvasHeight = Number(template?.canvas_height || (template?.format === 'feed' ? 1350 : 1920));
+                    const scale = 640 / canvasHeight;
+                    const fontSize = Math.max(7, Number(cfg.priceFontSize || 13) * scale);
+                    const rise = 10 * scale;
+
+                    catalogPreviewMeasureCtx.font = `600 ${fontSize}px Inter, Arial, sans-serif`;
+                    const text = formatCatalogPrice(value);
+                    const width = Math.max(1, catalogPreviewMeasureCtx.measureText(text).width);
+                    const angleDeg = -Math.atan2(rise, width) * (180 / Math.PI);
+
+                    return {
+                        borderTopWidth: `${Math.max(0.5, 2 * scale)}px`,
+                        transform: `rotate(${angleDeg}deg)`,
                     };
                 };
 

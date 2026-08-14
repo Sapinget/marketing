@@ -256,7 +256,7 @@
                     </div>
                     <div class="flex justify-end pt-2 border-t border-slate-100">
                         <button @click="saveBudgetServer" :disabled="submitting"
-                            class="px-5 py-2.5 bg-ppp-accent text-white rounded-xl text-body font-bold flex items-center gap-2 hover:bg-amber transition disabled:opacity-50">
+                            class="primary-cta-button primary-cta-button--accent hover:bg-amber disabled:opacity-50">
                             <i v-if="!submitting" class="fa-solid fa-floppy-disk"></i>
                             <i v-else class="fa-solid fa-circle-notch fa-spin"></i>
                             {{ submitting ? 'Menyimpan...' : 'Simpan Konfigurasi' }}

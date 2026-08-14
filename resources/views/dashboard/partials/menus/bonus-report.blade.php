@@ -268,7 +268,7 @@
                             </div>
                             <div class="flex justify-end mt-5">
                                 <button @click="saveBonusConfig"
-                                    class="px-6 py-2.5 bg-ppp-accent text-white rounded-xl text-body-sm font-bold uppercase hover:bg-amber transition-all active:scale-95">
+                                    class="primary-cta-button primary-cta-button--accent hover:bg-amber active:scale-95">
                                     <i class="fa-solid fa-floppy-disk mr-1.5"></i> Simpan Matrix
                                 </button>
                             </div>

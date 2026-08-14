@@ -1244,10 +1244,10 @@
             height: 36px;
             min-height: 36px;
             padding: 0 14px;
-            border: 1px solid #f1f5f9;
+            border: 1px solid var(--ppp-line);
             border-radius: 16px;
             font-size: var(--fs-body-sm);
-            background: #f8fafc;
+            background: #ffffff;
             color: #0f172a;
             display: inline-flex;
             align-items: center;
@@ -1265,9 +1265,9 @@
             height: 36px;
             min-height: 36px;
             padding: 0 14px;
-            border: 1px solid #f1f5f9;
+            border: 1px solid var(--ppp-line);
             border-radius: 16px;
-            background: #f8fafc;
+            background: #ffffff;
             font-size: var(--fs-body-sm);
             color: #0f172a;
             text-align: left;
@@ -2212,6 +2212,249 @@
             touch-action: none;
         }
 
+        .control-height-md {
+            height: 36px;
+            min-height: 36px;
+        }
+
+        .toolbar-segment-button,
+        .toolbar-tab-button,
+        .menu-action-button {
+            height: 36px;
+            min-height: 36px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--ppp-line);
+            background: #ffffff;
+            color: rgb(100 116 139);
+            font-size: var(--fs-body-sm);
+            font-weight: 700;
+            line-height: 1;
+            white-space: nowrap;
+            transition: border-color 0.18s ease, background-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+        }
+
+        .toolbar-segment-button {
+            padding: 0 12px;
+            border-radius: 12px;
+        }
+
+        .toolbar-tab-button {
+            padding: 0 12px;
+            border-radius: 8px;
+            text-transform: uppercase;
+        }
+
+        .menu-action-button {
+            width: 100%;
+            justify-content: flex-start;
+            gap: 12px;
+            padding: 0 16px;
+            text-align: left;
+        }
+
+        .icon-toolbar-button {
+            width: 36px;
+            min-width: 36px;
+            height: 36px;
+            min-height: 36px;
+            padding: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-action-button--auto {
+            width: auto;
+        }
+
+        .control-text-xs {
+            font-size: var(--fs-overline-xs);
+            line-height: 1.1;
+        }
+
+        .color-swatch-sm {
+            width: 18px;
+            height: 18px;
+        }
+
+        .color-swatch-md {
+            width: 26px;
+            height: 26px;
+        }
+
+        .checkerboard-bg {
+            background: repeating-conic-gradient(#e2e8f0 0% 25%, #ffffff 0% 50%) 0 0 / 6px 6px;
+        }
+
+        .color-value-text {
+            font-size: var(--fs-overline-xs);
+            line-height: 1;
+        }
+
+        .img-repo-shell {
+            margin: -0.75rem -0.75rem 0;
+            min-height: calc(100dvh - 64px);
+        }
+
+        .img-repo-grid {
+            display: grid;
+            gap: 0.5rem;
+        }
+
+        .img-repo-grid--folders {
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        }
+
+        .img-repo-grid--files,
+        .img-repo-grid--loading {
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        }
+
+        .img-repo-grid--loading {
+            margin-top: 0.5rem;
+        }
+
+        .img-repo-grid--folders {
+            margin-bottom: 1.5rem;
+        }
+
+        .img-repo-breadcrumb-current {
+            max-width: 200px;
+        }
+
+        .img-repo-detail-title {
+            max-width: 180px;
+        }
+
+        .apple-selection-badge {
+            font-size: 0.6rem;
+            line-height: 1;
+        }
+
+        .apple-product-thumb {
+            width: 56px;
+            height: 56px;
+        }
+
+        .apple-product-image {
+            width: 52px;
+            height: 52px;
+            object-fit: contain;
+            padding: 2px;
+        }
+
+        .apple-empty-logo {
+            font-size: 1.5rem;
+        }
+
+        .apple-check-icon {
+            font-size: 0.45rem;
+        }
+
+        .apple-preview-frame {
+            max-height: 320px;
+        }
+
+        .apple-preview-img {
+            height: 320px;
+            width: auto;
+            max-width: 100%;
+            object-fit: contain;
+        }
+
+        .floating-backdrop-layer {
+            z-index: 9490;
+        }
+
+        .color-picker-panel {
+            z-index: 9500;
+            width: 224px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+            border: 1px solid #e2e8f0;
+        }
+
+        .color-picker-gradient {
+            height: 140px;
+            cursor: crosshair;
+        }
+
+        .color-picker-slider {
+            height: 10px;
+            cursor: pointer;
+        }
+
+        .color-picker-hue-track {
+            background: linear-gradient(to right, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+        }
+
+        .color-picker-input-prefix,
+        .color-picker-input,
+        .color-picker-percent {
+            font-size: var(--fs-overline-xs);
+            line-height: 1;
+        }
+
+        .color-picker-percent-field {
+            width: 52px;
+        }
+
+        .color-picker-handle {
+            transform: translate(-50%, -50%);
+            border: 2px solid #ffffff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .color-picker-handle--strong {
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.25), 0 1px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .color-picker-saved-swatch {
+            box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+        }
+
+        .color-picker-saved-swatch--active {
+            box-shadow: 0 0 0 2px var(--ppp-accent);
+        }
+
+        .color-picker-saved-label {
+            font-size: 9px;
+            line-height: 1;
+        }
+
+        .preview-zoom-image {
+            width: auto;
+            height: auto;
+            max-width: none;
+        }
+
+        .toolbar-segment-button:hover,
+        .toolbar-tab-button:hover,
+        .menu-action-button:hover {
+            background: rgb(248 250 252);
+            border-color: rgb(203 213 225);
+        }
+
+        .toolbar-actions .primary-cta-button,
+        .toolbar-actions .table-action-button,
+        .table-toolbar-shell .primary-cta-button,
+        .table-toolbar-shell .table-action-button {
+            height: 36px;
+            min-height: 36px;
+            border-radius: 16px;
+        }
+
+        @media (min-width: 640px) {
+            .toolbar-actions .primary-cta-button,
+            .toolbar-actions .table-action-button {
+                width: 36px;
+                min-width: 36px;
+                height: 36px;
+                min-height: 36px;
+            }
+        }
+
         .segmented-control {
             display: inline-flex;
             align-items: center;
@@ -2729,8 +2972,8 @@
         .form-input {
             width: 100%;
             box-sizing: border-box;
-            background: #f8fafc;
-            border: 1px solid #f1f5f9;
+            background: #ffffff;
+            border: 1px solid var(--ppp-line);
             border-radius: 16px;
             height: 36px;
             min-height: 36px;
@@ -2744,7 +2987,7 @@
 
         .form-input:focus {
             border-color: var(--ppp-accent);
-            background: #f8fafc;
+            background: #ffffff;
         }
 
         .form-input-leading-icon {
@@ -2754,8 +2997,8 @@
         .form-input-auth {
             width: 100%;
             box-sizing: border-box;
-            background: #f8fafc;
-            border: 1px solid #f1f5f9;
+            background: #ffffff;
+            border: 1px solid var(--ppp-line);
             border-radius: 16px;
             height: 36px;
             min-height: 36px;
@@ -2769,14 +3012,14 @@
 
         .form-input-auth:focus {
             border-color: var(--ppp-accent);
-            background: #f8fafc;
+            background: #ffffff;
         }
 
         .form-input-compact {
             width: 100%;
             box-sizing: border-box;
-            background: #f8fafc;
-            border: 1px solid #f1f5f9;
+            background: #ffffff;
+            border: 1px solid var(--ppp-line);
             border-radius: 16px;
             height: 36px;
             min-height: 36px;
@@ -2790,13 +3033,13 @@
 
         .form-input-compact:focus {
             border-color: var(--ppp-accent);
-            background: #f8fafc;
+            background: #ffffff;
         }
 
         .form-input-compact-white {
             width: 100%;
-            background: #f8fafc;
-            border: 1px solid #f1f5f9;
+            background: #ffffff;
+            border: 1px solid var(--ppp-line);
             border-radius: 16px;
             height: 36px;
             min-height: 36px;
@@ -2810,13 +3053,13 @@
 
         .form-input-compact-white:focus {
             border-color: var(--ppp-accent);
-            background: #f8fafc;
+            background: #ffffff;
         }
 
         .form-input-search {
             width: 100%;
-            background: #f8fafc;
-            border: 1px solid #f1f5f9;
+            background: #ffffff;
+            border: 1px solid var(--ppp-line);
             border-radius: 16px;
             height: 36px;
             min-height: 36px;
@@ -2830,7 +3073,7 @@
 
         .form-input-search:focus {
             border-color: var(--ppp-accent);
-            background: #f8fafc;
+            background: #ffffff;
         }
 
         .form-textarea {
@@ -2914,7 +3157,7 @@
 
         .form-input-popover {
             width: 100%;
-            background: #f8fafc;
+            background: #ffffff;
             border: none;
             border-radius: 16px;
             height: 36px;
@@ -2929,7 +3172,7 @@
 
         .form-input-popover:focus {
             border-color: var(--ppp-accent);
-            background: #f8fafc;
+            background: #ffffff;
         }
 
         .form-input::placeholder,

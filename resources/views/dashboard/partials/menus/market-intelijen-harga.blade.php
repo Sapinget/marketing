@@ -199,15 +199,15 @@
             </div>
             <div class="flex gap-1 bg-slate-100 rounded-lg p-1">
                 <button @click="puraPriceChangesDirection = 'all'"
-                    :class="['px-3 py-1 text-body-sm font-semibold rounded-md transition-all', puraPriceChangesDirection === 'all' ? 'bg-white shadow text-slate-700' : 'text-slate-500 hover:text-slate-700']">
+                    :class="['toolbar-segment-button rounded-md border-transparent', puraPriceChangesDirection === 'all' ? 'bg-white shadow text-slate-700' : 'text-slate-500 hover:text-slate-700']">
                     Semua
                 </button>
                 <button @click="puraPriceChangesDirection = 'naik'"
-                    :class="['px-3 py-1 text-body-sm font-semibold rounded-md transition-all', puraPriceChangesDirection === 'naik' ? 'bg-white shadow text-red-600' : 'text-slate-500 hover:text-slate-700']">
+                    :class="['toolbar-segment-button rounded-md border-transparent', puraPriceChangesDirection === 'naik' ? 'bg-white shadow text-red-600' : 'text-slate-500 hover:text-slate-700']">
                     Naik
                 </button>
                 <button @click="puraPriceChangesDirection = 'turun'"
-                    :class="['px-3 py-1 text-body-sm font-semibold rounded-md transition-all', puraPriceChangesDirection === 'turun' ? 'bg-white shadow text-emerald-600' : 'text-slate-500 hover:text-slate-700']">
+                    :class="['toolbar-segment-button rounded-md border-transparent', puraPriceChangesDirection === 'turun' ? 'bg-white shadow text-emerald-600' : 'text-slate-500 hover:text-slate-700']">
                     Turun
                 </button>
             </div>
