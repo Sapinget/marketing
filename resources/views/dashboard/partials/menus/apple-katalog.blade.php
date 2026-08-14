@@ -102,13 +102,13 @@
             <div v-else-if="appleView === 'table'" class="section-card flex-1 min-h-0 overflow-auto">
                 <table class="w-full text-body-sm">
                     <thead>
-                        <tr class="border-b border-slate-100">
-                            <th class="px-3 py-2 text-left font-semibold text-slate-500 whitespace-nowrap">Model</th>
-                            <th class="px-3 py-2 text-left font-semibold text-slate-500 whitespace-nowrap">Storage</th>
+                        <tr class="table-header-row">
+                            <th class="table-header-cell text-left whitespace-nowrap">Model</th>
+                            <th class="table-header-cell text-left whitespace-nowrap">Storage</th>
                             <template v-for="label in appleKondisiLabels" :key="label">
-                                <th class="px-3 py-2 text-right font-semibold text-slate-500 whitespace-nowrap">{{ label }}</th>
+                                <th class="table-header-cell text-right whitespace-nowrap">{{ label }}</th>
                             </template>
-                            <th class="px-3 py-2 text-center font-semibold text-slate-500">Pilih</th>
+                            <th class="table-header-cell text-center">Pilih</th>
                         </tr>
                     </thead>
                     <tbody>

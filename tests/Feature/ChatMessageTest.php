@@ -56,7 +56,7 @@ class ChatMessageTest extends TestCase
             'message' => 'Pesan pertama',
         ]);
 
-        $response = $this->getJson('/api/chat/messages/' . $receiver->getKey());
+        $response = $this->getJson('/api/chat/messages/'.$receiver->getKey());
 
         $response->assertOk()
             ->assertJsonCount(1, 'data')
@@ -76,11 +76,11 @@ class ChatMessageTest extends TestCase
         $this->actingAs($receiver);
         $this->withSession([
             'dashboard_last_activity_at' => now()->timestamp,
-            'dashboard_active_session_id' => 'test-session-' . $receiver->getKey(),
+            'dashboard_active_session_id' => 'test-session-'.$receiver->getKey(),
         ]);
 
         // Receiver reads — should mark as read
-        $this->getJson('/api/chat/messages/' . $sender->getKey())->assertOk();
+        $this->getJson('/api/chat/messages/'.$sender->getKey())->assertOk();
 
         // Unread for sender should be 0 now
         $unreadCount = ChatMessage::query()
@@ -106,30 +106,30 @@ class ChatMessageTest extends TestCase
         $this->actingAs($receiver);
         $this->withSession([
             'dashboard_last_activity_at' => now()->timestamp,
-            'dashboard_active_session_id' => 'test-session-' . $receiver->getKey(),
+            'dashboard_active_session_id' => 'test-session-'.$receiver->getKey(),
         ]);
         $receiver->forceFill([
             'is_online' => true,
             'last_seen_at' => now(),
             'session_expires_at' => now()->addMinutes(15),
-            'active_session_id' => 'test-session-' . $receiver->getKey(),
+            'active_session_id' => 'test-session-'.$receiver->getKey(),
         ])->save();
-        $this->getJson('/api/chat/messages/' . $sender->getKey())->assertOk();
+        $this->getJson('/api/chat/messages/'.$sender->getKey())->assertOk();
         $this->assertNotNull(ChatMessage::query()->find($message->getKey())?->read_at);
 
         $this->actingAs($sender);
         $this->withSession([
             'dashboard_last_activity_at' => now()->timestamp,
-            'dashboard_active_session_id' => 'test-session-' . $sender->getKey(),
+            'dashboard_active_session_id' => 'test-session-'.$sender->getKey(),
         ]);
         $sender->forceFill([
             'is_online' => true,
             'last_seen_at' => now(),
             'session_expires_at' => now()->addMinutes(15),
-            'active_session_id' => 'test-session-' . $sender->getKey(),
+            'active_session_id' => 'test-session-'.$sender->getKey(),
         ])->save();
 
-        $response = $this->getJson('/api/chat/messages/' . $receiver->getKey());
+        $response = $this->getJson('/api/chat/messages/'.$receiver->getKey());
 
         $response->assertOk()
             ->assertJsonPath('data.0.id', $message->getKey());
@@ -146,7 +146,7 @@ class ChatMessageTest extends TestCase
         $this->actingAs($receiver);
         $this->withSession([
             'dashboard_last_activity_at' => now()->timestamp,
-            'dashboard_active_session_id' => 'test-session-' . $receiver->getKey(),
+            'dashboard_active_session_id' => 'test-session-'.$receiver->getKey(),
         ]);
 
         // Sender sends 3 messages
@@ -158,7 +158,7 @@ class ChatMessageTest extends TestCase
 
         $response->assertOk()
             ->assertJsonPath('total', 3)
-            ->assertJsonPath('by_user.' . $sender->getKey(), 3);
+            ->assertJsonPath('by_user.'.$sender->getKey(), 3);
     }
 
     public function test_empty_message_is_rejected(): void

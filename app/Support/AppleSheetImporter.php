@@ -30,112 +30,112 @@ class AppleSheetImporter
      */
     private const SHEET_CONFIG = [
         'IPHONE' => [
-            'seri_col'       => 0,
-            'storage_col'    => 1,
-            'ram_col'        => null,
+            'seri_col' => 0,
+            'storage_col' => 1,
+            'ram_col' => null,
             'harga_nasional' => 13, // SRP NEW (harga coret)
-            'special_price'  => 14, // HARGA TOKO NEW (no fallback)
-            'carry_seri'     => true,
-            'kondisi_cols'   => [
+            'special_price' => 14, // HARGA TOKO NEW (no fallback)
+            'carry_seri' => true,
+            'kondisi_cols' => [
                 'TIDAK TERDAFTAR' => 3,
-                'BEACUKAI'        => 4,
-                'EXIBOX'          => 5,
-                'DUAL SIM'        => 6,
-                'GARANSI ON'      => 7,
+                'BEACUKAI' => 4,
+                'EXIBOX' => 5,
+                'DUAL SIM' => 6,
+                'GARANSI ON' => 7,
                 'KREDIT BEACUKAI' => 8,
-                'KREDIT EXIBOX'   => 9,
-                'KREDIT NEW'      => 10,
+                'KREDIT EXIBOX' => 9,
+                'KREDIT NEW' => 10,
                 'KREDIT DUAL SIM' => 11,
-                'KREDIT GARANSI'  => 12,
-                'SRP NEW'         => 13,
-                'HARGA TOKO NEW'  => 14,
-                'HARGA ONLINE'    => 17,
+                'KREDIT GARANSI' => 12,
+                'SRP NEW' => 13,
+                'HARGA TOKO NEW' => 14,
+                'HARGA ONLINE' => 17,
             ],
         ],
         'IPAD' => [
-            'seri_col'       => 0,
-            'storage_col'    => 1,
-            'ram_col'        => null,
+            'seri_col' => 0,
+            'storage_col' => 1,
+            'ram_col' => null,
             'harga_nasional' => 3,  // SRP WIFI (harga coret)
-            'special_price'  => 5,  // HARGA TOKO WIFI (no fallback)
-            'carry_seri'     => true,
-            'kondisi_cols'   => [
-                'SRP WIFI'              => 3,
-                'SRP WIFI+CELL'         => 4,
-                'HARGA TOKO WIFI'       => 5,
-                'HARGA TOKO WIFI+CELL'  => 6,
-                'SECOND WIFI'           => 7,
-                'SECOND WIFI+CELL'      => 8,
-                'KREDIT NEW WIFI'       => 9,
-                'KREDIT NEW WIFI+CELL'  => 10,
-                'KREDIT SECOND WIFI'    => 11,
+            'special_price' => 5,  // HARGA TOKO WIFI (no fallback)
+            'carry_seri' => true,
+            'kondisi_cols' => [
+                'SRP WIFI' => 3,
+                'SRP WIFI+CELL' => 4,
+                'HARGA TOKO WIFI' => 5,
+                'HARGA TOKO WIFI+CELL' => 6,
+                'SECOND WIFI' => 7,
+                'SECOND WIFI+CELL' => 8,
+                'KREDIT NEW WIFI' => 9,
+                'KREDIT NEW WIFI+CELL' => 10,
+                'KREDIT SECOND WIFI' => 11,
                 'KREDIT SECOND WIFI+CELL' => 12,
-                'HARGA ONLINE WIFI'     => 13,
+                'HARGA ONLINE WIFI' => 13,
                 'HARGA ONLINE WIFI+CELL' => 14,
             ],
         ],
         'MACBOOK' => [
-            'seri_col'       => 0,
-            'storage_col'    => 3,  // INTERNL (SSD) — combined with RAM
-            'ram_col'        => 2,  // RAM
+            'seri_col' => 0,
+            'storage_col' => 3,  // INTERNL (SSD) — combined with RAM
+            'ram_col' => 2,  // RAM
             'harga_nasional' => 5,  // SRP NEW (harga coret)
-            'special_price'  => 6,  // CASH TOKO (no fallback)
-            'carry_seri'     => false,
-            'kondisi_cols'   => [
-                'SRP NEW'       => 5,
-                'CASH TOKO'     => 6,
-                'SECOND'        => 7,
-                'KREDIT NEW'    => 8,
+            'special_price' => 6,  // CASH TOKO (no fallback)
+            'carry_seri' => false,
+            'kondisi_cols' => [
+                'SRP NEW' => 5,
+                'CASH TOKO' => 6,
+                'SECOND' => 7,
+                'KREDIT NEW' => 8,
                 'KREDIT SECOND' => 9,
-                'HARGA ONLINE'  => 10,
+                'HARGA ONLINE' => 10,
             ],
         ],
         'APPLE WATCH' => [
-            'seri_col'       => 0,
-            'storage_col'    => 1,  // SIZE (42MM / 46MM / etc.)
-            'ram_col'        => null,
+            'seri_col' => 0,
+            'storage_col' => 1,  // SIZE (42MM / 46MM / etc.)
+            'ram_col' => null,
             'harga_nasional' => 3,  // SRP NEW (harga coret)
-            'special_price'  => 4,  // CASH NEW (no fallback)
-            'carry_seri'     => true,
-            'kondisi_cols'   => [
-                'SRP NEW'       => 3,
-                'CASH NEW'      => 4,
-                'SECOND'        => 5,
-                'KREDIT NEW'    => 6,
+            'special_price' => 4,  // CASH NEW (no fallback)
+            'carry_seri' => true,
+            'kondisi_cols' => [
+                'SRP NEW' => 3,
+                'CASH NEW' => 4,
+                'SECOND' => 5,
+                'KREDIT NEW' => 6,
                 'KREDIT SECOND' => 7,
-                'HARGA ONLINE'  => 8,
+                'HARGA ONLINE' => 8,
             ],
         ],
         'AIRPODS' => [
-            'seri_col'       => 0,
-            'storage_col'    => null,
-            'ram_col'        => null,
+            'seri_col' => 0,
+            'storage_col' => null,
+            'ram_col' => null,
             'harga_nasional' => 1,  // SRP NEW (harga coret)
-            'special_price'  => 2,  // CASH TOKO (no fallback)
-            'carry_seri'     => false,
-            'kondisi_cols'   => [
-                'SRP NEW'       => 1,
-                'CASH TOKO'     => 2,
-                'SECOND'        => 3,
-                'KREDIT NEW'    => 4,
+            'special_price' => 2,  // CASH TOKO (no fallback)
+            'carry_seri' => false,
+            'kondisi_cols' => [
+                'SRP NEW' => 1,
+                'CASH TOKO' => 2,
+                'SECOND' => 3,
+                'KREDIT NEW' => 4,
                 'KREDIT SECOND' => 5,
-                'HARGA ONLINE'  => 6,
+                'HARGA ONLINE' => 6,
             ],
         ],
         'APPLE PENCIL' => [
-            'seri_col'       => 0,
-            'storage_col'    => null,
-            'ram_col'        => null,
+            'seri_col' => 0,
+            'storage_col' => null,
+            'ram_col' => null,
             'harga_nasional' => 1,  // SRP NEW (harga coret)
-            'special_price'  => 2,  // CASH TOKO (no fallback)
-            'carry_seri'     => false,
-            'kondisi_cols'   => [
-                'SRP NEW'       => 1,
-                'CASH TOKO'     => 2,
-                'SECOND'        => 3,
-                'KREDIT NEW'    => 4,
+            'special_price' => 2,  // CASH TOKO (no fallback)
+            'carry_seri' => false,
+            'kondisi_cols' => [
+                'SRP NEW' => 1,
+                'CASH TOKO' => 2,
+                'SECOND' => 3,
+                'KREDIT NEW' => 4,
                 'KREDIT SECOND' => 5,
-                'HARGA ONLINE'  => 6,
+                'HARGA ONLINE' => 6,
             ],
         ],
     ];
@@ -161,11 +161,11 @@ class AppleSheetImporter
             : self::SHEETS;
 
         $summary = [
-            'status'   => 'success',
-            'sheets'   => [],
+            'status' => 'success',
+            'sheets' => [],
             'imported' => 0,
-            'skipped'  => 0,
-            'failed'   => 0,
+            'skipped' => 0,
+            'failed' => 0,
         ];
 
         foreach ($targetSheets as $sheetName) {
@@ -178,10 +178,10 @@ class AppleSheetImporter
             } catch (\Throwable $exception) {
                 $summary['failed']++;
                 $summary['sheets'][] = [
-                    'sheet'    => $sheetName,
+                    'sheet' => $sheetName,
                     'imported' => 0,
-                    'skipped'  => 0,
-                    'error'    => $exception->getMessage(),
+                    'skipped' => 0,
+                    'error' => $exception->getMessage(),
                 ];
             }
         }
@@ -217,7 +217,7 @@ class AppleSheetImporter
             $values = str_getcsv((string) $line, ',', '"', '\\');
             $cols = array_map(fn ($v) => trim((string) ($v ?? '')), $values);
             $rows[] = [
-                'cols'       => $cols,
+                'cols' => $cols,
                 'source_row' => $lineNumber + 2,
             ];
         }
@@ -236,14 +236,14 @@ class AppleSheetImporter
             return ['sheet' => $sheetName, 'imported' => 0, 'skipped' => count($rows)];
         }
 
-        $now      = now();
+        $now = now();
         $imported = 0;
-        $skipped  = 0;
+        $skipped = 0;
         $lastSeri = null;
-        $urut     = 0;
+        $urut = 0;
 
         foreach ($rows as $row) {
-            $cols      = $row['cols'];
+            $cols = $row['cols'];
             $sourceRow = $row['source_row'];
 
             // Resolve model name (with optional carry-forward)
@@ -258,6 +258,7 @@ class AppleSheetImporter
 
             if ($model === '' || $this->looksLikeHeader($model)) {
                 $skipped++;
+
                 continue;
             }
 
@@ -279,7 +280,7 @@ class AppleSheetImporter
 
             // Main prices — no fallback; "-" stays as null
             $hargaNasional = $this->moneyCol($cols, $cfg['harga_nasional']);
-            $specialPrice  = $this->moneyCol($cols, $cfg['special_price']);
+            $specialPrice = $this->moneyCol($cols, $cfg['special_price']);
 
             // Condition prices — all columns, no fallback
             $hargaKondisi = [];
@@ -294,6 +295,7 @@ class AppleSheetImporter
 
             if (! $hasAnyPrice) {
                 $skipped++;
+
                 continue;
             }
 
@@ -303,19 +305,19 @@ class AppleSheetImporter
             DB::table('apple_products')->updateOrInsert(
                 ['source_sheet' => $sheetName, 'source_row' => $sourceRow],
                 [
-                    'source_id'      => 'AP'.str_pad((string) abs(crc32($sheetName.'|'.$sourceRow)), 10, '0', STR_PAD_LEFT),
-                    'urut'           => $urut,
-                    'model'          => $model,
-                    'storage'        => $storage,
+                    'source_id' => 'AP'.str_pad((string) abs(crc32($sheetName.'|'.$sourceRow)), 10, '0', STR_PAD_LEFT),
+                    'urut' => $urut,
+                    'model' => $model,
+                    'storage' => $storage,
                     'harga_nasional' => $hargaNasional,
-                    'special_price'  => $specialPrice,
-                    'harga_kondisi'  => json_encode($hargaKondisi, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+                    'special_price' => $specialPrice,
+                    'harga_kondisi' => json_encode($hargaKondisi, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
                     'normalized_key' => $normalizedKey,
-                    'is_active'      => true,
-                    'raw_payload'    => json_encode($cols, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
-                    'imported_at'    => $now,
-                    'updated_at'     => $now,
-                    'created_at'     => $now,
+                    'is_active' => true,
+                    'raw_payload' => json_encode($cols, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+                    'imported_at' => $now,
+                    'updated_at' => $now,
+                    'created_at' => $now,
                 ]
             );
 
@@ -366,9 +368,9 @@ class AppleSheetImporter
 
         $context = stream_context_create([
             'http' => [
-                'timeout'       => 60,
+                'timeout' => 60,
                 'ignore_errors' => true,
-                'user_agent'    => 'PuraPuraPonselDashboard/1.0',
+                'user_agent' => 'PuraPuraPonselDashboard/1.0',
             ],
         ]);
 

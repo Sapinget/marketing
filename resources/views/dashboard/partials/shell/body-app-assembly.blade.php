@@ -26,6 +26,7 @@
 @include('dashboard.partials.shell.app-script-calendar-helpers')
 @include('dashboard.partials.shell.app-script-summary-computed-cluster')
 @include('dashboard.partials.shell.app-script-customer-service-crud')
+@include('dashboard.partials.shell.app-script-claim-menus')
 @include('dashboard.partials.shell.app-script-bonus-talent-cluster')
 @include('dashboard.partials.shell.app-script-cache-bootstrap-loaders')
 @verbatim

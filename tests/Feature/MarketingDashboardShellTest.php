@@ -88,7 +88,7 @@ class MarketingDashboardShellTest extends TestCase
 
         $this->assertIsString($dashboardShellCss);
 
-        return $html . "\n" . $dashboardShellCss;
+        return $html."\n".$dashboardShellCss;
     }
 
     public function test_root_serves_marketing_dashboard_shell(): void
@@ -120,7 +120,7 @@ class MarketingDashboardShellTest extends TestCase
     public function test_root_render_does_not_depend_on_public_dashboard_snapshot(): void
     {
         $publicSnapshotPath = public_path('marketing-dashboard.html');
-        $temporarySnapshotPath = $publicSnapshotPath . '.tmp-test';
+        $temporarySnapshotPath = $publicSnapshotPath.'.tmp-test';
 
         rename($publicSnapshotPath, $temporarySnapshotPath);
 
@@ -468,7 +468,7 @@ class MarketingDashboardShellTest extends TestCase
         }
 
         foreach ([
-            "const userLookupAliases = {",
+            'const userLookupAliases = {',
             "'@ogohogohdenpasar': 'ogoh-ogoh-denpasar'",
             "'at-arthadashing': 'artha'",
             "'at-depraz': 'depraz'",
@@ -608,7 +608,7 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlContains('.mobile-data-card__meta--stacked {', $html = $this->renderDashboardHtmlWithShellCss());
         $this->assertHtmlContains('flex-direction: column;', $html);
         $this->assertHtmlNotContains('class="flex flex-wrap gap-2 max-w-[160px]"', $partials['ideation']);
-        $this->assertHtmlNotContains('class="flex flex-wrap gap-2">' . "\n" . '                                                    <span v-for="plat in (item.Platforms || \'\').split(\',\')"', $partials['master-plan']);
+        $this->assertHtmlNotContains('class="flex flex-wrap gap-2">'."\n".'                                                    <span v-for="plat in (item.Platforms || \'\').split(\',\')"', $partials['master-plan']);
         $this->assertHtmlNotContains('platformDisplayName(video.Platforms)', $partials['editor-performance']);
     }
 
@@ -866,8 +866,8 @@ class MarketingDashboardShellTest extends TestCase
         $namaStockPartial = file_get_contents(resource_path('views/dashboard/partials/menus/nama-stock.blade.php'));
 
         $this->assertIsString($namaStockPartial);
-        $this->assertHtmlContains("<section class=\"section-card section-card-shell\">", $namaStockPartial);
-        $this->assertHtmlContains("</section>", $namaStockPartial);
+        $this->assertHtmlContains('<section class="section-card section-card-shell">', $namaStockPartial);
+        $this->assertHtmlContains('</section>', $namaStockPartial);
         $this->assertHtmlNotContains("</div>\n                    </div>\n@endverbatim", $namaStockPartial);
     }
 
@@ -1139,7 +1139,7 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlContains('onMounted(async () => {', $watcherPartial);
         $this->assertHtmlContains('onBeforeUnmount(() => {', $watcherPartial);
         $this->assertHtmlContains('watch([currentUser, activeTab], ([user, tab]) => {', $watcherPartial);
-        $this->assertHtmlContains("watch(() => activeTab.value, (newTab) => {", $watcherPartial);
+        $this->assertHtmlContains('watch(() => activeTab.value, (newTab) => {', $watcherPartial);
         $this->assertHtmlContains('runActiveTabProtectedLoaders(newTab);', $watcherPartial);
         $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-cache-bootstrap-loaders')", $assemblyPartial);
         $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-customer-service-crud')", $assemblyPartial);
@@ -1157,15 +1157,15 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-runner-web-factory')", $runnerPartial);
         foreach ([
             "getPromoData() { return fetchJson_('/api/program-promo').then(r => r.data || []); },",
-            "savePromo(data) {",
+            'savePromo(data) {',
             'const id = data.ID; const url = id ? `/api/program-promo/${encodeURIComponent(id)}` : \'/api/program-promo\';',
             'deletePromo(id) { return jsonApi(`/api/program-promo/${encodeURIComponent(id)}`, { method: \'DELETE\' }); },',
             "getSellOutTargetData() { return fetchJson_('/api/sell-out-targets').then(r => r.data || []); },",
-            "saveSellOutTarget(data) {",
+            'saveSellOutTarget(data) {',
             'const id = data.ID; const url = id ? `/api/sell-out-targets/${encodeURIComponent(id)}` : \'/api/sell-out-targets\';',
             'deleteSellOutTarget(id) { return jsonApi(`/api/sell-out-targets/${encodeURIComponent(id)}`, { method: \'DELETE\' }); },',
             "getHargaKompetitorData() { return fetchJson_('/api/harga-kompetitor').then(r => r.data || []); },",
-            "saveHargaKompetitor(data) {",
+            'saveHargaKompetitor(data) {',
             'const id = data.ID; const url = id ? `/api/harga-kompetitor/${encodeURIComponent(id)}` : \'/api/harga-kompetitor\';',
             'deleteHargaKompetitor(id) { return jsonApi(`/api/harga-kompetitor/${encodeURIComponent(id)}`, { method: \'DELETE\' }); },',
         ] as $needle) {
@@ -1817,7 +1817,7 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlContains('window.removeEventListener("wheel", markActivePanelScrollUserIntent, true);', $html);
         $this->assertHtmlContains('window.removeEventListener("touchmove", markActivePanelScrollUserIntent, true);', $html);
         $this->assertHtmlContains('window.removeEventListener("keydown", markActivePanelScrollUserIntent, true);', $html);
-        $this->assertHtmlContains("requestAnimationFrame(() => stabilizeActivePanelPosition());", $html);
+        $this->assertHtmlContains('requestAnimationFrame(() => stabilizeActivePanelPosition());', $html);
         $this->assertHtmlNotContains("document.querySelector('.overflow-y-auto')", $html);
     }
 
@@ -1842,8 +1842,8 @@ class MarketingDashboardShellTest extends TestCase
     {
         $html = $this->renderDashboardHtml();
 
-        $this->assertHtmlContains("const cachedCfg = (() => {", $html);
-        $this->assertHtmlContains("showNotification(", $html);
+        $this->assertHtmlContains('const cachedCfg = (() => {', $html);
+        $this->assertHtmlContains('showNotification(', $html);
         $this->assertHtmlContains('Konfigurasi bonus server tidak tersedia. Menggunakan konfigurasi lokal terakhir.', $html);
         $this->assertHtmlContains('Konfigurasi bonus server tidak tersedia. Menggunakan konfigurasi default.', $html);
     }
@@ -1933,7 +1933,7 @@ class MarketingDashboardShellTest extends TestCase
     {
         $html = $this->renderDashboardHtml();
 
-        $this->assertHtmlContains("const metaStoryTop = computed(() => [...filteredMetaStory.value].sort((a, b) => (Number(b.views) || 0) - (Number(a.views) || 0)).slice(0, 5));", $html);
+        $this->assertHtmlContains('const metaStoryTop = computed(() => [...filteredMetaStory.value].sort((a, b) => (Number(b.views) || 0) - (Number(a.views) || 0)).slice(0, 5));', $html);
         $this->assertHtmlContains('const metaStoryTotalPages = computed(() => Math.max(1, Math.ceil(filteredMetaStory.value.length / PAGE_SIZE)));', $html);
         $this->assertHtmlContains('const pagedMetaStory = computed(() => filteredMetaStory.value.slice((metaStoryPage.value - 1) * PAGE_SIZE, metaStoryPage.value * PAGE_SIZE));', $html);
         $this->assertHtmlContains('@click="metaStoryPage++" :disabled="metaStoryPage >= metaStoryTotalPages" aria-label="Halaman berikutnya"', $html);
@@ -1947,21 +1947,21 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlContains('Ringkasan Bulanan per Akun', $html);
         $this->assertHtmlContains('const metaStoryMonthlySummary = computed(() => _metaMonthlySummary', $html);
         $this->assertHtmlContains('const metaFeedMonthlySummary = computed(() => _metaMonthlySummary', $html);
-        $this->assertHtmlContains("const importMetaFolder = (dataset) => {", $html);
+        $this->assertHtmlContains('const importMetaFolder = (dataset) => {', $html);
     }
 
     public function test_meta_import_flow_requests_confirmation_before_overwrite(): void
     {
         $html = $this->renderDashboardHtml();
 
-        $this->assertHtmlContains("importMetaStory(rows, options = {})", $html);
-        $this->assertHtmlContains("importMetaFeed(rows, options = {})", $html);
-        $this->assertHtmlContains("importMetaStoryFolder(options = {})", $html);
-        $this->assertHtmlContains("importMetaFeedFolder(options = {})", $html);
-        $this->assertHtmlContains("overwrite: !!options.overwrite", $html);
+        $this->assertHtmlContains('importMetaStory(rows, options = {})', $html);
+        $this->assertHtmlContains('importMetaFeed(rows, options = {})', $html);
+        $this->assertHtmlContains('importMetaStoryFolder(options = {})', $html);
+        $this->assertHtmlContains('importMetaFeedFolder(options = {})', $html);
+        $this->assertHtmlContains('overwrite: !!options.overwrite', $html);
         $this->assertHtmlContains('const handleMetaImportResult = (dataset, result, retryImport, successMessage) => {', $html);
         $this->assertHtmlContains('if (r.requires_confirmation) {', $html);
-        $this->assertHtmlContains("showConfirm(", $html);
+        $this->assertHtmlContains('showConfirm(', $html);
         $this->assertHtmlContains('Data Meta Sudah Ada', $html);
     }
 
@@ -1992,10 +1992,10 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlContains('id="meta-feed-manual-account" name="meta_feed_manual_account"', $feedHtml);
         $this->assertHtmlContains('id="meta-feed-manual-publish-time" name="meta_feed_manual_publish_time"', $feedHtml);
         $this->assertHtmlContains('@submit.prevent="saveMetaFeedManual"', $feedHtml);
-        $this->assertHtmlContains("const metaFeedManualModalOpen = ref(false);", $html);
-        $this->assertHtmlContains("const saveMetaFeedManual = () => {", $html);
-        $this->assertHtmlContains("runner.withSuccessHandler(result => {", $html);
-        $this->assertHtmlContains("importMetaFeed([row], { overwrite });", $html);
+        $this->assertHtmlContains('const metaFeedManualModalOpen = ref(false);', $html);
+        $this->assertHtmlContains('const saveMetaFeedManual = () => {', $html);
+        $this->assertHtmlContains('runner.withSuccessHandler(result => {', $html);
+        $this->assertHtmlContains('importMetaFeed([row], { overwrite });', $html);
         $this->assertHtmlContains('metaFeedManualModalOpen,', $html);
         $this->assertHtmlContains('openMetaFeedManualModal,', $html);
         $this->assertHtmlContains('saveMetaFeedManual,', $html);
@@ -2207,7 +2207,7 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlContains("toggleSearchSelect(\$event, 'sellOutVendor')", $html);
         $this->assertHtmlContains("toggleSearchSelect(\$event, 'sellOutMonth')", $html);
         $this->assertHtmlContains('class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form"', $html);
-        $this->assertHtmlContains("fa-solid fa-chevron-down ml-auto text-[9px] text-slate-400", $html);
+        $this->assertHtmlContains('fa-solid fa-chevron-down ml-auto text-[9px] text-slate-400', $html);
     }
 
     public function test_unit_and_claim_searchable_dropdowns_use_select_trigger_pattern(): void
@@ -2250,9 +2250,9 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlNotContains('border-bottom: 1px solid rgb(203 213 225);', $html);
         $this->assertHtmlNotContains('border-color: rgb(203 213 225) !important;', $html);
         $this->assertHtmlContains('color: rgb(71 85 105) !important;', $html);
-        $this->assertHtmlNotContains('#app table thead {' . "\n" . '            background: var(--ppp-accent) !important;', $html);
-        $this->assertHtmlNotContains('#app table thead tr {' . "\n" . '            background: var(--ppp-accent) !important;', $html);
-        $this->assertHtmlNotContains('#app table th {' . "\n" . '            background: var(--ppp-accent) !important;', $html);
+        $this->assertHtmlNotContains('#app table thead {'."\n".'            background: var(--ppp-accent) !important;', $html);
+        $this->assertHtmlNotContains('#app table thead tr {'."\n".'            background: var(--ppp-accent) !important;', $html);
+        $this->assertHtmlNotContains('#app table th {'."\n".'            background: var(--ppp-accent) !important;', $html);
         $this->assertHtmlContains('padding: 8px 12px !important;', $html);
         $this->assertHtmlContains('#app table tbody,', $html);
         $this->assertHtmlContains('#app table tbody *,', $html);
@@ -2297,7 +2297,7 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlContains('.table-sortable.table-sort-desc::after {', $html);
         $this->assertHtmlContains('const hydrateSortableTableHeaders = () => {', $html);
         $this->assertHtmlContains('const sortTableDomRows = (headerCell) => {', $html);
-        $this->assertHtmlContains("hydrateSortableTableHeaders();", $html);
+        $this->assertHtmlContains('hydrateSortableTableHeaders();', $html);
     }
 
     public function test_ideation_kanban_caps_font_size_at_10px(): void
@@ -2363,9 +2363,9 @@ class MarketingDashboardShellTest extends TestCase
         $html = $this->renderDashboardHtml();
 
         foreach ([
-            "const getSeriOptions = (kat, brand) => {",
+            'const getSeriOptions = (kat, brand) => {',
             "const nsSeriOptions = computed(() => getSeriOptions(unitDitanyaForm.value['KATEGORI'], unitDitanyaForm.value['BRAND']));",
-            "getSeriOptions(sellOutForm.Kategori, sellOutForm.Brand)",
+            'getSeriOptions(sellOutForm.Kategori, sellOutForm.Brand)',
             "searchSelectOpen === 'unit_seri'",
             "searchSelectOpen === 'sotSeri'",
         ] as $needle) {
@@ -2378,14 +2378,14 @@ class MarketingDashboardShellTest extends TestCase
         $html = $this->renderDashboardHtml();
 
         foreach ([
-            "createNamaStockState(ref);",
+            'createNamaStockState(ref);',
             "const namaStockFilterKategoriOptions = computed(() => filteredUniqueFrom(namaStockRows.value, 'KATEGORI'));",
             "const namaStockFilterBrandOptions = computed(() => filteredUniqueFrom(namaStockRows.value, 'BRAND', { KATEGORI: namaStockKategoriFilter.value }));",
             "searchSelectOpen === 'nama_stock_filter_kategori'",
             "searchSelectOpen === 'nama_stock_filter_brand'",
             "namaStockKategoriFilter ? 'text-slate-800 font-medium' : 'text-slate-400'",
             "namaStockBrandFilter ? 'text-slate-800 font-medium' : 'text-slate-400'",
-            "return namaStockRows.value.filter(row => {",
+            'return namaStockRows.value.filter(row => {',
             "const matchKategori = !namaStockKategoriFilter.value || String(row.KATEGORI || '').trim().toUpperCase() === String(namaStockKategoriFilter.value || '').trim().toUpperCase();",
             "const matchBrand = !namaStockBrandFilter.value || String(row.BRAND || '').trim().toUpperCase() === String(namaStockBrandFilter.value || '').trim().toUpperCase();",
         ] as $needle) {
@@ -2409,8 +2409,8 @@ const keepBarangTypeHpOptions = computed(() => {
                     );
                 });
 HTML, $html);
-        $this->assertHtmlContains("const normalizeKeepBarangTypeHpValue = (value) => {", $html);
-        $this->assertHtmlContains("const exactMasterMatch = namaStockRows.value.find(row => buildStockNameLabel(row).toUpperCase() === raw);", $html);
+        $this->assertHtmlContains('const normalizeKeepBarangTypeHpValue = (value) => {', $html);
+        $this->assertHtmlContains('const exactMasterMatch = namaStockRows.value.find(row => buildStockNameLabel(row).toUpperCase() === raw);', $html);
         $this->assertHtmlContains("const seriMatches = namaStockRows.value.filter(row => String(row.SERI || '').trim().toUpperCase() === raw);", $html);
     }
 
@@ -2419,7 +2419,7 @@ HTML, $html);
         $html = $this->renderDashboardHtml();
 
         $this->assertHtmlContains('<button type="button" @click="toggleSearchSelect($event, \'keep_type_hp\')"', $html);
-        $this->assertHtmlContains("v-if=\"keepBarangTypeHpOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0\"", $html);
+        $this->assertHtmlContains('v-if="keepBarangTypeHpOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"', $html);
         $this->assertHtmlContains('Belum ada opsi Type HP', $html);
     }
 
@@ -2427,8 +2427,8 @@ HTML, $html);
     {
         $html = $this->renderDashboardHtml();
 
-        $this->assertHtmlContains("if (!namaStockLoaded.value) loadNamaStockData();", $html);
-        $this->assertHtmlContains("TYPE_HP: normalizeKeepBarangTypeHpValue(row.TYPE_HP)", $html);
+        $this->assertHtmlContains('if (!namaStockLoaded.value) loadNamaStockData();', $html);
+        $this->assertHtmlContains('TYPE_HP: normalizeKeepBarangTypeHpValue(row.TYPE_HP)', $html);
     }
 
     public function test_customer_service_save_handlers_prevent_double_submit_and_validate_required_fields(): void
@@ -2437,23 +2437,23 @@ HTML, $html);
         $customerServiceModule = file_get_contents(resource_path('js/dashboard/menu/customer-service.js'));
 
         foreach ([
-            "const saveOrderanOnline = () => {",
-            "const saveUnitDitanya = () => {",
-            "const saveClaimGaransi = () => {",
-            "const saveKeepBarang = () => {",
+            'const saveOrderanOnline = () => {',
+            'const saveUnitDitanya = () => {',
+            'const saveClaimGaransi = () => {',
+            'const saveKeepBarang = () => {',
         ] as $needle) {
             $this->assertHtmlContains($needle, $customerServiceModule);
         }
-        $this->assertHtmlContains("const saveSellOut = () => {", $html);
+        $this->assertHtmlContains('const saveSellOut = () => {', $html);
 
         $this->assertGreaterThanOrEqual(4, substr_count($customerServiceModule, 'if (deps.submitting.value) return;'));
         $this->assertHtmlContains("if (!deps.orderanOnlineForm.value.NAMA || !deps.orderanOnlineForm.value['TYPE UNIT']) {", $customerServiceModule);
         $this->assertHtmlContains("deps.showNotification('Nama customer dan type unit wajib diisi');", $customerServiceModule);
-        $this->assertHtmlContains("if (!deps.unitDitanyaForm.value.KATEGORI || !deps.unitDitanyaForm.value.BRAND || !deps.unitDitanyaForm.value.SERI) {", $customerServiceModule);
+        $this->assertHtmlContains('if (!deps.unitDitanyaForm.value.KATEGORI || !deps.unitDitanyaForm.value.BRAND || !deps.unitDitanyaForm.value.SERI) {', $customerServiceModule);
         $this->assertHtmlContains("deps.showNotification('Kategori, brand, dan seri wajib diisi');", $customerServiceModule);
-        $this->assertHtmlContains("if (!deps.claimGaransiForm.value.NAMA_CUSTOMER || !deps.claimGaransiForm.value.TIPE) {", $customerServiceModule);
+        $this->assertHtmlContains('if (!deps.claimGaransiForm.value.NAMA_CUSTOMER || !deps.claimGaransiForm.value.TIPE) {', $customerServiceModule);
         $this->assertHtmlContains("deps.showNotification('Nama customer dan tipe wajib diisi');", $customerServiceModule);
-        $this->assertHtmlContains("if (!form.NAMA || !form.NOMOR_HP || !form.TYPE_HP) {", $customerServiceModule);
+        $this->assertHtmlContains('if (!form.NAMA || !form.NOMOR_HP || !form.TYPE_HP) {', $customerServiceModule);
         $this->assertHtmlContains("deps.showNotification('Nama, nomor HP, dan Type HP wajib diisi');", $customerServiceModule);
     }
 
@@ -2557,7 +2557,7 @@ HTML, $html);
         $html = $this->renderDashboardHtml();
 
         $this->assertHtmlContains('const getIdeaAgeLabel = (item) => {', $html);
-        $this->assertHtmlContains("return `Umur \${diffDays}h`;", $html);
+        $this->assertHtmlContains('return `Umur ${diffDays}h`;', $html);
         $this->assertHtmlContains('{{ getIdeaAgeLabel(item) }}', $html);
     }
 
@@ -2755,14 +2755,14 @@ HTML, $html);
 
         $this->assertIsString($interactionHelperPartial);
         $this->assertIsString($lifecyclePartial);
-        $this->assertHtmlContains("const getBoundedTableScroller = (target) => {", $interactionHelperPartial);
-        $this->assertHtmlContains("const clampTableScroller = (scroller) => {", $interactionHelperPartial);
-        $this->assertHtmlContains("const containTableHorizontalWheel = (event) => {", $interactionHelperPartial);
-        $this->assertHtmlContains("const clampRootHorizontalScroll = () => {", $interactionHelperPartial);
-        $this->assertHtmlContains("const containRootHorizontalWheel = (event) => {", $interactionHelperPartial);
-        $this->assertHtmlContains("const rememberHorizontalPanStart = (event) => {", $interactionHelperPartial);
-        $this->assertHtmlContains("const containHorizontalTouchPan = (event) => {", $interactionHelperPartial);
-        $this->assertHtmlContains("const clearHorizontalPanStart = () => {", $interactionHelperPartial);
+        $this->assertHtmlContains('const getBoundedTableScroller = (target) => {', $interactionHelperPartial);
+        $this->assertHtmlContains('const clampTableScroller = (scroller) => {', $interactionHelperPartial);
+        $this->assertHtmlContains('const containTableHorizontalWheel = (event) => {', $interactionHelperPartial);
+        $this->assertHtmlContains('const clampRootHorizontalScroll = () => {', $interactionHelperPartial);
+        $this->assertHtmlContains('const containRootHorizontalWheel = (event) => {', $interactionHelperPartial);
+        $this->assertHtmlContains('const rememberHorizontalPanStart = (event) => {', $interactionHelperPartial);
+        $this->assertHtmlContains('const containHorizontalTouchPan = (event) => {', $interactionHelperPartial);
+        $this->assertHtmlContains('const clearHorizontalPanStart = () => {', $interactionHelperPartial);
         $this->assertHtmlContains('class="dashboard-topbar h-12 md:h-16 bg-white', file_get_contents(resource_path('views/dashboard/partials/shell/app-frame-header.blade.php')));
         $this->assertHtmlContains('fixed top-0 right-0 z-50', file_get_contents(resource_path('views/dashboard/partials/shell/app-frame-header.blade.php')));
         $this->assertHtmlContains(':style="isMobileViewport ? { left: \'0px\' } : { left: isSidebarOpen ? \'15rem\' : \'0px\' }"', file_get_contents(resource_path('views/dashboard/partials/shell/app-frame-header.blade.php')));
@@ -2902,7 +2902,7 @@ HTML, $html);
         $this->assertHtmlNotContains('class="w-full bg-slate-50 rounded-2xl pl-10 pr-4 py-4 text-[12px] outline-none border border-slate-100 focus:border-ppp-accent"', $html);
         $this->assertHtmlNotContains('class="w-full bg-slate-50 border border-slate-100 rounded-2xl px-4 py-3 text-[12px] outline-none hover:border-ppp-accent transition-all flex items-center gap-2 text-left"', $html);
         $this->assertHtmlNotContains('class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-[11px] outline-none hover:border-ppp-accent transition-all flex items-center gap-2 text-left"', $html);
-        $this->assertHtmlContains('.form-input {' . "\n" . '            width: 100%;', $html);
+        $this->assertHtmlContains('.form-input {'."\n".'            width: 100%;', $html);
         $this->assertTrue(str_contains($html, 'background: var(--ppp-bg);') || str_contains($html, 'background: #f8fafc;'));
         $this->assertTrue(str_contains($html, 'border: 1px solid var(--ppp-line);') || str_contains($html, 'border: 1px solid #f1f5f9;'));
         $this->assertTrue(str_contains($html, 'border-radius: 12px;') || str_contains($html, 'border-radius: 16px;'));
@@ -2910,7 +2910,7 @@ HTML, $html);
         $this->assertHtmlContains('min-height: 36px;', $html);
         $this->assertHtmlContains('padding: 0 16px;', $html);
         $this->assertHtmlContains('font-size: var(--fs-body-sm);', $html);
-        $this->assertHtmlContains('.form-input-auth {' . "\n" . '            width: 100%;', $html);
+        $this->assertHtmlContains('.form-input-auth {'."\n".'            width: 100%;', $html);
         $this->assertHtmlContains('padding: 0 16px 0 40px;', $html);
         $this->assertTrue(str_contains($html, '.select-trigger-button-form {') || str_contains($html, 'select-trigger-button-form'));
         $this->assertHtmlContains('padding: 0 14px;', $html);
@@ -2957,9 +2957,9 @@ HTML, $html);
         $this->assertHtmlContains('class="select-trigger-button toolbar-trigger-field"', $html);
         $this->assertHtmlNotContains('.toolbar-actions .form-input-search,', $html);
         $this->assertHtmlNotContains('.table-toolbar-shell .form-input-search,', $html);
-        $this->assertHtmlNotContains('min-height: 44px;' . "\n" . '            padding: 0 16px 0 40px;', $html);
+        $this->assertHtmlNotContains('min-height: 44px;'."\n".'            padding: 0 16px 0 40px;', $html);
         $this->assertHtmlNotContains('padding: 12px 16px 12px 40px;', $html);
-        $this->assertHtmlNotContains('.form-input-search {' . "\n" . '            width: 100%;' . "\n" . '            background: var(--ppp-bg);' . "\n" . '            border: 1px solid var(--ppp-line);' . "\n" . '            border-radius: 12px;' . "\n" . '            padding: 4px 12px 4px 32px;' . "\n" . '            font-size: 12px;', $html);
+        $this->assertHtmlNotContains('.form-input-search {'."\n".'            width: 100%;'."\n".'            background: var(--ppp-bg);'."\n".'            border: 1px solid var(--ppp-line);'."\n".'            border-radius: 12px;'."\n".'            padding: 4px 12px 4px 32px;'."\n".'            font-size: 12px;', $html);
     }
 
     public function test_export_buttons_only_use_pdf_or_excel_labels(): void
@@ -3124,7 +3124,7 @@ HTML, $html);
         $this->assertHtmlContains('const visibleActiveTeamUsers = computed(() => activeTeamUsers.value.slice(0, 5));', $statePartial);
         $this->assertHtmlContains('const hiddenActiveTeamUsersCount = computed(() => Math.max(0, activeTeamUsers.value.length - visibleActiveTeamUsers.value.length));', $statePartial);
         $this->assertHtmlContains("const currentUsername = String(currentUser.value?.username || '').trim().toLowerCase();", $statePartial);
-        $this->assertHtmlContains("return user?.is_online === true && username !== currentUsername;", $statePartial);
+        $this->assertHtmlContains('return user?.is_online === true && username !== currentUsername;', $statePartial);
         $this->assertHtmlContains('activeTeamUsers,', $returnPartial);
         $this->assertHtmlContains('visibleActiveTeamUsers,', $returnPartial);
         $this->assertHtmlContains('hiddenActiveTeamUsersCount,', $returnPartial);
@@ -3156,7 +3156,7 @@ HTML, $html);
         $this->assertHtmlContains('const syncSessionHeartbeat = () => {', $html);
         $this->assertHtmlContains('if (idleFor >= SESSION_IDLE_TIMEOUT_MS) {', $html);
         $this->assertHtmlContains('.logout();', $html);
-        $this->assertHtmlContains(".heartbeat();", $html);
+        $this->assertHtmlContains('.heartbeat();', $html);
         $this->assertHtmlContains("jsonApi('/api/auth/heartbeat'", $html);
         $this->assertHtmlContains('window.addEventListener("keydown", markClientActivity, true);', $html);
         $this->assertHtmlContains('sessionHeartbeatTimerId = window.setInterval(syncSessionHeartbeat, SESSION_HEARTBEAT_MS);', $html);
@@ -3213,15 +3213,15 @@ HTML, $html);
         $this->assertIsString($metaFeedPartial);
         $this->assertHtmlContains('@click.stop="chatOpenConversation(member)"', $headerPartial);
         $this->assertHtmlContains('id="btn-profile-chat"', $headerPartial);
-        $this->assertHtmlContains("const chatOpen = ref(false);", $chatStatePartial);
-        $this->assertHtmlContains("const chatPollMessages = async () => {", $chatStatePartial);
-        $this->assertHtmlContains("window.setInterval(chatPollUnread, 10000);", $chatStatePartial);
+        $this->assertHtmlContains('const chatOpen = ref(false);', $chatStatePartial);
+        $this->assertHtmlContains('const chatPollMessages = async () => {', $chatStatePartial);
+        $this->assertHtmlContains('window.setInterval(chatPollUnread, 10000);', $chatStatePartial);
         $this->assertHtmlContains("const chatCanUseBrowserNotification = () => typeof window !== 'undefined' && 'Notification' in window;", $chatStatePartial);
-        $this->assertHtmlContains("return await Notification.requestPermission();", $chatStatePartial);
+        $this->assertHtmlContains('return await Notification.requestPermission();', $chatStatePartial);
         $this->assertHtmlContains('const notice = new Notification(`Pesan baru dari ${name}`, {', $chatStatePartial);
-        $this->assertHtmlContains("chatShowBrowserNotification(targetId);", $chatStatePartial);
-        $this->assertHtmlContains("chatRecentContacts", $chatStatePartial);
-        $this->assertHtmlContains("chatLoadRecentContacts", $chatStatePartial);
+        $this->assertHtmlContains('chatShowBrowserNotification(targetId);', $chatStatePartial);
+        $this->assertHtmlContains('chatRecentContacts', $chatStatePartial);
+        $this->assertHtmlContains('chatLoadRecentContacts', $chatStatePartial);
         $this->assertHtmlContains('Mini Chat Panel', $chatPanelPartial);
         $this->assertHtmlContains('class="chat-backdrop glass-backdrop fixed inset-0 z-[299] transition-opacity"', $chatPanelPartial);
         $this->assertHtmlContains('class="fixed inset-0 z-[300] glass-backdrop flex items-start justify-center pt-16 md:pt-24"', $chatPanelPartial);
@@ -3454,12 +3454,12 @@ HTML, $html);
         }
 
         foreach ([
-            "class=\"md:hidden space-y-3\"",
-            "class=\"stat-card mobile-record-card mobile-data-card animate-fadeIn\"",
-            "class=\"mobile-data-card__summary\"",
-            "class=\"mobile-data-card__actions\"",
-            "line-clamp-2",
-            "line-clamp-1",
+            'class="md:hidden space-y-3"',
+            'class="stat-card mobile-record-card mobile-data-card animate-fadeIn"',
+            'class="mobile-data-card__summary"',
+            'class="mobile-data-card__actions"',
+            'line-clamp-2',
+            'line-clamp-1',
         ] as $needle) {
             $this->assertHtmlContains($needle, $html);
         }
@@ -3469,8 +3469,8 @@ HTML, $html);
         $this->assertHtmlContains("{{ row.SERI || row.Nama_Produk || '-' }}", $html);
         $this->assertHtmlContains("{{ row.Nama_Event || '-' }}", $html);
         $this->assertHtmlContains("{{ row.Nama || '-' }}", $html);
-        $this->assertHtmlContains("{{ row.title }}", $html);
-        $this->assertHtmlContains("{{ row.Program }}", $html);
+        $this->assertHtmlContains('{{ row.title }}', $html);
+        $this->assertHtmlContains('{{ row.Program }}', $html);
 
         $this->assertHtmlNotContains('class="bg-white radius-panel border border-slate-100 overflow-hidden">
                             <div class="md:hidden space-y-3', $html);
@@ -3526,8 +3526,8 @@ HTML, $html);
         $this->assertHtmlContains("else if (formContext === 'keepBarangRencanaAmbil')", $html);
         $this->assertHtmlContains("else if (formContext === 'keepBarangDeadlineGudang')", $html);
         $this->assertHtmlContains("else if (formContext === 'unboxingUploadDate')", $html);
-        $this->assertHtmlContains("return budgetDateFilter;", $html);
-        $this->assertHtmlContains("formatShortDate(adsDateFilter.start)", $html);
+        $this->assertHtmlContains('return budgetDateFilter;', $html);
+        $this->assertHtmlContains('formatShortDate(adsDateFilter.start)', $html);
         $this->assertHtmlContains('const calendarAnchorStyle = ref({});', $html);
         $this->assertHtmlContains('const updateCalendarAnchorPosition = () => {', $html);
         $this->assertHtmlContains('const closeCalendarOnOutsideClick = (event) => {', $html);
@@ -3632,8 +3632,8 @@ HTML, $html);
         $this->assertHtmlContains('@click="ideationBoardMobileTab = ideationDraftLabel"', $html);
         $this->assertHtmlContains("@click=\"ideationBoardMobileTab = 'In Progress'\"", $html);
         $this->assertHtmlContains("@click=\"ideationBoardMobileTab = 'Done'\"", $html);
-        $this->assertHtmlContains("v-show=\"status === ideationBoardMobileTab || !isMobileViewport\"", $html);
-        $this->assertHtmlContains("watch(() => ideationDraftLabel.value, (label) => {", $html);
+        $this->assertHtmlContains('v-show="status === ideationBoardMobileTab || !isMobileViewport"', $html);
+        $this->assertHtmlContains('watch(() => ideationDraftLabel.value, (label) => {', $html);
         $this->assertHtmlContains("if (mode === 'board') ideationBoardMobileTab.value = ideationDraftLabel.value;", $html);
     }
 
@@ -3685,7 +3685,7 @@ HTML, $html);
                 $plusPosition = strpos($toolbarHtml, 'fa-plus');
                 $excelPosition = strpos($toolbarHtml, 'fa-file-excel');
                 $pdfPosition = strpos($toolbarHtml, 'fa-file-pdf');
-                $label = basename($menuFile) . ' toolbar #' . ($index + 1);
+                $label = basename($menuFile).' toolbar #'.($index + 1);
 
                 if ($plusPosition !== false && $excelPosition !== false) {
                     $this->assertLessThan($excelPosition, $plusPosition, "{$label} should place add before Excel.");
@@ -3703,7 +3703,7 @@ HTML, $html);
             $this->assertDoesNotMatchRegularExpression(
                 '/<div class="toolbar-actions">[\s\S]{0,1600}<div class="relative(?: group)? search-select-container"/',
                 $html,
-                basename($menuFile) . ' should place filters before toolbar action groups.'
+                basename($menuFile).' should place filters before toolbar action groups.'
             );
         }
 
@@ -3825,8 +3825,8 @@ HTML, $html);
     {
         $html = $this->renderDashboardHtmlWithShellCss();
 
-        $this->assertHtmlContains("saveAds(data)", $html);
-        $this->assertHtmlContains("deleteAds(id)", $html);
+        $this->assertHtmlContains('saveAds(data)', $html);
+        $this->assertHtmlContains('deleteAds(id)', $html);
         $this->assertHtmlContains('/api/ads-performance', $html);
     }
 
@@ -3922,16 +3922,16 @@ HTML, $html);
         $promoExport = file_get_contents(resource_path('js/dashboard/export/promo.js'));
         $adsLogExport = file_get_contents(resource_path('js/dashboard/export/ads-log.js'));
 
-        $this->assertHtmlContains("export function getPrintHTML({", $printCore);
+        $this->assertHtmlContains('export function getPrintHTML({', $printCore);
         $this->assertHtmlContains('getPrintBaseStyles(),', $printCore);
         $this->assertHtmlContains('getPrintOrgHeaderHTML(),', $printCore);
         $this->assertHtmlContains('window.DASHBOARD_FONTAWESOME_URL || getDashboardAssetUrl', $printCore);
-        $this->assertHtmlContains("/vendor/dashboard/fontawesome/css/all.min.css", $printCore);
+        $this->assertHtmlContains('/vendor/dashboard/fontawesome/css/all.min.css', $printCore);
         $this->assertHtmlNotContains('https://cdn.jsdelivr.net', $printCore);
-        $this->assertHtmlContains("const html = getPrintHTML({", $promoExport);
+        $this->assertHtmlContains('const html = getPrintHTML({', $promoExport);
         $this->assertHtmlContains("title: 'PROGRAM PROMO'", $promoExport);
         $this->assertHtmlContains("openPrintWindow(html, 'Program Promo', {", $promoExport);
-        $this->assertHtmlContains("const html = getPrintHTML({", $adsLogExport);
+        $this->assertHtmlContains('const html = getPrintHTML({', $adsLogExport);
         $this->assertHtmlContains("title: 'ADS PERFORMANCE REPORT'", $adsLogExport);
         $this->assertHtmlContains("openPrintWindow(html, 'Ads Report', {", $adsLogExport);
     }
@@ -3951,7 +3951,7 @@ HTML, $html);
 
         $this->assertIsString($vendorManifest);
         $this->assertHtmlContains("const DASHBOARD_XLSX_VENDOR_PATH = '/vendor/dashboard/xlsx/xlsx.full.min.js';", $xlsxLoader);
-        $this->assertHtmlContains("script.src = buildDashboardAssetUrl(DASHBOARD_XLSX_VENDOR_PATH);", $xlsxLoader);
+        $this->assertHtmlContains('script.src = buildDashboardAssetUrl(DASHBOARD_XLSX_VENDOR_PATH);', $xlsxLoader);
         $this->assertHtmlNotContains('cdn.sheetjs.com', $xlsxLoader);
         $this->assertHtmlContains('"id": "xlsx"', $vendorManifest);
         $this->assertHtmlContains('"strategy": "repo-local-sync"', $vendorManifest);
@@ -4012,8 +4012,8 @@ HTML, $html);
 
         $this->assertHtmlContains("{{ asset('vendor/dashboard/fontawesome/css/all.min.css') }}", $welcome);
         $this->assertHtmlContains("{{ asset('vendor/dashboard/fontawesome/css/all.min.css') }}", $designSystemView);
-        $this->assertHtmlContains("?v={{ file_exists(\$fontAwesomeCssPath) ? filemtime(\$fontAwesomeCssPath) : time() }}", $welcome);
-        $this->assertHtmlContains("?v={{ file_exists(\$fontAwesomeCssPath) ? filemtime(\$fontAwesomeCssPath) : time() }}", $designSystemView);
+        $this->assertHtmlContains('?v={{ file_exists($fontAwesomeCssPath) ? filemtime($fontAwesomeCssPath) : time() }}', $welcome);
+        $this->assertHtmlContains('?v={{ file_exists($fontAwesomeCssPath) ? filemtime($fontAwesomeCssPath) : time() }}', $designSystemView);
         $this->assertHtmlNotContains('cdnjs.cloudflare.com', $welcome);
         $this->assertHtmlNotContains('cdnjs.cloudflare.com', $designSystemView);
     }
@@ -4062,7 +4062,7 @@ HTML, $html);
         foreach ($fontWeightRules[1] as $selectorList) {
             $this->assertStringNotContainsString(' i', $selectorList, 'Sidebar text weight rules must not override Font Awesome icon font weight.');
         }
-        $this->assertHtmlContains("sidebar-nav-item-active bg-gradient-to-r from-ppp-accent to-[#3D4FDB] text-white", $sidebarNavSources);
+        $this->assertHtmlContains('sidebar-nav-item-active bg-gradient-to-r from-ppp-accent to-[#3D4FDB] text-white', $sidebarNavSources);
     }
 
     public function test_design_system_route_renders_from_laravel_view(): void
@@ -4078,7 +4078,7 @@ HTML, $html);
     public function test_design_system_route_does_not_depend_on_public_snapshot(): void
     {
         $publicSnapshotPath = public_path('design-system.html');
-        $temporarySnapshotPath = $publicSnapshotPath . '.tmp-test';
+        $temporarySnapshotPath = $publicSnapshotPath.'.tmp-test';
 
         rename($publicSnapshotPath, $temporarySnapshotPath);
 
@@ -4126,11 +4126,11 @@ HTML, $html);
 
         $this->assertHtmlContains("body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10pt; line-height: 1.45;", $printCore);
         $this->assertHtmlContains("h1 { font-family: 'Times New Roman', Times, serif; font-size: 18pt;", $printCore);
-        $this->assertHtmlContains("table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 9pt;", $printCore);
-        $this->assertHtmlContains("td { border-bottom: 1px solid #e2e8f0; border-left: none; border-right: none; border-top: none; padding: 6px; font-size: 9pt;", $printCore);
-        $this->assertHtmlContains(".report-meta { margin: -6px 0 12px; text-align: center; color: var(--color-stone-500, #78716c); font-size: 8pt; }", $printCore);
-        $this->assertHtmlContains(".signature-section { margin-top: 28px; page-break-inside: avoid; display: flex !important;", $printCore);
-        $this->assertHtmlContains("headers: [", $bonusExport);
+        $this->assertHtmlContains('table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 9pt;', $printCore);
+        $this->assertHtmlContains('td { border-bottom: 1px solid #e2e8f0; border-left: none; border-right: none; border-top: none; padding: 6px; font-size: 9pt;', $printCore);
+        $this->assertHtmlContains('.report-meta { margin: -6px 0 12px; text-align: center; color: var(--color-stone-500, #78716c); font-size: 8pt; }', $printCore);
+        $this->assertHtmlContains('.signature-section { margin-top: 28px; page-break-inside: avoid; display: flex !important;', $printCore);
+        $this->assertHtmlContains('headers: [', $bonusExport);
         $this->assertHtmlContains("'Konten & Platform',", $bonusExport);
         $this->assertHtmlContains("'Total Bonus',", $bonusExport);
     }
@@ -4139,20 +4139,20 @@ HTML, $html);
     {
         $printCore = file_get_contents(resource_path('js/dashboard/export/print-core.js'));
         $printBrowser = file_get_contents(resource_path('js/dashboard/export/print-browser.js'));
-        $printSources = $printCore . "\n" . $printBrowser;
+        $printSources = $printCore."\n".$printBrowser;
 
         $this->assertHtmlContains('export function waitForPrintAssets(printWindow) {', $printCore);
         $this->assertHtmlContains('export function buildStandalonePrintHtml(html, { autoPrint = false } = {}) {', $printCore);
         $this->assertHtmlContains('const autoPrintHtml = buildStandalonePrintHtmlFn(html, { autoPrint: true });', $printBrowser);
-        $this->assertHtmlContains("submitBrowserPrintJob(autoPrintHtml, { jsonApi })", $printBrowser);
+        $this->assertHtmlContains('submitBrowserPrintJob(autoPrintHtml, { jsonApi })', $printBrowser);
         $this->assertHtmlContains('const pw = window.open(\'\', \'_blank\', \'width=1200,height=1000\');', $printBrowser);
         $this->assertHtmlContains('resolveAppUrl,', $printBrowser);
-        $this->assertHtmlContains("notifyError(", $printBrowser);
+        $this->assertHtmlContains('notifyError(', $printBrowser);
         $this->assertHtmlNotContains('fallbackWrite', $printSources);
         $this->assertHtmlNotContains('createObjectURL(blob)', $printSources);
         $this->assertHtmlNotContains('new Blob([printDocumentHtml]', $printSources);
-        $this->assertHtmlNotContains("pw.document.write(autoPrintHtml);", $printSources);
-        $this->assertHtmlNotContains("setTimeout(() => { try { pw.print(); } catch (e) { } }, 500);", $printSources);
+        $this->assertHtmlNotContains('pw.document.write(autoPrintHtml);', $printSources);
+        $this->assertHtmlNotContains('setTimeout(() => { try { pw.print(); } catch (e) { } }, 500);', $printSources);
         $this->assertHtmlNotContains('pw.location.href = `${execBaseUrl}/print?printJob=${encodeURIComponent(printJobKey)}`;', $printSources);
     }
 

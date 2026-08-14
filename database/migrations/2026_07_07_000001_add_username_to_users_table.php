@@ -25,7 +25,7 @@ return new class extends Migration
                 ->where('id', '!=', $user->id)
                 ->exists()) {
                 $suffix++;
-                $username = $baseUsername . '_' . $suffix;
+                $username = $baseUsername.'_'.$suffix;
             }
 
             DB::table('users')

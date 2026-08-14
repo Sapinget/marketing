@@ -1,12 +1,13 @@
 <?php
 
-use App\Support\XlsxSheetReader;
 use App\Support\DashboardAuth;
 use App\Support\MasterPlanDistributionSync;
+use App\Support\XlsxSheetReader;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
@@ -128,6 +129,103 @@ Artisan::command('marketing:import-settings {path} {--sheet=Settings} {--truncat
 
     return self::SUCCESS;
 })->purpose('Import the Settings sheet from a PPK XLSX workbook into SQLite');
+
+Artisan::command('marketing:sync-google-sheet
+    {spreadsheetId?}
+    {--output=storage/app/marketing/google-sheet.xlsx}
+    {--truncate}', function (XlsxSheetReader $reader): int {
+    $spreadsheetId = trim((string) ($this->argument('spreadsheetId') ?: env('MARKETING_GOOGLE_SHEET_ID', '1kt_r6PvRNO_p_2u1Dm1QpU3SLMehirJL')));
+    $outputOption = trim((string) $this->option('output'));
+    $outputPath = str_starts_with($outputOption, DIRECTORY_SEPARATOR) ? $outputOption : base_path($outputOption);
+
+    if ($spreadsheetId === '' || ! preg_match('/^[A-Za-z0-9_-]+$/', $spreadsheetId)) {
+        $this->error('Invalid spreadsheet id.');
+
+        return self::FAILURE;
+    }
+
+    File::ensureDirectoryExists(dirname($outputPath));
+
+    $url = "https://docs.google.com/spreadsheets/d/{$spreadsheetId}/export?format=xlsx";
+    $body = false;
+    $context = stream_context_create([
+        'http' => [
+            'timeout' => 120,
+            'ignore_errors' => true,
+            'header' => "User-Agent: marketing-dashboard-sync\r\n",
+        ],
+    ]);
+
+    for ($attempt = 1; $attempt <= 3; $attempt++) {
+        $body = file_get_contents($url, false, $context);
+        if (is_string($body) && str_starts_with($body, 'PK')) {
+            break;
+        }
+        usleep(1000000);
+    }
+
+    if (! is_string($body)) {
+        $this->error('Unable to download Google Sheet. Make sure it is shared with anyone who has the link.');
+
+        return self::FAILURE;
+    }
+    if (! str_starts_with($body, 'PK')) {
+        $this->error('Downloaded response is not an XLSX file. Make sure the sheet is accessible without login.');
+
+        return self::FAILURE;
+    }
+
+    File::put($outputPath, $body);
+    $this->info('Downloaded workbook to '.Str::after($outputPath, base_path().DIRECTORY_SEPARATOR));
+
+    $now = now();
+    $stats = [];
+    $sheetNames = $reader->sheetNames($outputPath);
+
+    $sheetHeaderRows = [
+        'Input Complain' => 4,
+        'Klaim Garansi Cermati' => 4,
+    ];
+
+    DB::transaction(function () use ($reader, $outputPath, $spreadsheetId, $now, $sheetNames, $sheetHeaderRows, &$stats): void {
+        if ($this->option('truncate')) {
+            DB::table('google_sheet_rows')->where('spreadsheet_id', $spreadsheetId)->delete();
+        }
+
+        foreach ($sheetNames as $sheetName) {
+            $rows = $reader->rows($outputPath, $sheetName, $sheetHeaderRows[$sheetName] ?? 1);
+            $stats[$sheetName] = count($rows);
+
+            foreach ($rows as $index => $row) {
+                $payload = json_encode($row, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+
+                DB::table('google_sheet_rows')->updateOrInsert(
+                    [
+                        'spreadsheet_id' => $spreadsheetId,
+                        'sheet_name' => $sheetName,
+                        'row_number' => $index + 2,
+                    ],
+                    [
+                        'row_hash' => hash('sha256', $payload),
+                        'payload' => $payload,
+                        'imported_at' => $now,
+                        'updated_at' => $now,
+                        'created_at' => $now,
+                    ],
+                );
+            }
+        }
+    });
+
+    foreach ($stats as $sheetName => $count) {
+        $this->line("{$sheetName}: {$count}");
+    }
+
+    $total = DB::table('google_sheet_rows')->where('spreadsheet_id', $spreadsheetId)->count();
+    $this->info("Imported {$total} rows into google_sheet_rows.");
+
+    return self::SUCCESS;
+})->purpose('Download a Google Sheets workbook and import every tab into the marketing database');
 
 Artisan::command('marketing:import-remaining-workbook {path} {--truncate}', function (XlsxSheetReader $reader): int {
     $path = (string) $this->argument('path');
@@ -342,11 +440,11 @@ Artisan::command('marketing:db-readiness {--write-doc=}', function (): int {
     }
 
     $markdown = "# MySQL Migration Readiness Report\n\n"
-        ."Generated at: ".now()->toDateTimeString()."\n\n"
+        .'Generated at: '.now()->toDateTimeString()."\n\n"
         ."## Status\n\n"
         ."- status: `{$status}`\n"
-        ."- db_connection: `".$report['connection']['default']."`\n"
-        ."- db_database: `".$report['connection']['database']."`\n\n"
+        .'- db_connection: `'.$report['connection']['default']."`\n"
+        .'- db_database: `'.$report['connection']['database']."`\n\n"
         ."## Table Totals\n\n"
         .collect($report['tables'])->map(fn ($value, $key) => "- `{$key}`: {$value}")->implode("\n")
         ."\n\n## Blocking Checks\n\n"
@@ -384,6 +482,7 @@ Artisan::command('marketing:repair-lpjk-relations {--create-missing}', function 
                     $masterId = trim((string) ($detail->master_id ?? ''));
                     if ($masterId === '') {
                         $detailsUnresolved++;
+
                         continue;
                     }
 
@@ -410,6 +509,7 @@ Artisan::command('marketing:repair-lpjk-relations {--create-missing}', function 
 
                     if ($parent === null) {
                         $detailsUnresolved++;
+
                         continue;
                     }
 
@@ -464,11 +564,11 @@ Artisan::command('marketing:import-sqlite-to-mysql
     $target = DB::connection('mysql');
     $target->getPdo();
 
-    $source = new \PDO('sqlite:'.$sourcePath);
-    $source->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-    $source->setAttribute(\PDO::ATTR_DEFAULT_FETCH_MODE, \PDO::FETCH_ASSOC);
+    $source = new PDO('sqlite:'.$sourcePath);
+    $source->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $source->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 
-    $sourceTables = collect($source->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'")->fetchAll(\PDO::FETCH_COLUMN))
+    $sourceTables = collect($source->query("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'")->fetchAll(PDO::FETCH_COLUMN))
         ->map(fn ($name) => (string) $name)
         ->values()
         ->all();
@@ -565,8 +665,8 @@ Artisan::command('marketing:import-sqlite-to-mysql
     $dsn = $socket !== ''
         ? "mysql:unix_socket={$socket};dbname={$database};charset=utf8mb4"
         : "mysql:host={$host};port={$port};dbname={$database};charset=utf8mb4";
-    $verify = new \PDO($dsn, (string) $this->option('target-username'), (string) $this->option('target-password'));
-    $verify->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+    $verify = new PDO($dsn, (string) $this->option('target-username'), (string) $this->option('target-password'));
+    $verify->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
     foreach ($tables as $table) {
         $targetCount = (int) $verify->query('SELECT COUNT(*) FROM `'.$table.'`')->fetchColumn();

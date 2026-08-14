@@ -18,7 +18,7 @@ class XlsxSheetReader
             throw new InvalidArgumentException("XLSX file not found: {$path}");
         }
 
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
         if ($zip->open($path) !== true) {
             throw new RuntimeException("Unable to open XLSX file: {$path}");
         }
@@ -41,13 +41,13 @@ class XlsxSheetReader
     /**
      * @return array<int, array<string, mixed>>
      */
-    public function rows(string $path, string $sheetName): array
+    public function rows(string $path, string $sheetName, int $headerRow = 1): array
     {
         if (! is_file($path)) {
             throw new InvalidArgumentException("XLSX file not found: {$path}");
         }
 
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
         if ($zip->open($path) !== true) {
             throw new RuntimeException("Unable to open XLSX file: {$path}");
         }
@@ -63,6 +63,13 @@ class XlsxSheetReader
             $rows = $this->worksheetRows($worksheetXml, $sharedStrings);
             if ($rows === []) {
                 return [];
+            }
+
+            for ($i = 1; $i < $headerRow; $i++) {
+                array_shift($rows);
+                if ($rows === []) {
+                    return [];
+                }
             }
 
             $headers = array_map(fn ($value) => trim((string) $value), array_shift($rows));
@@ -212,6 +219,7 @@ class XlsxSheetReader
 
         if ($type === 'inlineStr') {
             $cell->registerXPathNamespace('m', 'http://schemas.openxmlformats.org/spreadsheetml/2006/main');
+
             return implode('', array_map('strval', $cell->xpath('.//m:t') ?: []));
         }
 
@@ -252,6 +260,7 @@ class XlsxSheetReader
 
         if (is_numeric($value)) {
             $base = new \DateTimeImmutable('1899-12-30');
+
             return $base->modify('+'.(int) $value.' days')->format('Y-m-d');
         }
 

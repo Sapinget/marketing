@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 use ZipArchive;
 
@@ -40,7 +39,7 @@ class SettingsImportTest extends TestCase
     private function createSettingsWorkbookFixture(): string
     {
         $path = tempnam(sys_get_temp_dir(), 'settings-').'.xlsx';
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
         $zip->open($path, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
         $zip->addFromString('[Content_Types].xml', <<<'XML'

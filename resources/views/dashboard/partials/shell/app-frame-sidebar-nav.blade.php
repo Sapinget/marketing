@@ -6,6 +6,7 @@
                 @include('dashboard.partials.shell.app-frame-sidebar-nav-intelijen-pasar')
                 @include('dashboard.partials.shell.app-frame-sidebar-nav-analysis')
                 @include('dashboard.partials.shell.app-frame-sidebar-nav-cs')
+                @include('dashboard.partials.shell.app-frame-sidebar-nav-complain-tracker')
                 @include('dashboard.partials.shell.app-frame-sidebar-nav-admin')
 @verbatim
             </div>

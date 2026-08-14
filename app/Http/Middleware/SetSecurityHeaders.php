@@ -34,7 +34,7 @@ class SetSecurityHeaders
                     "form-action 'self'",
                     "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
                     "style-src 'self' 'unsafe-inline'",
-                    "font-src 'self' data:",
+                    "font-src 'self' data: https://frontend-cdn.perplexity.ai",
                     "img-src 'self' data: blob: https:",
                     "connect-src 'self'",
                 ])

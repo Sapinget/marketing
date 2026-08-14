@@ -138,6 +138,7 @@ class PricelistSheetImporter
             $urut = $this->integerValue($row['URUT'] ?? null);
             if ($urut === null) {
                 $skipped++;
+
                 continue;
             }
 

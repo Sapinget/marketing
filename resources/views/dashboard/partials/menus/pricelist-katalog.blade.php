@@ -352,6 +352,11 @@
                         <div class="grid grid-cols-1 gap-1.5">
                             <div v-for="colorField in catalogColorFields" :key="colorField.key" class="flex items-center gap-2">
                                 <span class="type-micro text-slate-400 w-24 flex-shrink-0">{{ colorField.label }}</span>
+                                <input
+                                    type="color"
+                                    :value="catalogColorHex(catalogTemplateForm.layout_config[colorField.key])"
+                                    class="sr-only"
+                                    @input="catalogApplyColor(colorField.key, $event)" />
                                 <button type="button"
                                     class="flex-1 flex items-center gap-2 px-2.5 rounded-lg border border-slate-200 bg-white hover:border-slate-300 transition-colors cursor-pointer"
                                     style="height:30px"

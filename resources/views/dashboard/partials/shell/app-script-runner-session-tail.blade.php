@@ -243,6 +243,15 @@
                     if (tab === 'nama_stock' && !namaStockLoaded.value) {
                         loadNamaStockData();
                     }
+                    if (tab === 'input_claim' && !inputClaimLoaded.value) {
+                        loadInputClaimData();
+                    }
+                    if (tab === 'garansi_cermati' && !garansiCermatiLoaded.value) {
+                        loadGaransiCermatiData();
+                    }
+                    if (tab === 'garansi_resmi' && !garansiResmiLoaded.value) {
+                        loadGaransiResmiData();
+                    }
                     if (tab === 'meta_story' && !metaStoryLoaded.value) {
                         loadMetaStory();
                     }

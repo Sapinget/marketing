@@ -37,13 +37,13 @@ abstract class TestCase extends BaseTestCase
         $this->actingAs($user);
         $this->withSession([
             'dashboard_last_activity_at' => $now->timestamp,
-            'dashboard_active_session_id' => 'test-dashboard-session-' . $user->getKey(),
+            'dashboard_active_session_id' => 'test-dashboard-session-'.$user->getKey(),
         ]);
         $user->forceFill([
             'is_online' => true,
             'last_seen_at' => $now,
             'session_expires_at' => $now->copy()->addMinutes(15),
-            'active_session_id' => 'test-dashboard-session-' . $user->getKey(),
+            'active_session_id' => 'test-dashboard-session-'.$user->getKey(),
         ])->save();
 
         return $user;

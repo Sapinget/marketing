@@ -58,7 +58,7 @@ class MasterPlanImportTest extends TestCase
     private function createWorkbookFixture(): string
     {
         $path = tempnam(sys_get_temp_dir(), 'master-plan-').'.xlsx';
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
         $zip->open($path, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
         $zip->addFromString('[Content_Types].xml', <<<'XML'

@@ -9,7 +9,7 @@ class MetaIgImportNormalizerTest extends TestCase
 {
     public function test_it_normalizes_story_rows_with_flexible_headers(): void
     {
-        $normalizer = new MetaIgImportNormalizer();
+        $normalizer = new MetaIgImportNormalizer;
 
         $rows = $normalizer->normalizeImportRows([
             [
@@ -47,7 +47,7 @@ class MetaIgImportNormalizerTest extends TestCase
 
     public function test_it_accepts_canonical_keys_and_aliases_for_feed_rows(): void
     {
-        $normalizer = new MetaIgImportNormalizer();
+        $normalizer = new MetaIgImportNormalizer;
 
         $rows = $normalizer->normalizeImportRows([
             [

@@ -5,23 +5,31 @@ namespace App\Support;
 use App\Models\User;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
-use Illuminate\Support\Carbon;
 
 class DashboardAuth
 {
     public const SESSION_IDLE_TIMEOUT_MINUTES = 15;
+
     public const SESSION_SUPERSEDED_MESSAGE = 'anda sudah login di perangkat lain';
+
     public const ROLE_SUPER_ADMIN = 'super_admin';
+
     public const ROLE_ADMIN = 'admin';
+
     public const ROLE_KASIR = 'kasir';
+
     public const ROLE_OPERASIONAL = 'operasional';
+
     public const ROLE_BRAND_AMBASADOR = 'brand_ambasador';
+
     public const ROLE_TALENT = 'talent';
+
     protected const ACTIVE_SESSION_KEY = 'dashboard_active_session_id';
 
     protected ?string $sessionFailureReason = null;
@@ -452,13 +460,13 @@ class DashboardAuth
             return null;
         }
 
-        $storagePath = storage_path('app/public/avatars/' . $user->avatar);
+        $storagePath = storage_path('app/public/avatars/'.$user->avatar);
 
         if (! file_exists($storagePath)) {
             return null;
         }
 
-        return '/api/auth/avatar/' . rawurlencode($user->avatar);
+        return '/api/auth/avatar/'.rawurlencode($user->avatar);
     }
 
     public function updateUserAvatar(User $user, string $filename): User

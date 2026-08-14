@@ -166,4 +166,43 @@
                         { label: 'Top Status', value: topStatus ? String(topStatus[0]).toUpperCase() : '-', icon: 'fa-circle-dot', color: 'text-slate-500', sub: formatNumber(topStatus ? topStatus[1] : 0) + ' event', subColor: 'text-slate-600' },
                     ]) };
                 });
+                const garansiCermatiSummary = computed(() => {
+                    const d = filteredGaransiCermatiRows.value || [];
+                    const st = _sCnt(d, r => String(r['Status perbaikan'] || '').trim());
+                    const done = st['Service Done'] || 0;
+                    const proses = st['Proses Perbaikan'] || 0;
+                    const belum = st['Belum Service'] || 0;
+                    return { cards: limitSummaryCards([
+                        { label: 'Total Klaim', value: formatNumber(d.length), unit: 'Unit', icon: 'fa-shield-halved', color: 'text-amber', unitColor: 'text-amber', subColor: 'text-amber', sub: 'Semua klaim cermati' },
+                        { label: 'Service Done', value: formatNumber(done), icon: 'fa-circle-check', color: 'text-success', subColor: 'text-success', sub: 'Perbaikan selesai' },
+                        { label: 'Proses', value: formatNumber(proses), icon: 'fa-spinner', color: 'text-amber', subColor: 'text-amber', sub: 'Sedang diperbaiki' },
+                        { label: 'Belum Service', value: formatNumber(belum), icon: 'fa-hourglass-half', color: 'text-slate-500', subColor: 'text-slate-600', sub: 'Menunggu service' },
+                    ]) };
+                });
+                const garansiResmiSummary = computed(() => {
+                    const d = filteredGaransiResmiRows.value || [];
+                    const st = _sCnt(d, r => String(r['Status perbaikan'] || '').trim());
+                    const done = st['Done'] || 0;
+                    const progress = st['Progress Claim'] || 0;
+                    const notStarted = st['Not Started'] || 0;
+                    return { cards: limitSummaryCards([
+                        { label: 'Total Klaim', value: formatNumber(d.length), unit: 'Unit', icon: 'fa-screwdriver-wrench', color: 'text-amber', unitColor: 'text-amber', subColor: 'text-amber', sub: 'Semua klaim resmi' },
+                        { label: 'Done', value: formatNumber(done), icon: 'fa-circle-check', color: 'text-success', subColor: 'text-success', sub: 'Klaim selesai' },
+                        { label: 'Progress', value: formatNumber(progress), icon: 'fa-spinner', color: 'text-amber', subColor: 'text-amber', sub: 'Sedang diproses' },
+                        { label: 'Not Started', value: formatNumber(notStarted), icon: 'fa-hourglass-half', color: 'text-slate-500', subColor: 'text-slate-600', sub: 'Belum dimulai' },
+                    ]) };
+                });
+                const inputClaimSummary = computed(() => {
+                    const d = filteredInputClaimRows.value || [];
+                    const st = _sCnt(d, r => String(r['Status'] || '').trim());
+                    const selesai = st['Selesai'] || 0;
+                    const proses = st['Proses'] || 0;
+                    const toko = _sCnt(d, r => String(r['Toko'] || '').trim());
+                    return { cards: limitSummaryCards([
+                        { label: 'Total Complain', value: formatNumber(d.length), unit: 'Kasus', icon: 'fa-file-pen', color: 'text-amber', unitColor: 'text-amber', subColor: 'text-amber', sub: 'Semua komplain masuk' },
+                        { label: 'Selesai', value: formatNumber(selesai), icon: 'fa-circle-check', color: 'text-success', subColor: 'text-success', sub: 'Komplain tuntas' },
+                        { label: 'Proses', value: formatNumber(proses), icon: 'fa-spinner', color: 'text-amber', subColor: 'text-amber', sub: 'Sedang ditangani' },
+                        { label: 'Toko', value: formatNumber(Object.keys(toko).filter(k => k !== '-').length), unit: 'Lokasi', icon: 'fa-store', color: 'text-slate-500', unitColor: 'text-slate-400', subColor: 'text-slate-600', sub: 'Sumber complain' },
+                    ]) };
+                });
 @endverbatim

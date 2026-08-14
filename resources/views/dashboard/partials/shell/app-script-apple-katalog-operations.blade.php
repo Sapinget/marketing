@@ -1064,7 +1064,7 @@
                     return a >= 1 ? '#' + colorPickerHexStr.value.toLowerCase() : `rgba(${r},${g},${b},${parseFloat(a.toFixed(2))})`;
                 });
 
-                watchEffect(() => {
+                Vue.watchEffect(() => {
                     if (colorPickerOpen.value && colorPickerSetter.value) {
                         colorPickerSetter.value(colorPickerColorStr.value);
                     }

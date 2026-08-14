@@ -232,11 +232,11 @@
             <template v-if="imgRepoViewMode === 'list' && imgRepoItems.length">
                 <table class="w-full text-body-sm">
                     <thead>
-                        <tr class="border-b border-slate-200">
-                            <th class="text-left py-2 px-3 text-slate-500 font-medium text-overline">NAMA</th>
-                            <th class="text-left py-2 px-3 text-slate-500 font-medium text-overline w-24">TIPE</th>
-                            <th class="text-right py-2 px-3 text-slate-500 font-medium text-overline w-24">UKURAN</th>
-                            <th class="w-10"></th>
+                        <tr class="table-header-row">
+                            <th class="table-header-cell text-left">NAMA</th>
+                            <th class="table-header-cell text-left w-24">TIPE</th>
+                            <th class="table-header-cell text-right w-24">UKURAN</th>
+                            <th class="table-header-cell w-10"></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -351,9 +351,8 @@
                     <span>Rename</span>
                 </button>
                 <button @click="imgRepoDelete(imgRepoSelected)"
-                    class="flex items-center gap-2 px-4 py-2 rounded-xl text-body-sm font-medium bg-white border border-red-200 text-red-600 hover:bg-red-50 transition-colors">
+                    class="flex items-center gap-2 px-4 py-2 rounded-xl text-body-sm font-medium bg-white border border-red-200 text-red-600 hover:bg-red-50 transition-colors" aria-label="Hapus">
                     <i class="fa-solid fa-trash text-red-400"></i>
-                    <span>Hapus</span>
                 </button>
             </div>
         </aside>
@@ -377,9 +376,8 @@
         </button>
         <div class="my-1 border-t border-slate-100"></div>
         <button @click="imgRepoDelete(imgRepoContextMenu.item); imgRepoContextMenu=null"
-            class="w-full flex items-center gap-3 px-4 py-2 text-body-sm text-red-600 hover:bg-red-50 transition-colors">
+            class="w-full flex items-center gap-3 px-4 py-2 text-body-sm text-red-600 hover:bg-red-50 transition-colors" aria-label="Hapus">
             <i class="fa-solid fa-trash w-4 text-center"></i>
-            <span>Hapus</span>
         </button>
     </div>
     {{-- Context menu backdrop --}}

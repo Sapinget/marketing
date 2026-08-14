@@ -3,9 +3,9 @@
 namespace Tests\Feature;
 
 use App\Support\DashboardAuth;
-use Illuminate\Support\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\File;
 use Tests\TestCase;
 
@@ -369,7 +369,7 @@ class DashboardAuthenticationTest extends TestCase
         $user->refresh();
 
         $this->assertNotNull($user->avatar);
-        $this->assertFileExists($avatarDirectory . DIRECTORY_SEPARATOR . $user->avatar);
+        $this->assertFileExists($avatarDirectory.DIRECTORY_SEPARATOR.$user->avatar);
 
         $this->get($avatarUrl)->assertOk();
 

@@ -41,6 +41,9 @@
                     unit_ditanya: { label: 'Unit Ditanya', category: 'Customer Service' },
                     claim_garansi_asuransi: { label: 'Claim Garansi', category: 'Customer Service' },
                     keep_barang: { label: 'Keep Barang', category: 'Customer Service' },
+                    input_claim: { label: 'Input Claim', category: 'Customer Service' },
+                    garansi_cermati: { label: 'Garansi Cermati', category: 'Customer Service' },
+                    garansi_resmi: { label: 'Garansi Resmi', category: 'Customer Service' },
                     bonus_report: { label: 'Bonus Report', category: 'Performa' },
                     talent_bonus: { label: 'Talent Bonus', category: 'Performa' },
                     editor_performance: { label: 'Editor Performance', category: 'Performa' },
@@ -71,6 +74,7 @@
                 const kontenOpen = ref(['master', 'ideation', 'distribution', 'analytics', 'calendar', 'story', 'unboxing'].includes(localStorage.getItem("ppp_active_tab")));
                 const analisaKontenOpen = ref(['top_content_platform', 'low_content_platform', 'analisa_insight', 'meta_story', 'meta_feed', 'meta_followers'].includes(localStorage.getItem("ppp_active_tab")));
                 const csOpen = ref(['orderan_online', 'unit_ditanya', 'claim_garansi_asuransi', 'keep_barang'].includes(localStorage.getItem("ppp_active_tab")));
+                const complainTrackerOpen = ref(['input_claim', 'garansi_cermati', 'garansi_resmi'].includes(localStorage.getItem("ppp_active_tab")));
                 const settingsGroupOpen = ref(['settings', 'nama_stock', 'auth_users', 'activity_logs'].includes(localStorage.getItem("ppp_active_tab")));
                 const performaOpen = ref(['bonus_report', 'talent_bonus', 'editor_performance'].includes(localStorage.getItem("ppp_active_tab")));
                 const marketingOpen = ref(['program_promo', 'sell_out', 'ads_log', 'budgeting'].includes(localStorage.getItem("ppp_active_tab")));
@@ -84,6 +88,7 @@
                     intelijenPasar: intelijenPasarOpen,
                     analisa: analisaKontenOpen,
                     cs: csOpen,
+                    complainTracker: complainTrackerOpen,
                     performa: performaOpen,
                     settings: settingsGroupOpen,
                 };
@@ -93,6 +98,7 @@
                     intelijenPasar: intelijenPasarTabs,
                     analisa: ['top_content_platform', 'low_content_platform', 'analisa_insight', 'meta_story', 'meta_feed', 'meta_followers'],
                     cs: ['orderan_online', 'unit_ditanya', 'claim_garansi_asuransi', 'keep_barang'],
+                    complainTracker: ['input_claim', 'garansi_cermati', 'garansi_resmi'],
                     performa: ['bonus_report', 'talent_bonus', 'editor_performance'],
                     settings: ['settings', 'nama_stock', 'auth_users', 'activity_logs'],
                 };
