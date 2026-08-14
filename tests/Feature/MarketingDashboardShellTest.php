@@ -4330,4 +4330,18 @@ HTML, $html);
         $this->assertHtmlContains('catalogTemplateForm.layout_config.rowHeight', $html);
         $this->assertHtmlContains('catalogTemplateForm.layout_config.priceFontSize', $html);
     }
+
+    public function test_pricelist_catalog_output_controls_use_consistent_primitives(): void
+    {
+        $html = $this->renderDashboardHtmlWithShellCss();
+
+        $this->assertHtmlContains('.catalog-control-grid {', $html);
+        $this->assertHtmlContains('.catalog-control-field {', $html);
+        $this->assertHtmlContains('.catalog-segment-group {', $html);
+        $this->assertHtmlContains('.catalog-segment-button.catalog-segment-button--active {', $html);
+        $this->assertHtmlContains("catalogOutputMode === 'list' ? 'catalog-segment-button--active' : ''", $html);
+        $this->assertHtmlContains("catalogPriceKey === opt.key ? 'catalog-segment-button--active' : ''", $html);
+        $this->assertHtmlNotContains("catalogOutputMode === 'list' ? 'bg-ppp-accent text-white border-ppp-accent' : 'bg-white text-slate-500 border-slate-200'", $html);
+        $this->assertHtmlNotContains("catalogPriceKey === opt.key ? 'bg-ppp-accent text-white border-ppp-accent' : 'bg-white text-slate-500 border-slate-200'", $html);
+    }
 }
