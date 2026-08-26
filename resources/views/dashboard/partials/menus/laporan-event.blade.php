@@ -1,7 +1,7 @@
 @verbatim
 <!-- Laporan Event tab -->
             <div v-if="activeTab === 'laporan_event' && !tabDataLoaded['lpjk']"
-                class="space-y-6 animate-fadeIn pb-10 animate-pulse">
+                class="space-y-4 animate-fadeIn animate-pulse">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
                     <div v-for="i in 4" :key="'sk-le-st'+i"
                         class="bg-white p-4 radius-card border border-slate-100 animate-pulse">
@@ -31,7 +31,7 @@
                     </div>
                 </div>
             </div>
-            <div v-if="activeTab === 'laporan_event' && tabDataLoaded['lpjk']" class="space-y-6 animate-fadeIn pb-10">
+            <div v-if="activeTab === 'laporan_event' && tabDataLoaded['lpjk']" class="space-y-4 animate-fadeIn">
                 <!-- Summary cards -->
                 <div class="space-y-3">
                     <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">

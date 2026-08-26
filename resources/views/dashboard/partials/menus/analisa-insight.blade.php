@@ -1,6 +1,6 @@
 @verbatim
 <!-- Analisa Insight & Tren View -->
-                    <div v-if="activeTab === 'analisa_insight'" class="space-y-6 animate-fadeIn pb-10">
+                    <div v-if="activeTab === 'analisa_insight'" class="space-y-4 animate-fadeIn">
                         <div class="section-card section-card-shell overflow-hidden">
                             <div class="table-toolbar-shell border-b border-slate-50">
                                 <div class="table-toolbar-shell__left">

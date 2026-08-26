@@ -1,5 +1,5 @@
 @verbatim
-<div v-if="activeTab === 'pricelist_katalog'" class="space-y-4 md:space-y-6 animate-fadeIn pb-10 xl:pb-0 xl:h-[calc(100dvh-7rem)] xl:min-h-[620px] xl:overflow-hidden">
+<div v-if="activeTab === 'pricelist_katalog'" class="space-y-4 animate-fadeIn xl:h-[calc(100dvh-7rem)] xl:min-h-[620px] xl:overflow-hidden">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
             <h1 class="type-title text-slate-900">Katalog Pricelist</h1>
@@ -83,7 +83,7 @@
             <div v-else class="flex-1 min-h-0 overflow-y-auto p-3 md:p-4">
                 <div v-if="pricelistCardGroups.length === 0" class="text-center text-slate-400 py-10">Belum ada data pricelist</div>
                 <div v-else class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 gap-2 md:gap-3 content-start">
-                    <div v-for="group in pricelistCardGroups" :key="group.model" class="relative border border-slate-200 bg-white rounded-2xl p-2.5 md:p-3 transition-all hover:border-slate-300 hover:shadow-sm">
+                    <div v-for="group in pricelistCardGroups" :key="group.model" class="relative border border-slate-200 bg-white rounded-2xl p-2.5 md:p-3 transition-all hover:border-slate-300">
                         <div class="absolute top-2 right-2 z-10">
                             <span :class="['px-2 py-0.5 rounded-full text-overline font-bold', group.variants.some(row => row.is_active !== false) ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400']">
                                 {{ group.variants.some(row => row.is_active !== false) ? 'ON' : 'OFF' }}

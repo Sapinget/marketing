@@ -1,5 +1,5 @@
 @verbatim
-<div v-if="activeTab === 'auth_users'" class="space-y-4 animate-fadeIn pb-10">
+<div v-if="activeTab === 'auth_users'" class="space-y-4 animate-fadeIn">
 
 
 

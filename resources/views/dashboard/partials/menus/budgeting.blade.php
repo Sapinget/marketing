@@ -1,7 +1,7 @@
 @verbatim
 <!-- Budgeting tab -->
             <div v-if="activeTab === 'budgeting' && !budgetConfigLoaded"
-                class="space-y-6 animate-fadeIn pb-10 animate-pulse">
+                class="space-y-4 animate-fadeIn animate-pulse">
                 <div class="section-card section-card-body">
                     <div class="flex items-center gap-4 mb-6">
                         <div class="w-12 h-12 rounded-2xl bg-slate-200"></div>
@@ -27,7 +27,7 @@
                     </div>
                 </div>
             </div>
-            <div v-if="activeTab === 'budgeting' && budgetConfigLoaded" class="space-y-6 animate-fadeIn pb-10">
+            <div v-if="activeTab === 'budgeting' && budgetConfigLoaded" class="space-y-4 animate-fadeIn">
                 <section class="section-card section-card-body">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
                         <div class="modal-header-copy">
@@ -907,7 +907,7 @@
                                         class="ml-6 text-body text-slate-400 italic py-4">Belum ada pengeluaran.
                                         Tambahkan dari form di sebelah kiri.</div>
                                     <div
-                                        class="mt-6 pt-4 border-t-2 border-double border-slate-800 flex justify-between items-center font-bold">
+                                        class="mt-6 pt-4 border-t-2 border-double border-slate-200 flex justify-between items-center font-bold">
                                         <span class="uppercase text-sm">TOTAL KESELURUHAN PENGELUARAN</span>
                                         <span class="text-heading-sm underline decoration-double underline-offset-4">{{ formatCurrency(lpjkDetailTotal) }}</span>
                                     </div>

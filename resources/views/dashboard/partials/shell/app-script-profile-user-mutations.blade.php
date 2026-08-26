@@ -124,23 +124,23 @@
                             };
                             const saveProfileSetting = () => {
                                 if (!deps.profileForm.value.oldPin || !deps.profileForm.value.newPin || !deps.profileForm.value.confirmPin) {
-                                    deps.showNotification("Harap lengkapi semua field PIN!");
+                                    deps.showNotification("Harap lengkapi semua field Password!");
                                     return;
                                 }
                                 if (deps.profileForm.value.newPin !== deps.profileForm.value.confirmPin) {
-                                    deps.showNotification("Konfirmasi PIN baru tidak cocok!");
+                                    deps.showNotification("Konfirmasi password baru tidak cocok!");
                                     return;
                                 }
                                 deps.submittingPin.value = true;
                                 deps.ensureRunApi().withSuccessHandler(() => {
                                     deps.submittingPin.value = false;
-                                    deps.showNotification("PIN berhasil diupdate!");
+                                    deps.showNotification("Password berhasil diperbarui!");
                                     deps.profileForm.value.oldPin = "";
                                     deps.profileForm.value.newPin = "";
                                     deps.profileForm.value.confirmPin = "";
                                 }).withFailureHandler((err) => {
                                     deps.submittingPin.value = false;
-                                    deps.notifyError('Gagal memperbarui PIN', err, 'PIN baru belum berhasil disimpan.');
+                                    deps.notifyError('Gagal memperbarui Password', err, 'Password baru belum berhasil disimpan.');
                                 }).changePin(deps.currentUser.value?.username, deps.profileForm.value.oldPin, deps.profileForm.value.newPin);
                             };
                             const submitAuthUserForm = () => {
@@ -179,7 +179,7 @@
                                 }
 
                                 if ((normalizedPin || normalizedConfirmPin) && normalizedPin !== normalizedConfirmPin) {
-                                    deps.showNotification("Konfirmasi PIN user baru tidak cocok!");
+                                    deps.showNotification("Konfirmasi password user baru tidak cocok!");
                                     return;
                                 }
 

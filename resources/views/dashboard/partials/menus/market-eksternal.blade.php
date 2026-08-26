@@ -2,7 +2,7 @@
 <!-- Intelijen Eksternal tab — shared by market_eksternal, market_ext_goodponsel, market_ext_devstore, market_ext_rumahgadget -->
 <template v-if="['market_eksternal','market_ext_goodponsel','market_ext_devstore','market_ext_rumahgadget'].includes(activeTab)">
     <div v-if="!tabDataLoaded['marketEksternal']"
-        class="space-y-6 animate-fadeIn pb-10 animate-pulse">
+        class="space-y-4 animate-fadeIn animate-pulse">
         <div class="section-card section-card-shell">
             <div class="px-6 py-4 border-b border-slate-50 flex gap-6">
                 <div class="h-3 bg-slate-200 rounded-full w-28"></div>
@@ -19,7 +19,7 @@
             </div>
         </div>
     </div>
-    <div v-if="tabDataLoaded['marketEksternal']" class="space-y-6 animate-fadeIn pb-10">
+    <div v-if="tabDataLoaded['marketEksternal']" class="space-y-4 animate-fadeIn">
 
         <div v-if="activeTab === 'market_eksternal'" class="flex items-center justify-between flex-wrap gap-3">
             <div>

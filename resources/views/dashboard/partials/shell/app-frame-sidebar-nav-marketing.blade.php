@@ -1,56 +1,27 @@
 @verbatim
-                <!-- Marketing Accordion -->
-                <div v-if="!isTeknisi" class="select-none">
-                    <div @click="toggleMenuGroup('marketing')"
-                        :class="['flex items-center justify-between px-5 py-3 cursor-pointer group transition-all duration-300', ['program_promo','sell_out','ads_log','budgeting'].includes(activeTab) ? 'nav-accordion-active' : 'nav-idle']">
-                        <div class="flex items-center gap-3">
-                            <i
-                                class="fa-solid fa-bullseye text-body w-4 text-center transition-transform duration-300 group-hover:scale-110"></i>
-                            <span class="type-body font-medium">Market</span>
-                        </div>
-                        <i
-                            :class="['fa-solid fa-chevron-down text-body-sm transition-transform duration-300', marketingOpen ? 'rotate-180' : '']"></i>
-                    </div>
-                    <transition name="sidebar-accordion">
-                        <div v-show="marketingOpen" class="sidebar-accordion-panel">
-                            <div @click="switchTab('program_promo')"
-                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'program_promo' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
-                                <div v-if="activeTab === 'program_promo'"
-                                    class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
-                                </div>
-                                <i
-                                    class="fa-solid fa-bullhorn text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium relative z-10">Program Promo</span>
-                            </div>
-                            <div @click="switchTab('sell_out')"
-                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'sell_out' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
-                                <div v-if="activeTab === 'sell_out'"
-                                    class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
-                                </div>
-                                <i
-                                    class="fa-solid fa-arrow-trend-up text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium relative z-10">Sell Out
-                                    Target</span>
-                            </div>
-                            <div @click="switchTab('ads_log')"
-                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'ads_log' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
-                                <div v-if="activeTab === 'ads_log'"
-                                    class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
-                                </div>
-                                <i
-                                    class="fa-solid fa-rectangle-ad text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium relative z-10">Ads Log</span>
-                            </div>
-                            <div @click="switchTab('budgeting')"
-                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'budgeting' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
-                                <div v-if="activeTab === 'budgeting'"
-                                    class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
-                                </div>
-                                <i
-                                    class="fa-solid fa-wallet text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium relative z-10">Budgeting</span>
-                            </div>
-                        </div>
-                    </transition>
+                <div v-if="!isTeknisi" class="px-6 pb-1 pt-2.5 text-[9px] font-bold uppercase tracking-[0.14em] text-slate-400">Market</div>
+                <div v-if="!isTeknisi" @click="switchTab('program_promo')"
+                    :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'program_promo' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
+                    <i class="fa-solid fa-bullhorn text-[11px] lg:text-[12px] w-4"></i>
+                    <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Program Promo</span>
+                    <span v-if="activeTab === 'program_promo'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
+                </div>
+                <div v-if="!isTeknisi" @click="switchTab('sell_out')"
+                    :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'sell_out' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
+                    <i class="fa-solid fa-arrow-trend-up text-[11px] lg:text-[12px] w-4"></i>
+                    <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Sell Out Target</span>
+                    <span v-if="activeTab === 'sell_out'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
+                </div>
+                <div v-if="!isTeknisi" @click="switchTab('ads_log')"
+                    :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'ads_log' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
+                    <i class="fa-solid fa-rectangle-ad text-[11px] lg:text-[12px] w-4"></i>
+                    <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Ads Log</span>
+                    <span v-if="activeTab === 'ads_log'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
+                </div>
+                <div v-if="!isTeknisi" @click="switchTab('budgeting')"
+                    :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'budgeting' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
+                    <i class="fa-solid fa-wallet text-[11px] lg:text-[12px] w-4"></i>
+                    <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Budgeting</span>
+                    <span v-if="activeTab === 'budgeting'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
                 </div>
 @endverbatim

@@ -12,13 +12,6 @@
                     budgetConfigLoaded,
                     bonusConfigLoaded,
                     isSidebarOpen,
-                    kontenOpen,
-                    analisaKontenOpen,
-                    csOpen,
-                    complainTrackerOpen,
-                    settingsGroupOpen,
-                    performaOpen,
-                    marketingOpen,
                     toggleMenuGroup,
                     submitting,
                     runtimeError,
@@ -37,6 +30,12 @@
                     logout,
                     profileMenuOpen,
                     openProfileSetting,
+                    showPin,
+                    rememberUsername,
+                    handleRememberUsernameChange,
+                    dashboardTodayLabel,
+                    dashboardGreeting,
+                    publishedPlanCount,
 
                     // Chat
                     chatOpen,
@@ -110,6 +109,9 @@
 
                     // Navigation
                     activeTab,
+                    bottomNavMoreOpen,
+                    closeBottomNavMore,
+                    openBottomNavMore,
                     switchTab,
 
                     // Utilities
@@ -917,8 +919,6 @@
                     exportBudgetToExcel,
 
                     // Intelijen Pasar (Market Intelligence)
-                    intelijenPasarOpen,
-                    marketExternalOpen,
                     marketExternalTabs,
                     pasarData,
                     intelijenHargaData,

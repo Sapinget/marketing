@@ -170,7 +170,7 @@
 
                 const handleLogin = () => {
                     if (!loginForm.value.username || !loginForm.value.pin) {
-                        runtimeError.value = "Username dan PIN wajib diisi.";
+                        runtimeError.value = "Username dan Password wajib diisi.";
                         return;
                     }
 

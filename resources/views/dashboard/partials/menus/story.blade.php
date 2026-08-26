@@ -1,5 +1,5 @@
 @verbatim
-<div v-if="activeTab === 'story'" class="space-y-6 animate-fadeIn pb-10">
+<div v-if="activeTab === 'story'" class="space-y-4 animate-fadeIn">
     <div class="space-y-3">
         <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
             <div v-for="c in storySummary.cards.slice(0, 5)" :key="c.label" class="dashboard-summary-card-compact stat-card relative overflow-hidden group">

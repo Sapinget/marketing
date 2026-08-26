@@ -250,6 +250,7 @@
                     activeTab.value = tab;
                     localStorage.setItem("ppp_active_tab", tab);
                     history.replaceState(null, '', '#' + tab);
+                    closeBottomNavMore();
                     if (window.innerWidth < 768) {
                         isSidebarOpen.value = false;
                     }

@@ -1,6 +1,6 @@
 @verbatim
 <div v-if="activeTab === 'market_pasar' && !tabDataLoaded['marketPasar']"
-    class="space-y-6 animate-fadeIn pb-10 animate-pulse">
+    class="space-y-4 animate-fadeIn animate-pulse">
     <div class="section-card section-card-shell">
         <div class="px-6 py-4 border-b border-slate-50 flex gap-6">
             <div class="h-3 bg-slate-200 rounded-full w-28"></div>
@@ -18,7 +18,7 @@
     </div>
 </div>
 <div v-if="activeTab === 'market_pasar' && tabDataLoaded['marketPasar']"
-    class="space-y-6 animate-fadeIn pb-10">
+    class="space-y-4 animate-fadeIn">
     <div class="flex items-center justify-between flex-wrap gap-3">
         <div>
             <h1 class="type-title text-slate-900">Intelijen Pasar</h1>

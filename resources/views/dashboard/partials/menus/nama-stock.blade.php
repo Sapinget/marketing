@@ -1,7 +1,7 @@
 @verbatim
 <!-- Nama Stock View -->
                     <div v-if="activeTab === 'nama_stock' && !namaStockLoaded"
-                        class="space-y-6 animate-fadeIn pb-10 animate-pulse">
+                        class="space-y-4 animate-fadeIn animate-pulse">
                         <div class="section-card section-card-body">
                             <div class="flex items-center justify-between gap-3 mb-4">
                                 <div class="flex items-center gap-4">
@@ -18,7 +18,7 @@
                             </div>
                         </div>
                     </div>
-                    <div v-if="activeTab === 'nama_stock' && namaStockLoaded" class="space-y-4 animate-fadeIn pb-10">
+                    <div v-if="activeTab === 'nama_stock' && namaStockLoaded" class="space-y-4 animate-fadeIn">
                         <section class="section-card section-card-body">
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
                                 <div class="flex items-center gap-4">

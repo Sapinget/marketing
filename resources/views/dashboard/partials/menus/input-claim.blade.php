@@ -1,5 +1,5 @@
 @verbatim
-<div v-if="activeTab === 'input_claim'" class="space-y-6 animate-fadeIn pb-10">
+<div v-if="activeTab === 'input_claim'" class="space-y-4 animate-fadeIn">
     <!-- KPI Summary Cards -->
     <div class="dashboard-summary-grid-compact grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
         <div v-for="c in inputClaimSummary.cards.slice(0, 5)" :key="c.label" class="dashboard-summary-card-compact stat-card relative overflow-hidden group">

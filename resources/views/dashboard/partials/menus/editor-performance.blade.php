@@ -1,7 +1,7 @@
 @verbatim
 <!-- Editor Performance tab -->
             <div v-if="activeTab === 'editor_performance' && !bonusConfigLoaded"
-                class="space-y-6 animate-fadeIn pb-10 animate-pulse">
+                class="space-y-4 animate-fadeIn animate-pulse">
                 <div class="section-card section-card-body">
                     <div class="flex items-center gap-4 mb-6">
                         <div class="w-12 h-12 rounded-2xl bg-slate-200"></div>
@@ -38,7 +38,7 @@
                     </div>
                 </div>
             </div>
-            <div v-if="activeTab === 'editor_performance' && bonusConfigLoaded" class="space-y-6 animate-fadeIn pb-10">
+            <div v-if="activeTab === 'editor_performance' && bonusConfigLoaded" class="space-y-4 animate-fadeIn">
 
                 <!-- Summary Stats (di atas judul, konsisten) -->
                 <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">

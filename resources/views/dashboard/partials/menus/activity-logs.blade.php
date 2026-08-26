@@ -1,5 +1,5 @@
 @verbatim
-<div v-if="activeTab === 'activity_logs'" class="space-y-4 animate-fadeIn pb-10">
+<div v-if="activeTab === 'activity_logs'" class="space-y-4 animate-fadeIn">
                         <section class="section-card section-card-body">
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
                                 <div class="flex items-center gap-4">

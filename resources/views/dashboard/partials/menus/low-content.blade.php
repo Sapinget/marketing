@@ -1,6 +1,6 @@
 @verbatim
 <!-- Low Konten View -->
-                    <div v-if="activeTab === 'low_content_platform'" class="space-y-6 animate-fadeIn pb-10">
+                    <div v-if="activeTab === 'low_content_platform'" class="space-y-4 animate-fadeIn">
 
 
                         <div v-if="lowContentByPlatform.length === 0"

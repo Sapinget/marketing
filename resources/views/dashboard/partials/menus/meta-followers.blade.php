@@ -1,12 +1,12 @@
 @verbatim
-<div v-if="activeTab === 'meta_followers' && !metaFollowersLoaded" class="meta-analytics-page space-y-6 animate-fadeIn pb-10">
+<div v-if="activeTab === 'meta_followers' && !metaFollowersLoaded" class="meta-analytics-page space-y-4 animate-fadeIn">
                         <section class="section-card section-card-shell px-6 py-16 text-center text-slate-300">
                             <i class="fa-solid fa-spinner fa-spin text-3xl mb-3 opacity-40 block"></i>
                             <p class="text-body-sm font-bold uppercase">Memuat data Followers</p>
                             <p class="text-overline-xs mt-1">Dashboard akan tampil setelah data selesai dibaca</p>
                         </section>
                     </div>
-<div v-if="activeTab === 'meta_followers' && metaFollowersLoaded" class="meta-analytics-page space-y-6 animate-fadeIn pb-10">
+<div v-if="activeTab === 'meta_followers' && metaFollowersLoaded" class="meta-analytics-page space-y-4 animate-fadeIn">
                         <section class="section-card meta-toolbar-card">
                             <div class="table-toolbar-shell">
                                 <div class="table-toolbar-shell__left"></div>

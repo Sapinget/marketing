@@ -1,96 +1,53 @@
 @verbatim
-                <!-- Dashboard Menu -->
+                <div v-if="!isTeknisi" class="px-6 pb-1 pt-2.5 text-[9px] font-bold uppercase tracking-[0.14em] text-slate-400">Dashboard</div>
                 <div v-if="!isTeknisi" @click="switchTab('dashboard')"
-                    :class="['flex items-center justify-between px-5 py-3 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'dashboard' ? 'sidebar-nav-item-active bg-gradient-to-r from-ppp-accent to-[#3D4FDB] text-white' : 'nav-idle']">
-                    <div v-if="activeTab === 'dashboard'"
-                        class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
-                    </div>
-                    <div class="flex items-center gap-3 relative z-10">
-                        <i
-                            class="fa-solid fa-gauge text-body w-4 text-center transition-transform duration-300 group-hover:scale-110"></i>
-                        <span class="type-body font-medium">Dashboard</span>
-                    </div>
+                    :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'dashboard' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
+                    <i class="fa-solid fa-gauge text-[11px] lg:text-[12px] w-4"></i>
+                    <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Dashboard</span>
+                    <span v-if="activeTab === 'dashboard'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
                 </div>
 
-                <!-- Konten Accordion -->
-                <div v-if="!isTeknisi" class="select-none">
-                    <div @click="toggleMenuGroup('konten')"
-                        :class="['flex items-center justify-between px-5 py-3 cursor-pointer group transition-all duration-300', ['master','ideation','distribution','analytics','calendar','story','unboxing'].includes(activeTab) ? 'nav-accordion-active' : 'nav-idle']">
-                        <div class="flex items-center gap-3">
-                            <i
-                                class="fa-solid fa-folder-open text-body w-4 text-center transition-transform duration-300 group-hover:scale-110"></i>
-                            <span class="type-body font-medium">Konten</span>
-                        </div>
-                        <i
-                            :class="['fa-solid fa-chevron-down text-body-sm transition-transform duration-300', kontenOpen ? 'rotate-180' : '']"></i>
-                    </div>
-
-                    <transition name="sidebar-accordion">
-                        <div v-show="kontenOpen" class="sidebar-accordion-panel">
-                            <div @click="switchTab('master')"
-                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'master' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
-                                <div v-if="activeTab === 'master'"
-                                    class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
-                                </div>
-                                <i
-                                    class="fa-solid fa-layer-group text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium relative z-10">Master Plan</span>
-                            </div>
-                            <div @click="switchTab('unboxing')"
-                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'unboxing' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
-                                <div v-if="activeTab === 'unboxing'"
-                                    class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
-                                </div>
-                                <i
-                                    class="fa-solid fa-box-open text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium relative z-10">Unboxing</span>
-                            </div>
-                            <div @click="switchTab('ideation')"
-                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'ideation' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
-                                <div v-if="activeTab === 'ideation'"
-                                    class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
-                                </div>
-                                <i
-                                    class="fa-solid fa-lightbulb text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium relative z-10">Ideation</span>
-                            </div>
-                            <div @click="switchTab('distribution')"
-                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'distribution' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
-                                <div v-if="activeTab === 'distribution'"
-                                    class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
-                                </div>
-                                <i
-                                    class="fa-solid fa-share-nodes text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium relative z-10">Distribution</span>
-                            </div>
-                            <div @click="switchTab('analytics')"
-                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'analytics' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
-                                <div v-if="activeTab === 'analytics'"
-                                    class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
-                                </div>
-                                <i
-                                    class="fa-solid fa-chart-line text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium relative z-10">Analytics</span>
-                            </div>
-                            <div @click="switchTab('calendar')"
-                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'calendar' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
-                                <div v-if="activeTab === 'calendar'"
-                                    class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
-                                </div>
-                                <i
-                                    class="fa-solid fa-calendar-days text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium relative z-10">Kalender</span>
-                            </div>
-                            <div @click="switchTab('story')"
-                                :class="['flex items-center gap-3 pl-10 pr-5 py-2.5 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'story' ? 'sidebar-nav-item-active bg-ppp-accent text-white' : 'nav-idle']">
-                                <div v-if="activeTab === 'story'"
-                                    class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
-                                </div>
-                                <i
-                                    class="fa-solid fa-clapperboard text-body w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                                <span class="type-body-sm font-medium relative z-10">Jadwal Story</span>
-                            </div>
-                        </div>
-                    </transition>
+                <div v-if="!isTeknisi" class="px-6 pb-1 pt-2.5 text-[9px] font-bold uppercase tracking-[0.14em] text-slate-400">Konten</div>
+                <div v-if="!isTeknisi" @click="switchTab('master')"
+                    :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'master' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
+                    <i class="fa-solid fa-layer-group text-[11px] lg:text-[12px] w-4"></i>
+                    <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Master Plan</span>
+                    <span v-if="activeTab === 'master'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
+                </div>
+                <div v-if="!isTeknisi" @click="switchTab('unboxing')"
+                    :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'unboxing' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
+                    <i class="fa-solid fa-box-open text-[11px] lg:text-[12px] w-4"></i>
+                    <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Unboxing</span>
+                    <span v-if="activeTab === 'unboxing'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
+                </div>
+                <div v-if="!isTeknisi" @click="switchTab('ideation')"
+                    :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'ideation' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
+                    <i class="fa-solid fa-lightbulb text-[11px] lg:text-[12px] w-4"></i>
+                    <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Ideation</span>
+                    <span v-if="activeTab === 'ideation'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
+                </div>
+                <div v-if="!isTeknisi" @click="switchTab('distribution')"
+                    :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'distribution' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
+                    <i class="fa-solid fa-share-nodes text-[11px] lg:text-[12px] w-4"></i>
+                    <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Distribution</span>
+                    <span v-if="activeTab === 'distribution'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
+                </div>
+                <div v-if="!isTeknisi" @click="switchTab('analytics')"
+                    :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'analytics' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
+                    <i class="fa-solid fa-chart-line text-[11px] lg:text-[12px] w-4"></i>
+                    <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Analytics</span>
+                    <span v-if="activeTab === 'analytics'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
+                </div>
+                <div v-if="!isTeknisi" @click="switchTab('calendar')"
+                    :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'calendar' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
+                    <i class="fa-solid fa-calendar-days text-[11px] lg:text-[12px] w-4"></i>
+                    <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Kalender</span>
+                    <span v-if="activeTab === 'calendar'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
+                </div>
+                <div v-if="!isTeknisi" @click="switchTab('story')"
+                    :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'story' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
+                    <i class="fa-solid fa-clapperboard text-[11px] lg:text-[12px] w-4"></i>
+                    <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Jadwal Story</span>
+                    <span v-if="activeTab === 'story'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
                 </div>
 @endverbatim

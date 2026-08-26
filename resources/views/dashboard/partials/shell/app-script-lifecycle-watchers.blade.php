@@ -177,13 +177,6 @@
                         return;
                     }
 
-                    const menuGroup = groupForTab(newTab);
-                    if (menuGroup) {
-                        openMenuGroup(menuGroup);
-                    } else {
-                        closeAllMenuGroups();
-                    }
-
                     // Mobile auto-close
                     if (window.innerWidth < 768) isSidebarOpen.value = false;
 

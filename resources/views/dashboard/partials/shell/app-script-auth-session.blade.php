@@ -51,4 +51,33 @@
                 const authBootstrapPending = ref(true);
                 const TEKNISI_TABS = new Set(['claim_garansi_asuransi', 'profile']);
                 const loginForm = ref({ username: "", pin: "" });
+                const showPin = ref(false);
+                const rememberUsername = ref(false);
+                const loadRememberedUsername = () => {
+                    try {
+                        const remembered = localStorage.getItem('ppp_login_remember_username');
+                        if (remembered && typeof remembered === 'string') {
+                            loginForm.value.username = remembered;
+                            rememberUsername.value = true;
+                        }
+                    } catch (error) {}
+                };
+                const handleRememberUsernameChange = () => {
+                    try {
+                        if (rememberUsername.value && loginForm.value.username) {
+                            localStorage.setItem('ppp_login_remember_username', loginForm.value.username);
+                        } else {
+                            localStorage.removeItem('ppp_login_remember_username');
+                        }
+                    } catch (error) {}
+                };
+                loadRememberedUsername();
+                const dashboardTodayLabel = new Intl.DateTimeFormat('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(new Date());
+                const dashboardGreeting = computed(() => {
+                    const hour = new Date().getHours();
+                    const waktu = hour < 11 ? 'pagi' : hour < 15 ? 'siang' : hour < 19 ? 'sore' : 'malam';
+                    const nama = String(currentUser.value?.nama || currentUser.value?.username || '').trim() || 'Tim';
+                    return `Selamat ${waktu}, ${nama}`;
+                });
+                const publishedPlanCount = computed(() => (masterPlanData.value || []).filter(i => i.Status === 'PUBLISHED').length);
 @endverbatim

@@ -1,7 +1,7 @@
 @verbatim
 <!-- Claim Garansi View -->
                     <div v-if="activeTab === 'claim_garansi_asuransi' && !tabDataLoaded['claimGaransi']"
-                        class="space-y-6 animate-fadeIn pb-10 animate-pulse">
+                        class="space-y-4 animate-fadeIn animate-pulse">
                         <div class="section-card section-card-shell">
                             <div class="px-6 py-4 border-b border-slate-50 flex gap-6">
                                 <div class="h-3 bg-slate-200 rounded-full w-20"></div>
@@ -26,7 +26,7 @@
                         </div>
                     </div>
                     <div v-if="activeTab === 'claim_garansi_asuransi' && tabDataLoaded['claimGaransi']"
-                        class="space-y-6 animate-fadeIn pb-10">
+                        class="space-y-4 animate-fadeIn">
                         <!-- Summary cards -->
                         <div class="space-y-3">
                             <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">

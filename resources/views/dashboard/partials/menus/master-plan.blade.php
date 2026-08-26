@@ -12,7 +12,7 @@
     }
 </style>
 <!-- Master Plan View -->
-                    <div v-if="activeTab === 'master'" class="space-y-6 animate-fadeIn pb-10">
+                    <div v-if="activeTab === 'master'" class="space-y-4 animate-fadeIn">
                         <!-- Summary cards -->
                         <div class="space-y-3">
                             <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">

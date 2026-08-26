@@ -1,6 +1,12 @@
 @verbatim
+                const persistSidebarState = () => {
+                    if (isMobileViewport.value) return;
+                    localStorage.setItem('sidebarCollapsed', String(!isSidebarOpen.value));
+                };
+
                 const toggleSidebar = () => {
                     isSidebarOpen.value = !isSidebarOpen.value;
+                    persistSidebarState();
                 };
 
                 const closeSidebar = () => {

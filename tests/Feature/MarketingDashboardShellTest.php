@@ -98,7 +98,7 @@ class MarketingDashboardShellTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('Marketing Dashboard', false);
-        $response->assertSee('Selamat Datang', false);
+        $response->assertSee('Masuk', false);
         $response->assertDontSee('https://cdn.tailwindcss.com', false);
         $response->assertDontSee('https://cdn.jsdelivr.net', false);
         $response->assertDontSee('https://fonts.googleapis.com', false);
@@ -129,7 +129,7 @@ class MarketingDashboardShellTest extends TestCase
 
             $response->assertOk();
             $response->assertSee('Marketing Dashboard', false);
-            $response->assertSee('Selamat Datang', false);
+            $response->assertSee('Masuk', false);
         } finally {
             rename($temporarySnapshotPath, $publicSnapshotPath);
         }
@@ -347,6 +347,10 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlContains('const currentUser = ref(loadStoredUser());', $authSessionPartial);
         $this->assertHtmlContains('const hasPermission = (tab, action) => {', $authSessionPartial);
         $this->assertHtmlContains('const loginForm = ref({ username: "", pin: "" });', $authSessionPartial);
+        $this->assertHtmlContains('const showPin = ref(false);', $authSessionPartial);
+        $this->assertHtmlContains('const rememberUsername = ref(false);', $authSessionPartial);
+        $this->assertHtmlContains("localStorage.getItem('ppp_login_remember_username')", $authSessionPartial);
+        $this->assertHtmlContains('const handleRememberUsernameChange = () => {', $authSessionPartial);
     }
 
     public function test_dashboard_shell_login_and_user_forms_have_bound_labels_and_field_names(): void
@@ -830,7 +834,7 @@ class MarketingDashboardShellTest extends TestCase
             'v-if="activeSettingTab &amp;&amp; settingsDraft[activeSettingTab]"',
             'v-if="showSettingsBulkAdd &amp;&amp; !isSettingTabObject(activeSettingTab)"',
             "v-if=\"activeTab === 'settings' &amp;&amp; isMobileViewport &amp;&amp; settingsDetailModalOpen &amp;&amp; activeSettingTab &amp;&amp; settingsDraft[activeSettingTab]\"",
-            'class="animate-fadeIn space-y-4 pb-10 md:pb-0"',
+            'class="animate-fadeIn space-y-4"',
             'md:h-[calc(100dvh-168px)]',
             'md:overflow-hidden',
             'md:flex-1 md:min-h-0 md:overflow-y-auto md:pr-1',
@@ -1749,7 +1753,7 @@ class MarketingDashboardShellTest extends TestCase
     {
         $html = $this->renderDashboardHtml();
 
-        $this->assertHtmlContains('<div v-if="activeTab === \'bonus_report\'" class="space-y-6 animate-fadeIn pb-10">', $html);
+        $this->assertHtmlContains('<div v-if="activeTab === \'bonus_report\'" class="space-y-4 animate-fadeIn">', $html);
         $this->assertHtmlContains('<template v-if="!bonusConfigLoaded">', $html);
         $this->assertHtmlContains('<template v-else>', $html);
         $this->assertHtmlNotContains('<div v-if="activeTab === \'bonus_report\' && !bonusConfigLoaded"', $html);
@@ -2249,7 +2253,7 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlNotContains('box-shadow: inset 0 -1px 0 rgb(203 213 225 / 0.65);', $html);
         $this->assertHtmlNotContains('border-bottom: 1px solid rgb(203 213 225);', $html);
         $this->assertHtmlNotContains('border-color: rgb(203 213 225) !important;', $html);
-        $this->assertHtmlContains('color: rgb(71 85 105) !important;', $html);
+        $this->assertHtmlContains('color: var(--ppp-secondary) !important;', $html);
         $this->assertHtmlNotContains('#app table thead {'."\n".'            background: var(--ppp-accent) !important;', $html);
         $this->assertHtmlNotContains('#app table thead tr {'."\n".'            background: var(--ppp-accent) !important;', $html);
         $this->assertHtmlNotContains('#app table th {'."\n".'            background: var(--ppp-accent) !important;', $html);
@@ -2283,7 +2287,7 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlContains('#app table tbody tr:hover .text-slate-400 {', $html);
         $this->assertHtmlContains('color: rgb(148 163 184) !important;', $html);
         $this->assertHtmlContains('#app table tbody tr:hover .text-slate-800 {', $html);
-        $this->assertHtmlContains('color: rgb(30 41 59) !important;', $html);
+        $this->assertHtmlContains('color: var(--ppp-text-secondary) !important;', $html);
         $this->assertHtmlContains('#app table td {', $html);
         $this->assertHtmlContains('padding: 6px 12px !important;', $html);
     }
@@ -2763,12 +2767,12 @@ HTML, $html);
         $this->assertHtmlContains('const rememberHorizontalPanStart = (event) => {', $interactionHelperPartial);
         $this->assertHtmlContains('const containHorizontalTouchPan = (event) => {', $interactionHelperPartial);
         $this->assertHtmlContains('const clearHorizontalPanStart = () => {', $interactionHelperPartial);
-        $this->assertHtmlContains('class="dashboard-topbar h-12 md:h-16 bg-white', file_get_contents(resource_path('views/dashboard/partials/shell/app-frame-header.blade.php')));
-        $this->assertHtmlContains('fixed top-0 right-0 z-50', file_get_contents(resource_path('views/dashboard/partials/shell/app-frame-header.blade.php')));
-        $this->assertHtmlContains(':style="isMobileViewport ? { left: \'0px\' } : { left: isSidebarOpen ? \'15rem\' : \'0px\' }"', file_get_contents(resource_path('views/dashboard/partials/shell/app-frame-header.blade.php')));
+        $this->assertHtmlContains('class="dashboard-topbar h-16 sticky top-0 z-50 bg-white', file_get_contents(resource_path('views/dashboard/partials/shell/app-frame-header.blade.php')));
+        $this->assertHtmlContains('px-4 md:px-5 lg:px-6', file_get_contents(resource_path('views/dashboard/partials/shell/app-frame-header.blade.php')));
+        $this->assertHtmlNotContains(':style="isMobileViewport ? { left: \'0px\' } : { left: isSidebarOpen ? \'15rem\' : \'0px\' }"', file_get_contents(resource_path('views/dashboard/partials/shell/app-frame-header.blade.php')));
         $this->assertHtmlNotContains('dashboard-main-shell min-h-[100dvh] transform-gpu', file_get_contents(resource_path('views/dashboard/partials/shell/app-frame.blade.php')));
-        $this->assertHtmlContains('padding-top: calc(3rem + 0.75rem) !important;', $dashboardShellCss);
-        $this->assertHtmlContains('padding-top: calc(4rem + 0.75rem) !important;', $dashboardShellCss);
+        $this->assertHtmlNotContains('padding-top: calc(3rem + 0.75rem) !important;', $dashboardShellCss);
+        $this->assertHtmlNotContains('padding-top: calc(4rem + 0.75rem) !important;', $dashboardShellCss);
         $this->assertHtmlNotContains('padding-top: calc(4rem + 1.25rem) !important;', $dashboardShellCss);
         $this->assertHtmlContains('window.addEventListener("scroll", clampRootHorizontalScroll, true);', $lifecyclePartial);
         $this->assertHtmlContains('window.addEventListener("scroll", clampTableScrollBounds, true);', $lifecyclePartial);
@@ -2849,7 +2853,7 @@ HTML, $html);
         $this->assertHtmlContains('.primary-cta-button--success {', $html);
         $this->assertHtmlContains('.primary-cta-button--danger {', $html);
         $this->assertHtmlContains('background: rgb(248 250 252);', $html);
-        $this->assertHtmlContains('color: rgb(71 85 105);', $html);
+        $this->assertHtmlContains('color: var(--ppp-secondary);', $html);
         $this->assertHtmlContains('class="primary-cta-button primary-cta-button--success active:scale-95"', $html);
         $this->assertHtmlContains('class="primary-cta-button primary-cta-button--danger active:scale-95"', $html);
         $this->assertHtmlContains('class="primary-cta-button primary-cta-button--link"', $html);
@@ -3047,39 +3051,30 @@ HTML, $html);
         $this->assertHtmlContains('.dashboard-summary-grid-compact {', $html);
         $this->assertHtmlContains('.dashboard-summary-value {', $html);
         $this->assertHtmlContains('.dashboard-summary-unit {', $html);
+        $this->assertHtmlContains('display: flex !important;', $html);
+        $this->assertHtmlContains('border: 1px solid var(--ppp-line-soft);', $html);
+        $this->assertHtmlContains('border-radius: 28px;', $html);
         $this->assertHtmlContains('.dashboard-summary-card-compact>.absolute {', $html);
-        $this->assertHtmlContains('padding: 0.9rem 4rem 0.9rem 1rem;', $html);
-        $this->assertHtmlContains('opacity: 1;', $html);
-        $this->assertHtmlContains('transform: translateY(-50%);', $html);
-        $this->assertHtmlContains('grid-template-columns: repeat(2, minmax(0, 1fr)) !important;', $html);
-        $this->assertHtmlContains('@media (min-width: 768px) {', $html);
-        $this->assertHtmlContains('grid-template-columns: repeat(5, minmax(0, 1fr)) !important;', $html);
-        $this->assertHtmlContains('.dashboard-summary-grid-compact:has(> :nth-child(3):last-child) {', $html);
-        $this->assertHtmlContains('grid-template-columns: repeat(3, minmax(0, 1fr)) !important;', $html);
-        $this->assertHtmlContains('.dashboard-summary-grid-compact:has(> :nth-child(4):last-child) {', $html);
-        $this->assertHtmlContains('grid-template-columns: repeat(4, minmax(0, 1fr)) !important;', $html);
+        $this->assertHtmlContains('display: none !important;', $html);
+        $this->assertHtmlContains('padding: 12px 10px;', $html);
+        $this->assertHtmlContains('text-align: center;', $html);
+        $this->assertHtmlContains('border-right: 1px solid var(--ppp-line-soft);', $html);
+        $this->assertHtmlContains('font-size: 16px;', $html);
+        $this->assertHtmlContains('font-weight: 800;', $html);
+        $this->assertHtmlContains('order: 2;', $html);
         $this->assertHtmlContains('@media (max-width: 767px) {', $html);
-        $this->assertHtmlContains('min-height: 82px;', $html);
-        $this->assertHtmlContains('border-radius: 14px;', $html);
-        $this->assertHtmlContains('border-radius: 12px !important;', $html);
-        $this->assertHtmlContains('border-radius: 10px;', $html);
-        $this->assertHtmlContains('border-radius: 8px;', $html);
-        $this->assertHtmlContains('.dashboard-summary-card-compact:hover>.absolute {', $html);
-        $this->assertHtmlContains('background: var(--ppp-accent);', $html);
-        $this->assertHtmlContains('color: var(--ppp-card);', $html);
-        $this->assertHtmlContains('.dashboard-summary-card-compact:hover>.absolute i {', $html);
-        $this->assertHtmlContains('color: var(--ppp-card) !important;', $html);
-        $this->assertHtmlNotContains('absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-700', $html);
-        $this->assertHtmlNotContains('dashboard-summary-card-compact stat-card relative overflow-hidden group"><div class="absolute -right-4 -bottom-4 opacity-5 group-hover:scale-110', $html);
+        $this->assertHtmlContains('grid-template-columns: repeat(2, minmax(0, 1fr)) !important;', $html);
+        $this->assertHtmlContains('.dashboard-summary-card-compact:hover {', $html);
+        $this->assertHtmlContains('background: #f8fafc;', $html);
+        $this->assertHtmlContains('.dashboard-summary-card-compact:has(> p.text-amber) .dashboard-summary-value', $html);
+        $this->assertHtmlContains('.dashboard-summary-card-compact:has(> p.text-success) .dashboard-summary-value', $html);
+        $this->assertHtmlNotContains('padding: 0.9rem 4rem 0.9rem 1rem;', $html);
+        $this->assertHtmlNotContains('min-height: 82px;', $html);
         $this->assertHtmlContains('class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4"', $html);
         $this->assertHtmlContains('class="dashboard-summary-card-compact stat-card relative overflow-hidden group"', $html);
         $this->assertHtmlContains('class="dashboard-summary-value"', $html);
         $this->assertHtmlContains('dashboard-summary-unit', $html);
         $this->assertHtmlContains('.dashboard-summary-card .icon-utility-button {', $html);
-        $this->assertHtmlNotContains('class="dashboard-summary-grid-compact grid grid-cols-3 md:grid-cols-4 gap-3 md:gap-4"', $html);
-        $this->assertHtmlNotContains('class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 md:gap-4"', $html);
-        $this->assertHtmlNotContains('class="bg-white radius-panel border border-slate-100 p-6 relative overflow-hidden group"', $html);
-        $this->assertHtmlNotContains('class="text-[22px] font-bold text-slate-900 leading-none"', $html);
     }
 
     public function test_summary_cards_are_limited_to_five_items(): void
@@ -3113,11 +3108,11 @@ HTML, $html);
         $this->assertIsString($statePartial);
         $this->assertIsString($returnPartial);
         $this->assertHtmlContains('class="grid grid-cols-1 gap-2 type-body text-slate-500 w-full min-w-0 md:min-w-[220px]"', $html);
-        $this->assertHtmlContains('class="active-team-chip active-team-chip--avatars-only" aria-label="Team aktif"', $headerPartial);
+        $this->assertHtmlContains('class="active-team-chip active-team-chip--avatars-only hover:bg-slate-50 transition-colors" aria-label="Team aktif"', $headerPartial);
         $this->assertHtmlContains('v-for="member in visibleActiveTeamUsers"', $headerPartial);
         $this->assertHtmlContains('class="active-team-avatar-item"', $headerPartial);
         $this->assertHtmlContains('v-if="hiddenActiveTeamUsersCount > 0"', $headerPartial);
-        $this->assertHtmlContains('class="active-team-avatar active-team-avatar--count"', $headerPartial);
+        $this->assertHtmlContains('class="active-team-avatar active-team-avatar--count bg-slate-900 text-white"', $headerPartial);
         $this->assertHtmlNotContains('<div class="active-team-label">Team Aktif</div>', $headerPartial);
         $this->assertHtmlNotContains('<div class="active-team-count">{{ activeTeamUsers.length }} user</div>', $headerPartial);
         $this->assertHtmlContains('const activeTeamUsers = computed(() => {', $statePartial);
@@ -3309,8 +3304,9 @@ HTML, $html);
         $this->assertHtmlContains('#app * {', $html);
         $this->assertHtmlContains('letter-spacing: 0 !important;', $html);
         $this->assertHtmlContains('class="type-body font-medium">Dashboard</span>', $html);
-        $this->assertHtmlContains("class=\"type-micro text-slate-400 uppercase\">{{ currentUser?.role || '-' }}", $html);
-        $this->assertHtmlContains('class="type-meta uppercase text-slate-400 mb-2">Ringkasan', $html);
+        $this->assertHtmlContains("class=\"text-[9px] uppercase tracking-widest text-slate-400\">{{ currentUser?.role || '-' }}", $html);
+        $this->assertHtmlContains('class="type-meta uppercase text-slate-400 mb-2">{{ dashboardTodayLabel }}', $html);
+        $this->assertHtmlContains('<h2 class="text-xl font-semibold text-slate-900">{{ dashboardGreeting }}</h2>', $html);
         $this->assertHtmlContains('class="type-title font-semibold text-slate-800 truncate">{{ item.Judul', $html);
         $this->assertHtmlNotContains('class="text-[11px] font-medium">Dashboard</span>', $html);
         $this->assertHtmlNotContains('class="text-[10px] uppercase text-slate-400 mb-2">Ringkasan', $html);
@@ -4036,33 +4032,23 @@ HTML, $html);
         $this->assertIsString($appCss);
         $this->assertIsString($dashboardShellCss);
         $this->assertIsString($sidebarNavSources);
-        $this->assertHtmlContains('--color-ppp-nav-text: #FAA500;', $appCss);
-        $this->assertHtmlContains('--ppp-nav-text: #FAA500;', $appCss);
-        $this->assertHtmlContains('--ppp-nav-rgb: 250 165 0;', $appCss);
+        $this->assertHtmlContains('--color-ppp-nav-text: #FFA500;', $appCss);
+        $this->assertHtmlContains('--ppp-nav-text: #FFA500;', $appCss);
+        $this->assertHtmlContains('--ppp-nav-rgb: 255 165 0;', $appCss);
         $this->assertHtmlContains('.nav-item.is-active .type-body,', $appCss);
         $this->assertHtmlContains('.nav-subitem.is-active .type-meta,', $appCss);
         $this->assertHtmlContains('color: inherit;', $appCss);
         $this->assertHtmlContains('.nav-accordion-active .type-body-sm {', $appCss);
         $this->assertHtmlContains('font-weight: 400;', $appCss);
         $this->assertHtmlNotContains('border-left: 3px solid var(--ppp-accent);', $appCss);
-        $this->assertHtmlContains('.dashboard-sidebar-shell .dashboard-sidebar-nav .type-body,', $dashboardShellCss);
-        $this->assertHtmlContains('.dashboard-sidebar-shell .dashboard-sidebar-nav .type-body-sm {', $dashboardShellCss);
-        $this->assertHtmlContains('font-size: var(--fs-body-sm) !important;', $dashboardShellCss);
-        $this->assertHtmlContains('.dashboard-sidebar-shell .nav-idle span,', $dashboardShellCss);
-        $this->assertHtmlContains('.dashboard-sidebar-shell .nav-accordion-active::before,', $dashboardShellCss);
-        $this->assertHtmlContains('border-radius: 0 4px 4px 0;', $dashboardShellCss);
-        $this->assertHtmlContains('height: 0.8rem;', $dashboardShellCss);
-        $this->assertHtmlContains('width: 0.24rem;', $dashboardShellCss);
-        $this->assertHtmlContains('.sidebar-nav-item-active .type-body,', $dashboardShellCss);
-        $this->assertHtmlContains('.sidebar-nav-item-active .type-meta,', $dashboardShellCss);
-        $this->assertHtmlContains('color: inherit !important;', $dashboardShellCss);
-        $this->assertHtmlContains('font-weight: 400 !important;', $dashboardShellCss);
-        $this->assertHtmlNotContains(".dashboard-sidebar-shell .sidebar-nav-item-active i {\n            color: var(--sidebar-active) !important;\n            font-weight: 700 !important;\n        }", $dashboardShellCss);
-        preg_match_all('/([^{}]+)\\{\\s*font-weight: 400 !important;\\s*\\}/', $dashboardShellCss, $fontWeightRules);
-        foreach ($fontWeightRules[1] as $selectorList) {
-            $this->assertStringNotContainsString(' i', $selectorList, 'Sidebar text weight rules must not override Font Awesome icon font weight.');
-        }
-        $this->assertHtmlContains('sidebar-nav-item-active bg-gradient-to-r from-ppp-accent to-[#3D4FDB] text-white', $sidebarNavSources);
+         $this->assertHtmlContains('.dashboard-sidebar-nav {', $dashboardShellCss);
+         $this->assertHtmlContains('transition-property: transform;', $dashboardShellCss);
+         $this->assertHtmlContains('cubic-bezier(0.4, 0, 0.2, 1)', $dashboardShellCss);
+         $this->assertHtmlNotContains('.nav-accordion-active', $dashboardShellCss);
+         $this->assertHtmlNotContains('sidebar-accordion', $dashboardShellCss);
+          $this->assertHtmlContains('sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white', $sidebarNavSources);
+          $this->assertHtmlNotContains('shadow-sm', $sidebarNavSources);
+         $this->assertHtmlContains('h-1.5 w-1.5 rounded-full bg-white', $sidebarNavSources);
     }
 
     public function test_design_system_route_renders_from_laravel_view(): void

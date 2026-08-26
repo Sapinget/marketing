@@ -1,5 +1,10 @@
 @verbatim
                 const appLoading = ref(true);
+                const pppBootScreen = document.getElementById('ppp-boot-screen');
+                if (pppBootScreen && !pppBootScreen.classList.contains('is-hidden')) {
+                    pppBootScreen.classList.add('is-hidden');
+                    setTimeout(function () { pppBootScreen.remove(); }, 300);
+                }
                 if ('scrollRestoration' in history) {
                     history.scrollRestoration = 'manual';
                 }
@@ -71,54 +76,19 @@
                     return items;
                 });
                 const profileMenuOpen = ref(false);
+                const bottomNavMoreOpen = ref(false);
+                const openBottomNavMore = () => {
+                    bottomNavMoreOpen.value = true;
+                };
+                const closeBottomNavMore = () => {
+                    bottomNavMoreOpen.value = false;
+                };
                 const isMobileViewport = ref(window.innerWidth < 768);
-                const isSidebarOpen = ref(window.innerWidth >= 768);
-                const kontenOpen = ref(['master', 'ideation', 'distribution', 'analytics', 'calendar', 'story', 'unboxing'].includes(localStorage.getItem("ppp_active_tab")));
-                const analisaKontenOpen = ref(['top_content_platform', 'low_content_platform', 'analisa_insight', 'meta_story', 'meta_feed', 'meta_followers'].includes(localStorage.getItem("ppp_active_tab")));
-                const csOpen = ref(['orderan_online', 'unit_ditanya', 'claim_garansi_asuransi', 'keep_barang'].includes(localStorage.getItem("ppp_active_tab")));
-                const complainTrackerOpen = ref(['input_claim', 'garansi_cermati', 'garansi_resmi'].includes(localStorage.getItem("ppp_active_tab")));
-                const settingsGroupOpen = ref(['settings', 'nama_stock', 'auth_users', 'activity_logs'].includes(localStorage.getItem("ppp_active_tab")));
-                const performaOpen = ref(['bonus_report', 'talent_bonus', 'editor_performance'].includes(localStorage.getItem("ppp_active_tab")));
-                const marketingOpen = ref(['program_promo', 'sell_out', 'ads_log', 'budgeting'].includes(localStorage.getItem("ppp_active_tab")));
+                const savedSidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+                const isSidebarOpen = ref(window.innerWidth >= 768 ? !savedSidebarCollapsed : false);
                 const marketExternalTabs = ['market_eksternal', 'market_ext_goodponsel', 'market_ext_devstore', 'market_ext_rumahgadget'];
-                const intelijenPasarTabs = ['market_pasar', 'market_intelijen_harga', 'market_audit_harga', ...marketExternalTabs];
-                const intelijenPasarOpen = ref(intelijenPasarTabs.includes(localStorage.getItem("ppp_active_tab")));
-                const marketExternalOpen = ref(marketExternalTabs.includes(localStorage.getItem("ppp_active_tab")));
-                const menuGroups = {
-                    konten: kontenOpen,
-                    marketing: marketingOpen,
-                    intelijenPasar: intelijenPasarOpen,
-                    analisa: analisaKontenOpen,
-                    cs: csOpen,
-                    complainTracker: complainTrackerOpen,
-                    performa: performaOpen,
-                    settings: settingsGroupOpen,
-                };
-                const menuGroupTabs = {
-                    konten: ['master', 'ideation', 'distribution', 'analytics', 'calendar', 'story', 'unboxing'],
-                    marketing: ['program_promo', 'sell_out', 'ads_log', 'budgeting'],
-                    intelijenPasar: intelijenPasarTabs,
-                    analisa: ['top_content_platform', 'low_content_platform', 'analisa_insight', 'meta_story', 'meta_feed', 'meta_followers'],
-                    cs: ['orderan_online', 'unit_ditanya', 'claim_garansi_asuransi', 'keep_barang'],
-                    complainTracker: ['input_claim', 'garansi_cermati', 'garansi_resmi'],
-                    performa: ['bonus_report', 'talent_bonus', 'editor_performance'],
-                    settings: ['settings', 'nama_stock', 'auth_users', 'activity_logs'],
-                };
-                const closeAllMenuGroups = () => {
-                    Object.values(menuGroups).forEach((group) => {
-                        group.value = false;
-                    });
-                };
-                const openMenuGroup = (groupName) => {
-                    closeAllMenuGroups();
-                    if (menuGroups[groupName]) menuGroups[groupName].value = true;
-                };
-                const toggleMenuGroup = (groupName) => {
-                    const isOpen = menuGroups[groupName]?.value === true;
-                    closeAllMenuGroups();
-                    if (!isOpen && menuGroups[groupName]) menuGroups[groupName].value = true;
-                };
-                const groupForTab = (tab) => {
-                    return Object.keys(menuGroupTabs).find((groupName) => menuGroupTabs[groupName].includes(tab)) || null;
-                };
+                const toggleMenuGroup = () => {};
+                const closeAllMenuGroups = () => {};
+                const openMenuGroup = () => {};
+                const groupForTab = () => null;
 @endverbatim

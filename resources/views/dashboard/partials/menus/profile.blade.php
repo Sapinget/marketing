@@ -1,6 +1,6 @@
 @verbatim
 <!-- Profile Setting View -->
-                    <div v-if="activeTab === 'profile'" class="space-y-6 animate-fadeIn pb-10">
+                    <div v-if="activeTab === 'profile'" class="space-y-4 animate-fadeIn">
                         <section class="section-card section-card-body">
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 md:gap-5">
                                 <div class="flex items-center gap-4">
@@ -113,7 +113,7 @@
                                 </div>
                             </form>
 
-                            <!-- Ganti PIN Keamanan -->
+                            <!-- Ganti Password Keamanan -->
                             <form @submit.prevent="saveProfileSetting"
                                 class="md:col-span-1 lg:col-span-4 bg-white radius-dialog border border-slate-100 p-6 md:p-8 flex flex-col group">
                                 <h3 class="type-title font-bold text-slate-900 mb-6 flex items-center gap-2">
@@ -121,7 +121,7 @@
                                         class="w-8 h-8 rounded-xl bg-danger text-light flex items-center justify-center group-hover:scale-110 transition-transform">
                                         <i class="fa-solid fa-shield-halved text-body"></i>
                                     </div>
-                                    Keamanan (PIN)
+                                    Keamanan (Password)
                                 </h3>
                                 <div class="sr-only" aria-hidden="true">
                                     <label for="profile-pin-username">Username</label>
@@ -131,18 +131,18 @@
                                 <div class="space-y-4 flex-1">
                                     <div>
                                         <label for="profile-old-pin"
-                                            class="type-body-sm font-bold text-slate-400 uppercase mb-1.5 pl-1">PIN
+                                            class="type-body-sm font-bold text-slate-400 uppercase mb-1.5 pl-1">Password
                                             Saat Ini</label>
                                         <input id="profile-old-pin" name="profile_old_pin" type="password" v-model="profileForm.oldPin"
-                                            placeholder="Masukkan PIN saat ini" autocomplete="current-password"
+                                            placeholder="Masukkan password saat ini" autocomplete="current-password"
                                             class="form-input" />
                                     </div>
                                     <div class="grid grid-cols-2 gap-3">
                                         <div>
                                             <label for="profile-new-pin"
-                                                class="type-body-sm font-bold text-slate-400 uppercase mb-1.5 pl-1">PIN
+                                                class="type-body-sm font-bold text-slate-400 uppercase mb-1.5 pl-1">Password
                                                 Baru</label>
-                                            <input id="profile-new-pin" name="profile_new_pin" type="password" v-model="profileForm.newPin" placeholder="PIN Baru"
+                                            <input id="profile-new-pin" name="profile_new_pin" type="password" v-model="profileForm.newPin" placeholder="Password Baru"
                                                 autocomplete="new-password"
                                                 class="form-input" />
                                         </div>
@@ -150,7 +150,7 @@
                                             <label for="profile-confirm-pin"
                                                 class="type-body-sm font-bold text-slate-400 uppercase mb-1.5 pl-1">Konfirmasi</label>
                                             <input id="profile-confirm-pin" name="profile_confirm_pin" type="password" v-model="profileForm.confirmPin"
-                                                placeholder="Ulangi PIN" autocomplete="new-password" class="form-input" />
+                                                placeholder="Ulangi password" autocomplete="new-password" class="form-input" />
                                         </div>
                                     </div>
                                 </div>
@@ -159,7 +159,7 @@
                                         class="primary-cta-button w-full primary-cta-button--danger active:scale-95 disabled:opacity-50">
                                         <i v-if="submittingPin" class="fa-solid fa-spinner fa-spin"></i>
                                         <i v-else class="fa-solid fa-lock"></i>
-                                        Update PIN
+                                        Update Password
                                     </button>
                                 </div>
                             </form>

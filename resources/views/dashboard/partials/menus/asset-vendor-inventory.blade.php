@@ -1,7 +1,7 @@
 @verbatim
 <!-- Asset Vendor Inventory tab -->
             <div v-if="activeTab === 'asset_vendor_inventory' && !tabDataLoaded['assetVendorInventory']"
-                class="space-y-6 animate-fadeIn pb-10 animate-pulse">
+                class="space-y-4 animate-fadeIn animate-pulse">
                 <div class="section-card section-card-body">
                     <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
                         <div class="flex items-center gap-4">
@@ -45,7 +45,7 @@
                 </div>
             </div>
             <div v-if="activeTab === 'asset_vendor_inventory' && tabDataLoaded['assetVendorInventory']"
-                class="space-y-6 animate-fadeIn pb-10">
+                class="space-y-4 animate-fadeIn">
                 <!-- Summary cards -->
                 <div class="space-y-3">
                     <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">

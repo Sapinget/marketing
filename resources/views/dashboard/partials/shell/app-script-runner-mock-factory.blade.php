@@ -38,7 +38,7 @@
                                     },
                                 };
                             }
-                            throw new Error("Username atau PIN salah.");
+                            throw new Error("Username atau Password salah.");
                         },
                         heartbeat() {
                             return { status: "success" };
@@ -254,7 +254,7 @@
                             return { status: 'success', user: { ID: userId, avatar_url: avatarUrl } };
                         },
                         changePin(username, oldPin, newPin) {
-                            if (oldPin !== mockState.pin) throw new Error('PIN saat ini salah.');
+                            if (oldPin !== mockState.pin) throw new Error('Password saat ini salah.');
                             mockState.pin = newPin;
                             return { status: 'success' };
                         },

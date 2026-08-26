@@ -1,6 +1,6 @@
 @verbatim
 <!-- Top Konten View -->
-                    <div v-if="activeTab === 'top_content_platform'" class="space-y-6 animate-fadeIn pb-10">
+                    <div v-if="activeTab === 'top_content_platform'" class="space-y-4 animate-fadeIn">
 
 
                         <div v-if="topContentByPlatform.length === 0"

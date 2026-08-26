@@ -4,7 +4,7 @@
                 class="chat-backdrop glass-backdrop fixed inset-0 z-[299] transition-opacity"
                 @click="chatClose" aria-hidden="true"></div>
             <div v-if="chatOpen && chatTargetUser"
-                class="fixed inset-0 z-[300] md:inset-auto md:bottom-4 md:right-4 md:w-80 md:h-[440px] md:rounded-2xl bg-white md:shadow-2xl border-t md:border border-slate-200 flex flex-col overflow-hidden transition-all duration-200"
+                class="fixed inset-0 z-[300] md:inset-auto md:bottom-4 md:right-4 md:w-80 md:h-[440px] md:rounded-2xl bg-white border-t md:border border-slate-200 flex flex-col overflow-hidden transition-all duration-200"
                 :class="isMobileViewport ? 'top-16 rounded-none' : ''">
                 <!-- Header -->
                 <div class="flex items-center gap-2 px-3 py-2.5 border-b border-slate-100 bg-white shrink-0">
@@ -60,7 +60,7 @@
                         </div>
                     </template>
                     <div v-if="chatPeerTyping" class="flex justify-start">
-                        <div class="bg-white border border-slate-200 text-slate-500 rounded-2xl rounded-bl-sm px-3 py-2 text-body-sm shadow-sm">
+                        <div class="bg-white border border-slate-200 text-slate-500 rounded-2xl rounded-bl-sm px-3 py-2 text-body-sm">
                             mengetik...
                         </div>
                     </div>
@@ -102,7 +102,7 @@
                         class="text-overline-xs text-slate-400 pl-1.5 pr-1 font-medium">+{{ chatUsersWithUnread.length - 4 }}</div>
                 </div>
                 <button @click="chatOpenPicker"
-                    class="w-12 h-12 rounded-full bg-ppp-accent text-white shadow-lg flex items-center justify-center hover:opacity-90 transition-opacity relative">
+                    class="w-12 h-12 rounded-full bg-ppp-accent text-white flex items-center justify-center hover:opacity-90 transition-opacity relative">
                     <i class="fa-regular fa-comment-dots text-body"></i>
                     <span v-if="chatUnreadTotal > 0"
                         class="absolute -top-1 -right-1 bg-danger text-white text-overline-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
@@ -115,7 +115,7 @@
             <transition name="fade">
                 <div v-if="chatShowPicker" class="fixed inset-0 z-[300] glass-backdrop flex items-start justify-center pt-16 md:pt-24"
                     @click.self="chatShowPicker = false">
-                    <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-[90vw] max-w-sm max-h-[70vh] flex flex-col overflow-hidden">
+                    <div class="bg-white rounded-2xl border border-slate-200 w-[90vw] max-w-sm max-h-[70vh] flex flex-col overflow-hidden">
                         <div class="flex items-center justify-between px-4 py-3 border-b border-slate-100 shrink-0">
                             <div class="text-body font-semibold text-slate-800">Pilih User</div>
                             <button @click="chatShowPicker = false" class="w-7 h-7 flex items-center justify-center text-slate-300 hover:text-slate-600">

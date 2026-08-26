@@ -3,12 +3,11 @@
                         <div class="section-card section-card-body">
                             <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
                                 <div>
-                                    <div class="type-meta uppercase text-slate-400 mb-2">Ringkasan
+                                    <div class="type-meta uppercase text-slate-400 mb-2">{{ dashboardTodayLabel }}
                                     </div>
-                                    <h2 class="text-xl font-semibold text-slate-900">Dashboard Operasional</h2>
-                                    <p class="type-body text-slate-500 mt-2">Dashboard marketing lengkap berjalan di
-                                        Laravel
-                                        dengan data real dari database yang sudah terhubung.</p>
+                                    <h2 class="text-xl font-semibold text-slate-900">{{ dashboardGreeting }}</h2>
+                                    <p class="type-body text-slate-500 mt-2">{{ publishedPlanCount }} konten terpublish
+                                        dari {{ masterPlanData.length }} plan · {{ storyData.length }} story terjadwal.</p>
                                 </div>
                                 <div class="grid grid-cols-1 gap-2 type-body text-slate-500 w-full min-w-0 md:min-w-[220px]">
                                     <div

@@ -1,36 +1,39 @@
 @import 'tailwindcss';
 @import './dashboard-shell.css';
+@import './dashboard-meeting-theme.css';
+
+@source inline("bg-ppp-accent text-ppp-accent bg-[var(--ppp-accent)] text-[var(--ppp-accent)] bg-[var(--ppp-accent-soft)] text-[var(--ppp-accent-soft)]");
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../../resources/views/**/*.blade.php';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Figtree', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
-    --color-ppp-accent: #FAA500;
-    --color-ppp-sidebar: #FFF2D9;
+    --color-ppp-accent: #FFA500;
+    --ppp-accent-soft: #fff1e0;
     --color-ppp-text: #0f172a;
     --color-ppp-muted: #94a3b8;
-    --color-ppp-nav-text: #FAA500;
+    --color-ppp-nav-text: #FFA500;
     --color-ppp-line: #e2e8f0;
     --color-ppp-bg: #f8fafc;
     --color-ppp-card: #ffffff;
-    --color-ppp-danger: #DC2626;
-    --color-ppp-secondary: #475569;
-    --color-ppp-success: #16A34A;
+    --color-ppp-danger: #e11d48;
+    --color-ppp-secondary: #64748b;
+    --color-ppp-success: #14b8a6;
     --color-ppp-info: #0EA5E9;
     --color-ppp-warning: #EAB308;
     --color-ppp-light: #F8FAFC;
     --color-ppp-dark: #0F172A;
 
     /* Semantic shorthand — bg-amber, text-light, bg-success, dll */
-    --color-amber:     #FAA500;
-    --color-success:   #16A34A;
+    --color-amber:     #FFA500;
+    --color-success:   #14b8a6;
     --color-info:      #0EA5E9;
     --color-warning:   #EAB308;
-    --color-danger:    #DC2626;
-    --color-secondary: #475569;
+    --color-danger:    #e11d48;
+    --color-secondary: #64748b;
     --color-light:     #F8FAFC;
     --color-dark:      #0F172A;
 
@@ -44,17 +47,17 @@
 
 :root {
     /* ─── Colors ─────────────────────────────────────────── */
-    --ppp-accent: #FAA500;
-    --ppp-sidebar: #FFF2D9;
+    --ppp-accent: #FFA500;
+    --ppp-accent-soft: #fff1e0;
     --ppp-text: #0f172a;
     --ppp-muted: #94a3b8;
-    --ppp-nav-text: #FAA500;
+    --ppp-nav-text: #FFA500;
     --ppp-line: #e2e8f0;
     --ppp-bg: #f8fafc;
     --ppp-card: #ffffff;
-    --ppp-danger: #DC2626;
-    --ppp-secondary: #475569;
-    --ppp-success: #16A34A;
+    --ppp-danger: #e11d48;
+    --ppp-secondary: #64748b;
+    --ppp-success: #14b8a6;
     --ppp-info: #0EA5E9;
     --ppp-warning: #EAB308;
     --ppp-light: #F8FAFC;
@@ -72,8 +75,22 @@
     --ppp-table-freeze-hover-bg: var(--ppp-table-row-hover-bg);
     --ppp-text-rgb: 15 23 42;
     --ppp-card-rgb: 255 255 255;
-    --ppp-nav-rgb: 250 165 0;
+    --ppp-nav-rgb: 255 165 0;
     --ppp-bg-rgb: 248 250 252;
+
+    /* ─── Line / Border ──────────────────────────────────── */
+    --ppp-line-soft: var(--ppp-line-soft);
+    --ppp-text-secondary: #334155;
+
+    /* ─── Field sizing — ala Meeting tokens ──────────────── */
+    --field-height: 44px;
+    --field-height-compact: 32px;
+    --field-radius: 14px;
+    --field-radius-compact: 12px;
+    --field-padding-x: 14px;
+    --field-padding-y: 10px;
+    --field-font-size: 13px;
+    --field-font-size-compact: 11px;
 
     /* ─── Typography — Golden Ratio Scale ────────────────── */
     /* Display  */
@@ -180,7 +197,7 @@ button {
     align-items: center;
     animation: logoPulse 1.6s ease-in-out infinite;
     background: #fff;
-    border: 1px solid #dbeafe;
+    border: 1px solid var(--ppp-line);
     border-radius: 28px;
     display: flex;
     height: 80px;
@@ -204,7 +221,7 @@ button {
 .loading-copy strong,
 .brand-name,
 .eyebrow {
-    color: #475569;
+    color: var(--ppp-secondary);
     display: block;
     font-size: var(--fs-body-sm);
     font-weight: 600;
@@ -332,8 +349,8 @@ button {
 
 .input-shell input,
 .search-shell input {
-    background: #f8fafc;
-    border: 1px solid #f1f5f9;
+    background: #ffffff;
+    border: 1px solid var(--ppp-line);
     border-radius: 16px;
     color: #0f172a;
     outline: none;
@@ -421,7 +438,7 @@ button {
 .brand-mark {
     align-items: center;
     background: #fff;
-    border: 1px solid #dbeafe;
+    border: 1px solid var(--ppp-line);
     border-radius: 12px;
     display: flex;
     height: 36px;
@@ -740,7 +757,7 @@ button {
 .filter-pills button {
     background: #fff;
     border: 1px solid var(--ppp-line);
-    color: #475569;
+    color: var(--ppp-secondary);
 }
 
 .dark-button {
@@ -773,7 +790,7 @@ button {
 
 .dashboard-hero p,
 .module-header p {
-    color: #64748b;
+    color: var(--ppp-secondary);
     font-size: var(--fs-body);
     line-height: 1.7;
     margin: 8px 0 0;
@@ -782,14 +799,14 @@ button {
 
 .hero-badge {
     background: #eff6ff;
-    border: 1px solid #dbeafe;
+    border: 1px solid var(--ppp-line);
     border-radius: 8px;
     padding: 12px 16px;
     text-align: left;
 }
 
 .hero-badge span {
-    color: #64748b;
+    color: var(--ppp-secondary);
     display: block;
     font-size: var(--fs-body-sm);
     letter-spacing: 0;
@@ -827,7 +844,7 @@ button {
 
 .kpi-card span,
 .kpi-card small {
-    color: #64748b;
+    color: var(--ppp-secondary);
     display: block;
     font-size: var(--fs-body-sm);
     letter-spacing: 0;
@@ -878,7 +895,7 @@ button {
 .status-list div,
 .mini-table div {
     align-items: center;
-    border-top: 1px solid #f1f5f9;
+    border-top: 1px solid var(--ppp-line-soft);
     display: flex;
     justify-content: space-between;
     padding: 13px 16px;
@@ -891,7 +908,7 @@ button {
 
 .status-list span,
 .mini-table span {
-    color: #64748b;
+    color: var(--ppp-secondary);
     font-size: var(--fs-body);
     font-weight: 600;
     letter-spacing: 0;
@@ -918,7 +935,7 @@ button {
 }
 
 .search-shell span {
-    color: #64748b;
+    color: var(--ppp-secondary);
     font-size: var(--fs-body-sm);
     font-weight: 700;
     letter-spacing: 0;
@@ -954,7 +971,7 @@ button {
 
 .data-table th {
     background: #f8fafc;
-    color: #64748b;
+    color: var(--ppp-secondary);
     font-size: var(--fs-body-sm);
     font-weight: 800;
     letter-spacing: 0;
@@ -964,8 +981,8 @@ button {
 }
 
 .data-table td {
-    border-top: 1px solid #f1f5f9;
-    color: #334155;
+    border-top: 1px solid var(--ppp-line-soft);
+    color: var(--ppp-text-secondary);
     font-size: var(--fs-body);
     padding: var(--space-3) var(--space-4);
 }

@@ -1,7 +1,7 @@
 @verbatim
 <!-- Talent Bonus tab -->
             <div v-if="activeTab === 'talent_bonus' && !bonusConfigLoaded"
-                class="space-y-6 animate-fadeIn pb-10 animate-pulse">
+                class="space-y-4 animate-fadeIn animate-pulse">
                 <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
                     <div v-for="i in 4" :key="'sk-tb-st'+i" class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
                         <div class="h-3 bg-slate-100 rounded-full w-20 mb-2"></div>
@@ -19,7 +19,7 @@
                     </div>
                 </div>
             </div>
-            <div v-if="activeTab === 'talent_bonus' && bonusConfigLoaded" class="space-y-6 animate-fadeIn pb-10">
+            <div v-if="activeTab === 'talent_bonus' && bonusConfigLoaded" class="space-y-4 animate-fadeIn">
                 <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
                     <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
                         <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-coins text-[120px]"></i></div>

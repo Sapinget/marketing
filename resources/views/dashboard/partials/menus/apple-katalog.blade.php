@@ -1,5 +1,5 @@
 @verbatim
-<div v-show="activeTab === 'apple_katalog'" class="space-y-4 md:space-y-6 animate-fadeIn pb-10 xl:pb-0 xl:h-[calc(100dvh-7rem)] xl:min-h-[620px] xl:overflow-hidden">
+<div v-show="activeTab === 'apple_katalog'" class="space-y-4 animate-fadeIn xl:h-[calc(100dvh-7rem)] xl:min-h-[620px] xl:overflow-hidden">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
             <h1 class="type-title text-slate-900">Katalog Apple</h1>

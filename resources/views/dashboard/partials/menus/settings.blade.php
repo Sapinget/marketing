@@ -1,6 +1,6 @@
 @verbatim
 <!-- Settings View -->
-                    <div v-if="activeTab === 'settings'" class="animate-fadeIn space-y-4 pb-10 md:pb-0">
+                    <div v-if="activeTab === 'settings'" class="animate-fadeIn space-y-4">
                         <div class="grid gap-4 md:grid-cols-[300px_1fr] md:items-start md:h-[calc(100dvh-168px)]">
                             <div class="section-card section-card-body p-4 md:h-[calc(100dvh-168px)] md:min-h-0 md:flex md:flex-col md:overflow-hidden">
                                 <div class="flex-shrink-0">

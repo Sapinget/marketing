@@ -1,7 +1,7 @@
 @verbatim
 <!-- Keep Barang / Retur View -->
                     <div v-if="activeTab === 'keep_barang' && !keepBarangLoaded"
-                        class="space-y-6 animate-fadeIn pb-10 animate-pulse">
+                        class="space-y-4 animate-fadeIn animate-pulse">
                         <div class="section-card section-card-shell">
                             <div class="px-6 py-4 border-b border-slate-50 flex gap-6">
                                 <div class="h-3 bg-slate-200 rounded-full w-20"></div>
@@ -23,7 +23,7 @@
                             </div>
                         </div>
                     </div>
-                    <div v-if="activeTab === 'keep_barang' && keepBarangLoaded" class="space-y-6 animate-fadeIn pb-10">
+                    <div v-if="activeTab === 'keep_barang' && keepBarangLoaded" class="space-y-4 animate-fadeIn">
                         <div class="dashboard-summary-grid-compact grid grid-cols-2 sm:grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
                                 <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
                                     <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-boxes-stacked text-[120px]"></i></div>
