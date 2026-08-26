@@ -1,6 +1,15 @@
 @verbatim
                 // ── Image Repository ─────────────────────────────────────────────────────
-                const imgRepoPath        = ref('');
+                const IMG_REPO_PATH_STORAGE_KEY = 'ppp_img_repo_path';
+                const imgRepoInitialPath = () => {
+                    try {
+                        return localStorage.getItem(IMG_REPO_PATH_STORAGE_KEY) || '';
+                    } catch (e) {
+                        return '';
+                    }
+                };
+
+                const imgRepoPath        = ref(imgRepoInitialPath());
                 const imgRepoItems       = ref([]);
                 const imgRepoLoading     = ref(false);
                 const imgRepoError       = ref(null);
@@ -31,6 +40,10 @@
                 const imgRepoDirs  = computed(() => imgRepoItems.value.filter(i => i.type === 'dir'));
                 const imgRepoFiles = computed(() => imgRepoItems.value.filter(i => i.type === 'file'));
 
+                const imgRepoVisibleItems = (items) => {
+                    return (items || []).filter((item) => item?.name !== '.DS_Store');
+                };
+
                 const imgRepoThumbUrl = (path) => '/api/img-repo/serve?path=' + encodeURIComponent(path);
 
                 async function imgRepoBrowse(path = '') {
@@ -43,7 +56,10 @@
                         if (!res.ok) throw new Error('HTTP ' + res.status);
                         const json = await res.json();
                         imgRepoPath.value  = json.path;
-                        imgRepoItems.value = json.items || [];
+                        imgRepoItems.value = imgRepoVisibleItems(json.items);
+                        try {
+                            localStorage.setItem(IMG_REPO_PATH_STORAGE_KEY, json.path || '');
+                        } catch (e) {}
                     } catch (e) {
                         imgRepoError.value = e.message || 'Gagal memuat direktori';
                     } finally {
@@ -155,12 +171,11 @@
                 }
 
                 function imgRepoOpenContext(event, item) {
-                    imgRepoSelected.value = item;
                     const margin = 8;
-                    const menuW = 176;
+                    const menuW = Math.min(192, window.innerWidth - margin * 2);
                     const menuH = item.type === 'dir' ? 120 : 96;
-                    const x = Math.min(event.clientX, window.innerWidth - menuW - margin);
-                    const y = Math.min(event.clientY, window.innerHeight - menuH - margin);
+                    const x = Math.max(margin, Math.min(event.clientX, window.innerWidth - menuW - margin));
+                    const y = Math.max(margin, Math.min(event.clientY, window.innerHeight - menuH - margin));
                     imgRepoContextMenu.value = { item, x, y };
                 }
                 // ─────────────────────────────────────────────────────────────────────────

@@ -1,26 +1,34 @@
 @verbatim
-<div v-if="activeTab === 'pricelist_katalog'" class="space-y-6 animate-fadeIn pb-10">
-    <div class="flex items-center justify-between flex-wrap gap-3">
+<div v-if="activeTab === 'pricelist_katalog'" class="space-y-4 md:space-y-6 animate-fadeIn pb-10 xl:pb-0 xl:h-[calc(100dvh-7rem)] xl:min-h-[620px] xl:overflow-hidden">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
             <h1 class="type-title text-slate-900">Katalog Pricelist</h1>
             <p class="text-body-sm text-slate-400 mt-1">Sync pricelist Android dari spreadsheet, upload background, dan generate katalog Story / IG Feed.</p>
         </div>
-        <button @click="syncPricelistProducts" :disabled="pricelistSyncing" class="primary-cta-button primary-cta-button--accent">
-            <i class="fa-solid fa-rotate text-body-sm"></i>
-            {{ pricelistSyncing ? 'Sync...' : 'Sync Spreadsheet' }}
+        <button @click="syncPricelistProducts" :disabled="pricelistSyncing" class="primary-cta-button primary-cta-button--accent w-full sm:w-auto">
+            <i class="fa-solid fa-rotate"></i>
+            <span>{{ pricelistSyncing ? 'Sync...' : 'Sync Data' }}</span>
         </button>
     </div>
 
-    <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1.2fr)_minmax(340px,0.8fr)] gap-4">
-        <div class="section-card">
-            <div class="px-6 py-4 border-b border-slate-100 space-y-3">
+    <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1.4fr)_minmax(340px,0.6fr)] gap-4 xl:h-[calc(100%-4.5rem)] min-h-0">
+        <div class="section-card flex flex-col min-h-[420px] md:min-h-[520px] xl:min-h-0 overflow-hidden">
+            <div class="px-4 md:px-6 py-4 border-b border-slate-100 space-y-3">
                 <div>
                     <h3 class="type-label font-semibold text-slate-700">Data Pricelist</h3>
                     <p class="text-body-sm text-slate-400 mt-0.5">Hanya row dengan kolom URUT terisi yang masuk katalog.</p>
                 </div>
-                <div class="grid grid-cols-[minmax(220px,1fr)_10rem] items-center gap-2 w-full">
-                    <input v-model="pricelistSearch" class="form-input-compact min-w-[220px]" placeholder="Cari produk..." />
-                    <div class="relative group search-select-container justify-self-end w-40">
+                <div class="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2 w-full">
+                    <input v-model="pricelistSearch" class="form-input-compact" placeholder="Cari produk..." />
+                    <div class="catalog-segment-group w-full sm:w-24 sm:justify-self-end">
+                        <button @click="pricelistView = 'card'" :class="['catalog-segment-button', pricelistView === 'card' ? 'catalog-segment-button--active' : '']" title="Card view" aria-label="Card view">
+                            <i class="fa-solid fa-grip"></i>
+                        </button>
+                        <button @click="pricelistView = 'table'" :class="['catalog-segment-button', pricelistView === 'table' ? 'catalog-segment-button--active' : '']" title="Table view" aria-label="Table view">
+                            <i class="fa-solid fa-table-list"></i>
+                        </button>
+                    </div>
+                    <div class="relative group search-select-container w-full sm:w-40 sm:justify-self-end">
                         <button type="button" @click="toggleSearchSelect($event, 'pricelist_sheet_filter')" :aria-expanded="searchSelectOpen === 'pricelist_sheet_filter' ? 'true' : 'false'" class="select-trigger-button select-trigger-button-compact toolbar-trigger-field-form">
                             <span class="truncate">{{ currentPricelistSheetFilterLabel }}</span>
                             <i class="fa-solid fa-chevron-down ml-auto text-[9px] text-slate-400"></i>
@@ -40,8 +48,8 @@
                     </div>
                 </div>
             </div>
-            <div class="overflow-x-auto">
-                <table class="ppp-table w-full">
+            <div v-if="pricelistView === 'table'" class="flex-1 min-h-0 overflow-auto overscroll-x-contain">
+                <table class="ppp-table w-full min-w-[720px]">
                     <thead>
                         <tr class="table-header-row">
                             <th class="table-header-cell table-header-index table-freeze-index">#</th>
@@ -72,7 +80,39 @@
                     </tbody>
                 </table>
             </div>
-            <div class="table-pager-bar">
+            <div v-else class="flex-1 min-h-0 overflow-y-auto p-3 md:p-4">
+                <div v-if="pricelistCardGroups.length === 0" class="text-center text-slate-400 py-10">Belum ada data pricelist</div>
+                <div v-else class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 gap-2 md:gap-3 content-start">
+                    <div v-for="group in pricelistCardGroups" :key="group.model" class="relative border border-slate-200 bg-white rounded-2xl p-2.5 md:p-3 transition-all hover:border-slate-300 hover:shadow-sm">
+                        <div class="absolute top-2 right-2 z-10">
+                            <span :class="['px-2 py-0.5 rounded-full text-overline font-bold', group.variants.some(row => row.is_active !== false) ? 'bg-emerald-50 text-emerald-600' : 'bg-slate-100 text-slate-400']">
+                                {{ group.variants.some(row => row.is_active !== false) ? 'ON' : 'OFF' }}
+                            </span>
+                        </div>
+                        <div class="flex justify-center mb-1.5">
+                            <div class="apple-product-thumb bg-slate-50 rounded-lg overflow-hidden flex items-center justify-center">
+                                <img v-if="androidProductImage(group.variants[0])" :src="androidProductImage(group.variants[0])" class="apple-product-image" :alt="group.model" />
+                                <i v-else class="fa-solid fa-mobile-screen-button text-slate-200 text-4xl"></i>
+                            </div>
+                        </div>
+                        <p class="text-body-sm font-bold text-slate-700 text-center leading-tight mb-1.5">{{ group.model }}</p>
+                        <p class="text-overline text-slate-400 text-center font-bold uppercase mb-2">{{ group.variants[0].source_sheet }}</p>
+                        <div v-for="row in group.variants" :key="row.ID" class="rounded-lg mt-1 bg-slate-50/80 px-2 py-1.5 min-w-0">
+                            <div class="flex items-center gap-1.5 min-w-0">
+                                <div class="flex-shrink-0 w-3 h-3 rounded-full border flex items-center justify-center" :class="row.is_active !== false ? 'bg-ppp-accent border-ppp-accent' : 'border-slate-300 bg-white'">
+                                    <i v-if="row.is_active !== false" class="apple-check-icon fa-solid fa-check text-white"></i>
+                                </div>
+                                <div class="text-overline font-semibold text-slate-600 truncate min-w-0 flex-1">{{ pricelistCardVariantLabel(row) }}</div>
+                            </div>
+                            <div class="mt-1 grid grid-cols-1 gap-0.5 tabular-nums min-w-0 pl-4">
+                                <span class="text-[9px] leading-none text-slate-400 line-through truncate">{{ formatPricelistPrice(row.harga_nasional) }}</span>
+                                <span class="text-[10px] leading-tight font-bold text-red-600 truncate">{{ formatPricelistPrice(row.special_price) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div v-if="pricelistView === 'table'" class="table-pager-bar flex-shrink-0">
                 <div class="text-body-sm text-slate-400 font-medium">{{ filteredPricelistProducts.length }} data</div>
                 <div class="flex items-center gap-1">
                     <button @click="pricelistPage--" :disabled="pricelistPage <= 1" class="icon-utility-button icon-utility-bordered"><i class="fa-solid fa-chevron-left text-body-sm"></i></button>
@@ -82,8 +122,8 @@
             </div>
         </div>
 
-        <div class="flex flex-col gap-3 min-h-0 overflow-y-auto pr-0.5">
-            <div class="section-card p-5 space-y-4">
+        <div class="flex flex-col gap-3 min-h-0 xl:overflow-y-auto xl:pr-0.5">
+            <div class="section-card p-4 md:p-5 space-y-4">
                 <div class="flex items-center justify-between">
                     <div>
                         <h3 class="type-label font-semibold text-slate-700">Template Background</h3>
@@ -101,12 +141,12 @@
                             <div class="text-overline text-slate-400 uppercase">{{ template.format }} · {{ template.canvas_width }}x{{ template.canvas_height }}</div>
                         </div>
                         <div class="flex items-center gap-1">
-                            <label class="icon-utility-button icon-utility-bordered cursor-pointer">
-                                <i class="fa-solid fa-image"></i>
+                            <label class="table-action-button table-action-compact cursor-pointer" title="Ganti Gambar" aria-label="Ganti Gambar">
+                                <i class="fa-solid fa-image text-body-sm"></i>
                                 <input type="file" accept="image/*" class="hidden" @change="uploadCatalogTemplateBackground($event, template)" />
                             </label>
-                            <button @click="openCatalogTemplateModal('edit', template)" class="icon-utility-button icon-utility-bordered"><i class="fa-solid fa-pen"></i></button>
-                            <button @click="deleteCatalogTemplate(template)" class="icon-utility-button icon-utility-danger"><i class="fa-solid fa-trash"></i></button>
+                            <button @click="openCatalogTemplateModal('edit', template)" class="table-action-button table-action-compact" title="Edit" aria-label="Edit"><i class="fa-solid fa-pen-to-square text-body-sm"></i></button>
+                            <button @click="deleteCatalogTemplate(template)" class="table-action-button table-action-compact table-action-danger" title="Hapus" aria-label="Hapus"><i class="fa-solid fa-trash-can text-body-sm"></i></button>
                         </div>
                     </div>
                 </div>
@@ -198,16 +238,16 @@
                         </button>
                     </div>
                 </div>
-            </div>
-            <div class="flex gap-2">
-                <button @click="generateCatalogPreview" :disabled="catalogGenerating" class="primary-cta-button primary-cta-button--accent flex-1">
-                    <i :class="['fa-solid', catalogGenerating ? 'fa-spinner fa-spin' : 'fa-eye']"></i>
-                    <span>{{ catalogGenerating ? 'Generate...' : 'Preview' }}</span>
-                </button>
-                <button @click="exportCatalogToPdf" :disabled="catalogGenerating" class="primary-cta-button primary-cta-button--info flex-1">
-                    <i :class="['fa-solid', catalogGenerating ? 'fa-spinner fa-spin' : 'fa-file-pdf']"></i>
-                    <span>{{ catalogGenerating ? 'Exporting...' : 'Export PDF' }}</span>
-                </button>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <button @click="generateCatalogPreview" :disabled="catalogGenerating" class="primary-cta-button primary-cta-button--accent w-full">
+                        <i :class="['fa-solid', catalogGenerating ? 'fa-spinner fa-spin' : 'fa-eye']"></i>
+                        <span>{{ catalogGenerating ? 'Generate...' : 'Preview' }}</span>
+                    </button>
+                    <button @click="exportCatalogToPdf" :disabled="catalogGenerating" class="primary-cta-button primary-cta-button--info w-full">
+                        <i :class="['fa-solid', catalogGenerating ? 'fa-spinner fa-spin' : 'fa-file-pdf']"></i>
+                        <span>{{ catalogGenerating ? 'Exporting...' : 'Export PDF' }}</span>
+                    </button>
+                </div>
             </div>
             <div class="grid grid-cols-2 gap-2" v-if="catalogPreviewImages.length">
                 <div v-for="(image, idx) in catalogPreviewImages" :key="idx" @click="openCatalogPreviewModal(idx)" class="block cursor-pointer border border-slate-100 rounded-xl overflow-hidden hover:border-ppp-accent/40 transition-colors">
@@ -219,36 +259,36 @@
 
     <teleport to="body">
         <div v-if="catalogPreviewModalOpen" class="fixed inset-0 z-[9400] bg-slate-950/80 flex flex-col" @click="closeCatalogPreviewModal">
-            <div class="shrink-0 px-4 py-3 flex items-center justify-between gap-3 bg-white/95 border-b border-slate-200" @click.stop>
-                <div>
+            <div class="shrink-0 px-3 md:px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 bg-white/95 border-b border-slate-200" @click.stop>
+                <div class="min-w-0">
                     <h3 class="type-label font-bold text-slate-800">Preview Katalog Pricelist</h3>
-                    <p class="text-body-sm text-slate-500">Halaman {{ catalogPreviewModalIndex + 1 }} / {{ catalogPreviewImages.length }} · Zoom {{ Math.round(catalogPreviewZoom * 100) }}%</p>
+                    <p class="text-body-sm text-slate-500 truncate">Halaman {{ catalogPreviewModalIndex + 1 }} / {{ catalogPreviewImages.length }} · Zoom {{ Math.round(catalogPreviewZoom * 100) }}%</p>
                 </div>
-                <div class="flex items-center gap-1.5">
+                <div class="flex items-center gap-1.5 flex-wrap">
                     <button @click="catalogPreviewNav(-1)" class="icon-utility-button icon-utility-bordered"><i class="fa-solid fa-chevron-left"></i></button>
                     <button @click="catalogPreviewZoomBy(0.85)" class="icon-utility-button icon-utility-bordered"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
-                    <button @click="catalogPreviewZoom = 1" class="toolbar-segment-button border-slate-200 text-slate-500 bg-white">100%</button>
+                    <button @click="catalogPreviewZoom = 1" class="toolbar-segment-button border-slate-200 text-slate-500 bg-white">Fit</button>
                     <button @click="catalogPreviewZoomBy(1.18)" class="icon-utility-button icon-utility-bordered"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
                     <button @click="catalogPreviewNav(1)" class="icon-utility-button icon-utility-bordered"><i class="fa-solid fa-chevron-right"></i></button>
                     <button @click="downloadCatalogPreview(catalogPreviewImages[catalogPreviewModalIndex], catalogPreviewModalIndex)" class="icon-utility-button icon-utility-bordered"><i class="fa-solid fa-download"></i></button>
                     <button @click="closeCatalogPreviewModal" class="icon-utility-button icon-utility-bordered"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
-            <div class="flex-1 overflow-auto p-6" @click.stop>
-                <div class="min-w-full min-h-full flex items-start justify-center">
-                    <img :src="catalogPreviewImages[catalogPreviewModalIndex]" class="preview-zoom-image rounded-xl shadow-2xl bg-white transition-transform origin-top" :style="`transform:scale(${catalogPreviewZoom})`" />
+            <div class="flex-1 overflow-auto p-2 md:p-4" @click.stop>
+                <div class="min-w-full min-h-full flex items-center justify-center">
+                    <img :src="catalogPreviewImages[catalogPreviewModalIndex]" class="preview-zoom-image max-w-full max-h-[calc(100vh-7rem)] w-auto h-auto object-contain rounded-xl shadow-2xl bg-white transition-transform origin-center" :style="`transform:scale(${catalogPreviewZoom})`" />
                 </div>
             </div>
         </div>
     </teleport>
 
-    <div v-if="catalogTemplateModalOpen" class="fixed inset-0 z-[9000] flex items-center justify-center p-4 bg-slate-900/40">
-        <div class="flex flex-col bg-white rounded-2xl w-full max-w-6xl max-h-[88vh] overflow-hidden shadow-xl">
+    <div v-if="catalogTemplateModalOpen" class="fixed inset-0 z-[9000] flex items-end md:items-center justify-center md:p-4 bg-slate-900/40">
+        <div class="mobile-sheet flex flex-col bg-white radius-sheet w-full max-w-6xl max-h-[94dvh] md:max-h-[88vh] overflow-hidden shadow-xl">
             <div class="flex items-center justify-between px-5 py-5 border-b border-slate-100 shrink-0">
                 <h3 class="type-label font-bold text-slate-800">{{ catalogTemplateModalType === 'edit' ? 'Edit Template' : 'Tambah Template' }}</h3>
                 <button @click="catalogTemplateModalOpen = false" class="icon-utility-button"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="flex-1 min-h-0 overflow-hidden p-5 flex flex-col gap-4">
+            <div class="flex-1 min-h-0 overflow-y-auto p-4 md:p-5 flex flex-col gap-4">
             <input v-model="catalogTemplateForm.name" class="form-input-compact w-full" placeholder="Nama template" />
             <div class="search-select-container">
                 <button @click="toggleSearchSelect($event, 'catalog-template-format')" type="button" :aria-expanded="searchSelectOpen === 'catalog-template-format'" class="select-trigger-button select-trigger-button-compact select-trigger-button-form w-full">
@@ -322,7 +362,7 @@
                                 <button type="button"
                                     class="select-trigger-button select-trigger-button-compact select-trigger-button-form toolbar-trigger-field-form w-full justify-start gap-2 cursor-pointer"
                                     @click="openColorPicker(() => catalogTemplateForm.layout_config[colorField.key], v => catalogTemplateForm.layout_config[colorField.key] = v, $event)">
-                                    <span class="color-swatch-sm relative flex-shrink-0 rounded-full overflow-hidden border border-black/10">
+                                    <span class="color-swatch-sm">
                                         <span class="checkerboard-bg absolute inset-0"></span>
                                         <span class="absolute inset-0" :style="'background:' + (catalogTemplateForm.layout_config[colorField.key] || '#ffffff')"></span>
                                     </span>
@@ -386,7 +426,7 @@
                                 <button type="button"
                                     class="select-trigger-button select-trigger-button-compact select-trigger-button-form toolbar-trigger-field-form w-full justify-start gap-2 cursor-pointer"
                                     @click="openColorPicker(() => catalogTemplateForm.layout_config.titleColor, v => catalogTemplateForm.layout_config.titleColor = v, $event)">
-                                    <span class="color-swatch-sm relative flex-shrink-0 rounded-full overflow-hidden border border-black/10">
+                                    <span class="color-swatch-sm">
                                         <span class="checkerboard-bg absolute inset-0"></span>
                                         <span class="absolute inset-0" :style="'background:' + (catalogTemplateForm.layout_config.titleColor || '#ffffff')"></span>
                                     </span>

@@ -56,11 +56,11 @@
 
                 <!-- Date filter -->
                 <div class="bg-white radius-panel border border-slate-100 p-4">
-                    <div class="flex flex-col sm:flex-row sm:items-end gap-3">
-                        <div class="flex-1 w-full">
-                            <label class="type-body-sm font-bold text-slate-400 uppercase mb-1">Periode</label>
+                    <div class="compact-period-toolbar">
+                        <label class="compact-period-toolbar__label font-bold uppercase">Periode</label>
+                        <div class="compact-period-toolbar__controls">
                             <button type="button" @click="openCalendar($event, 'filter', '', 'budgeting')"
-                                class="select-trigger-button-compact">
+                                class="select-trigger-button-compact w-full">
                                 <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
                                 <template v-if="budgetDateFilter.start">
                                     {{ formatShortDate(budgetDateFilter.start) }}
@@ -71,10 +71,10 @@
                                     @click.stop="budgetDateFilter = { start: '', end: '' }"
                                     class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-danger"></i>
                             </button>
+                            <button @click="budgetDateFilter = { start: '', end: '' }"
+                                class="primary-cta-button primary-cta-button--neutral w-full sm:w-auto" title="Reset"><i
+                                    class="fa-solid fa-rotate-left text-body-sm"></i><span>Reset</span></button>
                         </div>
-                        <button @click="budgetDateFilter = { start: '', end: '' }"
-                            class="primary-cta-button primary-cta-button--neutral" title="Reset"><i
-                                class="fa-solid fa-rotate-left text-body-sm"></i><span>Reset</span></button>
                     </div>
                 </div>
 
@@ -3684,7 +3684,7 @@
                                                 class="text-body font-bold text-slate-700">{{ platformDisplayName(item.Platform || (item.Platforms || '').split(',')[0]) }}</span>
                                         </div>
                                         <span
-                                            class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap bg-amber text-light uppercase">{{ item.Status }}</span>
+                                            class="status-badge-fixed inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap bg-amber text-light uppercase">{{ item.Status }}</span>
                                     </div>
                                     <h4 class="text-[12px] font-bold text-slate-900 leading-[1.2] mb-1 uppercase">{{ item.Judul }}</h4>
                                     <div class="flex items-center gap-2.5 flex-wrap">
@@ -3719,7 +3719,7 @@
                                                 class="text-body-sm font-bold text-danger uppercase">Story</span>
                                         </div>
                                         <span v-if="item.Status"
-                                            class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap bg-danger text-light uppercase">{{ item.Status }}</span>
+                                            class="status-badge-fixed inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap bg-danger text-light uppercase">{{ item.Status }}</span>
                                     </div>
                                     <h4 class="text-[12px] font-bold text-slate-900 leading-[1.2] mb-1 uppercase">{{ item.Story_Schedule || item.Story }}</h4>
                                     <div class="flex items-center gap-2.5 flex-wrap">

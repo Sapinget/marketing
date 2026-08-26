@@ -1,56 +1,83 @@
 @verbatim
-<div v-show="activeTab === 'apple_katalog'" class="space-y-4 xl:space-y-0 xl:h-[calc(100dvh-7rem)] xl:min-h-[620px] xl:overflow-hidden">
-    <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1.4fr)_minmax(300px,0.6fr)] gap-4 xl:h-full min-h-0">
+<div v-show="activeTab === 'apple_katalog'" class="space-y-4 md:space-y-6 animate-fadeIn pb-10 xl:pb-0 xl:h-[calc(100dvh-7rem)] xl:min-h-[620px] xl:overflow-hidden">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div>
+            <h1 class="type-title text-slate-900">Katalog Apple</h1>
+            <p class="text-body-sm text-slate-400 mt-1">Pilih model Apple, atur template, lalu generate katalog siap publish.</p>
+        </div>
+        <button @click="syncAppleProducts" :disabled="appleSyncing" class="primary-cta-button primary-cta-button--accent w-full sm:w-auto">
+            <i :class="['fa-solid fa-rotate', appleSyncing && 'fa-spin']"></i>
+            <span>{{ appleSyncing ? 'Sync...' : 'Sync Data' }}</span>
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 xl:grid-cols-[minmax(0,1.4fr)_minmax(340px,0.6fr)] gap-4 xl:h-[calc(100%-4.5rem)] min-h-0">
 
         <!-- LEFT: products panel -->
-        <div class="flex flex-col gap-3 min-h-0">
+        <div class="flex flex-col gap-3 min-h-0 min-w-0">
 
             <!-- header: search + toggle + sync + categories -->
-            <div class="section-card p-3 space-y-2">
-                <div class="flex items-center gap-2">
-                    <input v-model="appleSearch" class="form-input-compact flex-1" placeholder="Cari model..." />
-                    <button @click="syncAppleProducts" :disabled="appleSyncing"
-                        class="icon-utility-button icon-utility-bordered" title="Sync data">
-                        <i :class="['fa-solid fa-rotate-right', appleSyncing && 'fa-spin']"></i>
-                    </button>
-                    <button @click="appleSelectAll" class="primary-cta-button primary-cta-button--accent whitespace-nowrap">Select All</button>
-                    <button @click="appleResetSelection" class="toolbar-segment-button border-slate-200 bg-white text-slate-500 whitespace-nowrap">Reset</button>
-                    <div class="flex items-center gap-1">
-                        <button @click="appleView = 'card'"
-                            :class="['icon-utility-button', appleView === 'card' ? 'icon-utility-active' : 'icon-utility-bordered']"
-                            title="Card view">
-                            <i class="fa-solid fa-grip"></i>
-                        </button>
-                        <button @click="appleView = 'table'"
-                            :class="['icon-utility-button', appleView === 'table' ? 'icon-utility-active' : 'icon-utility-bordered']"
-                            title="Table view">
-                            <i class="fa-solid fa-table-list"></i>
-                        </button>
+            <div class="section-card p-4 catalog-control-stack">
+                <div class="catalog-control-field">
+                    <p class="text-overline text-slate-400 uppercase">Data Produk</p>
+                    <div class="grid grid-cols-1 sm:grid-cols-[minmax(0,1fr)_auto] gap-2">
+                        <input v-model="appleSearch" class="form-input-compact" placeholder="Cari model..." />
+                        <div class="flex items-center justify-end gap-2">
+                            <div class="catalog-segment-group w-24 flex-shrink-0">
+                                <button @click="appleView = 'card'" :class="['catalog-segment-button', appleView === 'card' ? 'catalog-segment-button--active' : '']" title="Card view" aria-label="Card view">
+                                    <i class="fa-solid fa-grip"></i>
+                                </button>
+                                <button @click="appleView = 'table'" :class="['catalog-segment-button', appleView === 'table' ? 'catalog-segment-button--active' : '']" title="Table view" aria-label="Table view">
+                                    <i class="fa-solid fa-table-list"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="flex flex-wrap gap-1.5">
-                    <button v-for="sheet in appleSheets" :key="sheet"
-                        @click="appleCategory = sheet"
-                        :class="['toolbar-segment-button', appleCategory === sheet ? 'bg-ppp-accent text-white border-ppp-accent' : 'bg-white text-slate-500 border-slate-200']">
-                        {{ sheet }}
-                    </button>
-                </div>
-                <div class="pt-2 border-t border-slate-100">
-                    <p class="text-overline text-slate-400 uppercase mb-1.5">Harga utama</p>
-                    <div class="flex flex-wrap gap-1.5">
-                        <button v-for="opt in applePriceOptions" :key="opt.key"
-                            @click="applePriceKey = opt.key"
-                            :class="['toolbar-segment-button', applePriceKey === opt.key ? 'bg-ppp-accent text-white border-ppp-accent' : 'bg-white text-slate-500 border-slate-200']">
-                            {{ opt.label }}
-                        </button>
+                <div class="catalog-control-grid">
+                    <div class="catalog-control-field">
+                        <p class="catalog-control-label">Kategori</p>
+                        <div class="relative group search-select-container min-w-0">
+                            <button type="button" @click="toggleSearchSelect($event, 'apple_category')" :aria-expanded="searchSelectOpen === 'apple_category' ? 'true' : 'false'" class="select-trigger-button select-trigger-button-compact select-trigger-button-form toolbar-trigger-field-form w-full">
+                                <span class="min-w-0 truncate">{{ appleCategory || 'Pilih kategori' }}</span>
+                                <i class="fa-solid fa-chevron-down ml-auto text-[9px] text-slate-400"></i>
+                            </button>
+                            <transition name="fade">
+                                <div v-if="searchSelectOpen === 'apple_category'" :style="popoverStyle" class="search-select-popover">
+                                    <div class="max-h-56 overflow-y-auto custom-scrollbar p-1">
+                                        <div v-for="sheet in appleSheets" :key="sheet" @click="appleCategory = sheet; searchSelectOpen = null" :class="['popover-option', appleCategory === sheet ? 'popover-option-active' : '']">{{ sheet }}</div>
+                                    </div>
+                                </div>
+                            </transition>
+                        </div>
                     </div>
+                    <div class="catalog-control-field">
+                        <p class="catalog-control-label">Harga utama</p>
+                        <div class="relative group search-select-container min-w-0">
+                            <button type="button" @click="toggleSearchSelect($event, 'apple_price')" :aria-expanded="searchSelectOpen === 'apple_price' ? 'true' : 'false'" class="select-trigger-button select-trigger-button-compact select-trigger-button-form toolbar-trigger-field-form w-full">
+                                <span class="min-w-0 truncate">{{ (applePriceOptions.find(opt => opt.key === applePriceKey) || {}).label || 'Pilih harga utama' }}</span>
+                                <i class="fa-solid fa-chevron-down ml-auto text-[9px] text-slate-400"></i>
+                            </button>
+                            <transition name="fade">
+                                <div v-if="searchSelectOpen === 'apple_price'" :style="popoverStyle" class="search-select-popover">
+                                    <div class="max-h-56 overflow-y-auto custom-scrollbar p-1">
+                                        <div v-for="opt in applePriceOptions" :key="opt.key" @click="applePriceKey = opt.key; searchSelectOpen = null" :class="['popover-option', applePriceKey === opt.key ? 'popover-option-active' : '']">{{ opt.label }}</div>
+                                    </div>
+                                </div>
+                            </transition>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <button @click="appleSelectAll" class="primary-cta-button primary-cta-button--accent w-full whitespace-nowrap">Select All</button>
+                    <button @click="appleResetSelection" class="primary-cta-button primary-cta-button--danger w-full whitespace-nowrap">Reset</button>
                 </div>
             </div>
 
             <!-- CARD VIEW -->
-            <div v-if="appleView === 'card'" class="section-card flex-1 min-h-0 overflow-y-auto p-4 grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-6 gap-3 content-start">
+            <div v-if="appleView === 'card'" class="section-card flex-1 min-h-[420px] xl:min-h-0 overflow-y-auto p-3 md:p-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5 gap-2 md:gap-3 content-start">
                 <div v-for="group in appleGroupedModels" :key="group.model"
-                    class="relative border rounded-2xl p-3 transition-all hover:shadow-sm"
+                    class="relative border rounded-2xl p-2.5 md:p-3 transition-all hover:shadow-sm"
                     :class="appleSelectedModels.includes(group.model)
                         ? 'border-ppp-accent bg-ppp-accent/5 shadow-sm'
                         : 'border-slate-200 bg-white hover:border-slate-300'">
@@ -96,74 +123,107 @@
             </div>
 
             <!-- TABLE VIEW -->
-            <div v-else-if="appleView === 'table'" class="section-card flex-1 min-h-0 overflow-auto">
-                <table class="w-full text-body-sm">
-                    <thead>
-                        <tr class="table-header-row">
-                            <th class="table-header-cell text-left whitespace-nowrap">Model</th>
-                            <th class="table-header-cell text-left whitespace-nowrap">Storage</th>
-                            <template v-for="label in appleKondisiLabels" :key="label">
-                                <th class="table-header-cell text-right whitespace-nowrap">{{ label }}</th>
-                            </template>
-                            <th class="table-header-cell text-center">Pilih</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="row in appleTableRows" :key="row.model + row.storage"
-                            @click="appleToggleVariant(row.model, appleVariantKey(row))"
-                            :class="['cursor-pointer border-b border-slate-50 hover:bg-slate-50', appleSelectedModels.includes(row.model) ? 'bg-ppp-accent/5' : '']">
-                            <td class="px-3 py-2 font-semibold text-slate-700 whitespace-nowrap">{{ row.model }}</td>
-                            <td class="px-3 py-2 text-slate-500 whitespace-nowrap">{{ row.storage }}</td>
-                            <template v-for="label in appleKondisiLabels" :key="label">
-                                <td class="px-3 py-2 text-right text-slate-600 whitespace-nowrap">
-                                    {{ row.harga_kondisi && row.harga_kondisi[label] ? formatApplePrice(row.harga_kondisi[label]) : '—' }}
+            <div v-else-if="appleView === 'table'" class="section-card flex-1 min-h-[420px] xl:min-h-0 min-w-0 overflow-hidden flex flex-col">
+                <div class="flex items-center justify-between gap-3 px-4 py-3 border-b border-slate-100 bg-white">
+                    <div class="min-w-0">
+                        <p class="text-overline text-slate-400 uppercase">Table View</p>
+                        <p class="text-body-sm text-slate-500 truncate">Tipe harga katalog: {{ (applePriceOptions.find(opt => opt.key === applePriceKey) || {}).label || 'Harga utama' }}</p>
+                    </div>
+                    <div class="text-body-sm font-bold text-ppp-accent whitespace-nowrap">{{ appleTableRows.length }} data</div>
+                </div>
+                <div class="apple-table-scroll flex-1 min-h-0 min-w-0 max-w-full">
+                    <table class="apple-catalog-table text-body-sm">
+                        <thead>
+                            <tr class="table-header-row">
+                                <th class="table-header-cell apple-model-cell text-left whitespace-nowrap">Model</th>
+                                <th class="table-header-cell apple-storage-cell text-left whitespace-nowrap">Storage</th>
+                                <template v-for="column in appleTablePriceColumns" :key="column.key">
+                                    <th class="table-header-cell apple-price-cell text-right whitespace-nowrap">{{ column.label }}</th>
+                                </template>
+                                <th class="table-header-cell apple-select-cell text-center sticky right-0 bg-slate-100 z-[75]">Pilih</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="row in appleTableRows" :key="row.model + row.storage"
+                                @click="appleToggleVariant(row.model, appleVariantKey(row))"
+                                :class="['cursor-pointer border-b border-slate-50 hover:bg-slate-50', appleIsVariantSelected(row.model, appleVariantKey(row)) ? 'bg-ppp-accent/5' : '']">
+                                <td class="apple-model-cell px-3 py-2 font-semibold text-slate-700 whitespace-nowrap">{{ row.model }}</td>
+                                <td class="apple-storage-cell px-3 py-2 text-slate-500 whitespace-nowrap">{{ row.storage }}</td>
+                                <template v-for="column in appleTablePriceColumns" :key="column.key">
+                                    <td class="apple-price-cell px-3 py-2 text-right text-slate-600 whitespace-nowrap">
+                                        {{ formatApplePrice(appleTablePriceValue(row, column)) }}
+                                    </td>
+                                </template>
+                                <td class="apple-select-cell px-3 py-2 text-center sticky right-0 bg-white">
+                                    <div v-if="appleIsVariantSelected(row.model, appleVariantKey(row))"
+                                        class="apple-selection-dot apple-selection-dot--active">
+                                        {{ appleSelectedModelOrder(row.model) }}
+                                    </div>
+                                    <div v-else class="apple-selection-dot"></div>
                                 </td>
-                            </template>
-                            <td class="px-3 py-2 text-center">
-                                <div v-if="appleSelectedModels.includes(row.model)"
-                                    class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-ppp-accent">
-                                    <i class="apple-selection-badge fa-solid fa-check text-white"></i>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
         <!-- RIGHT: config panel -->
-        <div class="flex flex-col gap-3 min-h-0 overflow-y-auto pr-0.5">
+        <div class="apple-config-panel flex flex-col gap-3 min-h-0 xl:overflow-hidden">
 
-            <!-- Template selector -->
-            <div class="section-card p-4 space-y-2">
-                <p class="text-overline text-slate-400 uppercase">Template</p>
-                <div class="flex flex-wrap gap-1.5">
-                    <button v-for="template in catalogTemplates" :key="template.ID"
-                        @click="appleSelectedTemplateId = template.ID"
-                        :class="['toolbar-segment-button', appleSelectedTemplateId === template.ID ? 'bg-ppp-accent text-white border-ppp-accent' : 'bg-white text-slate-500 border-slate-200']">
-                        {{ template.name || template.format }}
-                    </button>
+            <div class="section-card p-4 catalog-control-stack flex-shrink-0">
+                <div class="catalog-control-field">
+                    <p class="text-overline text-slate-400 uppercase">Pengaturan Output</p>
+                    <div class="relative group search-select-container min-w-0">
+                        <button type="button" @click="toggleSearchSelect($event, 'apple_template')" :aria-expanded="searchSelectOpen === 'apple_template' ? 'true' : 'false'" class="select-trigger-button select-trigger-button-compact select-trigger-button-form toolbar-trigger-field-form w-full">
+                            <span class="min-w-0 truncate">{{ (catalogTemplates.find(template => template.ID === appleSelectedTemplateId) || {}).name || (catalogTemplates.find(template => template.ID === appleSelectedTemplateId) || {}).format || 'Pilih template' }}</span>
+                            <i class="fa-solid fa-chevron-down ml-auto text-[9px] text-slate-400"></i>
+                        </button>
+                        <transition name="fade">
+                            <div v-if="searchSelectOpen === 'apple_template'" :style="popoverStyle" class="search-select-popover">
+                                <div class="p-2 border-b border-slate-100">
+                                    <input v-model="searchSelectQuery" class="form-input-popover" placeholder="Cari template..." />
+                                </div>
+                                <div class="max-h-56 overflow-y-auto custom-scrollbar p-1">
+                                    <div v-for="template in catalogTemplates.filter(template => !searchSelectQuery || String(template.name || template.format || '').toLowerCase().includes(searchSelectQuery.toLowerCase()))" :key="template.ID" @click="appleSelectedTemplateId = template.ID; searchSelectOpen = null" :class="['popover-option', appleSelectedTemplateId === template.ID ? 'popover-option-active' : '']">
+                                        <div class="font-bold">{{ template.name || template.format }}</div>
+                                        <div class="text-overline text-slate-400 uppercase">{{ template.format }} · {{ template.canvas_width }}x{{ template.canvas_height }}</div>
+                                    </div>
+                                    <div v-if="!catalogTemplates.length" class="px-3 py-2 text-body-sm text-slate-400">Belum ada template upload</div>
+                                </div>
+                            </div>
+                        </transition>
+                    </div>
                 </div>
+                <div class="catalog-control-field">
+                    <p class="catalog-control-label">Kolom per baris</p>
+                    <div class="search-select-container">
+                        <button @click="toggleSearchSelect($event, 'apple-columns-per-row')" type="button" :aria-expanded="searchSelectOpen === 'apple-columns-per-row'" class="select-trigger-button select-trigger-button-compact select-trigger-button-form toolbar-trigger-field-form w-full">
+                            <span class="truncate">{{ appleColumnsPerRow }} kolom</span>
+                            <i class="fa-solid fa-chevron-down text-[10px] text-slate-400"></i>
+                        </button>
+                        <div v-if="searchSelectOpen === 'apple-columns-per-row'" class="search-select-popover" :style="popoverStyle">
+                            <button v-for="col in [3,4,5,6,7,8]" :key="col" @click="appleColumnsPerRow = col; searchSelectOpen = null" type="button" :class="['popover-option', appleColumnsPerRow === col ? 'popover-option-active' : '']">
+                                {{ col }} kolom
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <button @click="generateAppleCatalog"
+                    :disabled="appleGenerating || !appleSelectedModels.length || !appleSelectedTemplateId"
+                    class="primary-cta-button primary-cta-button--info w-full">
+                    <i :class="['fa-solid', appleGenerating ? 'fa-spinner fa-spin' : 'fa-wand-magic-sparkles']"></i>
+                    <span>{{ appleGenerating ? 'Generating...' : 'Generate Katalog' }}</span>
+                </button>
             </div>
 
-            <!-- Columns per row -->
-            <div class="section-card p-4 space-y-2">
-                <p class="text-overline text-slate-400 uppercase">Kolom per baris</p>
-                <div class="flex flex-wrap gap-1.5">
-                    <button v-for="col in [3,4,5,6,7,8]" :key="col"
-                        @click="appleColumnsPerRow = col"
-                        :class="['toolbar-segment-button', appleColumnsPerRow === col ? 'bg-ppp-accent text-white border-ppp-accent' : 'bg-white text-slate-500 border-slate-200']">
-                        {{ col }}
-                    </button>
-                </div>
-            </div>
-
-            <div class="section-card p-4 space-y-3">
-                <div>
+            <div class="section-card apple-layout-card flex-1 min-h-0 overflow-hidden flex flex-col">
+                <div class="apple-layout-card__header flex-shrink-0 p-4 pb-3">
                     <p class="text-overline text-slate-400 uppercase">Layout</p>
                     <p class="text-body-sm text-slate-400 mt-0.5">Cukup atur bagian utama. Detail lanjutan bisa dibuka kalau hasil preview belum pas.</p>
                 </div>
-                <div class="grid grid-cols-2 gap-2">
+                <div class="apple-layout-card__body flex-1 min-h-0 overflow-y-auto custom-scrollbar px-4 pb-4 space-y-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <div>
                         <label class="type-micro text-slate-400 block mb-1">Area atas</label>
                         <input v-model.number="appleCfg.topOffset" class="form-input-compact w-full" placeholder="150" />
@@ -181,7 +241,7 @@
                         <input v-model.number="appleCfg.gap" class="form-input-compact w-full" placeholder="50" />
                     </div>
                 </div>
-                <details class="rounded-xl border border-slate-100 bg-slate-50/60">
+                <details class="rounded-xl border border-slate-100 bg-white overflow-hidden">
                     <summary class="cursor-pointer toolbar-trigger-field-form control-height-md px-3 text-body-sm font-bold text-slate-600 flex items-center justify-between">Pengaturan teks & judul <i class="fa-solid fa-chevron-down text-slate-300"></i></summary>
                     <div class="grid grid-cols-2 gap-2 p-3 pt-1">
                         <div>
@@ -202,7 +262,7 @@
                         </div>
                     </div>
                 </details>
-                <details v-if="applePriceKey !== 'second_table'" class="rounded-xl border border-slate-100 bg-slate-50/60">
+                <details v-if="applePriceKey !== 'second_table'" class="rounded-xl border border-slate-100 bg-white overflow-hidden">
                     <summary class="cursor-pointer toolbar-trigger-field-form control-height-md px-3 text-body-sm font-bold text-slate-600 flex items-center justify-between">Detail layout card <i class="fa-solid fa-chevron-down text-slate-300"></i></summary>
                     <div class="grid grid-cols-2 gap-2 p-3 pt-1">
                         <div>
@@ -223,7 +283,7 @@
                         </div>
                     </div>
                 </details>
-                <details v-if="applePriceKey === 'second_table'" class="rounded-xl border border-slate-100 bg-slate-50/60" open>
+                <details v-if="applePriceKey === 'second_table'" class="rounded-xl border border-slate-100 bg-white overflow-hidden" open>
                     <summary class="cursor-pointer toolbar-trigger-field-form control-height-md px-3 text-body-sm font-bold text-slate-600 flex items-center justify-between">Layout tabel second <i class="fa-solid fa-chevron-down text-slate-300"></i></summary>
                     <div class="grid grid-cols-2 gap-2 p-3 pt-1">
                         <div>
@@ -260,7 +320,7 @@
                         </div>
                     </div>
                 </details>
-                <details class="rounded-xl border border-slate-100 bg-slate-50/60">
+                <details class="rounded-xl border border-slate-100 bg-white overflow-hidden">
                     <summary class="cursor-pointer toolbar-trigger-field-form control-height-md px-3 text-body-sm font-bold text-slate-600 flex items-center justify-between">Warna <i class="fa-solid fa-chevron-down text-slate-300"></i></summary>
                     <div class="grid grid-cols-1 gap-1.5 p-3 pt-1">
                         <template v-for="(colorCfg, idx) in [
@@ -275,12 +335,12 @@
                             { label: 'Garis tabel', key: 'tableBorderColor', ph: 'rgba(255,255,255,0.35)' },
                             { label: 'Garis seri', key: 'tableGroupLineColor', ph: 'rgba(255,255,255,0.5)' },
                         ]" :key="idx">
-                            <div class="flex items-center gap-2">
-                                <span class="type-micro text-slate-400 w-24 flex-shrink-0">{{ colorCfg.label }}</span>
+                            <div class="grid grid-cols-[7rem_minmax(0,1fr)] items-center gap-2">
+                                <span class="type-micro text-slate-400 min-w-0 truncate">{{ colorCfg.label }}</span>
                                 <button type="button"
-                                    class="select-trigger-button select-trigger-button-compact select-trigger-button-form toolbar-trigger-field-form w-full justify-start gap-2 cursor-pointer"
+                                    class="select-trigger-button select-trigger-button-compact select-trigger-button-form toolbar-trigger-field-form w-full min-w-0 justify-start gap-2 cursor-pointer"
                                     @click="openColorPicker(() => appleCfg[colorCfg.key], v => appleCfg[colorCfg.key] = v, $event)">
-                                    <span class="color-swatch-sm relative flex-shrink-0 rounded-full overflow-hidden border border-black/10">
+                                    <span class="color-swatch-sm">
                                         <span class="checkerboard-bg absolute inset-0"></span>
                                         <span class="absolute inset-0" :style="'background:' + (appleCfg[colorCfg.key] || colorCfg.ph)"></span>
                                     </span>
@@ -290,10 +350,13 @@
                         </template>
                     </div>
                 </details>
-                <div class="flex items-center gap-2">
-                    <input id="appleRowSepToggle" type="checkbox" v-model="appleCfg.rowSep" class="w-4 h-4 rounded border-slate-300 text-ppp-accent" />
-                    <label for="appleRowSepToggle" class="type-micro text-slate-400">Tampilkan separator antar baris</label>
-                </div>
+                <label for="appleRowSepToggle" class="flex items-center justify-between gap-3 rounded-xl border border-slate-100 bg-white px-3 py-2 cursor-pointer">
+                    <span class="type-micro text-slate-400">Tampilkan separator antar baris</span>
+                    <input id="appleRowSepToggle" type="checkbox" v-model="appleCfg.rowSep" class="sr-only" />
+                    <span :class="['relative inline-flex h-5 w-9 flex-shrink-0 items-center rounded-full border transition-colors duration-300 ease-out', appleCfg.rowSep ? 'border-ppp-accent bg-ppp-accent' : 'border-slate-200 bg-slate-100']">
+                        <span :class="['absolute left-0.5 top-1/2 h-4 w-4 -translate-y-1/2 rounded-full bg-white shadow-sm transition-transform duration-300 ease-out will-change-transform', appleCfg.rowSep ? 'translate-x-4' : 'translate-x-0']"></span>
+                    </span>
+                </label>
             </div>
 
             <!-- Selection summary -->
@@ -301,18 +364,6 @@
                 <p class="text-body-sm text-ppp-accent font-bold">{{ appleSelectedModels.length }} model dari {{ appleCategory }}</p>
                 <p class="text-overline text-slate-400 mt-0.5">{{ appleSelectedModels.slice(0,3).join(', ') }}{{ appleSelectedModels.length > 3 ? ` +${appleSelectedModels.length - 3} lagi` : '' }}</p>
             </div>
-            <div v-else class="px-3 py-2 bg-slate-50 rounded-xl">
-                <p class="text-body-sm text-slate-400">Pilih model dari panel kiri.</p>
-            </div>
-
-            <!-- Generate button -->
-            <button @click="generateAppleCatalog"
-                :disabled="appleGenerating || !appleSelectedModels.length || !appleSelectedTemplateId"
-                class="primary-cta-button primary-cta-button--info w-full">
-                <i :class="['fa-solid', appleGenerating ? 'fa-spinner fa-spin' : 'fa-wand-magic-sparkles']"></i>
-                <span>{{ appleGenerating ? 'Generating...' : 'Generate Katalog' }}</span>
-            </button>
-
             <!-- Preview images -->
             <div v-if="applePreviewImages.length" class="section-card p-4 space-y-3">
                 <div class="flex items-center justify-between">
@@ -333,17 +384,18 @@
                     </div>
                 </div>
             </div>
+            </div>
         </div>
     </div>
 
     <teleport to="body">
         <div v-if="applePreviewModalOpen" class="fixed inset-0 z-[9400] bg-slate-950/80 flex flex-col" @click="closeApplePreviewModal">
-            <div class="shrink-0 px-4 py-3 flex items-center justify-between gap-3 bg-white/95 border-b border-slate-200" @click.stop>
-                <div>
+            <div class="shrink-0 px-3 md:px-4 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 bg-white/95 border-b border-slate-200" @click.stop>
+                <div class="min-w-0">
                     <h3 class="type-label font-bold text-slate-800">Preview Katalog Apple</h3>
-                    <p class="text-body-sm text-slate-500">Halaman {{ applePreviewModalIndex + 1 }} / {{ applePreviewImages.length }} · Zoom {{ Math.round(applePreviewZoom * 100) }}%</p>
+                    <p class="text-body-sm text-slate-500 truncate">Halaman {{ applePreviewModalIndex + 1 }} / {{ applePreviewImages.length }} · Zoom {{ Math.round(applePreviewZoom * 100) }}%</p>
                 </div>
-                <div class="flex items-center gap-1.5">
+                <div class="flex items-center gap-1.5 flex-wrap">
                     <button @click="applePreviewNav(-1)" class="icon-utility-button icon-utility-bordered"><i class="fa-solid fa-chevron-left"></i></button>
                     <button @click="applePreviewZoomBy(0.85)" class="icon-utility-button icon-utility-bordered"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
                     <button @click="applePreviewZoom = 1" class="toolbar-segment-button border-slate-200 text-slate-500 bg-white">100%</button>
@@ -353,10 +405,10 @@
                     <button @click="closeApplePreviewModal" class="icon-utility-button icon-utility-bordered"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
-            <div class="flex-1 overflow-auto p-6" @click.stop>
-                <div class="min-w-full min-h-full flex items-start justify-center">
+            <div class="flex-1 overflow-auto p-2 md:p-6" @click.stop>
+                <div class="min-w-full min-h-full flex items-start md:items-start justify-center">
                     <img :src="applePreviewImages[applePreviewModalIndex]"
-                        class="preview-zoom-image rounded-xl shadow-2xl bg-white transition-transform origin-top"
+                        class="preview-zoom-image apple-preview-modal-image rounded-xl shadow-2xl bg-white transition-transform origin-top"
                         :style="`transform:scale(${applePreviewZoom})`" />
                 </div>
             </div>

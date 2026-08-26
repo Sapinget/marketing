@@ -28,8 +28,8 @@
         </div>
     </div>
 
-    <div class="bg-white radius-dialog border border-slate-100 p-4 md:p-8">
-        <div class="md:hidden space-y-2">
+    <div class="bg-white radius-dialog border border-slate-100 p-4 sm:p-5 lg:p-8">
+        <div class="lg:hidden space-y-2">
             <template v-for="day in getCalendarDaysInMonth(calendarActiveDate)" :key="'mlist-'+day">
                 <div @click="getCalendarItems(day).length > 0 && openCalendarDayModal(day)"
                     :class="['flex items-center gap-3 p-2.5 rounded-xl border transition-all', isTodayCalendar(day) ? 'bg-ppp-accent/5 border-ppp-accent/30' : 'bg-white border-slate-100', getCalendarItems(day).length > 0 ? 'cursor-pointer active:scale-[0.99]' : 'opacity-55']">
@@ -57,19 +57,19 @@
             </template>
         </div>
 
-        <div class="hidden md:block">
+        <div class="hidden lg:block">
             <div class="grid grid-cols-7 mb-4">
                 <div v-for="day in ['Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab']" :key="day"
                     class="text-center text-body-sm font-bold text-slate-400 uppercase py-2">
                     {{ day }}</div>
             </div>
-            <div class="grid grid-cols-7 gap-4">
+            <div class="grid grid-cols-7 gap-3 xl:gap-4">
                 <div v-for="empty in getCalendarEmptyDays(calendarActiveDate)" :key="'empty-'+empty"
-                    class="min-h-[140px] bg-slate-50/50 rounded-2xl border border-dashed border-slate-100">
+                    class="min-h-[120px] xl:min-h-[140px] bg-slate-50/50 rounded-2xl border border-dashed border-slate-100">
                 </div>
                 <div v-for="day in getCalendarDaysInMonth(calendarActiveDate)" :key="day"
                     @click="openCalendarDayModal(day)"
-                    :class="['min-h-[140px] rounded-2xl border p-3 transition-all group relative cursor-pointer', isTodayCalendar(day) ? 'bg-ppp-accent/5 border-ppp-accent/20' : 'bg-white border-slate-100 hover:border-ppp-accent/30 ']">
+                    :class="['min-h-[120px] xl:min-h-[140px] rounded-2xl border p-2.5 xl:p-3 transition-all group relative cursor-pointer', isTodayCalendar(day) ? 'bg-ppp-accent/5 border-ppp-accent/20' : 'bg-white border-slate-100 hover:border-ppp-accent/30 ']">
                     <div class="flex items-center justify-between mb-2">
                         <span
                             :class="['text-body font-bold', isTodayCalendar(day) ? 'text-ppp-accent' : 'text-slate-400 group-hover:text-slate-600']">{{ day }}</span>

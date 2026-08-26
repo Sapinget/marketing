@@ -200,7 +200,7 @@
                                         {{ formatCurrency(row.Selisih) }}</td>
                                     <td class="px-4 py-3 text-center">
                                         <span :class="getStatusColor(row.Status)"
-                                            class="inline-flex items-center px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase whitespace-nowrap">{{ row.Status }}</span>
+                                            class="status-badge-fixed inline-flex items-center px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase whitespace-nowrap">{{ row.Status }}</span>
                                     </td>
                                 </tr>
                             </tbody>

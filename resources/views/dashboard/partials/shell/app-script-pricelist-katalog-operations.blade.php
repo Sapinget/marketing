@@ -4,6 +4,7 @@
                 const pricelistSyncing = ref(false);
                 const pricelistSearch = ref('');
                 const pricelistSheetFilter = ref('all');
+                const pricelistView = ref(localStorage.getItem('ppp_pricelist_view') || 'card');
                 const pricelistPage = ref(1);
                 const pricelistPageSize = 20;
                 const catalogTemplates = ref([]);
@@ -99,6 +100,7 @@
 
                 watch(catalogSelectedTemplateId, (v) => localStorage.setItem('ppp_pricelist_template_id', v || ''));
                 watch(catalogSelectedSheet, (v) => localStorage.setItem('ppp_pricelist_selected_sheet', v || ''));
+                watch(pricelistView, (v) => localStorage.setItem('ppp_pricelist_view', v || 'table'));
                 watch(catalogPriceKey, (v) => localStorage.setItem('ppp_pricelist_price_key', v || ''));
                 watch(catalogBrandPriceKeys, (v) => localStorage.setItem('ppp_pricelist_brand_price_keys', JSON.stringify(v || {})), { deep: true });
                 watch(catalogOutputMode, (v) => localStorage.setItem('ppp_pricelist_output_mode', v || 'list'));
@@ -266,6 +268,8 @@
 
                 const pricelistTotalPages = computed(() => Math.max(1, Math.ceil(filteredPricelistProducts.value.length / pricelistPageSize)));
                 const pagedPricelistProducts = computed(() => filteredPricelistProducts.value.slice((pricelistPage.value - 1) * pricelistPageSize, pricelistPage.value * pricelistPageSize));
+                const pricelistCardGroups = computed(() => catalogAndroidCardGroups(filteredPricelistProducts.value));
+                const pricelistCardVariantLabel = (row) => [row.ram, row.storage, row.warna].filter(Boolean).join(' · ') || row.kategori || row.source_sheet || 'Varian';
 
                 const catalogA4AutoTemplate = () => ({
                     ID: 'a4_auto',

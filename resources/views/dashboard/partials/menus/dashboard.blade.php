@@ -81,7 +81,7 @@
                                             <div class="type-body-sm text-slate-400 mt-0.5">{{ item.Format_Konten }} | {{ item.Editor }}<span v-if="item.TalentList && item.TalentList.length"> | Talent: {{ item.TalentList.join(', ') }}</span></div>
                                         </div>
                                         <span
-                                            :class="['inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold whitespace-nowrap', item.Status === 'PUBLISHED' ? 'bg-success text-light' : item.Status === 'EDITING' ? 'bg-amber text-light' : 'bg-amber text-light']">{{ item.Status }}</span>
+                                            :class="['status-badge-fixed inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold whitespace-nowrap', item.Status === 'PUBLISHED' ? 'bg-success text-light' : item.Status === 'EDITING' ? 'bg-amber text-light' : 'bg-amber text-light']">{{ item.Status }}</span>
                                     </div>
                                 </div>
                             </section>

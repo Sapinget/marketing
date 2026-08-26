@@ -125,7 +125,7 @@
                 </div>
             </div>
             <div class="overflow-x-auto">
-            <table class="w-full text-body-sm text-left border-collapse">
+            <table class="w-full min-w-[1180px] table-fixed text-body-sm text-left border-collapse">
                 <thead>
                     <tr class="table-header-row">
                         <th class="table-header-cell table-header-index table-freeze-index">

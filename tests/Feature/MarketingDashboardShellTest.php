@@ -4291,7 +4291,7 @@ HTML, $html);
         $this->assertHtmlContains('Katalog Pricelist', $html);
         $this->assertHtmlContains("switchTab('pricelist_katalog')", $sidebarNavAdminPartial);
         $this->assertHtmlContains("activeTab === 'pricelist_katalog'", $html);
-        $this->assertHtmlContains("pricelist_katalog: { label: 'Katalog Pricelist', category: null }", $html);
+        $this->assertHtmlContains("pricelist_katalog: { label: 'Katalog Android', category: null }", $html);
         $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-pricelist-katalog-operations')", $assemblyPartial);
         $this->assertHtmlContains('getPricelistProducts()', $html);
         $this->assertHtmlContains('syncPricelistProducts()', $html);
@@ -4331,6 +4331,36 @@ HTML, $html);
         $this->assertHtmlContains('catalogTemplateForm.layout_config.priceFontSize', $html);
     }
 
+    public function test_pricelist_catalog_data_table_supports_card_view(): void
+    {
+        $html = $this->renderDashboardHtmlWithShellCss();
+        $pricelistPartial = file_get_contents(resource_path('views/dashboard/partials/menus/pricelist-katalog.blade.php'));
+        $operationsPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-pricelist-katalog-operations.blade.php'));
+
+        $this->assertIsString($pricelistPartial);
+        $this->assertIsString($operationsPartial);
+
+        $this->assertHtmlContains("const pricelistView = ref(localStorage.getItem('ppp_pricelist_view') || 'card');", $operationsPartial);
+        $this->assertHtmlContains('const pricelistCardGroups = computed(() => catalogAndroidCardGroups(filteredPricelistProducts.value));', $operationsPartial);
+
+        $this->assertHtmlContains("@click=\"pricelistView = 'card'\"", $pricelistPartial);
+        $this->assertHtmlContains("@click=\"pricelistView = 'table'\"", $pricelistPartial);
+        $this->assertHtmlContains('v-if="pricelistView === \'table\'"', $pricelistPartial);
+        $this->assertHtmlContains('v-for="group in pricelistCardGroups"', $pricelistPartial);
+        $this->assertHtmlContains('androidProductImage(group.variants[0])', $pricelistPartial);
+        $this->assertHtmlContains('pricelistCardVariantLabel(row)', $pricelistPartial);
+        $this->assertHtmlContains('xl:h-[calc(100dvh-7rem)]', $pricelistPartial);
+        $this->assertHtmlContains('section-card flex flex-col min-h-[420px] md:min-h-[520px] xl:min-h-0 overflow-hidden', $pricelistPartial);
+        $this->assertHtmlContains('v-else class="flex-1 min-h-0 overflow-y-auto p-3 md:p-4"', $pricelistPartial);
+        $this->assertHtmlContains('v-if="pricelistView === \'table\'" class="table-pager-bar flex-shrink-0"', $pricelistPartial);
+        $this->assertHtmlContains('max-h-[calc(100vh-7rem)] w-auto h-auto object-contain', $pricelistPartial);
+        $this->assertHtmlContains('origin-center', $pricelistPartial);
+
+        $this->assertHtmlContains('pricelistView,', $html);
+        $this->assertHtmlContains('pricelistCardGroups,', $html);
+        $this->assertHtmlContains('pricelistCardVariantLabel,', $html);
+    }
+
     public function test_pricelist_catalog_output_controls_use_consistent_primitives(): void
     {
         $html = $this->renderDashboardHtmlWithShellCss();
@@ -4342,11 +4372,272 @@ HTML, $html);
         $this->assertHtmlContains('.catalog-segment-group {', $html);
         $this->assertHtmlContains('.catalog-segment-group {'."\n".'            box-sizing: border-box;'."\n".'            height: 36px;', $html);
         $this->assertHtmlContains('border-radius: 12px;', $html);
-        $this->assertHtmlContains('.catalog-segment-button {'."\n".'            min-width: 0;'."\n".'            min-height: 28px;'."\n".'            border-radius: 8px;', $html);
+        $this->assertHtmlContains('.catalog-segment-button {'."\n".'            min-width: 0;'."\n".'            min-height: 28px;', $html);
+        $this->assertHtmlContains('border-radius: calc(var(--radius-lg) - 4px);', $html);
         $this->assertHtmlContains('.catalog-segment-button.catalog-segment-button--active {', $html);
         $this->assertHtmlContains("catalogOutputMode === 'list' ? 'catalog-segment-button--active' : ''", $html);
         $this->assertHtmlContains("catalogPriceKey === opt.key ? 'catalog-segment-button--active' : ''", $html);
         $this->assertHtmlNotContains("catalogOutputMode === 'list' ? 'bg-ppp-accent text-white border-ppp-accent' : 'bg-white text-slate-500 border-slate-200'", $html);
         $this->assertHtmlNotContains("catalogPriceKey === opt.key ? 'bg-ppp-accent text-white border-ppp-accent' : 'bg-white text-slate-500 border-slate-200'", $html);
+    }
+
+    public function test_apple_catalog_table_view_allows_horizontal_scroll(): void
+    {
+        $html = $this->renderDashboardHtmlWithShellCss();
+
+        $this->assertHtmlContains('apple-table-scroll', $html);
+        $this->assertHtmlContains('apple-catalog-table', $html);
+        $this->assertHtmlContains('.apple-table-scroll {', $html);
+        $this->assertHtmlContains('overflow-x: auto;', $html);
+        $this->assertHtmlContains('.apple-catalog-table {', $html);
+        $this->assertHtmlContains('width: max-content;', $html);
+        $this->assertHtmlContains('.apple-catalog-table .apple-price-cell {', $html);
+        $this->assertHtmlContains('min-width: 112px;', $html);
+    }
+
+    public function test_apple_catalog_table_view_follows_primary_price_filter(): void
+    {
+        $html = $this->renderDashboardHtmlWithShellCss();
+
+        $this->assertHtmlContains('const appleTablePriceColumns = computed(() => {', $html);
+        $this->assertHtmlContains("if (applePriceKey.value === 'second_table')", $html);
+        $this->assertHtmlContains('const appleTablePriceValue = (row, column) => {', $html);
+        $this->assertHtmlContains('v-for="column in appleTablePriceColumns"', $html);
+        $this->assertHtmlContains('{{ column.label }}', $html);
+        $this->assertHtmlContains('formatApplePrice(appleTablePriceValue(row, column))', $html);
+        $this->assertHtmlNotContains('v-for="label in appleKondisiLabels"', $html);
+    }
+
+    public function test_apple_catalog_table_selection_matches_card_selection_order(): void
+    {
+        $html = $this->renderDashboardHtmlWithShellCss();
+
+        $this->assertHtmlContains('const appleIsVariantSelected = (model, vKey) => {', $html);
+        $this->assertHtmlContains('const appleSelectedModelOrder = (model) => {', $html);
+        $this->assertHtmlContains('if (!appleSelectedModels.value.includes(model)) {', $html);
+        $this->assertHtmlContains('appleSelectedModels.value = [...appleSelectedModels.value, model];', $html);
+        $this->assertHtmlContains("appleIsVariantSelected(row.model, appleVariantKey(row)) ? 'bg-ppp-accent/5' : ''", $html);
+        $this->assertHtmlContains('v-if="appleIsVariantSelected(row.model, appleVariantKey(row))"', $html);
+        $this->assertHtmlContains('{{ appleSelectedModelOrder(row.model) }}', $html);
+        $this->assertHtmlContains('appleIsVariantSelected,', $html);
+        $this->assertHtmlContains('appleSelectedModelOrder,', $html);
+        $this->assertHtmlNotContains("appleSelectedModels.includes(row.model) ? 'bg-ppp-accent/5' : ''", $html);
+    }
+
+    public function test_apple_catalog_table_select_column_shows_empty_bullet(): void
+    {
+        $html = $this->renderDashboardHtmlWithShellCss();
+
+        $this->assertHtmlContains('.apple-selection-dot {', $html);
+        $this->assertHtmlContains('width: 1.25rem;', $html);
+        $this->assertHtmlContains('height: 1.25rem;', $html);
+        $this->assertHtmlContains('box-sizing: border-box;', $html);
+        $this->assertHtmlContains('.apple-selection-dot--active {', $html);
+        $this->assertHtmlContains('class="apple-selection-dot apple-selection-dot--active"', $html);
+        $this->assertHtmlContains('class="apple-selection-dot"', $html);
+        $this->assertHtmlContains('<div v-else', $html);
+    }
+
+    public function test_compact_color_swatches_use_consistent_token_shape(): void
+    {
+        $html = $this->renderDashboardHtmlWithShellCss();
+
+        $this->assertHtmlContains('.color-swatch-sm {', $html);
+        $this->assertHtmlContains('width: 18px;', $html);
+        $this->assertHtmlContains('height: 18px;', $html);
+        $this->assertHtmlContains('border-radius: 6px;', $html);
+        $this->assertHtmlContains('box-sizing: border-box;', $html);
+        $this->assertHtmlContains('overflow: hidden;', $html);
+        $this->assertHtmlContains('class="color-swatch-sm"', $html);
+        $this->assertHtmlNotContains('color-swatch-sm relative flex-shrink-0 rounded-full overflow-hidden border border-black/10', $html);
+    }
+
+    public function test_apple_catalog_output_controls_stay_outside_layout_scroll(): void
+    {
+        $html = $this->renderDashboardHtmlWithShellCss();
+        $appleCatalogPartial = file_get_contents(resource_path('views/dashboard/partials/menus/apple-katalog.blade.php'));
+
+        $this->assertHtmlContains('class="apple-config-panel flex flex-col gap-3 min-h-0 xl:overflow-hidden"', $html);
+        $this->assertHtmlContains('class="section-card p-4 catalog-control-stack flex-shrink-0"', $html);
+        $this->assertHtmlContains('class="section-card apple-layout-card flex-1 min-h-0 overflow-hidden flex flex-col"', $html);
+        $this->assertHtmlContains('class="apple-layout-card__header flex-shrink-0 p-4 pb-3"', $html);
+        $this->assertHtmlContains('class="apple-layout-card__body flex-1 min-h-0 overflow-y-auto custom-scrollbar px-4 pb-4 space-y-3"', $html);
+        $outputPosition = strpos($appleCatalogPartial, 'Pengaturan Output');
+        $layoutCardPosition = strpos($appleCatalogPartial, 'apple-layout-card');
+        $scrollPosition = strpos($appleCatalogPartial, 'apple-layout-card__body');
+        $layoutPosition = strpos($appleCatalogPartial, '>Layout<');
+
+        $this->assertNotFalse($outputPosition);
+        $this->assertNotFalse($layoutCardPosition);
+        $this->assertNotFalse($scrollPosition);
+        $this->assertNotFalse($layoutPosition);
+        $this->assertLessThan($layoutCardPosition, $outputPosition);
+        $this->assertLessThan($scrollPosition, $layoutPosition);
+        $this->assertIsString($appleCatalogPartial);
+        $this->assertHtmlNotContains('class="flex flex-col gap-3 min-h-0 overflow-y-auto pr-0.5"', $appleCatalogPartial);
+        $this->assertHtmlNotContains('class="apple-config-scroll flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-0.5 space-y-3"', $appleCatalogPartial);
+    }
+
+    public function test_img_repo_uses_dashboard_ui_primitives(): void
+    {
+        $html = $this->renderDashboardHtmlWithShellCss();
+        $imgRepoPartial = file_get_contents(resource_path('views/dashboard/partials/menus/img-repo.blade.php'));
+
+        $this->assertIsString($imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-shell section-card flex flex-col md:flex-row overflow-hidden"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-sidebar shrink-0 flex flex-col gap-1 min-h-0"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-topbar flex items-center gap-3 shrink-0"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-content flex-1 min-h-0 overflow-auto custom-scrollbar"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-folder-card img-repo-folder-card--compact flex items-center', $imgRepoPartial);
+        $this->assertHtmlContains(":class=\"['img-repo-file-card", $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-detail-panel shrink-0 flex flex-col min-h-0"', $imgRepoPartial);
+        $this->assertHtmlContains('const imgRepoVisibleItems = (items) => {', $html);
+        $this->assertHtmlContains("return (items || []).filter((item) => item?.name !== '.DS_Store');", $html);
+        $this->assertHtmlContains('imgRepoItems.value = imgRepoVisibleItems(json.items);', $html);
+        $this->assertHtmlContains("const IMG_REPO_PATH_STORAGE_KEY = 'ppp_img_repo_path';", $html);
+        $this->assertHtmlContains('const imgRepoInitialPath = () => {', $html);
+        $this->assertHtmlContains('return localStorage.getItem(IMG_REPO_PATH_STORAGE_KEY) || \'\';', $html);
+        $this->assertHtmlContains('const imgRepoPath        = ref(imgRepoInitialPath());', $html);
+        $this->assertHtmlContains('localStorage.setItem(IMG_REPO_PATH_STORAGE_KEY, json.path || \'\');', $html);
+        $this->assertHtmlContains("imgRepoBrowse(imgRepoPath.value || '');", $html);
+        $this->assertHtmlContains('function imgRepoOpenContext(event, item) {', $html);
+        $this->assertHtmlContains('imgRepoContextMenu.value = { item, x, y };', $html);
+        $openContextPosition = strpos($html, 'function imgRepoOpenContext(event, item) {');
+        $contextMenuPosition = strpos($html, 'imgRepoContextMenu.value = { item, x, y };');
+        $contextSelectionPosition = strpos($html, 'imgRepoSelected.value = item;', $openContextPosition ?: 0);
+
+        $this->assertNotFalse($openContextPosition);
+        $this->assertNotFalse($contextMenuPosition);
+        $this->assertTrue($contextSelectionPosition === false || $contextSelectionPosition > $contextMenuPosition);
+        $this->assertHtmlContains('.img-repo-sidebar {', $html);
+        $this->assertHtmlContains('.img-repo-create-button {', $html);
+        $this->assertHtmlContains('.img-repo-create-menu {', $html);
+        $this->assertHtmlContains('.img-repo-create-menu__item {', $html);
+        $this->assertHtmlContains('.img-repo-sidebar-section {', $html);
+        $this->assertHtmlContains('.img-repo-sidebar-nav {', $html);
+        $this->assertHtmlContains('.img-repo-sidebar-nav--active {', $html);
+        $this->assertHtmlContains('.img-repo-shell {'."\n".'            position: relative;'."\n".'            margin: -0.75rem -0.75rem 0;'."\n".'            height: calc(100dvh - 7rem);'."\n".'            min-height: 0;', $html);
+        $this->assertHtmlNotContains('min-height: calc(100dvh - 64px);', $html);
+        $this->assertHtmlContains('.img-repo-sidebar {'."\n".'            width: 14rem;', $html);
+        $this->assertHtmlContains('.img-repo-detail-panel {', $html);
+        $this->assertHtmlContains('.img-repo-detail-header {', $html);
+        $this->assertHtmlContains('.img-repo-detail-header {'."\n".'            display: flex;'."\n".'            align-items: center;'."\n".'            justify-content: space-between;'."\n".'            gap: 0.75rem;'."\n".'            padding: 0.75rem 1.25rem;', $html);
+        $this->assertHtmlContains('.img-repo-toolbar-toggle {', $html);
+        $this->assertHtmlContains('.img-repo-toggle-button {', $html);
+        $this->assertHtmlContains('.img-repo-toggle-button--active {', $html);
+        $this->assertHtmlContains('.img-repo-breadcrumb {', $html);
+        $this->assertHtmlContains('.img-repo-breadcrumb__button {', $html);
+        $this->assertHtmlContains('.img-repo-breadcrumb__separator {', $html);
+        $this->assertHtmlContains('.img-repo-breadcrumb__current {', $html);
+        $this->assertHtmlContains('.img-repo-context-menu {', $html);
+        $this->assertHtmlContains('.img-repo-context-menu__item {', $html);
+        $this->assertHtmlContains('.img-repo-context-menu__item--danger {', $html);
+        $this->assertHtmlContains('.img-repo-context-menu__separator {', $html);
+        $this->assertHtmlContains('.img-repo-detail-actions {', $html);
+        $this->assertHtmlContains('.img-repo-detail-action {', $html);
+        $this->assertHtmlContains('.img-repo-detail-action--primary {', $html);
+        $this->assertHtmlContains('.img-repo-detail-action--danger {', $html);
+        $this->assertHtmlContains('.img-repo-folder-card,', $html);
+        $this->assertHtmlContains('.img-repo-file-card {', $html);
+        $this->assertHtmlContains('.img-repo-file-card--active {', $html);
+        $this->assertHtmlContains('.img-repo-file-card__media {', $html);
+        $this->assertHtmlContains('.img-repo-file-card__image {', $html);
+        $this->assertHtmlContains('.img-repo-file-card__menu-button {', $html);
+        $this->assertHtmlContains('.img-repo-file-card__meta {', $html);
+        $this->assertHtmlContains('.img-repo-file-card__name {', $html);
+        $this->assertHtmlContains('.img-repo-file-card__rename-body {', $html);
+        $this->assertHtmlContains('.img-repo-file-card__rename-actions {', $html);
+        $this->assertHtmlContains('.img-repo-detail-panel {'."\n".'            position: absolute;', $html);
+        $this->assertHtmlContains('right: 0;', $html);
+        $this->assertHtmlContains('top: 0;', $html);
+        $this->assertHtmlContains('bottom: 0;', $html);
+        $this->assertHtmlContains('.img-repo-grid--files,'."\n".'        .img-repo-grid--loading {'."\n".'            grid-template-columns: repeat(5, minmax(0, 1fr));', $html);
+        $this->assertHtmlContains('.img-repo-grid--folders {'."\n".'            grid-template-columns: repeat(auto-fill, minmax(176px, 1fr));', $html);
+        $this->assertHtmlContains('.img-repo-folder-card--compact {', $html);
+        $this->assertHtmlContains('min-height: 2.75rem;', $html);
+        $this->assertHtmlContains('padding: 0.625rem 0.75rem;', $html);
+        $this->assertHtmlNotContains('grid-template-columns: repeat(auto-fill, 160px);', $html);
+        $this->assertHtmlNotContains('grid-template-columns: repeat(auto-fill, 148px);', $html);
+        $this->assertHtmlNotContains('grid-template-columns: repeat(4, minmax(0, 1fr));', $html);
+        $this->assertHtmlNotContains('grid-template-columns: repeat(5, var(--img-repo-file-card-width));', $html);
+        $this->assertHtmlNotContains('grid-template-columns: repeat(4, var(--img-repo-file-card-width));', $html);
+        $this->assertHtmlNotContains('grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));', $html);
+        $this->assertHtmlNotContains('grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));', $html);
+        $this->assertHtmlNotContains('grid-template-columns: repeat(auto-fit, minmax(176px, 1fr));', $html);
+        $this->assertHtmlNotContains('grid-template-columns: repeat(auto-fill, 176px);', $html);
+        $this->assertHtmlNotContains('grid-template-columns: repeat(auto-fill, 220px);', $html);
+        $this->assertHtmlContains('border-radius: var(--radius-lg);', $html);
+        $this->assertHtmlContains("imgRepoViewMode==='grid' ? 'img-repo-toggle-button--active' : ''", $imgRepoPartial);
+        $this->assertHtmlContains("imgRepoViewMode==='list' ? 'img-repo-toggle-button--active' : ''", $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-breadcrumb flex-1 min-w-0"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-breadcrumb__button"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-breadcrumb__separator fa-solid fa-chevron-right"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-breadcrumb__current"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-context-menu fixed"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-context-menu__item"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-context-menu__item img-repo-context-menu__item--danger"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-detail-actions"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-detail-header"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-detail-action"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-detail-action img-repo-detail-action--danger"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-file-card__media"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-file-card__image"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-file-card__menu-button"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-file-card__meta"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-file-card__name"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-file-card__rename-body"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-file-card__rename-actions"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-grid img-repo-grid--files"', $imgRepoPartial);
+        $this->assertHtmlNotContains('img-repo-grid--files-with-detail', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-create-button"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-create-menu"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-create-menu__item"', $imgRepoPartial);
+        $this->assertHtmlContains('class="img-repo-sidebar-section"', $imgRepoPartial);
+        $this->assertHtmlContains("class=\"['img-repo-sidebar-nav", $imgRepoPartial);
+        $this->assertHtmlContains("imgRepoPath === '' ? 'img-repo-sidebar-nav--active' : ''", $imgRepoPartial);
+        $this->assertHtmlContains("imgRepoPath === 'APPLE' || imgRepoPath.startsWith('APPLE/') ? 'img-repo-sidebar-nav--active' : ''", $imgRepoPartial);
+        $folderSectionPosition = strpos($imgRepoPartial, '<div class="img-repo-sidebar-section">');
+        $repoImagePosition = strpos($imgRepoPartial, '<span>Menu Utama</span>');
+        $folderLabelPosition = strpos($imgRepoPartial, 'FOLDER UTAMA');
+
+        $this->assertNotFalse($folderSectionPosition);
+        $this->assertNotFalse($repoImagePosition);
+        $this->assertNotFalse($folderLabelPosition);
+        $this->assertGreaterThan($folderSectionPosition, $repoImagePosition);
+        $this->assertGreaterThan($folderLabelPosition, $repoImagePosition);
+        $this->assertHtmlContains('<span>Apple</span>', $imgRepoPartial);
+        $this->assertHtmlContains('<span>Android</span>', $imgRepoPartial);
+        $this->assertHtmlNotContains('<span>Repo Gambar</span>', $imgRepoPartial);
+        $this->assertHtmlNotContains('<span>APPLE</span>', $imgRepoPartial);
+        $this->assertHtmlNotContains('<span>ANDROID</span>', $imgRepoPartial);
+        $this->assertHtmlNotContains('resources/img', $imgRepoPartial);
+        $this->assertHtmlNotContains('class="mt-auto px-3 pt-4 border-t border-slate-100"', $imgRepoPartial);
+        $this->assertHtmlNotContains('{{-- Nav items --}}', $imgRepoPartial);
+        $this->assertHtmlContains('<span>Hapus Item</span>', $imgRepoPartial);
+        $this->assertHtmlNotContains("['icon-toolbar-button transition-colors', imgRepoViewMode==='grid'", $imgRepoPartial);
+        $this->assertHtmlNotContains("['icon-toolbar-button transition-colors', imgRepoViewMode==='list'", $imgRepoPartial);
+        $this->assertHtmlNotContains('class="flex items-center gap-0.5 flex-1 min-w-0 text-body-sm"', $imgRepoPartial);
+        $this->assertHtmlNotContains('class="flex items-center justify-between px-4 pt-4 pb-3 border-b border-slate-200"', $imgRepoPartial);
+        $this->assertHtmlNotContains('class="aspect-[4/3] bg-slate-100 overflow-hidden relative"', $imgRepoPartial);
+        $this->assertHtmlNotContains('class="w-full h-full object-contain"', $imgRepoPartial);
+        $this->assertHtmlNotContains('class="absolute top-1.5 right-1.5 w-7 h-7 rounded-full flex items-center justify-center bg-white/90 shadow-sm text-slate-500 opacity-0 group-hover:opacity-100 hover:bg-white transition-all"', $imgRepoPartial);
+        $this->assertHtmlNotContains('class="px-2 py-1.5 flex items-center gap-1"', $imgRepoPartial);
+        $this->assertHtmlNotContains('class="text-xs text-slate-700 truncate"', $imgRepoPartial);
+        $this->assertHtmlNotContains('toolbar-segment-button border-transparent text-slate-500 hover:bg-slate-100 hover:text-slate-800 transition-colors shrink-0 font-medium', $imgRepoPartial);
+        $this->assertHtmlNotContains('class="text-slate-300 text-sm shrink-0">/</span>', $imgRepoPartial);
+        $this->assertHtmlNotContains('img-repo-breadcrumb-current px-2 py-1 rounded-lg text-slate-800 font-semibold shrink-0 truncate', $imgRepoPartial);
+        $this->assertHtmlNotContains('.img-repo-breadcrumb-current {', $html);
+        $this->assertHtmlNotContains('class="fixed z-50 bg-white border border-slate-200 rounded-xl shadow-xl py-1.5 w-44 overflow-hidden"', $imgRepoPartial);
+        $this->assertHtmlNotContains('class="px-4 py-3 border-t border-slate-200 flex flex-col gap-2"', $imgRepoPartial);
+        $this->assertHtmlNotContains('class="menu-action-button rounded-xl bg-white border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors font-medium"', $imgRepoPartial);
+        $this->assertHtmlNotContains('class="menu-action-button rounded-xl bg-white border-red-200 text-red-600 hover:bg-red-50 transition-colors font-medium"', $imgRepoPartial);
+        $this->assertHtmlNotContains('menu-action-button img-repo-nav-button shadow-sm', $imgRepoPartial);
+        $this->assertHtmlNotContains('menu-action-button img-repo-nav-button', $imgRepoPartial);
+        $this->assertHtmlNotContains('class="menu-action-button border-transparent text-slate-700 hover:bg-slate-50 transition-colors">'."\n".'            <i class="fa-solid fa-pencil text-slate-400 w-4 text-center"></i>'."\n".'            <span>Rename</span>'."\n".'        </button>'."\n".'        <div class="my-1 border-t border-slate-100"></div>', $imgRepoPartial);
+        $this->assertHtmlNotContains('bg-blue-50', $imgRepoPartial);
+        $this->assertHtmlNotContains('bg-blue-100', $imgRepoPartial);
+        $this->assertHtmlNotContains('rounded-2xl', $imgRepoPartial);
+        $this->assertHtmlNotContains('.img-repo-sidebar {'."\n".'            width: 14rem;'."\n".'            padding: 1rem 0.75rem 1.25rem;'."\n".'            border-right: 1px solid var(--ppp-line);'."\n".'            background: rgb(248 250 252);', $html);
+        $this->assertHtmlNotContains('.img-repo-detail-panel {'."\n".'            width: 18rem;'."\n".'            border-left: 1px solid var(--ppp-line);'."\n".'            background: rgb(248 250 252);', $html);
     }
 }

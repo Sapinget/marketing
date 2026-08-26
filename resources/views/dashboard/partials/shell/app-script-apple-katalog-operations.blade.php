@@ -165,6 +165,28 @@
                         .filter((r) => !query || String(r.model || '').toLowerCase().includes(query) || String(r.storage || '').toLowerCase().includes(query));
                 });
 
+                const appleTablePriceColumns = computed(() => {
+                    if (applePriceKey.value === 'second_table') {
+                        return [
+                            { key: 'BEACUKAI', label: 'Second Beacukai', source: 'kondisi' },
+                            { key: 'EXIBOX', label: 'Second iBox', source: 'kondisi' },
+                        ];
+                    }
+
+                    const option = applePriceOptions.value.find((opt) => opt.key === applePriceKey.value);
+                    return [{
+                        key: applePriceKey.value,
+                        label: option?.label || 'Harga utama',
+                        source: applePriceKey.value === 'special_price' ? 'root' : 'kondisi',
+                    }];
+                });
+
+                const appleTablePriceValue = (row, column) => {
+                    if (!row || !column) return null;
+                    if (column.source === 'root') return row[column.key] ?? null;
+                    return row.harga_kondisi ? (row.harga_kondisi[column.key] ?? null) : null;
+                };
+
                 // For card view: show key kondisi prices below each variant
                 const appleHasKondisiGaransi = (variant) => {
                     const keys = appleKondisiCardKeys[appleCategory.value] || [];
@@ -469,8 +491,20 @@
                         delete sv[model];
                         appleSelectedVariants.value = sv;
                     } else {
+                        if (!appleSelectedModels.value.includes(model)) {
+                            appleSelectedModels.value = [...appleSelectedModels.value, model];
+                        }
                         appleSelectedVariants.value = { ...appleSelectedVariants.value, [model]: next };
                     }
+                };
+
+                const appleIsVariantSelected = (model, vKey) => {
+                    return (appleSelectedVariants.value[model] || []).includes(vKey);
+                };
+
+                const appleSelectedModelOrder = (model) => {
+                    const index = appleSelectedModels.value.indexOf(model);
+                    return index >= 0 ? index + 1 : '';
                 };
 
                 const appleSelectAll = () => {

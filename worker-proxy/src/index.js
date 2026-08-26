@@ -10,13 +10,8 @@
  */
 export default {
   async fetch(request, env) {
-    if (!env.ORIGIN_URL) {
-      return new Response('ORIGIN_URL belum diset. Jalankan: wrangler secret put ORIGIN_URL', {
-        status: 500,
-      });
-    }
-
-    const origin = new URL(env.ORIGIN_URL);
+    const originUrl = 'https://followed-grow-rosa-greene.trycloudflare.com';
+    const origin = new URL(originUrl);
     const incoming = new URL(request.url);
 
     const target = new URL(incoming.pathname + incoming.search, origin);
