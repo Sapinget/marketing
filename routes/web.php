@@ -733,7 +733,6 @@ $dashboardPage('/settings/activity-logs', 'dashboard.settings.activity-logs', 'd
 // Batch B: Customer Service
 $dashboardPage('/cs/order-online', 'dashboard.cs.order-online', 'dashboard.pages.cs.order-online', 'orderan_online', 'dashboard.partials.menus.order-online', $dashboardBackendUrl);
 $dashboardPage('/cs/unit-ditanya', 'dashboard.cs.unit-ditanya', 'dashboard.pages.cs.unit-ditanya', 'unit_ditanya', 'dashboard.partials.menus.unit-ditanya', $dashboardBackendUrl);
-$dashboardPage('/cs/service', 'dashboard.cs.service', 'dashboard.pages.cs.service', 'service', 'dashboard.partials.menus.service', $dashboardBackendUrl);
 $dashboardPage('/cs/claim-garansi', 'dashboard.cs.claim-garansi', 'dashboard.pages.cs.claim-garansi', 'claim_garansi_asuransi', 'dashboard.partials.menus.claim-garansi', $dashboardBackendUrl);
 $dashboardPage('/cs/keep-barang', 'dashboard.cs.keep-barang', 'dashboard.pages.cs.keep-barang', 'keep_barang', 'dashboard.partials.menus.keep-barang', $dashboardBackendUrl);
 // URL lama /unit_ditanya (sebelum penyeragaman /cs/*) tetap hidup.

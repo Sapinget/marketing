@@ -144,6 +144,8 @@ Catatan Batch C–F (2026-10-09, dikerjakan 4 agent paralel di git worktree lalu
 - Ukuran akhir (server-side): `/` 1,46 MB; semua 36 halaman menu 0,95–1,02 MB (gzip ±150–159 KB), semuanya 200 dan lolos `node --check`. Test: 428 lulus. Anggaran ukuran halaman dedicated di test: 1,15 MB.
 - Sisa di `$legacyMenus` (dirender di `/`): `dashboard`, `analisa-insight`, `top-content`, `low-content`, `profile`, `bonus-report`, `talent-bonus`, `editor-performance`, `market-*` (7), `content-modal`, plus menu yang sudah punya URL (`pricelist-katalog`, `template-background`, `apple-katalog`, `img-repo`, `asset-vendor-inventory`, `promo-pamflet`), yang bisa dikeluarkan di Fase 3 karena `switchTab`/`#hash` sudah dialihkan lewat `tab_urls`.
 
+Catatan (2026-10-09): menu **Service dihapus** atas permintaan (route `/cs/service`, page, menu blade, sidebar, `tab_urls`, `tabConfig`, loader tab). Yang sengaja **tidak** dihapus: state/fungsi service di script bersama (`serviceData`, `loadServiceData`, `app-script-customer-service-crud`), API `/api/service*`, tabel `services`/`service_claims` beserta migrasinya, dan menu tersembunyi `proses_claim` yang memakai data service. Saat diuji di browser, modal Service memang tidak pernah tersambung (`serviceModalOpen`, `serviceForm`, `saveService` tidak ada di `return`), kondisi yang sudah ada sebelum migrasi.
+
 Pemetaan script ke menu (isi saat mengerjakan, contoh awal dari `one-menu-one-blade-roadmap.md`):
 
 | Menu (tab) | Script milik menu | Bergantung pada |
@@ -156,7 +158,7 @@ Pemetaan script ke menu (isi saat mengerjakan, contoh awal dari `one-menu-one-bl
 | `budgeting` | `budgeting-operations`, `reporting-and-budgeting` | `reporting-export-bridge` |
 | `meta_story`, `meta_feed` | `meta-ig-analytics`, `-presentation` | satu modul bersama |
 | `meta_followers` | `meta-followers` | - |
-| `orderan_online`, `service`, `keep_barang`, `claim_garansi_asuransi` | `customer-service-crud`, `claim-menus` | `date-helpers` |
+| `orderan_online`, `keep_barang`, `claim_garansi_asuransi` | `customer-service-crud`, `claim-menus` | `date-helpers` |
 | `bonus_report`, `talent_bonus`, `editor_performance` | `bonus-talent-cluster` | tersembunyi; tunda |
 
 Kriteria selesai fase ini: tidak ada `@include` menu non-aktif di `app-frame`, tidak ada script menu di `body-app-assembly` selain yang bersama, `return` block hanya berisi state bersama + hasil gabungan otomatis.

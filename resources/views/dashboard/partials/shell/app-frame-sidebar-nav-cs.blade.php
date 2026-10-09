@@ -12,12 +12,6 @@
                     <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Unit Ditanya</span>
                     <span v-if="activeTab === 'unit_ditanya'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
                 </a>
-                <a href="/cs/service" @click="navigateTab($event, 'service')"
-                    :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'service' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
-                    <i class="fa-solid fa-screwdriver-wrench text-[11px] lg:text-[12px] w-4"></i>
-                    <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Service</span>
-                    <span v-if="activeTab === 'service'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
-                </a>
                 <a href="/cs/claim-garansi" @click="navigateTab($event, 'claim_garansi_asuransi')"
                     :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'claim_garansi_asuransi' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
                     <i class="fa-solid fa-shield-heart text-[11px] lg:text-[12px] w-4"></i>

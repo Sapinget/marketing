@@ -7,7 +7,7 @@ return [
     | URL routing per menu
     |--------------------------------------------------------------------------
     |
-    | true  : menu yang sudah dimigrasi dibuka lewat URL sendiri (/cs/service dst).
+    | true  : menu yang sudah dimigrasi dibuka lewat URL sendiri (/cs/order-online dst).
     | false : sidebar kembali memakai navigasi hash (#tab). Route baru tetap ada.
     | Lihat docs/hash-to-url-routing-plan.md. Dibaca sidebar mulai Batch A.
     |
@@ -41,7 +41,6 @@ return [
         // Batch B
         'orderan_online' => '/cs/order-online',
         'unit_ditanya' => '/cs/unit-ditanya',
-        'service' => '/cs/service',
         'claim_garansi_asuransi' => '/cs/claim-garansi',
         'keep_barang' => '/cs/keep-barang',
 

@@ -241,7 +241,6 @@
                         'dashboard.partials.menus.activity-logs',
                         'dashboard.partials.menus.order-online',
                         'dashboard.partials.menus.unit-ditanya',
-                        'dashboard.partials.menus.service',
                         'dashboard.partials.menus.claim-garansi',
                         'dashboard.partials.menus.keep-barang',
 

@@ -317,7 +317,6 @@
                         'unboxing': 'unboxing',
                         'orderan_online': 'orderanOnline',
                         'unit_ditanya': 'unitDitanya',
-                        'service': 'service',
                         'claim_garansi_asuransi': 'claimGaransi',
                         'program_promo': 'promo',
                         'sell_out': 'sellOut',
@@ -328,11 +327,7 @@
                         'calendar': 'calendar'
                     };
                     const dataKey = TAB_DATA_MAP[tab];
-                    if (tab === 'service') {
-                        loadServiceData().then(() => {
-                            tabDataLoaded.value = Object.assign({}, tabDataLoaded.value, { service: true });
-                        });
-                    } else if (dataKey) loadTabData(dataKey);
+                    if (dataKey) loadTabData(dataKey);
 
                     // Market Intelligence — direct fetch to Laravel API (not Apps Script)
                     if (tab === 'market_pasar') loadMarketPasar();

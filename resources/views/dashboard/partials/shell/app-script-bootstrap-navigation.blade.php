@@ -60,7 +60,6 @@
                     meta_followers: { label: 'Followers IG', category: 'Analisa Konten' },
                     orderan_online: { label: 'Order Online', category: 'Customer Service' },
                     unit_ditanya: { label: 'Unit Ditanya', category: 'Customer Service' },
-                    service: { label: 'Service', category: 'Customer Service' },
                     claim_garansi_asuransi: { label: 'Claim Garansi', category: 'Customer Service' },
                     keep_barang: { label: 'Keep Barang', category: 'Customer Service' },
                     input_claim: { label: 'Input Claim', category: 'Complain Traker' },

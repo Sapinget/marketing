@@ -224,7 +224,6 @@ class DashboardPageRoutesTest extends TestCase
             '/cs/unit-ditanya' => 'v-if="unitDitanyaModalOpen"',
             '/cs/claim-garansi' => 'v-if="claimGaransiModalOpen"',
             '/cs/keep-barang' => 'v-if="keepBarangModalOpen"',
-            '/cs/service' => 'v-if="serviceModalOpen"',
         ];
 
         foreach ($markers as $uri => $marker) {
@@ -242,7 +241,7 @@ class DashboardPageRoutesTest extends TestCase
     {
         $sidebar = (string) file_get_contents(resource_path('views/dashboard/partials/shell/app-frame-sidebar-nav-cs.blade.php'));
 
-        foreach (['orderan_online', 'unit_ditanya', 'service', 'claim_garansi_asuransi', 'keep_barang'] as $tab) {
+        foreach (['orderan_online', 'unit_ditanya', 'claim_garansi_asuransi', 'keep_barang'] as $tab) {
             $url = config('dashboard.tab_urls')[$tab];
 
             $this->assertStringContainsString('href="'.$url.'" @click="navigateTab($event, \''.$tab.'\')"', $sidebar);
@@ -257,5 +256,13 @@ class DashboardPageRoutesTest extends TestCase
 
         $this->assertStringContainsString('dedicatedExtraViews', $shell);
         $this->assertStringContainsString('array $extraViews = []', $routes);
+    }
+
+    public function test_service_menu_is_removed(): void
+    {
+        $this->get('/cs/service')->assertNotFound();
+        $this->assertArrayNotHasKey('service', config('dashboard.tab_urls'));
+        $this->assertFileDoesNotExist(resource_path('views/dashboard/partials/menus/service.blade.php'));
+        $this->assertStringNotContainsString("navigateTab(\$event, 'service')", (string) file_get_contents(resource_path('views/dashboard/partials/shell/app-frame-sidebar-nav-cs.blade.php')));
     }
 }
