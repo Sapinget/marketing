@@ -203,64 +203,67 @@
                     </template>
                 </div>
 @endverbatim
-                @include('dashboard.partials.menus.dashboard')
-                @include('dashboard.partials.menus.master-plan')
-                @include('dashboard.partials.menus.ideation')
-                @include('dashboard.partials.menus.distribution')
-                @include('dashboard.partials.menus.analytics')
-                @include('dashboard.partials.menus.calendar')
-                @include('dashboard.partials.menus.story')
-                @include('dashboard.partials.menus.analisa-insight')
-                @include('dashboard.partials.menus.meta-story')
-                @include('dashboard.partials.menus.meta-feed')
-                @include('dashboard.partials.menus.meta-followers')
-                @include('dashboard.partials.menus.unboxing')
-                @include('dashboard.partials.menus.top-content')
-                @include('dashboard.partials.menus.low-content')
-                @include('dashboard.partials.menus.order-online')
-                @include('dashboard.partials.menus.unit-ditanya')
-                @include('dashboard.partials.menus.service')
-                @include('dashboard.partials.menus.claim-garansi')
-                @include('dashboard.partials.menus.input-claim')
-                @include('dashboard.partials.menus.garansi-cermati')
-                @include('dashboard.partials.menus.garansi-resmi')
-                @include('dashboard.partials.menus.keep-barang')
-                @include('dashboard.partials.menus.settings')
-                @include('dashboard.partials.menus.nama-stock')
-                @include('dashboard.partials.menus.profile')
-                @include('dashboard.partials.menus.auth-users')
-                @include('dashboard.partials.menus.activity-logs')
-                @include('dashboard.partials.menus.program-promo')
-                @if(($dedicatedMenuView ?? null) !== 'dashboard.partials.menus.promo-pamflet')
-                    @include('dashboard.partials.menus.promo-pamflet')
-                @endif
-                @include('dashboard.partials.menus.bonus-report')
-                @include('dashboard.partials.menus.talent-bonus')
-                @include('dashboard.partials.menus.editor-performance')
-                @include('dashboard.partials.menus.sell-out')
-                @include('dashboard.partials.menus.harga-kompetitor')
+                {{-- Satu menu = satu halaman: halaman dengan URL sendiri hanya merender menunya. $legacyMenus menyusut tiap batch migrasi (docs/hash-to-url-routing-plan.md). --}}
+                @php
+                    $legacyMenus = [
+                    'dashboard.partials.menus.dashboard',
+                    'dashboard.partials.menus.master-plan',
+                    'dashboard.partials.menus.ideation',
+                    'dashboard.partials.menus.distribution',
+                    'dashboard.partials.menus.analytics',
+                    'dashboard.partials.menus.calendar',
+                    'dashboard.partials.menus.story',
+                    'dashboard.partials.menus.analisa-insight',
+                    'dashboard.partials.menus.meta-story',
+                    'dashboard.partials.menus.meta-feed',
+                    'dashboard.partials.menus.meta-followers',
+                    'dashboard.partials.menus.unboxing',
+                    'dashboard.partials.menus.top-content',
+                    'dashboard.partials.menus.low-content',
+                    'dashboard.partials.menus.order-online',
+                    'dashboard.partials.menus.unit-ditanya',
+                    'dashboard.partials.menus.service',
+                    'dashboard.partials.menus.claim-garansi',
+                    'dashboard.partials.menus.input-claim',
+                    'dashboard.partials.menus.garansi-cermati',
+                    'dashboard.partials.menus.garansi-resmi',
+                    'dashboard.partials.menus.keep-barang',
+                    'dashboard.partials.menus.settings',
+                    'dashboard.partials.menus.nama-stock',
+                    'dashboard.partials.menus.profile',
+                    'dashboard.partials.menus.auth-users',
+                    'dashboard.partials.menus.activity-logs',
+                    'dashboard.partials.menus.program-promo',
+                    'dashboard.partials.menus.promo-pamflet',
+                    'dashboard.partials.menus.bonus-report',
+                    'dashboard.partials.menus.talent-bonus',
+                    'dashboard.partials.menus.editor-performance',
+                    'dashboard.partials.menus.sell-out',
+                    'dashboard.partials.menus.harga-kompetitor',
+                    'dashboard.partials.menus.pricelist-katalog',
+                    'dashboard.partials.menus.template-background',
+                    'dashboard.partials.menus.apple-katalog',
+                    'dashboard.partials.menus.img-repo',
+                    'dashboard.partials.menus.asset-vendor-inventory',
+                    'dashboard.partials.menus.laporan-event',
+                    'dashboard.partials.menus.ads-log',
+                    'dashboard.partials.menus.budgeting',
+                    'dashboard.partials.menus.market-pasar',
+                    'dashboard.partials.menus.market-intelijen-harga',
+                    'dashboard.partials.menus.market-audit-harga',
+                    'dashboard.partials.menus.market-eksternal',
+                    'dashboard.partials.menus.market-ext-goodponsel',
+                    'dashboard.partials.menus.market-ext-devstore',
+                    'dashboard.partials.menus.market-ext-rumahgadget',
+                    ];
+                @endphp
                 @if($dedicatedMenuView ?? null)
                     @include($dedicatedMenuView)
                 @else
-                    @include('dashboard.partials.menus.pricelist-katalog')
-                    @include('dashboard.partials.menus.template-background')
-                    @include('dashboard.partials.menus.apple-katalog')
-                    @include('dashboard.partials.menus.img-repo')
-                    @include('dashboard.partials.menus.asset-vendor-inventory')
+                    @foreach($legacyMenus as $legacyMenu)
+                        @include($legacyMenu)
+                    @endforeach
                 @endif
-                @if(($dedicatedMenuView ?? null) !== 'dashboard.partials.menus.tiktok-template')
-                    @include('dashboard.partials.menus.tiktok-template')
-                @endif
-                @include('dashboard.partials.menus.laporan-event')
-                @include('dashboard.partials.menus.ads-log')
-                @include('dashboard.partials.menus.budgeting')
-                @include('dashboard.partials.menus.market-pasar')
-                @include('dashboard.partials.menus.market-intelijen-harga')
-                @include('dashboard.partials.menus.market-audit-harga')
-                @include('dashboard.partials.menus.market-eksternal')
-                @include('dashboard.partials.menus.market-ext-goodponsel')
-                @include('dashboard.partials.menus.market-ext-devstore')
-                @include('dashboard.partials.menus.market-ext-rumahgadget')
 @verbatim
             </main>
 @endverbatim

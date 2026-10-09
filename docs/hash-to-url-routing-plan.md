@@ -1,6 +1,6 @@
 # Plan: Migrasi Menu Hash (`#tab`) ke URL Sendiri
 
-Status: direvisi 2026-10-09; Fase -1 dan Fase 0 selesai (kecuali ukuran request di browser), berikutnya fondasi Fase 1.5. Dibuat 2026-10-08.
+Status: direvisi 2026-10-09; Fase -1 dan Fase 0 selesai; fondasi Fase 1.5 selesai sebagian (lihat checklist), percontohan isolasi: `tiktok_template`. Dibuat 2026-10-08.
 Melengkapi `docs/one-menu-one-blade-roadmap.md` (target arsitektur penuh). Dokumen ini mengatur **urutan batch dan resep per menu** untuk:
 
 1. menghapus routing berbasis `#` (satu menu = satu URL), dan
@@ -111,11 +111,11 @@ Urutan dari risiko terendah ke tertinggi.
 Fondasi dikerjakan sekali **sebelum Batch A**. Isolasi per menu dikerjakan di PR batch yang sama dengan URL-nya (bukan sesudahnya), karena pola ini sudah dipilih sebagai percontohan di bagian 6.
 
 Fondasi (sekali, 1-2 PR, sebelum Batch A dimulai):
-- [ ] Tambah `@stack('menu-scripts')` ke `partials/shell/body-app-assembly.blade.php` tepat sebelum `app-script-return-block` (script menu disisipkan di dalam `setup()` yang sama).
-- [ ] Mekanisme state per menu: tiap menu mengekspor state/fungsinya lewat satu objek (mis. `menuExports.<tab> = { ... }`) yang digabung otomatis ke `return`, menggantikan daftar manual di `app-script-return-block.blade.php`. Tanpa ini setiap menu yang dipisah tetap harus mengedit file 1122 baris itu.
-- [ ] `app-frame.blade.php`: ganti daftar `@include('...menus.*')` menjadi: include hanya `$dedicatedMenuView`; sisanya hanya untuk tab yang belum dimigrasi (daftar eksplisit `$legacyMenus`, menyusut tiap batch). Halaman `/` (tab `dashboard`) memuat dirinya sendiri.
-- [ ] Pisahkan script **bersama** (dipakai banyak menu: `date-helpers`, `search-select-and-options`, `calendar-helpers`, `summary-computed-cluster`, `auth-session`, `chat-state`, `notification-error-utils`, `shell-interaction-helpers`) dari script **milik satu menu**. Yang bersama tetap dimuat di semua halaman; yang milik satu menu pindah ke halaman menu itu.
-- [ ] Petakan ketergantungan silang: fungsi/state menu A yang dipakai menu B (mis. `master-content-operations` dipakai `ideation`, `top_content_platform`, `distribution`). Catat di tabel pemetaan (lihat bawah) sebelum memindahkan.
+- [x] `@stack('menu-scripts')` ditambahkan di `body-app-assembly.blade.php` tepat sebelum `app-script-return-block` (di dalam `setup()` yang sama). Page blade memakai `@push('menu-scripts') @include('...app-script-<menu>') @endpush`.
+- [x] Mekanisme state per menu: `const menuExports = {}` di `app-script-open.blade.php`, `...menuExports` di akhir `return`. Script menu mengakhiri dirinya dengan `Object.assign(menuExports, { ...nama })`. Return block tidak perlu diedit lagi untuk menu terisolasi (47 nama `tt*` sudah dipindah).
+- [x] `app-frame.blade.php`: halaman ber-`$dedicatedMenuView` hanya merender menu itu; halaman lain merender `$legacyMenus` (daftar eksplisit 49 menu, menyusut tiap batch; `tiktok-template` sudah keluar).
+- [ ] (belum) Pisahkan script **bersama** (dipakai banyak menu: `date-helpers`, `search-select-and-options`, `calendar-helpers`, `summary-computed-cluster`, `auth-session`, `chat-state`, `notification-error-utils`, `shell-interaction-helpers`) dari script **milik satu menu**. Yang bersama tetap dimuat di semua halaman; yang milik satu menu pindah ke halaman menu itu.
+- [ ] (belum, kerjakan per batch) Petakan ketergantungan silang: fungsi/state menu A yang dipakai menu B (mis. `master-content-operations` dipakai `ideation`, `top_content_platform`, `distribution`). Catat di tabel pemetaan (lihat bawah) sebelum memindahkan.
 
 Per menu (mengikuti batch Fase 1):
 - [ ] Pindahkan `app-script-<menu>-operations.blade.php` ke `@push('menu-scripts')` di page blade menu, bukan di `body-app-assembly`.
@@ -124,6 +124,10 @@ Per menu (mengikuti batch Fase 1):
 - [ ] Pindahkan blok `if (tab === '<tab>')` dan `tabDataKey` menu itu dari `runner-session-tail`/`switchTab` ke script menu (dipanggil saat `onMounted`).
 - [ ] Verifikasi: `view-source` halaman menu tidak memuat markup/script menu lain; error console bersih; ukuran HTML turun.
 - [ ] Test otomatis per menu: `assertDontSee` marker menu lain (mis. `activeTab === '<tab_lain>'`) pada halaman menu itu. Tambah ke `DedicatedMenuBladeViewsTest`.
+
+Percontohan isolasi (2026-10-09): `tiktok_template`. State-nya self-contained (semua nama `tt*`, tidak dipakai file lain). Script dipindah dari `body-app-assembly` ke `@push('menu-scripts')` di `pages/ecommerce/tiktok-template.blade.php`; menu keluar dari `$legacyMenus`, jadi `/` tidak lagi memuat markup maupun script TikTok. Sintaks JS semua halaman diperiksa dengan `node --check`, semua nama ekspor terdeklarasi, dan semua `tt*` di markup terekspor. **Belum diuji di browser** (ekstensi Chrome tidak terhubung): buka `/ecommerce/tiktok-template` setelah login, upload template, edit sel, ekspor.
+
+Temuan ukuran (rendered, server-side): markup menu 1,26 MB + script shell 0,84 MB dari total 2,27 MB. Isolasi markup saja sudah menurunkan halaman dedicated dari ~2,06 MB ke ~0,97 MB (gzip 255 → 157 KB), yaitu 57% lebih kecil dari `/`. Satu file `menus/budgeting.blade.php` saja 311 KB. Isolasi script (state) tambahan nanti memangkas sisa ~0,84 MB, tapi paling berisiko (ketergantungan silang), jadi dikerjakan per menu setelah markup.
 
 Pemetaan script ke menu (isi saat mengerjakan, contoh awal dari `one-menu-one-blade-roadmap.md`):
 

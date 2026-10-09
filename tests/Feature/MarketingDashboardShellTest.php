@@ -237,9 +237,9 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlContains('<div id="app" class="min-h-[100dvh]" v-cloak>', $appFramePartial);
         $this->assertHtmlContains("@include('dashboard.partials.shell.app-frame-sidebar')", $appFramePartial);
         $this->assertHtmlContains('breadcrumbItems', $appFramePartial);
-        $this->assertHtmlContains("@include('dashboard.partials.menus.bonus-report')", $appFramePartial);
-        $this->assertHtmlContains("@include('dashboard.partials.menus.talent-bonus')", $appFramePartial);
-        $this->assertHtmlContains("@include('dashboard.partials.menus.editor-performance')", $appFramePartial);
+        $this->assertHtmlContains("'dashboard.partials.menus.bonus-report'", $appFramePartial);
+        $this->assertHtmlContains("'dashboard.partials.menus.talent-bonus'", $appFramePartial);
+        $this->assertHtmlContains("'dashboard.partials.menus.editor-performance'", $appFramePartial);
         $this->assertHtmlContains('</main>', $appFramePartial);
         $this->assertHtmlContains("@include('dashboard.partials.shell.app-frame-sidebar-nav')", $appFrameSidebarPartial);
         $this->assertHtmlContains("@include('dashboard.partials.shell.app-frame-sidebar-nav-dashboard-content')", $appFrameSidebarNavPartial);

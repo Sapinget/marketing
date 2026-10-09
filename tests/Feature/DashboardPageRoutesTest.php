@@ -75,4 +75,45 @@ class DashboardPageRoutesTest extends TestCase
     {
         $this->assertTrue(config('dashboard.url_routing'));
     }
+
+    public function test_dedicated_page_renders_only_its_own_menu_and_script(): void
+    {
+        $page = $this->get('/ecommerce/tiktok-template')->assertOk();
+        $page->assertSee("activeTab === 'tiktok_template'", false);
+        $page->assertSee('const ttFile', false);
+        // Penanda khusus markup menu lain (sidebar/header memuat `activeTab === ...` umum, jadi tidak dipakai).
+        $page->assertDontSee('<!-- Budgeting tab -->', false);
+        $page->assertDontSee("activeTab === 'budgeting' && !budgetConfigLoaded", false);
+
+        $legacy = $this->get('/')->assertOk();
+        $legacy->assertSee('<!-- Budgeting tab -->', false);
+        $legacy->assertDontSee('const ttFile', false);
+        $legacy->assertDontSee('ttDownloadAudit', false);
+    }
+
+    public function test_dedicated_pages_are_much_lighter_than_the_legacy_dashboard(): void
+    {
+        $legacySize = strlen($this->get('/')->getContent());
+
+        foreach ($this->dashboardPages() as [$uri]) {
+            $this->assertLessThan($legacySize * 0.6, strlen($this->get($uri)->getContent()), "{$uri} should render far less than the full dashboard.");
+        }
+    }
+
+    public function test_isolated_menu_script_registers_through_menu_exports(): void
+    {
+        $shell = resource_path('views/dashboard/partials/shell/');
+        $script = file_get_contents($shell.'app-script-tiktok-template-operations.blade.php');
+        $returnBlock = file_get_contents($shell.'app-script-return-block.blade.php');
+        $assembly = file_get_contents($shell.'body-app-assembly.blade.php');
+
+        $this->assertIsString($script);
+        $this->assertIsString($returnBlock);
+        $this->assertIsString($assembly);
+        $this->assertStringContainsString('Object.assign(menuExports, {', $script);
+        $this->assertStringContainsString('...menuExports,', $returnBlock);
+        $this->assertStringNotContainsString('ttFile', $returnBlock);
+        $this->assertStringContainsString("@stack('menu-scripts')", $assembly);
+        $this->assertStringNotContainsString('app-script-tiktok-template-operations', $assembly);
+    }
 }
