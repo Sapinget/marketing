@@ -1,6 +1,6 @@
 # Plan: Migrasi Menu Hash (`#tab`) ke URL Sendiri
 
-Status: direvisi 2026-10-09; Fase -1, Fase 0, Batch A–F (URL + isolasi markup; `dashboard` tetap di `/`) selesai di kode; fondasi Fase 1.5 sebagian; Fase 2 sebagian. **Belum ada verifikasi browser** untuk semua batch dan percontohan (ekstensi Chrome tidak terhubung). Dibuat 2026-10-08.
+Status (diperbarui 2026-10-09): **URL per menu selesai di kode** (Fase -1, 0, Batch A–F, Fase 2); 27 dari 28 menu sidebar punya URL sendiri, `dashboard` sengaja tetap di `/`, menu Service dihapus. **Belum**: isolasi script per menu (Fase 1.5 bagian script), pembersihan (Fase 3), dan uji klik/isi form di browser sungguhan. Uji Chrome headless (35 halaman: login, muat halaman, konsol, API, modal, pengalihan `#tab`, klik sidebar) lolos 200 dari 201 pengecekan; satu yang gagal (modal Service) sudah tidak relevan karena menunya dihapus. Dibuat 2026-10-08.
 Melengkapi `docs/one-menu-one-blade-roadmap.md` (target arsitektur penuh). Dokumen ini mengatur **urutan batch dan resep per menu** untuk:
 
 1. menghapus routing berbasis `#` (satu menu = satu URL), dan
@@ -29,21 +29,21 @@ Menu yang sudah punya URL sendiri (pola yang akan ditiru):
 | `/repository-gambar`, `/inventory/asset-vendor` | `img_repo`, `asset_vendor_inventory` | `menus.*` (sidebar disembunyikan / tidak ada link) |
 | `/unit_ditanya` | `unit_ditanya` | memakai `dashboard.index` |
 
-### Menu yang masih hash dan tampil di sidebar (29 tab)
+### Menu sidebar dan status migrasi (28 tab; Service dihapus). Semua sudah punya URL kecuali `dashboard`
 
 | Batch | Grup | Tab |
 |---|---|---|
 | A | Tools & Settings | `harga_kompetitor`, `laporan_event`, `settings`, `nama_stock`, `auth_users`, `activity_logs` |
-| B | Customer Service | `orderan_online`, `unit_ditanya` (route `/unit_ditanya` sudah ada; sidebar belum link; rename ke `/cs/unit-ditanya` = tugas terpisah), `service`, `claim_garansi_asuransi`, `keep_barang` |
+| B | Customer Service | `orderan_online`, `unit_ditanya` (`/cs/unit-ditanya`; `/unit_ditanya` lama = redirect 301), `claim_garansi_asuransi`, `keep_barang` (`service` dihapus) |
 | C | Complain Tracker | `input_claim`, `garansi_cermati`, `garansi_resmi` |
 | D | Marketing | `program_promo`, `sell_out`, `ads_log`, `budgeting` |
 | E | Analisa Konten | `meta_story`, `meta_feed`, `meta_followers` |
-| F | Dashboard & Konten | `dashboard`, `master`, `unboxing`, `ideation`, `distribution`, `analytics`, `calendar`, `story` |
+| F | Dashboard & Konten | `dashboard` (tetap di `/`), `master`, `unboxing`, `ideation`, `distribution`, `analytics`, `calendar`, `story` |
 
 ### Tab hash yang disembunyikan dari sidebar (tunda, jangan dikerjakan sekarang)
 
 Performa (`bonus_report`, `talent_bonus`, `editor_performance`), Intelijen Pasar (`market_pasar`, `market_intelijen_harga`, `market_audit_harga`, `market_eksternal`, `market_ext_goodponsel`, `market_ext_devstore`, `market_ext_rumahgadget`), `top_content_platform`, `low_content_platform`, `analisa_insight`, `proses_claim`, `profile`.
-Mereka tetap hidup lewat `#hash` selama `switchTab` legacy dipertahankan (lihat Fase 3). Daftar tab tersembunyi ada di `_hiddenTabs` pada `app-script-bootstrap-navigation.blade.php`. Saat menu dimunculkan lagi, keluarkan dari daftar itu dan kerjakan sebagai batch baru.
+Mereka tetap dirender di `/` (daftar `$legacyMenus` di `app-frame.blade.php`) dan hidup lewat `#hash` selama `switchTab` legacy dipertahankan (lihat Fase 3). Daftar tab tersembunyi ada di `_hiddenTabs` pada `app-script-bootstrap-navigation.blade.php`. Saat menu dimunculkan lagi, keluarkan dari daftar itu dan kerjakan sebagai batch baru.
 
 ## 2. Resep per Menu (berlaku untuk semua batch)
 
@@ -78,12 +78,12 @@ Fase -1 → Fase 0 → Fase 1.5 fondasi → Batch A (URL + isolasi sekaligus, pe
 
 ### Fase 0: Persiapan (selesai 2026-10-09)
 - [x] Konvensi URL (tabel di bagian 4) disetujui 2026-10-09. Satu sumber kebenaran: tabel ini; bila `one-menu-one-blade-roadmap.md` berbeda, samakan dokumen itu ke tabel ini.
-- [x] Buat helper agar route tidak ditulis berulang (`$dashboardPage($uri, $name, $view, $tab, $menuView, $backendUrl = null)` di `routes/web.php`; 7 route lama sudah memakainya, nama route tidak berubah; tiap route diberi default `_dashboard_tab` untuk test).
+- [x] Buat helper agar route tidak ditulis berulang (`$dashboardPage($uri, $name, $view, $tab, $menuView, $backendUrl = null)` di `routes/web.php`; semua route halaman menu memakainya (7 route lama + semua batch), nama route tidak berubah; argumen ke-7 `$extraViews` untuk partial tambahan seperti modal konten generik; tiap route diberi default `_dashboard_tab` untuk test).
 - [x] Test generik `tests/Feature/DashboardPageRoutesTest.php`: menemukan semua route ber-`_dashboard_tab` secara otomatis; tiap halaman 200, memuat `activeTab === '<tab>'`, header `no-store`. Route baru otomatis ikut teruji.
 - [x] Keputusan guard: route halaman tetap publik (shell menangani login di sisi klien lewat `/api/auth/session`, server tidak tahu user pada request halaman). Pengamanan nyata ada di API (`dashboard.auth` + `assertUserManagementAccess`/`assertSettingsManagementAccess`/`assertSensitiveLogAccess` di `routes/web.php`). Halaman admin (`auth_users`, `settings`, `activity_logs`) hanya cangkang; guard klien (`canManageUsers`, `canManageSettings`) tetap. Tidak ada middleware session baru. Test wajib: endpoint API tiap menu admin menolak akun non-admin (sebagian sudah ada di `HighRiskDomainRouteAuthorizationTest`).
 - [x] Test: API admin (`/api/auth/users`, `/api/activity-logs`, `/api/settings`) menolak tanpa login (401). Test halaman admin tanpa login = 200 ikut otomatis lewat test generik saat route-nya dibuat di Batch A.
-- [ ] Konvensi query string: filter menu disimpan sebagai query (`?q=`, `?status=`) hanya bila menu sudah punya state filter terpusat; selain itu tidak dipertahankan. Link lama `/?tab=...` tidak didukung (hanya `#tab`).
-- [x] Perilaku URL tak dikenal: Laravel 404 bawaan. Trailing slash (`/cs/service/`) sudah dilayani Laravel dengan halaman yang sama (dicek test), tidak perlu redirect. `/#tab_tak_dikenal` jatuh ke `dashboard` seperti sekarang.
+- [x] (keputusan saja, tidak ada kode) Konvensi query string: filter menu disimpan sebagai query (`?q=`, `?status=`) hanya bila menu sudah punya state filter terpusat; selain itu tidak dipertahankan. Link lama `/?tab=...` tidak didukung (hanya `#tab`).
+- [x] Perilaku URL tak dikenal: Laravel 404 bawaan. Trailing slash (mis. `/cs/order-online/`) sudah dilayani Laravel dengan halaman yang sama (dicek test), tidak perlu redirect. `/#tab_tak_dikenal` jatuh ke `dashboard` seperti sekarang.
 - [x] Pencatatan kunjungan menu (`POST /api/menu-visits`) dijadikan helper `trackMenuVisit(tab)` (di `app-script-protected-user-settings.blade.php`, sebelumnya inline di `switchTab`). Dipanggil dari `switchTab` (klik sidebar di `/`) dan dari `resumeActiveTabAfterBootstrap` (sekali per muat halaman). Sebelumnya buka URL/refresh langsung tidak tercatat sama sekali. Catatan: setelah login, tab pendaratan belum tercatat; dibiarkan. Verifikasi manual di browser (tanpa dobel) masih perlu.
 - [x] Anggaran performa dan go/no-go: lihat bagian 6. Baseline server-side (diukur 2026-10-09, `php` kernel lokal, bukan browser):
 
@@ -95,7 +95,7 @@ Fase -1 → Fase 0 → Fase 1.5 fondasi → Batch A (URL + isolasi sekaligus, pe
   | `/promo-pamflet` | 2.055.924 B | 255.526 B | 10 | 23 | 163 |
 
   Temuan: halaman "dedicated" yang sudah ada hanya ~9% lebih kecil dari `/` (semua menu dan script tetap dirender), jadi target go/no-go -30% memang butuh Fase 1.5. Yang belum diukur: jumlah request dan waktu muat di browser (DevTools/Lighthouse); ukur sebelum Batch A dimulai.
-- [x] Rollback: flag `config('dashboard.url_routing')` / env `DASHBOARD_URL_ROUTING` (default aktif) sudah ada di `config/dashboard.php` dan `.env.example`. Belum dibaca siapa pun; sidebar mulai memakainya di Batch A (flag mati = sidebar kembali ke `switchTab` hash, route baru tetap ada).
+- [x] Rollback: flag `config('dashboard.url_routing')` / env `DASHBOARD_URL_ROUTING` (default aktif) sudah ada di `config/dashboard.php` dan `.env.example`. Dibaca `app-script-bootstrap-navigation` (`urlRouting`) dan `app-frame.blade.php` (`$migratedMenus` dirender lagi di `/` bila flag mati; sidebar kembali ke navigasi hash). Dites oleh `test_flag_off_restores_*`; belum dicoba di browser. Karena script menu belum diisolasi, rollback ini valid; setelah script diisolasi, rollback = revert.
 
 ### Fase 1: Migrasi per batch (satu PR per batch, urutan A → F)
 Urutan dari risiko terendah ke tertinggi.
@@ -108,22 +108,24 @@ Urutan dari risiko terendah ke tertinggi.
 
 ### Fase 1.5: Isolasi per menu (inti "1 menu 1 blade")
 
+**Sisa pekerjaan (belum dikerjakan): isolasi script/state per menu.** Markup sudah terisolasi untuk semua halaman menu, dan hanya `tiktok_template` yang script-nya sudah terisolasi. Halaman menu masih ±0,95 MB karena ±0,85 MB script bersama tetap dimuat. Keputusan untuk melanjutkan atau berhenti ada pada pemilik proyek; konsekuensi berhenti: halaman tetap berat tapi sudah 52% lebih kecil dari baseline.
+
 Fondasi dikerjakan sekali **sebelum Batch A**. Isolasi per menu dikerjakan di PR batch yang sama dengan URL-nya (bukan sesudahnya), karena pola ini sudah dipilih sebagai percontohan di bagian 6.
 
 Fondasi (sekali, 1-2 PR, sebelum Batch A dimulai):
 - [x] `@stack('menu-scripts')` ditambahkan di `body-app-assembly.blade.php` tepat sebelum `app-script-return-block` (di dalam `setup()` yang sama). Page blade memakai `@push('menu-scripts') @include('...app-script-<menu>') @endpush`.
 - [x] Mekanisme state per menu: `const menuExports = {}` di `app-script-open.blade.php`, `...menuExports` di akhir `return`. Script menu mengakhiri dirinya dengan `Object.assign(menuExports, { ...nama })`. Return block tidak perlu diedit lagi untuk menu terisolasi (47 nama `tt*` sudah dipindah).
-- [x] `app-frame.blade.php`: halaman ber-`$dedicatedMenuView` hanya merender menu itu; halaman lain merender `$legacyMenus` (daftar eksplisit 49 menu, menyusut tiap batch; `tiktok-template` sudah keluar).
+- [x] `app-frame.blade.php`: halaman ber-`$dedicatedMenuView` hanya merender menu itu; halaman lain merender `$legacyMenus` (daftar eksplisit, sisa 22 menu: `dashboard`, 9 tab tersembunyi/menu non-sidebar, 6 menu yang sudah punya URL tapi masih dirender di `/` (katalog x3, img-repo, asset-vendor, promo-pamflet), `content-modal`, dan 6 `market-*`).
 - [ ] (belum) Pisahkan script **bersama** (dipakai banyak menu: `date-helpers`, `search-select-and-options`, `calendar-helpers`, `summary-computed-cluster`, `auth-session`, `chat-state`, `notification-error-utils`, `shell-interaction-helpers`) dari script **milik satu menu**. Yang bersama tetap dimuat di semua halaman; yang milik satu menu pindah ke halaman menu itu.
 - [ ] (belum, kerjakan per batch) Petakan ketergantungan silang: fungsi/state menu A yang dipakai menu B (mis. `master-content-operations` dipakai `ideation`, `top_content_platform`, `distribution`). Catat di tabel pemetaan (lihat bawah) sebelum memindahkan.
 
 Per menu (mengikuti batch Fase 1):
 - [ ] Pindahkan `app-script-<menu>-operations.blade.php` ke `@push('menu-scripts')` di page blade menu, bukan di `body-app-assembly`.
 - [ ] Hapus state/fungsi menu dari `return` block bersama dan dari `app-script-domain-state*.blade.php`; pindahkan ke script menu.
-- [ ] Hapus `@include` menu dari daftar `$legacyMenus` di `app-frame`.
+- [x] (markup) Menu yang dimigrasi keluar dari `$legacyMenus` di `app-frame` (dikerjakan tiap batch). Tersisa 22 entri, lihat catatan fondasi di atas.
 - [ ] (belum) Pindahkan blok `if (tab === '<tab>')` dan `tabDataKey` menu itu dari `runner-session-tail`/`switchTab` ke script menu (dipanggil saat `onMounted`).
-- [ ] Verifikasi: `view-source` halaman menu tidak memuat markup/script menu lain; error console bersih; ukuran HTML turun.
-- [ ] Test otomatis per menu: `assertDontSee` marker menu lain (mis. `activeTab === '<tab_lain>'`) pada halaman menu itu. Tambah ke `DedicatedMenuBladeViewsTest`.
+- [ ] Verifikasi (markup selesai: ukuran turun ±52%, konsol bersih di Chrome headless; script menu lain masih dimuat karena belum diisolasi).
+- [x] (markup) Test isolasi per batch: `DashboardPageRoutesTest` + `DashboardBatch{C,D,E,F1,F2}Test` memeriksa marker menu ada di halamannya, tidak ada di `/`, dan flag-off mengembalikannya. Memakai pengecekan boolean (`assertPageHas/Lacks`), bukan `assertSee` pada halaman penuh, karena 1-2 MB bisa membuat PHPUnit macet saat gagal. Isolasi script belum punya test.
 
 Percontohan isolasi (2026-10-09): `tiktok_template`. State-nya self-contained (semua nama `tt*`, tidak dipakai file lain). Script dipindah dari `body-app-assembly` ke `@push('menu-scripts')` di `pages/ecommerce/tiktok-template.blade.php`; menu keluar dari `$legacyMenus`, jadi `/` tidak lagi memuat markup maupun script TikTok. Sintaks JS semua halaman diperiksa dengan `node --check`, semua nama ekspor terdeklarasi, dan semua `tt*` di markup terekspor. **Belum diuji di browser** (ekstensi Chrome tidak terhubung): buka `/ecommerce/tiktok-template` setelah login, upload template, edit sel, ekspor.
 
@@ -165,10 +167,10 @@ Kriteria selesai fase ini: tidak ada `@include` menu non-aktif di `app-frame`, t
 
 ### Fase 2: Kompatibilitas link lama
 Berjalan paralel dengan Fase 1, aktif sejak batch pertama.
-- [ ] Pemetaan `tab → URL` di satu tempat (JS object di `app-script-bootstrap-navigation.blade.php`, dibagi dengan server lewat `@json`).
-- [ ] Saat halaman `/` dibuka dengan `#tab` yang sudah punya URL, `replaceState`/`location.replace` ke URL baru. Bookmark dan link chat/notifikasi lama tetap bekerja.
-- [ ] `localStorage('ppp_active_tab')`: pulihkan ke URL baru (bukan hash) untuk tab yang sudah dimigrasi.
-- [ ] `switchTab(tab)`: bila `tab` ada di pemetaan, `location.assign(url)`; bila tidak (tab tersembunyi), pakai perilaku hash lama.
+- [x] Pemetaan `tab → URL` di satu tempat: `config('dashboard.tab_urls')`, dibagi ke JS lewat `@json` (`tabUrls` di `app-script-bootstrap-navigation.blade.php`); `test_tab_url_map_matches_routes_exactly` menjaga kesamaannya dengan route.
+- [x] Saat `/` dibuka dengan `#tab` yang sudah punya URL, `location.replace` ke URL baru (`_migratedUrl`). Terbukti di Chrome headless untuk 7 tab + `/unit_ditanya`.
+- [x] (di kode, belum diuji langsung) `localStorage('ppp_active_tab')` ikut jalur yang sama karena `_savedTab` = server tab, hash, atau tab tersimpan; `_hiddenTabs` mencegah tab tersembunyi dipulihkan. Belum ada pesan flash bagi non-admin yang dialihkan dari `/settings/users`.
+- [x] `switchTab(tab)`: bila `tab` ada di pemetaan, `goToMigratedTab` membuka URL-nya; bila tidak (tab tersembunyi), perilaku hash lama. Sidebar memakai `<a href>` + `navigateTab()`.
 
 ### Fase 3: Pembersihan (setelah semua batch hijau)
 - [ ] Hapus cabang hash di `switchTab` untuk tab yang sudah dimigrasi; sisakan hanya jalur tab tersembunyi.
@@ -178,9 +180,9 @@ Berjalan paralel dengan Fase 1, aktif sejak batch pertama.
 - [ ] Update `docs/one-menu-one-blade-roadmap.md` (centang fase yang selesai) dan `docs/component-catalog.md` bila ada pola baru.
 
 ### Fase 4 (opsional): Tab tersembunyi
-Kerjakan hanya bila menunya diaktifkan lagi: Performa, Intelijen Pasar, Top/Low Konten, Insight & Tren, Proses Claim, Profile. Gunakan resep bagian 2.
+Kerjakan hanya bila menunya diaktifkan lagi: Performa, Intelijen Pasar, Top/Low Konten, Insight & Tren, Proses Claim (memakai data service; menu Service dihapus), Profile. Gunakan resep bagian 2.
 
-## 4. Usulan URL (perlu persetujuan)
+## 4. Peta URL (disetujui 2026-10-09; sumber kebenaran runtime: `config/dashboard.php` `tab_urls`)
 
 | Tab | URL |
 |---|---|
@@ -191,8 +193,8 @@ Kerjakan hanya bila menunya diaktifkan lagi: Performa, Intelijen Pasar, Top/Low 
 | `auth_users` | `/settings/users` |
 | `activity_logs` | `/settings/activity-logs` |
 | `orderan_online` | `/cs/order-online` |
-| `unit_ditanya` | `/unit_ditanya` sekarang; target `/cs/unit-ditanya` + redirect (langkah terpisah, akhir Batch B) |
-| `service` | `/cs/service` |
+| `unit_ditanya` | `/cs/unit-ditanya` (`/unit_ditanya` lama = redirect 301) |
+| ~~`service`~~ | dihapus (route `/cs/service` tidak ada lagi) |
 | `claim_garansi_asuransi` | `/cs/claim-garansi` |
 | `keep_barang` | `/cs/keep-barang` |
 | `input_claim` | `/complain/input-claim` |
@@ -214,7 +216,7 @@ Kerjakan hanya bila menunya diaktifkan lagi: Performa, Intelijen Pasar, Top/Low 
 | `calendar` | `/konten/calendar` |
 | `story` | `/konten/story` |
 
-Nama mengikuti `one-menu-one-blade-roadmap.md` bila berbeda; satu sumber kebenaran harus dipilih di Fase 0.
+Tabel ini sumber kebenaran dokumen; `docs/one-menu-one-blade-roadmap.md` masih perlu disamakan (lihat Fase 3).
 
 ## 5. Risiko dan Mitigasi
 
@@ -227,7 +229,7 @@ Nama mengikuti `one-menu-one-blade-roadmap.md` bila berbeda; satu sumber kebenar
 | `setup()` Vue tunggal: script yang disisipkan lewat `@push` harus berada di scope `setup()`, bukan setelah `createApp` | Tempatkan `@stack('menu-scripts')` di dalam `setup()`; verifikasi dengan compile + buka halaman. |
 | Loader data tidak jalan saat buka URL langsung | Langkah 5 resep; uji "buka URL langsung + refresh" untuk tiap menu. |
 | Guard role hanya di sisi sidebar | Fase 0: guard sisi server untuk menu admin (Teknisi di luar lingkup). |
-| Tab tersimpan di `localStorage` mengarahkan ke menu tersembunyi/usang | Pemetaan Fase 2 + `_hiddenTabs`. |
+| Tab tersimpan di `localStorage` mengarahkan ke menu tersembunyi/usang | Pemetaan Fase 2 + `_hiddenTabs` (sudah diterapkan). |
 | Worker proxy memblokir path baru | Dicek 2026-10-09: `worker-proxy/src/index.js` meneruskan semua path ke origin (hanya `/__health` yang ditangani sendiri), tidak ada allowlist. Aman; hindari memakai path `/__health`. |
 | Navigasi = reload penuh; tiap halaman memanggil ulang `/api/auth/session`, chat bootstrap, data global (master plan untuk dropdown) | Ukur di baseline (Fase 0); target go/no-go di bagian 6. Cache data global di `sessionStorage` bila perlu. |
 | Kunjungan menu dobel atau hilang setelah pindah ke URL | Lihat bullet menu-visits di Fase 0. |
