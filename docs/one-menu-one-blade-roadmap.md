@@ -1,5 +1,18 @@
 # Roadmap Pemisahan Arsitektur: 1 Menu 1 Blade
 
+> **Status 2026-10-09 (lihat `docs/hash-to-url-routing-plan.md` untuk rincian):** 27 dari 28 menu sidebar sudah punya URL sendiri lewat helper `$dashboardPage` di `routes/web.php` dan peta `config/dashboard.php` `tab_urls` (menu `dashboard` tetap di `/`, menu Service dihapus). Markup tiap menu hanya dirender di halamannya (`app-frame.blade.php`: `$dedicatedMenuView` vs `$legacyMenus`). **Script/state menu belum dipisah** (kecuali `tiktok_template`), jadi kotak per menu di bawah sengaja dibiarkan kosong: definisi "selesai" di dokumen ini mencakup pemisahan script. Peta URL final ada di bagian 4 plan routing, bukan di dokumen ini.
+>
+> | Cluster | URL |
+> |---|---|
+> | Konten | `/konten/{master-plan,unboxing,ideation,distribution,analytics,calendar,story}` |
+> | Marketing | `/marketing/{program-promo,sell-out,ads-log,budgeting}`, `/tools/{harga-kompetitor,laporan-event}`, `/promo-pamflet` |
+> | Analisa | `/analisa/{story-ig,feed-konten,followers-ig}` |
+> | Customer Service | `/cs/{order-online,unit-ditanya,claim-garansi,keep-barang}` |
+> | Complain | `/complain/{input-claim,garansi-cermati,garansi-resmi}` |
+> | Settings | `/settings`, `/settings/{nama-stock,users,activity-logs}` |
+> | Menu tersembunyi (masih `#hash` di `/`) | Performa, Intelijen Pasar, Top/Low Konten, Insight & Tren, Proses Claim, Profile |
+
+
 Dokumen ini adalah rencana kerja komprehensif untuk memigrasi dashboard monolith SPA (satu file Blade dengan hash routing) menjadi arsitektur multi-page **1 Menu 1 Blade** dengan rute server-side Laravel standar.
 
 ---

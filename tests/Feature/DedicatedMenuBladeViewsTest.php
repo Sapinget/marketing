@@ -23,9 +23,8 @@ class DedicatedMenuBladeViewsTest extends TestCase
         $response->assertSee('Devstore');
         $response->assertSee('Rumah Gadget Bali');
 
-        // Verify pricelist katalog and template background are separate
-        $response->assertSee("activeTab === 'pricelist_katalog'", false);
-        $response->assertSee("activeTab === 'template_background'", false);
+        // Katalog sudah punya URL sendiri (tab_urls) dan tidak lagi dirender di `/`
+        // (kecuali flag dashboard.url_routing dimatikan; lihat DashboardPageRoutesTest).
     }
 
     public function test_external_market_navigation_has_source_mapping(): void

@@ -172,12 +172,12 @@ Berjalan paralel dengan Fase 1, aktif sejak batch pertama.
 - [x] (di kode, belum diuji langsung) `localStorage('ppp_active_tab')` ikut jalur yang sama karena `_savedTab` = server tab, hash, atau tab tersimpan; `_hiddenTabs` mencegah tab tersembunyi dipulihkan. Belum ada pesan flash bagi non-admin yang dialihkan dari `/settings/users`.
 - [x] `switchTab(tab)`: bila `tab` ada di pemetaan, `goToMigratedTab` membuka URL-nya; bila tidak (tab tersembunyi), perilaku hash lama. Sidebar memakai `<a href>` + `navigateTab()`.
 
-### Fase 3: Pembersihan (setelah semua batch hijau)
-- [ ] Hapus cabang hash di `switchTab` untuk tab yang sudah dimigrasi; sisakan hanya jalur tab tersembunyi.
-- [ ] Hapus `_hiddenTabs` workaround untuk tab yang kini punya URL.
-- [ ] Hapus include menu ganda dan sisa `v-show="activeTab === ..."` yang tidak lagi perlu (hati-hati: test `MarketingDashboardShellTest` memeriksa string ini).
-- [ ] Hapus `$legacyMenus`, daftar manual di `return` block, dan `app-script-domain-state*` yang sudah kosong.
-- [ ] Update `docs/one-menu-one-blade-roadmap.md` (centang fase yang selesai) dan `docs/component-catalog.md` bila ada pola baru.
+### Fase 3: Pembersihan (dikerjakan 2026-10-09 sejauh aman; sisa butir bergantung Fase 1.5/4)
+- [x] (sebagian, sengaja) Dengan flag `url_routing` aktif, tab yang punya URL tidak lagi melewati cabang hash di `switchTab` (`goToMigratedTab` lebih dulu). Cabang hash **tidak dibuang** karena masih dipakai tab tersembunyi dan jalur rollback flag mati; buang bersama flag setelah rilis stabil.
+- [x] (dinilai, tidak dihapus) `_hiddenTabs` berisi 4 tab ber-URL (`pricelist_katalog`, `apple_katalog`, `template_background`, `img_repo`) yang memang tidak ada di sidebar; daftarnya hanya mencegah tab itu dipulihkan dari `localStorage` sebagai halaman pendaratan `/`. Tanpa daftar itu, membuka `/` setelah mengunjungi katalog akan selalu dialihkan ke katalog. Tetap dipakai.
+- [x] Include ganda sudah hilang (`@if($dedicatedMenuView !== ...)` diganti satu mekanisme `$dedicatedMenuView` / `$legacyMenus`). Enam menu yang sudah ber-URL sebelum migrasi (`pricelist-katalog`, `template-background`, `apple-katalog`, `img-repo`, `asset-vendor-inventory`, `promo-pamflet`) keluar dari `$legacyMenus` dan hanya dirender di `/` bila flag mati (`$migratedMenus`). `/` turun dari 1,46 MB ke 1,22 MB (HTML terkompres belum diukur ulang). `v-show="activeTab === ..."` di menu tidak dihapus (masih dibutuhkan di `/` oleh menu tersembunyi dan dicek test).
+- [ ] Hapus `$legacyMenus` (sisa 16 entri: `dashboard`, `analisa-insight`, `top-content`, `low-content`, `profile`, `bonus-report`, `talent-bonus`, `editor-performance`, `content-modal`, 6 `market-*`), daftar manual di `return` block, dan `app-script-domain-state*`. Menunggu Fase 1.5 (script) dan keputusan soal tab tersembunyi (Fase 4).
+- [x] `docs/one-menu-one-blade-roadmap.md` diberi banner status dan peta URL (kotak per menu di sana sengaja tidak dicentang karena definisinya termasuk isolasi script). `docs/component-catalog.md` tidak berubah: tidak ada komponen UI baru.
 
 ### Fase 4 (opsional): Tab tersembunyi
 Kerjakan hanya bila menunya diaktifkan lagi: Performa, Intelijen Pasar, Top/Low Konten, Insight & Tren, Proses Claim (memakai data service; menu Service dihapus), Profile. Gunakan resep bagian 2.

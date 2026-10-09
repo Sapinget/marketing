@@ -265,4 +265,41 @@ class DashboardPageRoutesTest extends TestCase
         $this->assertFileDoesNotExist(resource_path('views/dashboard/partials/menus/service.blade.php'));
         $this->assertStringNotContainsString("navigateTab(\$event, 'service')", (string) file_get_contents(resource_path('views/dashboard/partials/shell/app-frame-sidebar-nav-cs.blade.php')));
     }
+
+    /**
+     * Menu yang sudah punya URL sebelum migrasi hash: markup root-nya (bukan teks sidebar/komentar).
+     *
+     * @return array<string, string> uri => penanda
+     */
+    private function preExistingUrlMenus(): array
+    {
+        return [
+            '/katalog/android' => '<div v-if="activeTab === \'pricelist_katalog\'" class="space-y-4 animate-fadeIn xl:h-',
+            '/katalog/template-background' => '<div v-if="activeTab === \'template_background\'" class="space-y-4 animate-fadeIn xl:h-',
+            '/katalog/apple' => '<div v-show="activeTab === \'apple_katalog\'" class="space-y-4 animate-fadeIn xl:h-',
+            '/repository-gambar' => '<div v-show="activeTab === \'img_repo\'"',
+            '/inventory/asset-vendor' => '<!-- Asset Vendor Inventory tab -->',
+            '/promo-pamflet' => '<!-- Promo Pamflet tab -->',
+        ];
+    }
+
+    public function test_menus_with_pre_existing_urls_leave_the_legacy_dashboard(): void
+    {
+        $legacy = $this->html('/');
+
+        foreach ($this->preExistingUrlMenus() as $uri => $marker) {
+            $this->assertPageLacks($legacy, $marker, "/ must not render {$uri} markup.");
+            $this->assertPageHas($this->html($uri), $marker, "{$uri} must render its own markup.");
+        }
+    }
+
+    public function test_flag_off_restores_pre_existing_url_menus_on_the_legacy_dashboard(): void
+    {
+        config(['dashboard.url_routing' => false]);
+        $legacy = $this->html('/');
+
+        foreach ($this->preExistingUrlMenus() as $uri => $marker) {
+            $this->assertPageHas($legacy, $marker, "flag off: / should render {$uri} markup again.");
+        }
+    }
 }

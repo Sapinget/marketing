@@ -211,15 +211,9 @@
                     'dashboard.partials.menus.top-content',
                     'dashboard.partials.menus.low-content',
                     'dashboard.partials.menus.profile',
-                    'dashboard.partials.menus.promo-pamflet',
                     'dashboard.partials.menus.bonus-report',
                     'dashboard.partials.menus.talent-bonus',
                     'dashboard.partials.menus.editor-performance',
-                    'dashboard.partials.menus.pricelist-katalog',
-                    'dashboard.partials.menus.template-background',
-                    'dashboard.partials.menus.apple-katalog',
-                    'dashboard.partials.menus.img-repo',
-                    'dashboard.partials.menus.asset-vendor-inventory',
                     'dashboard.partials.menus.content-modal',
                     'dashboard.partials.menus.market-pasar',
                     'dashboard.partials.menus.market-intelijen-harga',
@@ -233,6 +227,14 @@
                 @php
                     // Menu yang sudah punya URL sendiri; hanya tampil di `/` bila flag dashboard.url_routing dimatikan (rollback ke hash).
                     $migratedMenus = [
+                        // Sudah punya URL sejak sebelum migrasi hash
+                        'dashboard.partials.menus.promo-pamflet',
+                        'dashboard.partials.menus.pricelist-katalog',
+                        'dashboard.partials.menus.template-background',
+                        'dashboard.partials.menus.apple-katalog',
+                        'dashboard.partials.menus.img-repo',
+                        'dashboard.partials.menus.asset-vendor-inventory',
+
                         'dashboard.partials.menus.harga-kompetitor',
                         'dashboard.partials.menus.laporan-event',
                         'dashboard.partials.menus.settings',
