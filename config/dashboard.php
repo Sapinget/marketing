@@ -53,6 +53,9 @@ return [
 
         // Batch E: Analisa Konten
         // (entri batch E ditambahkan di bawah baris ini)
+        'meta_story' => '/analisa/story-ig',
+        'meta_feed' => '/analisa/feed-konten',
+        'meta_followers' => '/analisa/followers-ig',
 
         // Batch F: Dashboard & Konten
         // (entri batch F ditambahkan di bawah baris ini)
