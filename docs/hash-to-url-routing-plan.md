@@ -1,6 +1,6 @@
 # Plan: Migrasi Menu Hash (`#tab`) ke URL Sendiri
 
-Status (diperbarui 2026-10-09): **URL per menu selesai di kode** (Fase -1, 0, Batch A–F, Fase 2); 27 dari 28 menu sidebar punya URL sendiri, `dashboard` sengaja tetap di `/`, menu Service dihapus. **Belum**: isolasi script per menu (Fase 1.5 bagian script), pembersihan (Fase 3), dan uji klik/isi form di browser sungguhan. Uji Chrome headless (35 halaman: login, muat halaman, konsol, API, modal, pengalihan `#tab`, klik sidebar) lolos 200 dari 201 pengecekan; satu yang gagal (modal Service) sudah tidak relevan karena menunya dihapus. Dibuat 2026-10-08.
+Status (diperbarui 2026-10-09): **selesai di kode dan sudah di-push** (branch `feat/hash-to-url-routing`). 27 dari 28 menu sidebar punya URL sendiri (`dashboard` sengaja tetap di `/`; menu Service dihapus); markup semua halaman terisolasi; script terisolasi untuk TikTok, katalog, meta-ig presentation, followers, img-repo, asset-vendor, dan market-intel (sisa script bersama sengaja tidak dipecah, lihat Fase 1.5); Fase 2 dan Fase 3 selesai sejauh aman. Diuji dengan 436 test PHPUnit dan Chrome headless (Vue build dev: 203/204 + rollback flag mati 12/12 + skenario non-admin). **Yang masih terbuka**: uji manual oleh manusia (klik tombol, isi form, simpan/hapus/upload), satu butir Fase 3 yang sengaja ditunda (hapus `$legacyMenus`), dan keputusan pemilik soal sisa menu Service dan tab tersembunyi (lihat "Sisa pekerjaan dan keputusan" di bagian 6). Dibuat 2026-10-08.
 Melengkapi `docs/one-menu-one-blade-roadmap.md` (target arsitektur penuh). Dokumen ini mengatur **urutan batch dan resep per menu** untuk:
 
 1. menghapus routing berbasis `#` (satu menu = satu URL), dan
@@ -99,12 +99,12 @@ Fase -1 → Fase 0 → Fase 1.5 fondasi → Batch A (URL + isolasi sekaligus, pe
 
 ### Fase 1: Migrasi per batch (satu PR per batch, urutan A → F)
 Urutan dari risiko terendah ke tertinggi.
-- [x] **Batch A** Tools & Settings (6 menu) selesai 2026-10-09 (URL, sidebar, markup terisolasi; script **tidak** diisolasi, lihat catatan di bawah; belum diuji browser). Mayoritas CRUD sederhana, `activity_logs`/`auth_users`/`settings` punya guard role sendiri.
-- [x] **Batch B** Customer Service (5) selesai 2026-10-09 (URL `/cs/*`, sidebar `<a href>`, markup terisolasi, modal order online / unit ditanya / claim garansi / keep barang dipindah dari budgeting ke menunya; service sudah punya modal sendiri; `/unit_ditanya` → 301 ke `/cs/unit-ditanya`; belum diuji browser). `unit_ditanya` hanya perlu link sidebar di batch ini; rename URL ke `/cs/unit-ditanya` (+ redirect dari `/unit_ditanya`) dikerjakan sebagai langkah terpisah di akhir batch.
-- [x] **Batch C** Complain Tracker (3) selesai 2026-10-09 (`/complain/*`, dikerjakan agent paralel di worktree, digabung `8ec382b`; belum diuji browser).
-- [x] **Batch D** Marketing (4) selesai 2026-10-09 (`/marketing/*`, `d015ec0`; `budgeting` tidak punya modal sendiri; belum diuji browser). `program_promo` terkait route publik `/promo`, jangan bentrok.
-- [x] **Batch E** Analisa Konten (3) selesai 2026-10-09 (`/analisa/story-ig`, `/analisa/feed-konten`, `/analisa/followers-ig`, `4f00f08`; belum diuji browser). Bergantung pada importer Meta (`meta_story`, `meta_feed`, `meta_followers`).
-- [x] **Batch F** Dashboard & Konten: 7 dari 8 menu selesai 2026-10-09 (`/konten/master-plan`, `unboxing`, `ideation`, `distribution`, `analytics`, `calendar`, `story`; F1 oleh agent `9bdeaad`, `master` oleh lead). **`dashboard` sengaja tetap di `/`** karena `/` juga menjadi host tab tersembunyi lewat `#hash` (`analisa_insight`, `top/low_content`, `bonus_report`, `talent_bonus`, `editor_performance`, `profile`, `market_*`). Belum diuji browser.
+- [x] **Batch A** Tools & Settings (6 menu) selesai 2026-10-09 (URL, sidebar, markup terisolasi; script **tidak** diisolasi, lihat catatan di bawah; diuji Chrome headless, belum manual). Mayoritas CRUD sederhana, `activity_logs`/`auth_users`/`settings` punya guard role sendiri.
+- [x] **Batch B** Customer Service (5) selesai 2026-10-09 (URL `/cs/*`, sidebar `<a href>`, markup terisolasi, modal order online / unit ditanya / claim garansi / keep barang dipindah dari budgeting ke menunya; service sudah punya modal sendiri; `/unit_ditanya` → 301 ke `/cs/unit-ditanya`; diuji Chrome headless, belum manual). `unit_ditanya` hanya perlu link sidebar di batch ini; rename URL ke `/cs/unit-ditanya` (+ redirect dari `/unit_ditanya`) dikerjakan sebagai langkah terpisah di akhir batch.
+- [x] **Batch C** Complain Tracker (3) selesai 2026-10-09 (`/complain/*`, dikerjakan agent paralel di worktree, digabung `8ec382b`; diuji Chrome headless, belum manual).
+- [x] **Batch D** Marketing (4) selesai 2026-10-09 (`/marketing/*`, `d015ec0`; `budgeting` tidak punya modal sendiri; diuji Chrome headless, belum manual). `program_promo` terkait route publik `/promo`, jangan bentrok.
+- [x] **Batch E** Analisa Konten (3) selesai 2026-10-09 (`/analisa/story-ig`, `/analisa/feed-konten`, `/analisa/followers-ig`, `4f00f08`; diuji Chrome headless, belum manual). Bergantung pada importer Meta (`meta_story`, `meta_feed`, `meta_followers`).
+- [x] **Batch F** Dashboard & Konten: 7 dari 8 menu selesai 2026-10-09 (`/konten/master-plan`, `unboxing`, `ideation`, `distribution`, `analytics`, `calendar`, `story`; F1 oleh agent `9bdeaad`, `master` oleh lead). **`dashboard` sengaja tetap di `/`** karena `/` juga menjadi host tab tersembunyi lewat `#hash` (`analisa_insight`, `top/low_content`, `bonus_report`, `talent_bonus`, `editor_performance`, `profile`, `market_*`). Diuji Chrome headless, belum manual.
 
 ### Fase 1.5: Isolasi per menu (inti "1 menu 1 blade")
 
@@ -116,14 +116,14 @@ Fondasi dikerjakan sekali **sebelum Batch A**. Isolasi per menu dikerjakan di PR
 Fondasi (sekali, 1-2 PR, sebelum Batch A dimulai):
 - [x] `@stack('menu-scripts')` ditambahkan di `body-app-assembly.blade.php` tepat sebelum `app-script-return-block` (di dalam `setup()` yang sama). Page blade memakai `@push('menu-scripts') @include('...app-script-<menu>') @endpush`.
 - [x] Mekanisme state per menu: `const menuExports = {}` di `app-script-open.blade.php`, `...menuExports` di akhir `return`. Script menu mengakhiri dirinya dengan `Object.assign(menuExports, { ...nama })`. Return block tidak perlu diedit lagi untuk menu terisolasi (47 nama `tt*` sudah dipindah).
-- [x] `app-frame.blade.php`: halaman ber-`$dedicatedMenuView` hanya merender menu itu; halaman lain merender `$legacyMenus` (daftar eksplisit, sisa 22 menu: `dashboard`, 9 tab tersembunyi/menu non-sidebar, 6 menu yang sudah punya URL tapi masih dirender di `/` (katalog x3, img-repo, asset-vendor, promo-pamflet), `content-modal`, dan 6 `market-*`).
+- [x] `app-frame.blade.php`: halaman ber-`$dedicatedMenuView` hanya merender menu itu; halaman lain merender `$legacyMenus` (daftar eksplisit; sisa 16 entri setelah Fase 3: `dashboard`, `analisa-insight`, `top-content`, `low-content`, `profile`, `bonus-report`, `talent-bonus`, `editor-performance`, `content-modal`, dan 7 `market-*`).
 - [x] (sebagian) Pisahkan script **bersama** (dipakai banyak menu: `date-helpers`, `search-select-and-options`, `calendar-helpers`, `summary-computed-cluster`, `auth-session`, `chat-state`, `notification-error-utils`, `shell-interaction-helpers`) dari script **milik satu menu**. Yang bersama tetap dimuat di semua halaman; yang milik satu menu pindah ke halaman menu itu.
 - [x] Ketergantungan silang dipetakan otomatis (skrip analisis + dua penjaga test: `test_every_page_declares_everything_its_setup_returns*` dan `test_shared_scripts_never_reference_names_declared_only_in_isolated_scripts`). Petakan: fungsi/state menu A yang dipakai menu B (mis. `master-content-operations` dipakai `ideation`, `top_content_platform`, `distribution`). Catat di tabel pemetaan (lihat bawah) sebelum memindahkan.
 
 Per menu (mengikuti batch Fase 1):
 - [x] (untuk script yang bisa) Pindahkan script ke `@push('menu-scripts')` lewat wrapper `shell/menu-scripts-<nama>.blade.php`; `/` memuatnya hanya bila flag mati (blok `@if` di `body-app-assembly`). Script menu tersembunyi yang hanya hidup di `/` memakai `@unless($dedicatedMenuView)`.
 - [x] (untuk script terisolasi) Nama dipindah dari `return` block bersama ke `Object.assign(menuExports, {...})` oleh alat bantu; return block turun dari 1078 ke ±760 baris. `app-script-domain-state*` belum disentuh.
-- [x] (markup) Menu yang dimigrasi keluar dari `$legacyMenus` di `app-frame` (dikerjakan tiap batch). Tersisa 22 entri, lihat catatan fondasi di atas.
+- [x] (markup) Menu yang dimigrasi keluar dari `$legacyMenus` di `app-frame` (dikerjakan tiap batch). Tersisa 16 entri (setelah Fase 3), lihat catatan fondasi di atas.
 - [x] (untuk script terisolasi) Loader per tab dipindah ke `menuLoaders.<tab>` di script menu (`runActiveTabProtectedLoaders` memanggil `menuLoaders[tab]`). `TAB_DATA_MAP`/`tabDataKey` untuk menu lain belum dipindah.
 - [x] Verifikasi: Chrome headless dengan Vue **build dev** (agar peringatan properti tak terdefinisi muncul): 204 pengecekan, 203 lolos; satu peringatan lama di `master-plan` (`<style>` di dalam template Vue, sudah ada sebelum migrasi). Jalur rollback flag mati (`/#tab` untuk 12 tab) lolos 12/12.
 - [x] (markup) Test isolasi per batch: `DashboardPageRoutesTest` + `DashboardBatch{C,D,E,F1,F2}Test` memeriksa marker menu ada di halamannya, tidak ada di `/`, dan flag-off mengembalikannya. Memakai pengecekan boolean (`assertPageHas/Lacks`), bukan `assertSee` pada halaman penuh, karena 1-2 MB bisa membuat PHPUnit macet saat gagal. Isolasi script belum punya test.
@@ -179,7 +179,7 @@ Berjalan paralel dengan Fase 1, aktif sejak batch pertama.
 - [x] (sebagian, sengaja) Dengan flag `url_routing` aktif, tab yang punya URL tidak lagi melewati cabang hash di `switchTab` (`goToMigratedTab` lebih dulu). Cabang hash **tidak dibuang** karena masih dipakai tab tersembunyi dan jalur rollback flag mati; buang bersama flag setelah rilis stabil.
 - [x] (dinilai, tidak dihapus) `_hiddenTabs` berisi 4 tab ber-URL (`pricelist_katalog`, `apple_katalog`, `template_background`, `img_repo`) yang memang tidak ada di sidebar; daftarnya hanya mencegah tab itu dipulihkan dari `localStorage` sebagai halaman pendaratan `/`. Tanpa daftar itu, membuka `/` setelah mengunjungi katalog akan selalu dialihkan ke katalog. Tetap dipakai.
 - [x] Include ganda sudah hilang (`@if($dedicatedMenuView !== ...)` diganti satu mekanisme `$dedicatedMenuView` / `$legacyMenus`). Enam menu yang sudah ber-URL sebelum migrasi (`pricelist-katalog`, `template-background`, `apple-katalog`, `img-repo`, `asset-vendor-inventory`, `promo-pamflet`) keluar dari `$legacyMenus` dan hanya dirender di `/` bila flag mati (`$migratedMenus`). `/` turun dari 1,46 MB ke 1,22 MB (HTML terkompres belum diukur ulang). `v-show="activeTab === ..."` di menu tidak dihapus (masih dibutuhkan di `/` oleh menu tersembunyi dan dicek test).
-- [ ] Hapus `$legacyMenus` (sisa 16 entri: `dashboard`, `analisa-insight`, `top-content`, `low-content`, `profile`, `bonus-report`, `talent-bonus`, `editor-performance`, `content-modal`, 6 `market-*`), daftar manual di `return` block, dan `app-script-domain-state*`. Menunggu Fase 1.5 (script) dan keputusan soal tab tersembunyi (Fase 4).
+- [ ] Hapus `$legacyMenus` (sisa 16 entri: `dashboard`, `analisa-insight`, `top-content`, `low-content`, `profile`, `bonus-report`, `talent-bonus`, `editor-performance`, `content-modal`, 7 `market-*`), daftar manual di `return` block, dan `app-script-domain-state*`. Menunggu Fase 1.5 (script) dan keputusan soal tab tersembunyi (Fase 4).
 - [x] `docs/one-menu-one-blade-roadmap.md` diberi banner status dan peta URL (kotak per menu di sana sengaja tidak dicentang karena definisinya termasuk isolasi script). `docs/component-catalog.md` tidak berubah: tidak ada komponen UI baru.
 
 ### Fase 4 (opsional): Tab tersembunyi
@@ -261,3 +261,19 @@ Rekomendasi (urutan resmi): Fase 0, lalu fondasi Fase 1.5, lalu Batch A (URL + i
 Bila salah satu gagal: berhenti, selesaikan hanya Fase 1 (URL) untuk batch lain dan jadwalkan 1.5 terpisah.
 
 Konsekuensi jalur URL-saja: halaman tetap berat karena semua menu dan script tetap dirender.
+
+### Sisa pekerjaan dan keputusan (per 2026-10-09)
+
+Kode: tidak ada butir wajib yang tersisa. Yang masih terbuka:
+
+| Item | Jenis | Catatan |
+|---|---|---|
+| Uji manual: tambah/edit/hapus data, upload gambar, impor followers, edit+ekspor TikTok, dialog konfirmasi hapus | Wajib sebelum merge | Chrome headless tidak mengisi form, menyimpan, atau mengunggah berkas sungguhan |
+| Buat/perbarui PR | Wajib | `gh` yang terpasang hanya punya izin READ; buat lewat `https://github.com/Sapinget/marketing/pull/new/feat/hash-to-url-routing` |
+| `php artisan migrate --force` + hard refresh setelah deploy | Saat deploy | Lihat risiko "Migration/DB" dan "Cache lama" |
+| Fase 3: hapus `$legacyMenus`, daftar manual `return`, `app-script-domain-state*`, cabang hash `switchTab`, flag `url_routing` | Ditunda | Menunggu rilis stabil dan keputusan tab tersembunyi (Fase 4) |
+| Fase 4: migrasikan tab tersembunyi (Performa, Intelijen Pasar, Top/Low Konten, Insight, Proses Claim, Profile) | Keputusan pemilik | Hanya bila menunya dimunculkan lagi |
+| Sisa menu Service: state/API/tabel (`services`, `service_claims`) | Keputusan pemilik | Tabel sengaja tidak dihapus (data hilang bila di-drop) |
+| Isolasi sisa ±0,6 MB script bersama | Opsional | Risiko tinggi, hemat ±0,1–0,2 MB per halaman; sebaiknya ditunda sampai ada bukti perlu |
+| ±135 baris `sessions` anonim dari server uji awal di MySQL asli | Housekeeping | Tidak berbahaya; bisa dihapus berdasarkan user agent HeadlessChrome/curl dan `user_id` kosong |
+

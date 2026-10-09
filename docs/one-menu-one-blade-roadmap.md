@@ -1,6 +1,6 @@
 # Roadmap Pemisahan Arsitektur: 1 Menu 1 Blade
 
-> **Status 2026-10-09 (lihat `docs/hash-to-url-routing-plan.md` untuk rincian):** 27 dari 28 menu sidebar sudah punya URL sendiri lewat helper `$dashboardPage` di `routes/web.php` dan peta `config/dashboard.php` `tab_urls` (menu `dashboard` tetap di `/`, menu Service dihapus). Markup tiap menu hanya dirender di halamannya (`app-frame.blade.php`: `$dedicatedMenuView` vs `$legacyMenus`). **Script/state menu belum dipisah** (kecuali `tiktok_template`), jadi kotak per menu di bawah sengaja dibiarkan kosong: definisi "selesai" di dokumen ini mencakup pemisahan script. Peta URL final ada di bagian 4 plan routing, bukan di dokumen ini.
+> **Status 2026-10-09 (lihat `docs/hash-to-url-routing-plan.md` untuk rincian):** 27 dari 28 menu sidebar sudah punya URL sendiri lewat helper `$dashboardPage` di `routes/web.php` dan peta `config/dashboard.php` `tab_urls` (menu `dashboard` tetap di `/`, menu Service dihapus). Markup tiap menu hanya dirender di halamannya (`app-frame.blade.php`: `$dedicatedMenuView` vs `$legacyMenus`). **Script/state menu baru sebagian dipisah** (`tiktok_template`, katalog pricelist/apple, meta-ig presentation, followers, img-repo, asset-vendor, market-intel); sisa script bersama (settings, kalender, content-list, summary, dll.) sengaja tidak dipecah. Kotak per menu di bawah sengaja dibiarkan kosong karena definisi "selesai" di dokumen ini mencakup pemisahan script penuh. Peta URL final ada di bagian 4 plan routing, bukan di dokumen ini.
 >
 > | Cluster | URL |
 > |---|---|
