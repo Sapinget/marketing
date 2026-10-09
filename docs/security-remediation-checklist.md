@@ -53,3 +53,18 @@ Tanggal audit: 2026-07-10
 - [x] `php artisan migrate --force`
 - [x] `php artisan test tests/Feature/GasProxySecurityTest.php tests/Feature/DashboardUserManagementTest.php tests/Feature/DashboardAuthenticationTest.php`
 - [x] `npm run build`
+
+## Audit 127.0.0.1:8090 (2026-10-09)
+
+Diperbaiki:
+
+- [x] **phpMyAdmin terbuka di `/pma/`**: `public/pma` adalah symlink ke `/opt/homebrew/share/phpmyadmin`, dan tunnel Cloudflare meneruskan semua path ke origin. Symlink dihapus (target tidak disentuh). Dijaga `PublicDirectoryHygieneTest`. Jalankan phpMyAdmin di port lokal terpisah bila perlu, mis. `php -S 127.0.0.1:8091 -t /opt/homebrew/share/phpmyadmin`.
+- [x] **XSS lewat tautan di `/print-job`**: sebelumnya publik, tanpa CSRF/throttle, sanitizer regex meloloskan `onerror=`/`onmouseover=` tanpa tanda kutip, dan halaman disajikan satu origin dengan CSP `unsafe-inline`. Sekarang: wajib login (`dashboard.auth`) dengan CSRF, throttle 30/60 per menit, token terikat pada akun pembuatnya, sanitasi lewat DOM (`App\Support\PrintHtmlSanitizer`), dan halaman cetak memakai CSP ber-nonce (hanya skrip cetak yang boleh jalan). `SetSecurityHeaders` tidak lagi menimpa CSP yang sudah diset route.
+
+Belum (dari audit yang sama), urut prioritas:
+
+- [ ] `APP_ENV=local` pada instance yang di-tunnel (membuka `/__db/*`; guard hanya mengandalkan IP loopback + `X-Forwarded-For`). Pakai `production`.
+- [ ] Layar login mengirim seluruh aplikasi (±650 KB HTML + semua path API); pisahkan halaman login yang ringan.
+- [ ] `Cache-Control` untuk aset statis (`/build/assets/*` immutable; `/vendor`, `/asset` max-age).
+- [ ] Dependensi: Laravel 10.50.2 sudah EOL (4 advisory, 1 tinggi), `league/commonmark` (2), `league/flysystem` (1); `npm audit` melaporkan `vue`/`@vue/server-renderer` dan `source-map-js` (dev tooling).
+- [ ] `public/.DS_Store` disajikan; `X-Powered-By: PHP/x` (`expose_php`); `robots.txt` kosong (izinkan indeks); `/design-system*` dan `/marketing-dashboard.html` publik; CSP `font-src` memuat `frontend-cdn.perplexity.ai`; `logo.png` 960×960.

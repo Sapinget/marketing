@@ -4367,7 +4367,11 @@ HTML, $html);
 
     public function test_print_job_route_keeps_html_available_during_cache_ttl(): void
     {
-        cache()->put('ppp_print_job_deadbeef1234', '<!DOCTYPE html><html><body>Demo Print</body></html>', now()->addMinutes(5));
+        $user = $this->actingAsDashboardUser();
+        cache()->put('ppp_print_job_deadbeef1234', [
+            'html' => '<!DOCTYPE html><html><body>Demo Print</body></html>',
+            'user_id' => $user->id,
+        ], now()->addMinutes(5));
 
         $firstResponse = $this->get('/print-job/deadbeef1234');
         $firstResponse->assertOk();

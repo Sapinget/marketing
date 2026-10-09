@@ -9,6 +9,7 @@ use App\Support\MarketingDashboardShell;
 use App\Support\MasterPlanDistributionSync;
 use App\Support\MetaIgImportNormalizer;
 use App\Support\PricelistSheetImporter;
+use App\Support\PrintHtmlSanitizer;
 use App\Support\XlsxSheetReader;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Http\Kernel;
@@ -326,14 +327,17 @@ Route::get('/print-job/{token}', function (string $token) {
         return response('Token tidak valid.', 404)->header('Content-Type', 'text/html; charset=UTF-8');
     }
     $cacheKey = 'ppp_print_job_'.$safeToken;
-    $html = cache()->get($cacheKey);
-    if (! $html) {
+    $job = cache()->get($cacheKey);
+    // Hanya pembuat token yang boleh membukanya; token milik akun lain diperlakukan seperti tidak ada.
+    $html = is_array($job) && ($job['user_id'] ?? null) === auth()->id() ? (string) ($job['html'] ?? '') : '';
+    if ($html === '') {
         return response('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Print Tidak Ditemukan</title></head><body style="font-family:Arial,sans-serif;padding:40px;text-align:center"><p>Dokumen print tidak ditemukan atau sudah kedaluwarsa. Silakan coba cetak lagi.</p></body></html>', 404)
             ->header('Content-Type', 'text/html; charset=UTF-8');
     }
 
-    $autoPrintScript = <<<'HTML'
-<script>
+    $nonce = base64_encode(random_bytes(16));
+    $autoPrintScript = <<<HTML
+<script nonce="{$nonce}">
 (() => {
     const waitForAssets = () => {
         const fontsReady = document.fonts?.ready?.catch(() => undefined) ?? Promise.resolve();
@@ -362,15 +366,23 @@ HTML;
 
     // Do NOT forget on first GET: the popup load itself is one GET, and a reload/refresh
     // would otherwise 404 ("Print Tidak Ditemukan"). The 5-minute cache TTL handles cleanup.
+    // CSP ber-nonce: hanya skrip cetak di atas yang boleh jalan; markup/atribut inline apa pun dari konten diblokir.
     return response($html, 200)
         ->header('Content-Type', 'text/html; charset=UTF-8')
         ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
-        ->header('Pragma', 'no-cache');
-})->withoutMiddleware([
-    VerifyCsrfToken::class,
-    StartSession::class,
-    ShareErrorsFromSession::class,
-]);
+        ->header('Pragma', 'no-cache')
+        ->header('Content-Security-Policy', implode('; ', [
+            "default-src 'none'",
+            "script-src 'nonce-{$nonce}'",
+            "style-src 'self' 'unsafe-inline'",
+            "img-src 'self' data: https:",
+            "font-src 'self' data:",
+            "base-uri 'none'",
+            "form-action 'none'",
+            "frame-ancestors 'none'",
+            "object-src 'none'",
+        ]));
+})->middleware(['dashboard.auth', 'throttle:60,1']);
 
 Route::get('/health', fn () => response()->json([
     'status' => 'ok',
@@ -406,18 +418,15 @@ Route::post('/print-job', function () {
     if (strlen($html) > 512000) {
         return response()->json(['error' => 'HTML payload too large (max 500KB)'], 413);
     }
-    $sanitized = strip_tags($html, '<div><span><p><br><hr><table><thead><tbody><tr><th><td><h1><h2><h3><h4><h5><h6><ul><ol><li><img><a><strong><em><b><i><u><s><pre><code><blockquote><section><article><header><footer><main><aside><figure><figcaption><style><link><meta><title>');
-    $sanitized = preg_replace('/<([a-z]+[a-z0-9]*)\s[^>]*?(on\w+)=["\'][^"\']*["\']/i', '<$1', $sanitized);
-    $sanitized = preg_replace('/href=["\']\s*javascript:[^"\']*["\']/i', '', $sanitized);
     $token = bin2hex(random_bytes(16));
-    cache()->put('ppp_print_job_'.$token, $sanitized, now()->addMinutes(5));
+    // Token milik pembuatnya: halaman cetak hanya bisa dibuka oleh akun yang sama (cegah tautan token dibagikan ke admin lain).
+    cache()->put('ppp_print_job_'.$token, [
+        'html' => PrintHtmlSanitizer::sanitize($html),
+        'user_id' => auth()->id(),
+    ], now()->addMinutes(5));
 
     return response()->json(['token' => $token]);
-})->withoutMiddleware([
-    VerifyCsrfToken::class,
-    StartSession::class,
-    ShareErrorsFromSession::class,
-]);
+})->middleware(['dashboard.auth', 'throttle:30,1']);
 
 Route::get('/api/auth/session', function (DashboardAuth $dashboardAuth) {
     if (! auth()->check()) {

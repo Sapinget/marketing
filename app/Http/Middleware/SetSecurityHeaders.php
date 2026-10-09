@@ -23,7 +23,8 @@ class SetSecurityHeaders
 
         $contentType = (string) $response->headers->get('Content-Type', '');
 
-        if (str_starts_with(strtolower($contentType), 'text/html')) {
+        // Route yang menetapkan CSP sendiri (mis. halaman cetak ber-nonce) tidak ditimpa.
+        if (str_starts_with(strtolower($contentType), 'text/html') && ! $response->headers->has('Content-Security-Policy')) {
             $response->headers->set(
                 'Content-Security-Policy',
                 implode('; ', [

@@ -48,15 +48,19 @@ class BrainFindingsHardeningTest extends TestCase
         ]);
         $loginResponse->assertStatus(422);
 
+        // Print job dulu publik; kini wajib login (lihat PrintJobAnd8090SecurityTest).
+        $this->postJson('/print-job', ['html' => '<p>Public Print Document</p>'])->assertUnauthorized();
+
+        $this->actingAsDashboardUser();
         $printResponse = $this->postJson('/print-job', [
-            'html' => '<p>Public Print Document</p>',
+            'html' => '<p>Print Document</p>',
         ]);
         $printResponse->assertOk()->assertJsonStructure(['token']);
         $token = (string) $printResponse->json('token');
 
         $this->get('/print-job/'.$token)
             ->assertOk()
-            ->assertSee('Public Print Document');
+            ->assertSee('Print Document');
     }
 
     public function test_8090_route_is_method_restricted_and_prevents_path_traversal(): void
