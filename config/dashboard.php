@@ -52,6 +52,10 @@ return [
         'garansi_resmi' => '/complain/garansi-resmi',
 
         // Batch D: Marketing
+        'program_promo' => '/marketing/program-promo',
+        'sell_out' => '/marketing/sell-out',
+        'ads_log' => '/marketing/ads-log',
+        'budgeting' => '/marketing/budgeting',
         // (entri batch D ditambahkan di bawah baris ini)
 
         // Batch E: Analisa Konten

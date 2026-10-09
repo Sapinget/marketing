@@ -746,6 +746,10 @@ $dashboardPage('/complain/garansi-cermati', 'dashboard.complain.garansi-cermati'
 $dashboardPage('/complain/garansi-resmi', 'dashboard.complain.garansi-resmi', 'dashboard.pages.complain.garansi-resmi', 'garansi_resmi', 'dashboard.partials.menus.garansi-resmi', $dashboardBackendUrl);
 
 // Batch D: Marketing
+$dashboardPage('/marketing/program-promo', 'dashboard.marketing.program-promo', 'dashboard.pages.marketing.program-promo', 'program_promo', 'dashboard.partials.menus.program-promo', $dashboardBackendUrl);
+$dashboardPage('/marketing/sell-out', 'dashboard.marketing.sell-out', 'dashboard.pages.marketing.sell-out', 'sell_out', 'dashboard.partials.menus.sell-out', $dashboardBackendUrl);
+$dashboardPage('/marketing/ads-log', 'dashboard.marketing.ads-log', 'dashboard.pages.marketing.ads-log', 'ads_log', 'dashboard.partials.menus.ads-log', $dashboardBackendUrl);
+$dashboardPage('/marketing/budgeting', 'dashboard.marketing.budgeting', 'dashboard.pages.marketing.budgeting', 'budgeting', 'dashboard.partials.menus.budgeting', $dashboardBackendUrl);
 // (route batch D ditambahkan di bawah baris ini)
 
 // Batch E: Analisa Konten
