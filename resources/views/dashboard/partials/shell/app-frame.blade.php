@@ -208,13 +208,7 @@
                     $legacyMenus = [
                     'dashboard.partials.menus.dashboard',
                     'dashboard.partials.menus.master-plan',
-                    'dashboard.partials.menus.ideation',
-                    'dashboard.partials.menus.distribution',
-                    'dashboard.partials.menus.analytics',
-                    'dashboard.partials.menus.calendar',
-                    'dashboard.partials.menus.story',
                     'dashboard.partials.menus.analisa-insight',
-                    'dashboard.partials.menus.unboxing',
                     'dashboard.partials.menus.top-content',
                     'dashboard.partials.menus.low-content',
                     'dashboard.partials.menus.profile',
@@ -269,6 +263,12 @@
                         'dashboard.partials.menus.meta-followers',
 
                         // Batch F
+                        'dashboard.partials.menus.unboxing',
+                        'dashboard.partials.menus.ideation',
+                        'dashboard.partials.menus.distribution',
+                        'dashboard.partials.menus.analytics',
+                        'dashboard.partials.menus.calendar',
+                        'dashboard.partials.menus.story',
                     ];
                 @endphp
                 @if($dedicatedMenuView ?? null)

@@ -2679,7 +2679,7 @@ HTML, $html);
 
     public function test_toolbar_create_buttons_are_icon_only(): void
     {
-        $html = $this->get('/')->assertOk()->getContent();
+        $html = $this->renderDashboardHtml();
 
         $this->assertHtmlContains('aria-label="Buat Ide"', $html);
         $this->assertHtmlNotContains('<i class="fa-solid fa-plus mr-2"></i>Buat Ide', $html);

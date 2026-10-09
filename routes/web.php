@@ -760,6 +760,12 @@ $dashboardPage('/analisa/followers-ig', 'dashboard.analisa.followers-ig', 'dashb
 
 // Batch F: Dashboard & Konten
 // (route batch F ditambahkan di bawah baris ini)
+$dashboardPage('/konten/unboxing', 'dashboard.konten.unboxing', 'dashboard.pages.konten.unboxing', 'unboxing', 'dashboard.partials.menus.unboxing', $dashboardBackendUrl);
+$dashboardPage('/konten/ideation', 'dashboard.konten.ideation', 'dashboard.pages.konten.ideation', 'ideation', 'dashboard.partials.menus.ideation', $dashboardBackendUrl, ['dashboard.partials.menus.content-modal']);
+$dashboardPage('/konten/distribution', 'dashboard.konten.distribution', 'dashboard.pages.konten.distribution', 'distribution', 'dashboard.partials.menus.distribution', $dashboardBackendUrl);
+$dashboardPage('/konten/analytics', 'dashboard.konten.analytics', 'dashboard.pages.konten.analytics', 'analytics', 'dashboard.partials.menus.analytics', $dashboardBackendUrl);
+$dashboardPage('/konten/calendar', 'dashboard.konten.calendar', 'dashboard.pages.konten.calendar', 'calendar', 'dashboard.partials.menus.calendar', $dashboardBackendUrl, ['dashboard.partials.menus.content-modal', 'dashboard.partials.menus.story-modal']);
+$dashboardPage('/konten/story', 'dashboard.konten.story', 'dashboard.pages.konten.story', 'story', 'dashboard.partials.menus.story', $dashboardBackendUrl);
 
 Route::get('/api/promo-pamflets/file/{filename}', function (string $filename) {
     abort_unless(preg_match('/^[A-Za-z0-9._-]+$/', $filename) === 1, 404);
