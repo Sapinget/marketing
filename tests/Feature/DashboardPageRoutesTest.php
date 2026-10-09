@@ -110,12 +110,18 @@ class DashboardPageRoutesTest extends TestCase
         $this->assertPageLacks($legacy, 'ttDownloadAudit');
     }
 
-    public function test_dedicated_pages_are_much_lighter_than_the_legacy_dashboard(): void
+    public function test_dedicated_pages_stay_within_the_size_budget(): void
     {
+        // Anggaran: shell + script bersama (~0,85 MB) + satu menu. Baseline sebelum isolasi: 2,27 MB.
+        // Turunkan batas ini saat script menu mulai diisolasi (Fase 1.5).
+        $budgetBytes = 1_150_000;
         $legacySize = strlen($this->html('/'));
 
         foreach ($this->dashboardPages() as [$uri]) {
-            $this->assertLessThan($legacySize * 0.6, strlen($this->html($uri)), "{$uri} should render far less than the full dashboard.");
+            $size = strlen($this->html($uri));
+
+            $this->assertLessThan($budgetBytes, $size, "{$uri} exceeds the dedicated page size budget.");
+            $this->assertLessThan($legacySize, $size, "{$uri} should be lighter than the legacy dashboard.");
         }
     }
 
