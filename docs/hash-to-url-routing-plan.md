@@ -268,7 +268,7 @@ Kode: tidak ada butir wajib yang tersisa. Yang masih terbuka:
 
 | Item | Jenis | Catatan |
 |---|---|---|
-| Uji manual: tambah/edit/hapus data, upload gambar, impor followers, edit+ekspor TikTok, dialog konfirmasi hapus | Wajib sebelum merge | Chrome headless tidak mengisi form, menyimpan, atau mengunggah berkas sungguhan |
+| Uji manual oleh manusia di browser sungguhan (tampilan, mobile, data nyata) | Wajib sebelum merge | Sudah diuji otomatis di Chrome headless pada salinan repo terpisah dengan DB sqlite sementara: Order Online tambah/ubah/hapus lewat dialog konfirmasi, Keep Barang tambah, Harga Kompetitor tambah, Nama Stock tambah, repo gambar unggah (+ thumbnail tersaji), impor CSV followers (2 baris), TikTok unggah template + ekspor; semua tanpa error konsol dengan Vue build dev. Belum: tampilan visual, layar mobile, data nyata |
 | Buat/perbarui PR | Wajib | `gh` yang terpasang hanya punya izin READ; buat lewat `https://github.com/Sapinget/marketing/pull/new/feat/hash-to-url-routing` |
 | `php artisan migrate --force` + hard refresh setelah deploy | Saat deploy | Lihat risiko "Migration/DB" dan "Cache lama" |
 | Fase 3: hapus `$legacyMenus`, daftar manual `return`, `app-script-domain-state*`, cabang hash `switchTab`, flag `url_routing` | Ditunda | Menunggu rilis stabil dan keputusan tab tersembunyi (Fase 4) |
@@ -276,4 +276,9 @@ Kode: tidak ada butir wajib yang tersisa. Yang masih terbuka:
 | Sisa menu Service: state/API/tabel (`services`, `service_claims`) | Keputusan pemilik | Tabel sengaja tidak dihapus (data hilang bila di-drop) |
 | Isolasi sisa ±0,6 MB script bersama | Opsional | Risiko tinggi, hemat ±0,1–0,2 MB per halaman; sebaiknya ditunda sampai ada bukti perlu |
 | ±135 baris `sessions` anonim dari server uji awal di MySQL asli | Housekeeping | Tidak berbahaya; bisa dihapus berdasarkan user agent HeadlessChrome/curl dan `user_id` kosong |
+
+### Temuan lama dari uji CRUD (bukan dari migrasi; belum diperbaiki)
+
+- **Id baru dibaca dari kunci yang salah.** `saveHargaKompetitor` (`app-script-price-competitor-operations`), `saveAvi` (`asset-vendor-inventory-operations`), dan `lpjk.js` (2 tempat) membaca `res.id`, padahal API mengembalikan `{status, data: {source_id, ...}}`. Baris yang baru dibuat memakai id sementara (`'HK' + Date.now()` dst.), sehingga mengubah/menghapus baris itu sebelum halaman dimuat ulang menghasilkan **404** (terbukti: `DELETE /api/harga-kompetitor/HK... 404`). Perbaikan: pakai `res?.data?.source_id`.
+- `deleteHargaKompetitor` memakai `confirm()` bawaan browser, bukan dialog `confirmModal` seperti menu lain.
 
