@@ -95,8 +95,11 @@ class DashboardBatchF1Test extends TestCase
         $this->assertPageHas($this->html('/konten/story'), 'v-if="storyModalOpen"');
     }
 
-    public function test_legacy_dashboard_keeps_the_generic_content_modal(): void
+    public function test_root_no_longer_renders_the_generic_content_modal_unless_the_flag_is_off(): void
     {
+        $this->assertPageLacks($this->html('/'), 'Riwayat Konten Colab');
+
+        config(['dashboard.url_routing' => false]);
         $this->assertPageHas($this->html('/'), 'Riwayat Konten Colab');
     }
 

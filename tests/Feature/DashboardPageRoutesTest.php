@@ -101,11 +101,11 @@ class DashboardPageRoutesTest extends TestCase
         $this->assertPageHas($page, "activeTab === 'tiktok_template'");
         $this->assertPageHas($page, 'const ttFile');
         // Penanda khusus markup menu lain (sidebar/header memuat `activeTab === ...` umum, jadi tidak dipakai).
-        $this->assertPageLacks($page, '<!-- Profile Setting View -->');
+        $this->assertPageLacks($page, "<div v-if=\"activeTab === 'dashboard'\" class=\"space-y-4\">");
         $this->assertPageLacks($page, "activeTab === 'budgeting' && !budgetConfigLoaded");
 
         $legacy = $this->html('/');
-        $this->assertPageHas($legacy, '<!-- Profile Setting View -->');
+        $this->assertPageHas($legacy, "<div v-if=\"activeTab === 'dashboard'\" class=\"space-y-4\">");
         $this->assertPageLacks($legacy, 'const ttFile');
         $this->assertPageLacks($legacy, 'ttDownloadAudit');
     }
@@ -428,5 +428,44 @@ class DashboardPageRoutesTest extends TestCase
         $this->assertStringContainsString("redirectWithNotice('settings'", $watchers);
         $this->assertStringContainsString('showFlashNotice();', $tail);
         $this->assertSame(2, substr_count($settings.$watchers, 'Akses manajemen user hanya untuk Super Admin'), 'one message per guard (switchTab + watcher)');
+    }
+
+    public function test_templates_never_assign_active_tab_directly(): void
+    {
+        // `@click="activeTab = 'x'"` mengganti tab tanpa membuka URL-nya; menu yang sudah dimigrasi akan kosong.
+        // Pakai switchTab('x') agar tab ber-URL dibuka lewat URL-nya.
+        foreach (glob(resource_path('views/dashboard/partials/{menus,shell}/*.blade.php'), GLOB_BRACE) ?: [] as $path) {
+            $source = (string) file_get_contents($path);
+
+            $this->assertSame(0, preg_match('/@click="[^"]*\bactiveTab\s*=\s*[\'"]/', $source), basename($path).' assigns activeTab directly in a template.');
+        }
+    }
+
+    public function test_hidden_menus_have_their_own_urls_and_root_renders_only_the_dashboard(): void
+    {
+        $tabs = ['bonus_report', 'talent_bonus', 'editor_performance', 'market_pasar', 'market_intelijen_harga', 'market_audit_harga',
+            'market_eksternal', 'market_ext_goodponsel', 'market_ext_devstore', 'market_ext_rumahgadget',
+            'top_content_platform', 'low_content_platform', 'analisa_insight', 'profile'];
+
+        foreach ($tabs as $tab) {
+            $this->assertArrayHasKey($tab, config('dashboard.tab_urls'));
+        }
+
+        $root = $this->html('/');
+        $this->assertPageHas($root, "<div v-if=\"activeTab === 'dashboard'\" class=\"space-y-4\">");
+        $this->assertPageLacks($root, '<!-- Profile Setting View -->');
+        $this->assertPageLacks($root, '<!-- Talent Bonus tab -->');
+        $this->assertPageHas($this->html('/profil'), '<!-- Profile Setting View -->');
+        $this->assertPageHas($this->html('/performa/talent-bonus'), '<!-- Talent Bonus tab -->');
+    }
+
+    public function test_flag_off_restores_hidden_menus_on_root(): void
+    {
+        config(['dashboard.url_routing' => false]);
+        $root = $this->html('/');
+
+        $this->assertPageHas($root, '<!-- Profile Setting View -->');
+        $this->assertPageHas($root, '<!-- Talent Bonus tab -->');
+        $this->assertPageHas($root, 'v-if="modalOpen"');
     }
 }

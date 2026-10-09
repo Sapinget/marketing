@@ -229,9 +229,14 @@
                 };
                 const openProfileSetting = () => {
                     profileMenuOpen.value = false;
+                    if (goToMigratedTab('profile')) return;
                     activeTab.value = "profile";
                     profileForm.value.namaLengkap = currentUser.value?.nama || "";
                     localStorage.setItem("ppp_active_tab", "profile");
+                };
+                // Dibuka langsung lewat URL /profil: isi form dengan nama pengguna saat ini.
+                menuLoaders.profile = () => {
+                    profileForm.value.namaLengkap = currentUser.value?.nama || "";
                 };
 
 @endverbatim

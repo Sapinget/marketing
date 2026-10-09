@@ -6,33 +6,28 @@ use Tests\TestCase;
 
 class DedicatedMenuBladeViewsTest extends TestCase
 {
-    public function test_each_external_market_source_has_dedicated_blade_rendered_in_app_frame(): void
+    public function test_each_external_market_source_has_its_own_page_with_its_menu(): void
     {
-        $response = $this->get('/');
-        $response->assertOk();
+        $pages = [
+            '/intelijen/kompetitor' => ["activeTab === 'market_eksternal'", 'Summary Eksternal'],
+            '/intelijen/kompetitor/good-ponsel' => ["activeTab === 'market_ext_goodponsel'", 'Good Ponsel'],
+            '/intelijen/kompetitor/devstore' => ["activeTab === 'market_ext_devstore'", 'Devstore'],
+            '/intelijen/kompetitor/rumah-gadget' => ["activeTab === 'market_ext_rumahgadget'", 'Rumah Gadget Bali'],
+        ];
 
-        // Verify each dedicated menu tab condition is rendered in dashboard shell
-        $response->assertSee("activeTab === 'market_eksternal'", false);
-        $response->assertSee("activeTab === 'market_ext_goodponsel'", false);
-        $response->assertSee("activeTab === 'market_ext_devstore'", false);
-        $response->assertSee("activeTab === 'market_ext_rumahgadget'", false);
+        foreach ($pages as $uri => [$marker, $title]) {
+            $html = (string) $this->get($uri)->assertOk()->getContent();
 
-        // Verify specific titles for each source view
-        $response->assertSee('Summary Eksternal');
-        $response->assertSee('Good Ponsel');
-        $response->assertSee('Devstore');
-        $response->assertSee('Rumah Gadget Bali');
-
-        // Katalog sudah punya URL sendiri (tab_urls) dan tidak lagi dirender di `/`
-        // (kecuali flag dashboard.url_routing dimatikan; lihat DashboardPageRoutesTest).
+            $this->assertTrue(str_contains($html, $marker), "{$uri} must render {$marker}");
+            $this->assertTrue(str_contains($html, $title), "{$uri} must mention {$title}");
+        }
     }
 
     public function test_external_market_navigation_has_source_mapping(): void
     {
-        $response = $this->get('/');
-        $response->assertOk();
+        // Pemetaan tab -> sumber ada di script market-intel, yang dimuat di halaman market (dan di `/` bila flag mati).
+        $content = (string) $this->get('/intelijen/kompetitor/good-ponsel')->assertOk()->getContent();
 
-        $content = $response->getContent();
         $this->assertMatchesRegularExpression("/market_ext_goodponsel:\s*'goodponsel'/", $content);
         $this->assertMatchesRegularExpression("/market_ext_devstore:\s*'devstore'/", $content);
         $this->assertMatchesRegularExpression("/market_ext_rumahgadget:\s*'rumahgadget'/", $content);

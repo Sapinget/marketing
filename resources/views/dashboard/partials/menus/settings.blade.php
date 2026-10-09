@@ -112,10 +112,10 @@
                                                 <button v-if="!isSettingTabObject(activeSettingTab)" @click="clearEmptySettingOptions(activeSettingTab)" class="primary-cta-button primary-cta-button--danger active:scale-95">
                                                     <i class="fa-solid fa-eraser text-body-sm"></i> Hapus Kosong
                                                 </button>
-                                                <button v-if="activeSettingTab === 'BONUS_CONFIG'" @click="activeTab = 'bonus_report'" class="primary-cta-button primary-cta-button--link active:scale-95">
+                                                <button v-if="activeSettingTab === 'BONUS_CONFIG'" @click="switchTab('bonus_report')" class="primary-cta-button primary-cta-button--link active:scale-95">
                                                     <i class="fa-solid fa-arrow-up-right-from-square text-body-sm"></i> Buka Bonus
                                                 </button>
-                                                <button v-if="activeSettingTab === 'BUDGET_CONFIG'" @click="activeTab = 'budgeting'" class="primary-cta-button primary-cta-button--link active:scale-95">
+                                                <button v-if="activeSettingTab === 'BUDGET_CONFIG'" @click="switchTab('budgeting')" class="primary-cta-button primary-cta-button--link active:scale-95">
                                                     <i class="fa-solid fa-arrow-up-right-from-square text-body-sm"></i> Buka Budget
                                                 </button>
                                             </div>
@@ -303,10 +303,10 @@
                                             <button v-if="!isSettingTabObject(activeSettingTab)" @click="clearEmptySettingOptions(activeSettingTab)" class="primary-cta-button primary-cta-button--danger active:scale-95">
                                                 <i class="fa-solid fa-eraser text-body-sm"></i> Hapus
                                             </button>
-                                            <button v-if="activeSettingTab === 'BONUS_CONFIG'" @click="closeSettingsDetailModal(); activeTab = 'bonus_report'" class="primary-cta-button primary-cta-button--link active:scale-95 col-span-2">
+                                            <button v-if="activeSettingTab === 'BONUS_CONFIG'" @click="closeSettingsDetailModal(); switchTab('bonus_report')" class="primary-cta-button primary-cta-button--link active:scale-95 col-span-2">
                                                 <i class="fa-solid fa-arrow-up-right-from-square text-body-sm"></i> Buka Bonus Editor
                                             </button>
-                                            <button v-if="activeSettingTab === 'BUDGET_CONFIG'" @click="closeSettingsDetailModal(); activeTab = 'budgeting'" class="primary-cta-button primary-cta-button--link active:scale-95 col-span-2">
+                                            <button v-if="activeSettingTab === 'BUDGET_CONFIG'" @click="closeSettingsDetailModal(); switchTab('budgeting')" class="primary-cta-button primary-cta-button--link active:scale-95 col-span-2">
                                                 <i class="fa-solid fa-arrow-up-right-from-square text-body-sm"></i> Buka Budget Editor
                                             </button>
                                         </div>

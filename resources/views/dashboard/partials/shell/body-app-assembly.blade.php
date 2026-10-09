@@ -15,10 +15,6 @@
 @include('dashboard.partials.shell.app-script-price-competitor-operations')
 @include('dashboard.partials.shell.app-script-lpjk-operations')
 @include('dashboard.partials.shell.app-script-budgeting-operations')
-{{-- Hanya dipakai menu tersembunyi market-* yang dirender di `/`; halaman menu ber-URL tidak memuatnya. --}}
-@unless($dedicatedMenuView ?? null)
-    @include('dashboard.partials.shell.app-script-market-intelligence-operations')
-@endunless
 @include('dashboard.partials.shell.app-script-search-select-and-options')
 @include('dashboard.partials.shell.app-script-calendar-helpers')
 @include('dashboard.partials.shell.app-script-summary-computed-cluster')
@@ -50,6 +46,7 @@
     @include('dashboard.partials.shell.menu-scripts-meta-followers')
     @include('dashboard.partials.shell.menu-scripts-img-repo')
     @include('dashboard.partials.shell.menu-scripts-asset-vendor')
+    @include('dashboard.partials.shell.menu-scripts-market-intel')
 @endif
 @stack('menu-scripts')
 @include('dashboard.partials.shell.app-script-return-block')

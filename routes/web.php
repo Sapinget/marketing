@@ -759,6 +759,22 @@ $dashboardPage('/analisa/followers-ig', 'dashboard.analisa.followers-ig', 'dashb
 
 // Batch F: Dashboard & Konten
 // (route batch F ditambahkan di bawah baris ini)
+
+// Fase 4: menu tersembunyi (tanpa link sidebar; profile dibuka dari menu profil di header)
+$dashboardPage('/performa/bonus-report', 'dashboard.performa.bonus-report', 'dashboard.pages.performa.bonus-report', 'bonus_report', 'dashboard.partials.menus.bonus-report', $dashboardBackendUrl, ['dashboard.partials.menus.content-modal']);
+$dashboardPage('/performa/talent-bonus', 'dashboard.performa.talent-bonus', 'dashboard.pages.performa.talent-bonus', 'talent_bonus', 'dashboard.partials.menus.talent-bonus', $dashboardBackendUrl);
+$dashboardPage('/performa/editor-performance', 'dashboard.performa.editor-performance', 'dashboard.pages.performa.editor-performance', 'editor_performance', 'dashboard.partials.menus.editor-performance', $dashboardBackendUrl);
+$dashboardPage('/intelijen/pasar', 'dashboard.intelijen.pasar', 'dashboard.pages.intelijen.pasar', 'market_pasar', 'dashboard.partials.menus.market-pasar', $dashboardBackendUrl);
+$dashboardPage('/intelijen/harga', 'dashboard.intelijen.harga', 'dashboard.pages.intelijen.harga', 'market_intelijen_harga', 'dashboard.partials.menus.market-intelijen-harga', $dashboardBackendUrl);
+$dashboardPage('/intelijen/audit-harga', 'dashboard.intelijen.audit-harga', 'dashboard.pages.intelijen.audit-harga', 'market_audit_harga', 'dashboard.partials.menus.market-audit-harga', $dashboardBackendUrl);
+$dashboardPage('/intelijen/kompetitor', 'dashboard.intelijen.kompetitor', 'dashboard.pages.intelijen.kompetitor', 'market_eksternal', 'dashboard.partials.menus.market-eksternal', $dashboardBackendUrl);
+$dashboardPage('/intelijen/kompetitor/good-ponsel', 'dashboard.intelijen.kompetitor.good-ponsel', 'dashboard.pages.intelijen.kompetitor-good-ponsel', 'market_ext_goodponsel', 'dashboard.partials.menus.market-ext-goodponsel', $dashboardBackendUrl);
+$dashboardPage('/intelijen/kompetitor/devstore', 'dashboard.intelijen.kompetitor.devstore', 'dashboard.pages.intelijen.kompetitor-devstore', 'market_ext_devstore', 'dashboard.partials.menus.market-ext-devstore', $dashboardBackendUrl);
+$dashboardPage('/intelijen/kompetitor/rumah-gadget', 'dashboard.intelijen.kompetitor.rumah-gadget', 'dashboard.pages.intelijen.kompetitor-rumah-gadget', 'market_ext_rumahgadget', 'dashboard.partials.menus.market-ext-rumahgadget', $dashboardBackendUrl);
+$dashboardPage('/analisa/top-konten', 'dashboard.analisa.top-konten', 'dashboard.pages.analisa.top-konten', 'top_content_platform', 'dashboard.partials.menus.top-content', $dashboardBackendUrl);
+$dashboardPage('/analisa/low-konten', 'dashboard.analisa.low-konten', 'dashboard.pages.analisa.low-konten', 'low_content_platform', 'dashboard.partials.menus.low-content', $dashboardBackendUrl);
+$dashboardPage('/analisa/insight-tren', 'dashboard.analisa.insight-tren', 'dashboard.pages.analisa.insight-tren', 'analisa_insight', 'dashboard.partials.menus.analisa-insight', $dashboardBackendUrl);
+$dashboardPage('/profil', 'dashboard.profil', 'dashboard.pages.profil.index', 'profile', 'dashboard.partials.menus.profile', $dashboardBackendUrl);
 $dashboardPage('/konten/master-plan', 'dashboard.konten.master-plan', 'dashboard.pages.konten.master-plan', 'master', 'dashboard.partials.menus.master-plan', $dashboardBackendUrl, ['dashboard.partials.menus.content-modal']);
 $dashboardPage('/konten/unboxing', 'dashboard.konten.unboxing', 'dashboard.pages.konten.unboxing', 'unboxing', 'dashboard.partials.menus.unboxing', $dashboardBackendUrl);
 $dashboardPage('/konten/ideation', 'dashboard.konten.ideation', 'dashboard.pages.konten.ideation', 'ideation', 'dashboard.partials.menus.ideation', $dashboardBackendUrl, ['dashboard.partials.menus.content-modal']);

@@ -1,6 +1,6 @@
 # Plan: Migrasi Menu Hash (`#tab`) ke URL Sendiri
 
-Status (diperbarui 2026-10-09): **selesai di kode dan sudah di-push** (branch `feat/hash-to-url-routing`). 27 dari 28 menu sidebar punya URL sendiri (`dashboard` sengaja tetap di `/`; menu Service dihapus); markup semua halaman terisolasi; script terisolasi untuk TikTok, katalog, meta-ig presentation, followers, img-repo, asset-vendor, dan market-intel (sisa script bersama sengaja tidak dipecah, lihat Fase 1.5); Fase 2 dan Fase 3 selesai sejauh aman. Diuji dengan 436 test PHPUnit dan Chrome headless (Vue build dev: 203/204 + rollback flag mati 12/12 + skenario non-admin). **Yang masih terbuka**: uji manual oleh manusia (klik tombol, isi form, simpan/hapus/upload), satu butir Fase 3 yang sengaja ditunda (hapus `$legacyMenus`), dan keputusan pemilik soal sisa menu Service dan tab tersembunyi (lihat "Sisa pekerjaan dan keputusan" di bagian 6). Dibuat 2026-10-08.
+Status (diperbarui 2026-10-09): **selesai di kode** (branch `feat/hash-to-url-routing`). Semua 27 menu sidebar **dan** 14 menu tersembunyi (Fase 4) punya URL sendiri; hanya `dashboard` yang tetap di `/` (menu Service dihapus). `/` kini hanya merender menu dashboard (`$legacyMenus` = 1 entri). Markup semua halaman terisolasi; script terisolasi untuk TikTok, katalog, meta-ig presentation, followers, img-repo, asset-vendor, market-intel (sisa script bersama sengaja tidak dipecah). Cabang hash `switchTab`, flag `url_routing`, dan `$migratedMenus` sengaja dipertahankan sebagai jalur rollback sampai rilis stabil. Diuji: 439 test PHPUnit; Chrome headless dengan Vue build dev (260/260 pengecekan semua 49 halaman, CRUD nyata Order Online/Keep Barang/Harga/Nama Stock/unggah gambar/impor followers/TikTok, rollback flag mati 16/16, skenario non-admin, profil, tombol Settings). **Yang masih terbuka**: uji manual oleh manusia (tampilan, mobile, data nyata), pembuatan PR, dan dua temuan lama di bagian akhir dokumen. Dibuat 2026-10-08.
 Melengkapi `docs/one-menu-one-blade-roadmap.md` (target arsitektur penuh). Dokumen ini mengatur **urutan batch dan resep per menu** untuk:
 
 1. menghapus routing berbasis `#` (satu menu = satu URL), dan
@@ -179,11 +179,16 @@ Berjalan paralel dengan Fase 1, aktif sejak batch pertama.
 - [x] (sebagian, sengaja) Dengan flag `url_routing` aktif, tab yang punya URL tidak lagi melewati cabang hash di `switchTab` (`goToMigratedTab` lebih dulu). Cabang hash **tidak dibuang** karena masih dipakai tab tersembunyi dan jalur rollback flag mati; buang bersama flag setelah rilis stabil.
 - [x] (dinilai, tidak dihapus) `_hiddenTabs` berisi 4 tab ber-URL (`pricelist_katalog`, `apple_katalog`, `template_background`, `img_repo`) yang memang tidak ada di sidebar; daftarnya hanya mencegah tab itu dipulihkan dari `localStorage` sebagai halaman pendaratan `/`. Tanpa daftar itu, membuka `/` setelah mengunjungi katalog akan selalu dialihkan ke katalog. Tetap dipakai.
 - [x] Include ganda sudah hilang (`@if($dedicatedMenuView !== ...)` diganti satu mekanisme `$dedicatedMenuView` / `$legacyMenus`). Enam menu yang sudah ber-URL sebelum migrasi (`pricelist-katalog`, `template-background`, `apple-katalog`, `img-repo`, `asset-vendor-inventory`, `promo-pamflet`) keluar dari `$legacyMenus` dan hanya dirender di `/` bila flag mati (`$migratedMenus`). `/` turun dari 1,46 MB ke 1,22 MB (HTML terkompres belum diukur ulang). `v-show="activeTab === ..."` di menu tidak dihapus (masih dibutuhkan di `/` oleh menu tersembunyi dan dicek test).
-- [ ] Hapus `$legacyMenus` (sisa 16 entri: `dashboard`, `analisa-insight`, `top-content`, `low-content`, `profile`, `bonus-report`, `talent-bonus`, `editor-performance`, `content-modal`, 7 `market-*`), daftar manual di `return` block, dan `app-script-domain-state*`. Menunggu Fase 1.5 (script) dan keputusan soal tab tersembunyi (Fase 4).
+- [x] (sebagian, sengaja) `$legacyMenus` kini hanya `dashboard` (setelah Fase 4); sebelumnya sisa 16 entri: `dashboard`, `analisa-insight`, `top-content`, `low-content`, `profile`, `bonus-report`, `talent-bonus`, `editor-performance`, `content-modal`, 7 `market-*`), daftar manual di `return` block, dan `app-script-domain-state*`. Daftar manual `return` block dan `app-script-domain-state*` tidak dihapus: keduanya masih memuat state bersama yang dipakai banyak menu. Flag `url_routing`, `$migratedMenus` (dirender di `/` hanya bila flag mati) dan cabang hash dipertahankan sebagai jalur rollback; hapus semuanya bersama setelah rilis stabil.
 - [x] `docs/one-menu-one-blade-roadmap.md` diberi banner status dan peta URL (kotak per menu di sana sengaja tidak dicentang karena definisinya termasuk isolasi script). `docs/component-catalog.md` tidak berubah: tidak ada komponen UI baru.
 
-### Fase 4 (opsional): Tab tersembunyi
-Kerjakan hanya bila menunya diaktifkan lagi: Performa, Intelijen Pasar, Top/Low Konten, Insight & Tren, Proses Claim (memakai data service; menu Service dihapus), Profile. Gunakan resep bagian 2.
+### Fase 4: Tab tersembunyi (selesai 2026-10-09 atas permintaan pemilik)
+- [x] 14 menu tersembunyi diberi URL (tanpa link sidebar): `/performa/{bonus-report,talent-bonus,editor-performance}`, `/intelijen/{pasar,harga,audit-harga,kompetitor,kompetitor/good-ponsel,kompetitor/devstore,kompetitor/rumah-gadget}`, `/analisa/{top-konten,low-konten,insight-tren}`, `/profil`. `proses_claim` tidak punya markup yang dirender di mana pun (dead), jadi tidak dibuatkan halaman.
+- [x] `bonus_report` membawa `content-modal` (memakai `openEditModal`); `content-modal` tidak lagi dirender di `/` (hanya di halaman yang butuh, atau bila flag mati). Halaman market memuat `menu-scripts-market-intel` lewat `@push`.
+- [x] `openProfileSetting` (menu profil di header) sekarang membuka `/profil`, memakai `goToMigratedTab`; `menuLoaders.profile` mengisi nama pengguna saat halaman dibuka langsung.
+- [x] **Bug yang ditemukan dan diperbaiki**: `menus/settings.blade.php` punya 4 tombol `@click="activeTab = 'bonus_report'|'budgeting'"` yang mengganti tab tanpa membuka URL (halaman kosong setelah Batch D). Diganti `switchTab(...)`; dijaga `test_templates_never_assign_active_tab_directly` untuk semua template.
+- `_hiddenTabs` tetap: tab yang tidak ada di sidebar tidak dipulihkan dari `localStorage` sebagai halaman pendaratan `/`.
+
 
 ## 4. Peta URL (disetujui 2026-10-09; sumber kebenaran runtime: `config/dashboard.php` `tab_urls`)
 
@@ -218,6 +223,20 @@ Kerjakan hanya bila menunya diaktifkan lagi: Performa, Intelijen Pasar, Top/Low 
 | `analytics` | `/konten/analytics` |
 | `calendar` | `/konten/calendar` |
 | `story` | `/konten/story` |
+| `bonus_report` | `/performa/bonus-report` |
+| `talent_bonus` | `/performa/talent-bonus` |
+| `editor_performance` | `/performa/editor-performance` |
+| `market_pasar` | `/intelijen/pasar` |
+| `market_intelijen_harga` | `/intelijen/harga` |
+| `market_audit_harga` | `/intelijen/audit-harga` |
+| `market_eksternal` | `/intelijen/kompetitor` |
+| `market_ext_goodponsel` | `/intelijen/kompetitor/good-ponsel` |
+| `market_ext_devstore` | `/intelijen/kompetitor/devstore` |
+| `market_ext_rumahgadget` | `/intelijen/kompetitor/rumah-gadget` |
+| `top_content_platform` | `/analisa/top-konten` |
+| `low_content_platform` | `/analisa/low-konten` |
+| `analisa_insight` | `/analisa/insight-tren` |
+| `profile` | `/profil` |
 
 Tabel ini sumber kebenaran dokumen; `docs/one-menu-one-blade-roadmap.md` masih perlu disamakan (lihat Fase 3).
 
@@ -271,8 +290,7 @@ Kode: tidak ada butir wajib yang tersisa. Yang masih terbuka:
 | Uji manual oleh manusia di browser sungguhan (tampilan, mobile, data nyata) | Wajib sebelum merge | Sudah diuji otomatis di Chrome headless pada salinan repo terpisah dengan DB sqlite sementara: Order Online tambah/ubah/hapus lewat dialog konfirmasi, Keep Barang tambah, Harga Kompetitor tambah, Nama Stock tambah, repo gambar unggah (+ thumbnail tersaji), impor CSV followers (2 baris), TikTok unggah template + ekspor; semua tanpa error konsol dengan Vue build dev. Belum: tampilan visual, layar mobile, data nyata |
 | Buat/perbarui PR | Wajib | `gh` yang terpasang hanya punya izin READ; buat lewat `https://github.com/Sapinget/marketing/pull/new/feat/hash-to-url-routing` |
 | `php artisan migrate --force` + hard refresh setelah deploy | Saat deploy | Lihat risiko "Migration/DB" dan "Cache lama" |
-| Fase 3: hapus `$legacyMenus`, daftar manual `return`, `app-script-domain-state*`, cabang hash `switchTab`, flag `url_routing` | Ditunda | Menunggu rilis stabil dan keputusan tab tersembunyi (Fase 4) |
-| Fase 4: migrasikan tab tersembunyi (Performa, Intelijen Pasar, Top/Low Konten, Insight, Proses Claim, Profile) | Keputusan pemilik | Hanya bila menunya dimunculkan lagi |
+| Hapus flag `url_routing`, `$migratedMenus`, cabang hash `switchTab`, `_hiddenTabs` | Ditunda | Setelah rilis stabil (ini jalur rollback) |
 | Sisa menu Service: state/API/tabel (`services`, `service_claims`) | Keputusan pemilik | Tabel sengaja tidak dihapus (data hilang bila di-drop) |
 | Isolasi sisa ±0,6 MB script bersama | Opsional | Risiko tinggi, hemat ±0,1–0,2 MB per halaman; sebaiknya ditunda sampai ada bukti perlu |
 | ±135 baris `sessions` anonim dari server uji awal di MySQL asli | Housekeeping | Tidak berbahaya; bisa dihapus berdasarkan user agent HeadlessChrome/curl dan `user_id` kosong |

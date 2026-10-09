@@ -65,6 +65,22 @@ return [
 
         // Batch F: Dashboard & Konten
         // (entri batch F ditambahkan di bawah baris ini)
+
+        // Fase 4: menu tersembunyi
+        'bonus_report' => '/performa/bonus-report',
+        'talent_bonus' => '/performa/talent-bonus',
+        'editor_performance' => '/performa/editor-performance',
+        'market_pasar' => '/intelijen/pasar',
+        'market_intelijen_harga' => '/intelijen/harga',
+        'market_audit_harga' => '/intelijen/audit-harga',
+        'market_eksternal' => '/intelijen/kompetitor',
+        'market_ext_goodponsel' => '/intelijen/kompetitor/good-ponsel',
+        'market_ext_devstore' => '/intelijen/kompetitor/devstore',
+        'market_ext_rumahgadget' => '/intelijen/kompetitor/rumah-gadget',
+        'top_content_platform' => '/analisa/top-konten',
+        'low_content_platform' => '/analisa/low-konten',
+        'analisa_insight' => '/analisa/insight-tren',
+        'profile' => '/profil',
         'master' => '/konten/master-plan',
         'unboxing' => '/konten/unboxing',
         'ideation' => '/konten/ideation',

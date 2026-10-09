@@ -1489,10 +1489,11 @@ class MarketingDashboardShellTest extends TestCase
     public function test_root_hardens_external_links_and_print_popup_url(): void
     {
         $response = $this->get('/');
-        $html = $response->getContent();
+        $response->assertOk();
+        // Menu yang memuat tautan eksternal kini ada di halaman masing-masing; periksa seluruh UI gabungan.
+        $html = $this->renderDashboardHtml();
         $printBrowser = file_get_contents(resource_path('js/dashboard/export/print-browser.js'));
 
-        $response->assertOk();
         $this->assertIsString($html);
         $this->assertIsString($printBrowser);
         $this->assertHtmlContains('target="_blank" rel="noopener noreferrer"', $html);

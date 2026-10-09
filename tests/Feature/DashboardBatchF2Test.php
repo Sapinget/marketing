@@ -39,7 +39,7 @@ class DashboardBatchF2Test extends TestCase
         $legacy = $this->html('/');
 
         $this->assertPageLacks($legacy, self::MASTER_MARKER);
-        $this->assertPageHas($legacy, 'v-if="modalOpen"', 'content modal stays on / for hidden legacy tabs');
+        $this->assertPageLacks($legacy, 'v-if="modalOpen"', 'content modal only travels with the pages that need it');
         $this->assertArrayNotHasKey('dashboard', config('dashboard.tab_urls'), 'dashboard tab lives on /');
     }
 

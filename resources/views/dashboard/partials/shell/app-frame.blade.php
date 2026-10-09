@@ -207,21 +207,6 @@
                 @php
                     $legacyMenus = [
                     'dashboard.partials.menus.dashboard',
-                    'dashboard.partials.menus.analisa-insight',
-                    'dashboard.partials.menus.top-content',
-                    'dashboard.partials.menus.low-content',
-                    'dashboard.partials.menus.profile',
-                    'dashboard.partials.menus.bonus-report',
-                    'dashboard.partials.menus.talent-bonus',
-                    'dashboard.partials.menus.editor-performance',
-                    'dashboard.partials.menus.content-modal',
-                    'dashboard.partials.menus.market-pasar',
-                    'dashboard.partials.menus.market-intelijen-harga',
-                    'dashboard.partials.menus.market-audit-harga',
-                    'dashboard.partials.menus.market-eksternal',
-                    'dashboard.partials.menus.market-ext-goodponsel',
-                    'dashboard.partials.menus.market-ext-devstore',
-                    'dashboard.partials.menus.market-ext-rumahgadget',
                     ];
                 @endphp
                 @php
@@ -270,6 +255,23 @@
                         'dashboard.partials.menus.analytics',
                         'dashboard.partials.menus.calendar',
                         'dashboard.partials.menus.story',
+
+                        // Fase 4: menu tersembunyi
+                        'dashboard.partials.menus.bonus-report',
+                        'dashboard.partials.menus.talent-bonus',
+                        'dashboard.partials.menus.editor-performance',
+                        'dashboard.partials.menus.market-pasar',
+                        'dashboard.partials.menus.market-intelijen-harga',
+                        'dashboard.partials.menus.market-audit-harga',
+                        'dashboard.partials.menus.market-eksternal',
+                        'dashboard.partials.menus.market-ext-goodponsel',
+                        'dashboard.partials.menus.market-ext-devstore',
+                        'dashboard.partials.menus.market-ext-rumahgadget',
+                        'dashboard.partials.menus.top-content',
+                        'dashboard.partials.menus.low-content',
+                        'dashboard.partials.menus.analisa-insight',
+                        'dashboard.partials.menus.profile',
+                        'dashboard.partials.menus.content-modal',
                     ];
                 @endphp
                 @if($dedicatedMenuView ?? null)
