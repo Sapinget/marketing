@@ -13,6 +13,13 @@ class SetSecurityHeaders
         /** @var Response $response */
         $response = $next($request);
 
+        // Dashboard internal: jangan diindeks mesin pencari (host publik lewat tunnel/workers.dev) dan jangan umumkan versi PHP.
+        $response->headers->set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+        $response->headers->remove('X-Powered-By');
+        if (! headers_sent()) {
+            header_remove('X-Powered-By');
+        }
+
         $response->headers->set('X-Frame-Options', 'DENY');
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('Referrer-Policy', 'strict-origin-when-cross-origin');
@@ -35,7 +42,7 @@ class SetSecurityHeaders
                     "form-action 'self'",
                     "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
                     "style-src 'self' 'unsafe-inline'",
-                    "font-src 'self' data: https://frontend-cdn.perplexity.ai",
+                    "font-src 'self' data:",
                     "img-src 'self' data: blob: https:",
                     "connect-src 'self'",
                 ])

@@ -65,6 +65,13 @@ Belum (dari audit yang sama), urut prioritas:
 
 - [ ] `APP_ENV=local` pada instance yang di-tunnel (membuka `/__db/*`; guard hanya mengandalkan IP loopback + `X-Forwarded-For`). Pakai `production`.
 - [ ] Layar login mengirim seluruh aplikasi (±650 KB HTML + semua path API); pisahkan halaman login yang ringan.
-- [ ] `Cache-Control` untuk aset statis (`/build/assets/*` immutable; `/vendor`, `/asset` max-age).
 - [ ] Dependensi: Laravel 10.50.2 sudah EOL (4 advisory, 1 tinggi), `league/commonmark` (2), `league/flysystem` (1); `npm audit` melaporkan `vue`/`@vue/server-renderer` dan `source-map-js` (dev tooling).
-- [ ] `public/.DS_Store` disajikan; `X-Powered-By: PHP/x` (`expose_php`); `robots.txt` kosong (izinkan indeks); `/design-system*` dan `/marketing-dashboard.html` publik; CSP `font-src` memuat `frontend-cdn.perplexity.ai`; `logo.png` 960×960.
+- [ ] `/design-system*` dan `/marketing-dashboard.html` masih publik; `logo.png` 960×960 (96 KB).
+
+Paket kecil, diperbaiki:
+
+- [x] `public/.DS_Store` dan stub `public/adminer.php` dihapus (keduanya gitignored); dijaga `SecurityHeadersTest`.
+- [x] `X-Powered-By` dihapus di `SetSecurityHeaders` (cek langsung di `:8090`).
+- [x] `robots.txt` kini `Disallow: /`, plus header `X-Robots-Tag: noindex, nofollow, noarchive` di semua respons.
+- [x] CSP `font-src` tidak lagi memuat `frontend-cdn.perplexity.ai` (tidak dipakai di mana pun).
+- [x] Header cache untuk aset statis ditambahkan di `worker-proxy/src/index.js` (`/build/assets/*` immutable setahun; `/vendor/dashboard/*` dan `/asset/*` sehari; tidak menimpa `Cache-Control` dari origin). **Berlaku setelah worker di-deploy** (`wrangler deploy`).

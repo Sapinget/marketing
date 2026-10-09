@@ -51,6 +51,20 @@ export default {
       });
     }
 
-    return response;
+    return withCacheHeaders(incoming.pathname, response);
   },
 };
+
+// Origin (php -S di belakang tunnel) tidak mengirim Cache-Control untuk berkas statis.
+// Aset Vite ber-hash aman di-cache selamanya; aset vendor/gambar cukup sehari.
+function withCacheHeaders(pathname, response) {
+  if (response.status !== 200 || response.headers.has("cache-control")) return response;
+  let policy = null;
+  if (pathname.startsWith("/build/assets/")) policy = "public, max-age=31536000, immutable";
+  else if (pathname.startsWith("/vendor/dashboard/") || pathname.startsWith("/asset/")) policy = "public, max-age=86400";
+  if (!policy) return response;
+
+  const headers = new Headers(response.headers);
+  headers.set("cache-control", policy);
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+}
