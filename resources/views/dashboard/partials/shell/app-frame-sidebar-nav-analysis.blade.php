@@ -20,22 +20,22 @@
                     <span v-if="activeTab === 'analisa_insight'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
                 </div>
 -->
-                <div @click="switchTab('meta_story')"
+                <a href="/analisa/story-ig" @click="navigateTab($event, 'meta_story')"
                     :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'meta_story' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
                     <i class="fa-solid fa-clapperboard text-[11px] lg:text-[12px] w-4"></i>
                     <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Story IG</span>
                     <span v-if="activeTab === 'meta_story'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
-                </div>
-                <div @click="switchTab('meta_feed')"
+                </a>
+                <a href="/analisa/feed-konten" @click="navigateTab($event, 'meta_feed')"
                     :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'meta_feed' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
                     <i class="fa-solid fa-photo-film text-[11px] lg:text-[12px] w-4"></i>
                     <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Feed Konten</span>
                     <span v-if="activeTab === 'meta_feed'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
-                </div>
-                <div @click="switchTab('meta_followers')"
+                </a>
+                <a href="/analisa/followers-ig" @click="navigateTab($event, 'meta_followers')"
                     :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'meta_followers' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
                     <i class="fa-solid fa-user-group text-[11px] lg:text-[12px] w-4"></i>
                     <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Followers IG</span>
                     <span v-if="activeTab === 'meta_followers'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
-                </div>
+                </a>
 @endverbatim

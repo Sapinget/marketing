@@ -750,6 +750,9 @@ $dashboardPage('/complain/garansi-resmi', 'dashboard.complain.garansi-resmi', 'd
 
 // Batch E: Analisa Konten
 // (route batch E ditambahkan di bawah baris ini)
+$dashboardPage('/analisa/story-ig', 'dashboard.analisa.story-ig', 'dashboard.pages.analisa.story-ig', 'meta_story', 'dashboard.partials.menus.meta-story', $dashboardBackendUrl);
+$dashboardPage('/analisa/feed-konten', 'dashboard.analisa.feed-konten', 'dashboard.pages.analisa.feed-konten', 'meta_feed', 'dashboard.partials.menus.meta-feed', $dashboardBackendUrl);
+$dashboardPage('/analisa/followers-ig', 'dashboard.analisa.followers-ig', 'dashboard.pages.analisa.followers-ig', 'meta_followers', 'dashboard.partials.menus.meta-followers', $dashboardBackendUrl);
 
 // Batch F: Dashboard & Konten
 // (route batch F ditambahkan di bawah baris ini)

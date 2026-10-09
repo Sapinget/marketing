@@ -214,9 +214,6 @@
                     'dashboard.partials.menus.calendar',
                     'dashboard.partials.menus.story',
                     'dashboard.partials.menus.analisa-insight',
-                    'dashboard.partials.menus.meta-story',
-                    'dashboard.partials.menus.meta-feed',
-                    'dashboard.partials.menus.meta-followers',
                     'dashboard.partials.menus.unboxing',
                     'dashboard.partials.menus.top-content',
                     'dashboard.partials.menus.low-content',
@@ -267,6 +264,9 @@
                         // Batch D
 
                         // Batch E
+                        'dashboard.partials.menus.meta-story',
+                        'dashboard.partials.menus.meta-feed',
+                        'dashboard.partials.menus.meta-followers',
 
                         // Batch F
                     ];
