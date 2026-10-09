@@ -1,6 +1,6 @@
 # Plan: Migrasi Menu Hash (`#tab`) ke URL Sendiri
 
-Status: direvisi 2026-10-09; prasyarat selesai (Fase -1), siap mulai Fase 0. Dibuat 2026-10-08.
+Status: direvisi 2026-10-09; Fase -1 dan Fase 0 selesai (kecuali ukuran request di browser), berikutnya fondasi Fase 1.5. Dibuat 2026-10-08.
 Melengkapi `docs/one-menu-one-blade-roadmap.md` (target arsitektur penuh). Dokumen ini mengatur **urutan batch dan resep per menu** untuk:
 
 1. menghapus routing berbasis `#` (satu menu = satu URL), dan
@@ -51,13 +51,9 @@ Satu menu = satu perubahan kecil yang bisa diuji dan di-rollback sendiri.
 
 1. **Route** di `routes/web.php`, di blok publik dekat route katalog (bukan di grup `dashboard.auth`, karena shell yang menangani login):
    ```php
-   Route::get('/<grup>/<menu>', function (MarketingDashboardShell $dashboardShell) {
-       return response()->view('dashboard.pages.<grup>.<menu>', array_merge(
-           $dashboardShell->build(rtrim(url('/'), '/')),
-           ['activeTab' => '<tab_key>', 'dedicatedMenuView' => 'dashboard.partials.menus.<menu>']
-       ))->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
-   })->name('dashboard.<grup>.<menu>');
+   $dashboardPage('/<grup>/<menu>', 'dashboard.<grup>.<menu>', 'dashboard.pages.<grup>.<menu>', '<tab_key>', 'dashboard.partials.menus.<menu>');
    ```
+   Helper `$dashboardPage` (di `routes/web.php`) sudah membuat route GET, header `no-store`, dan default `_dashboard_tab` yang dipakai `DashboardPageRoutesTest`.
 2. **Page blade** tipis `resources/views/dashboard/pages/<grup>/<menu>.blade.php` (`@extends('layouts.dashboard', ['activeTab' => ...])` + `@section('dashboard-menu')`), meniru `pages/ecommerce/tiktok-template.blade.php`.
 3. **`app-frame.blade.php`**: pastikan menu tidak ter-include dua kali. Pola yang dipakai: `@if(($dedicatedMenuView ?? null) !== '<view>') @include('<view>') @endif`.
 4. **Sidebar**: ganti `<div @click="switchTab('x')">` menjadi `<a href="/<grup>/<menu>">`, pertahankan class active (`activeTab === 'x'`) dan guard `v-if` yang ada (`canManageSettings`, dst.).
@@ -80,17 +76,26 @@ Fase -1 → Fase 0 → Fase 1.5 fondasi → Batch A (URL + isolasi sekaligus, pe
 - [x] Suite test hijau (380 lulus). Dua test merah (`export buttons are icon only`, `menu table headers use shared classes`) disebabkan menu `tiktok-template`; diperbaiki di menunya, bukan di test.
 - [x] Batasan role Teknisi dihapus (shell Blade, legacy source, test).
 
-### Fase 0: Persiapan (1 PR)
+### Fase 0: Persiapan (selesai 2026-10-09)
 - [x] Konvensi URL (tabel di bagian 4) disetujui 2026-10-09. Satu sumber kebenaran: tabel ini; bila `one-menu-one-blade-roadmap.md` berbeda, samakan dokumen itu ke tabel ini.
-- [ ] Buat helper agar route tidak ditulis berulang: closure `$dashboardPage(string $view, string $tab, string $menuView)` di `routes/web.php`, dipakai route baru dan bisa dipakai ulang oleh route lama.
-- [ ] Tambah test generik: untuk semua route halaman, `GET` mengembalikan 200 dan memuat `activeTab === '<tab>'`.
+- [x] Buat helper agar route tidak ditulis berulang (`$dashboardPage($uri, $name, $view, $tab, $menuView, $backendUrl = null)` di `routes/web.php`; 7 route lama sudah memakainya, nama route tidak berubah; tiap route diberi default `_dashboard_tab` untuk test).
+- [x] Test generik `tests/Feature/DashboardPageRoutesTest.php`: menemukan semua route ber-`_dashboard_tab` secara otomatis; tiap halaman 200, memuat `activeTab === '<tab>'`, header `no-store`. Route baru otomatis ikut teruji.
 - [x] Keputusan guard: route halaman tetap publik (shell menangani login di sisi klien lewat `/api/auth/session`, server tidak tahu user pada request halaman). Pengamanan nyata ada di API (`dashboard.auth` + `assertUserManagementAccess`/`assertSettingsManagementAccess`/`assertSensitiveLogAccess` di `routes/web.php`). Halaman admin (`auth_users`, `settings`, `activity_logs`) hanya cangkang; guard klien (`canManageUsers`, `canManageSettings`) tetap. Tidak ada middleware session baru. Test wajib: endpoint API tiap menu admin menolak akun non-admin (sebagian sudah ada di `HighRiskDomainRouteAuthorizationTest`).
-- [ ] Tambah test: halaman admin tanpa login tetap 200 (cangkang), dan API terkait 401/403.
+- [x] Test: API admin (`/api/auth/users`, `/api/activity-logs`, `/api/settings`) menolak tanpa login (401). Test halaman admin tanpa login = 200 ikut otomatis lewat test generik saat route-nya dibuat di Batch A.
 - [ ] Konvensi query string: filter menu disimpan sebagai query (`?q=`, `?status=`) hanya bila menu sudah punya state filter terpusat; selain itu tidak dipertahankan. Link lama `/?tab=...` tidak didukung (hanya `#tab`).
-- [ ] Perilaku URL tak dikenal: Laravel 404 bawaan. Trailing slash (`/cs/service/`) di-redirect 301 ke tanpa slash lewat satu aturan di helper route. `/#tab_tak_dikenal` jatuh ke `dashboard` seperti sekarang.
-- [ ] Pindahkan pencatatan kunjungan menu (`POST /api/menu-visits`, saat ini di dalam `runActiveTabProtectedLoaders` di `app-script-protected-user-settings.blade.php`) agar juga terpicu saat halaman dibuka langsung dengan `_serverTab`; tambah test/pengecekan manual bahwa satu kunjungan = satu catatan (jangan dobel).
-- [ ] Tetapkan anggaran performa dan kriteria go/no-go (lihat bagian 6) dan catat angka baseline: ukuran HTML `/`, jumlah request awal, waktu muat.
-- [ ] Rollback: satu flag config `config('dashboard.url_routing')` (default aktif); bila dimatikan, sidebar kembali memakai `switchTab` hash. Route baru tetap ada.
+- [x] Perilaku URL tak dikenal: Laravel 404 bawaan. Trailing slash (`/cs/service/`) sudah dilayani Laravel dengan halaman yang sama (dicek test), tidak perlu redirect. `/#tab_tak_dikenal` jatuh ke `dashboard` seperti sekarang.
+- [x] Pencatatan kunjungan menu (`POST /api/menu-visits`) dijadikan helper `trackMenuVisit(tab)` (di `app-script-protected-user-settings.blade.php`, sebelumnya inline di `switchTab`). Dipanggil dari `switchTab` (klik sidebar di `/`) dan dari `resumeActiveTabAfterBootstrap` (sekali per muat halaman). Sebelumnya buka URL/refresh langsung tidak tercatat sama sekali. Catatan: setelah login, tab pendaratan belum tercatat; dibiarkan. Verifikasi manual di browser (tanpa dobel) masih perlu.
+- [x] Anggaran performa dan go/no-go: lihat bagian 6. Baseline server-side (diukur 2026-10-09, `php` kernel lokal, bukan browser):
+
+  | Halaman | HTML | gzip | `<script src>` | `<link href>` | marker `activeTab ===` |
+  |---|---|---|---|---|---|
+  | `/` | 2.269.299 B | 285.926 B | 10 | 23 | 169 |
+  | `/katalog/android` | 2.123.140 B | 265.467 B | 10 | 23 | 164 |
+  | `/ecommerce/tiktok-template` | 2.055.926 B | 255.155 B | 10 | 23 | 163 |
+  | `/promo-pamflet` | 2.055.924 B | 255.526 B | 10 | 23 | 163 |
+
+  Temuan: halaman "dedicated" yang sudah ada hanya ~9% lebih kecil dari `/` (semua menu dan script tetap dirender), jadi target go/no-go -30% memang butuh Fase 1.5. Yang belum diukur: jumlah request dan waktu muat di browser (DevTools/Lighthouse); ukur sebelum Batch A dimulai.
+- [x] Rollback: flag `config('dashboard.url_routing')` / env `DASHBOARD_URL_ROUTING` (default aktif) sudah ada di `config/dashboard.php` dan `.env.example`. Belum dibaca siapa pun; sidebar mulai memakainya di Batch A (flag mati = sidebar kembali ke `switchTab` hash, route baru tetap ada).
 
 ### Fase 1: Migrasi per batch (satu PR per batch, urutan A → F)
 Urutan dari risiko terendah ke tertinggi.

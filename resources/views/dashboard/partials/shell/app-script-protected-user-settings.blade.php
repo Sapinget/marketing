@@ -239,6 +239,17 @@
                     }).sort((a, b) => (a.Jam || "").localeCompare(b.Jam || ""));
                 });
 
+                const trackMenuVisit = (tab) => {
+                    fetch(window.MarketingDashboardRuntimeHelpers.resolveAppUrl('/api/menu-visits'), {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                        },
+                        body: JSON.stringify({ tab_key: tab })
+                    }).catch(() => {});
+                };
+
                 const switchTab = (tab) => {
                     if (tab === 'auth_users' && !canManageUsers.value) {
                         showNotification("Akses manajemen user hanya untuk Super Admin", "warning");
@@ -280,15 +291,7 @@
 
                     if (tabDataKey) loadTabData(tabDataKey);
 
-                    // Track menu visit
-                    fetch(window.MarketingDashboardRuntimeHelpers.resolveAppUrl('/api/menu-visits'), {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
-                        },
-                        body: JSON.stringify({ tab_key: tab })
-                    }).catch(() => {});
+                    trackMenuVisit(tab);
 
                     // Calendar butuh story data (master plan & events sudah dimuat saat init).
                     if (tab === 'calendar' && storyData.value.length === 0) {

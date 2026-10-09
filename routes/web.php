@@ -701,75 +701,25 @@ Route::get('/promo', function (Request $request) {
     ));
 })->name('promo.index');
 
-Route::get('/katalog/android', function (MarketingDashboardShell $dashboardShell) use ($dashboardBackendUrl) {
-    return response()->view('dashboard.pages.katalog.pricelist', array_merge(
-        $dashboardShell->build($dashboardBackendUrl()),
-        [
-            'activeTab' => 'pricelist_katalog',
-            'dedicatedMenuView' => 'dashboard.partials.menus.pricelist-katalog',
-        ]
-    ))->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
-})->name('dashboard.katalog.pricelist');
+// Satu pintu untuk halaman menu dashboard yang punya URL sendiri (lihat docs/hash-to-url-routing-plan.md).
+// Route publik: shell menangani login di sisi klien; pengaman data ada di route API (dashboard.auth).
+// `_dashboard_tab` dipakai test untuk menemukan semua halaman menu secara otomatis.
+$dashboardPage = static function (string $uri, string $name, string $view, string $tab, string $menuView, ?Closure $backendUrl = null) {
+    return Route::get($uri, function (MarketingDashboardShell $dashboardShell) use ($view, $tab, $menuView, $backendUrl) {
+        return response()->view($view, array_merge(
+            $dashboardShell->build($backendUrl ? $backendUrl() : rtrim(url('/'), '/')),
+            ['activeTab' => $tab, 'dedicatedMenuView' => $menuView]
+        ))->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+    })->name($name)->defaults('_dashboard_tab', $tab);
+};
 
-Route::get('/katalog/apple', function (MarketingDashboardShell $dashboardShell) use ($dashboardBackendUrl) {
-    return response()->view('dashboard.pages.katalog.apple', array_merge(
-        $dashboardShell->build($dashboardBackendUrl()),
-        [
-            'activeTab' => 'apple_katalog',
-            'dedicatedMenuView' => 'dashboard.partials.menus.apple-katalog',
-        ]
-    ))->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
-})->name('dashboard.katalog.apple');
-
-Route::get('/katalog/template-background', function (MarketingDashboardShell $dashboardShell) use ($dashboardBackendUrl) {
-    return response()->view('dashboard.pages.katalog.template-background', array_merge(
-        $dashboardShell->build($dashboardBackendUrl()),
-        [
-            'activeTab' => 'template_background',
-            'dedicatedMenuView' => 'dashboard.partials.menus.template-background',
-        ]
-    ))->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
-})->name('dashboard.katalog.template-background');
-
-Route::get('/repository-gambar', function (MarketingDashboardShell $dashboardShell) {
-    return response()->view('dashboard.pages.katalog.img-repo', array_merge(
-        $dashboardShell->build(rtrim(url('/'), '/')),
-        [
-            'activeTab' => 'img_repo',
-            'dedicatedMenuView' => 'dashboard.partials.menus.img-repo',
-        ]
-    ))->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
-})->name('dashboard.img-repo');
-
-Route::get('/ecommerce/tiktok-template', function (MarketingDashboardShell $dashboardShell) {
-    return response()->view('dashboard.pages.ecommerce.tiktok-template', array_merge(
-        $dashboardShell->build(rtrim(url('/'), '/')),
-        [
-            'activeTab' => 'tiktok_template',
-            'dedicatedMenuView' => 'dashboard.partials.menus.tiktok-template',
-        ]
-    ))->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
-})->name('dashboard.ecommerce.tiktok-template');
-
-Route::get('/inventory/asset-vendor', function (MarketingDashboardShell $dashboardShell) {
-    return response()->view('dashboard.pages.katalog.asset-vendor', array_merge(
-        $dashboardShell->build(rtrim(url('/'), '/')),
-        [
-            'activeTab' => 'asset_vendor_inventory',
-            'dedicatedMenuView' => 'dashboard.partials.menus.asset-vendor-inventory',
-        ]
-    ))->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
-})->name('dashboard.inventory.asset-vendor');
-
-Route::get('/promo-pamflet', function (MarketingDashboardShell $dashboardShell) use ($dashboardBackendUrl) {
-    return response()->view('dashboard.pages.promo-pamflet', array_merge(
-        $dashboardShell->build($dashboardBackendUrl()),
-        [
-            'activeTab' => 'promo_pamflet',
-            'dedicatedMenuView' => 'dashboard.partials.menus.promo-pamflet',
-        ]
-    ))->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
-})->name('dashboard.promo-pamflet');
+$dashboardPage('/katalog/android', 'dashboard.katalog.pricelist', 'dashboard.pages.katalog.pricelist', 'pricelist_katalog', 'dashboard.partials.menus.pricelist-katalog', $dashboardBackendUrl);
+$dashboardPage('/katalog/apple', 'dashboard.katalog.apple', 'dashboard.pages.katalog.apple', 'apple_katalog', 'dashboard.partials.menus.apple-katalog', $dashboardBackendUrl);
+$dashboardPage('/katalog/template-background', 'dashboard.katalog.template-background', 'dashboard.pages.katalog.template-background', 'template_background', 'dashboard.partials.menus.template-background', $dashboardBackendUrl);
+$dashboardPage('/repository-gambar', 'dashboard.img-repo', 'dashboard.pages.katalog.img-repo', 'img_repo', 'dashboard.partials.menus.img-repo');
+$dashboardPage('/ecommerce/tiktok-template', 'dashboard.ecommerce.tiktok-template', 'dashboard.pages.ecommerce.tiktok-template', 'tiktok_template', 'dashboard.partials.menus.tiktok-template');
+$dashboardPage('/inventory/asset-vendor', 'dashboard.inventory.asset-vendor', 'dashboard.pages.katalog.asset-vendor', 'asset_vendor_inventory', 'dashboard.partials.menus.asset-vendor-inventory');
+$dashboardPage('/promo-pamflet', 'dashboard.promo-pamflet', 'dashboard.pages.promo-pamflet', 'promo_pamflet', 'dashboard.partials.menus.promo-pamflet', $dashboardBackendUrl);
 
 Route::get('/unit_ditanya', function (MarketingDashboardShell $dashboardShell) use ($dashboardBackendUrl) {
     return response()->view('dashboard.index', array_merge(
