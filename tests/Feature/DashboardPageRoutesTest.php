@@ -468,4 +468,21 @@ class DashboardPageRoutesTest extends TestCase
         $this->assertPageHas($root, '<!-- Talent Bonus tab -->');
         $this->assertPageHas($root, 'v-if="modalOpen"');
     }
+
+    public function test_created_rows_take_their_id_from_the_api_response(): void
+    {
+        // API membalas {status, data: {source_id, ...}}; membaca `res.id` saja memberi id sementara (HK..., AVI..., LJ...)
+        // sehingga ubah/hapus baris yang baru dibuat menghasilkan 404 sampai halaman dimuat ulang.
+        $sources = [
+            resource_path('views/dashboard/partials/shell/app-script-price-competitor-operations.blade.php'),
+            resource_path('views/dashboard/partials/shell/app-script-asset-vendor-inventory-operations.blade.php'),
+            resource_path('js/dashboard/menu/lpjk.js'),
+        ];
+
+        foreach ($sources as $path) {
+            $source = (string) file_get_contents($path);
+
+            $this->assertStringContainsString('res.data.source_id', $source, basename($path).' must read the new id from data.source_id.');
+        }
+    }
 }

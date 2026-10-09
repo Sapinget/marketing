@@ -59,7 +59,7 @@
                     ensureRunApi()
                         .withSuccessHandler(res => {
                             submitting.value = false;
-                            const saved = { ...payload, ID: res && res.id ? res.id : (form.ID || ('AVI' + Date.now())) };
+                            const saved = { ...payload, ID: (res && res.data && res.data.source_id) || (res && res.id) || form.ID || ('AVI' + Date.now()) };
                             if (!form.ID) {
                                 aviData.value.unshift(saved);
                             } else {

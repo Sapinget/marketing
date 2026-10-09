@@ -295,8 +295,7 @@ Kode: tidak ada butir wajib yang tersisa. Yang masih terbuka:
 | Isolasi sisa ±0,6 MB script bersama | Opsional | Risiko tinggi, hemat ±0,1–0,2 MB per halaman; sebaiknya ditunda sampai ada bukti perlu |
 | ±135 baris `sessions` anonim dari server uji awal di MySQL asli | Housekeeping | Tidak berbahaya; bisa dihapus berdasarkan user agent HeadlessChrome/curl dan `user_id` kosong |
 
-### Temuan lama dari uji CRUD (bukan dari migrasi; belum diperbaiki)
+### Temuan lama dari uji CRUD (bukan dari migrasi)
 
-- **Id baru dibaca dari kunci yang salah.** `saveHargaKompetitor` (`app-script-price-competitor-operations`), `saveAvi` (`asset-vendor-inventory-operations`), dan `lpjk.js` (2 tempat) membaca `res.id`, padahal API mengembalikan `{status, data: {source_id, ...}}`. Baris yang baru dibuat memakai id sementara (`'HK' + Date.now()` dst.), sehingga mengubah/menghapus baris itu sebelum halaman dimuat ulang menghasilkan **404** (terbukti: `DELETE /api/harga-kompetitor/HK... 404`). Perbaikan: pakai `res?.data?.source_id`.
-- `deleteHargaKompetitor` memakai `confirm()` bawaan browser, bukan dialog `confirmModal` seperti menu lain.
-
+- **Diperbaiki (2026-10-09):** id baris yang baru dibuat dibaca dari `res.id` padahal API membalas `{status, data: {source_id, ...}}`, sehingga ubah/hapus baris itu sebelum reload memberi **404**. Sekarang memakai `res.data.source_id` di `app-script-price-competitor-operations`, `app-script-asset-vendor-inventory-operations`, dan `resources/js/dashboard/menu/lpjk.js` (2 tempat). Terbukti di browser untuk Harga Kompetitor (`DELETE /api/harga-kompetitor/HK-... 200` tepat setelah tambah). Perbaikan `lpjk.js` ada di sumber JS, jadi baru berlaku setelah `npm run build`. Dijaga `test_created_rows_take_their_id_from_the_api_response`.
+- **Belum:** `deleteHargaKompetitor` memakai `confirm()` bawaan browser, bukan dialog `confirmModal` seperti menu lain.

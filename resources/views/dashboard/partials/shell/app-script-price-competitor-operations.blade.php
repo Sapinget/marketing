@@ -98,7 +98,7 @@
                         .withSuccessHandler(res => {
                             submitting.value = false;
                             if (!form.ID) {
-                                hargaKompetitorData.value.unshift({ ...form, ID: (res && res.id) || ('HK' + Date.now()) });
+                                hargaKompetitorData.value.unshift({ ...form, ID: (res && res.data && res.data.source_id) || (res && res.id) || ('HK' + Date.now()) });
                             } else {
                                 const idx = hargaKompetitorData.value.findIndex(r => String(r.ID) === String(form.ID));
                                 if (idx !== -1) hargaKompetitorData.value.splice(idx, 1, { ...form });

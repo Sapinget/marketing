@@ -63,7 +63,7 @@ export function createLpjkOperations(deps) {
             .withSuccessHandler(res => {
                 submitting.value = false;
                 if (!form.ID) {
-                    lpjkData.value.unshift({ ...form, ID: (res && res.id) || ('LJ' + Date.now()) });
+                    lpjkData.value.unshift({ ...form, ID: (res && res.data && res.data.source_id) || (res && res.id) || ('LJ' + Date.now()) });
                 } else {
                     const idx = lpjkData.value.findIndex(r => String(r.ID) === String(form.ID));
                     if (idx !== -1) lpjkData.value.splice(idx, 1, { ...form });
@@ -110,7 +110,7 @@ export function createLpjkOperations(deps) {
         ensureRunApi()
             .withSuccessHandler(res => {
                 submitting.value = false;
-                const saved = { ...item, ID: (res && res.id) || ('LD' + Date.now()) };
+                const saved = { ...item, ID: (res && res.data && res.data.source_id) || (res && res.id) || ('LD' + Date.now()) };
                 lpjkDetailData.value.push(saved);
                 const newTotal = lpjkDetailData.value.reduce((s, i) => s + (Number(i.Total) || 0), 0);
                 const lpjkRow = lpjkData.value.find(r => String(r.ID) === String(item.Master_ID));
