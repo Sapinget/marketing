@@ -279,6 +279,10 @@
                     if (tab === 'story' || tab === 'calendar') {
                         loadStoryData();
                     }
+                    // Halaman dedicated dibuka tanpa melewati master/ideation: kalender (item konten) dan analytics (fallback tanggal) butuh master plan.
+                    if (tab === 'calendar' || tab === 'analytics') {
+                        loadMasterPlanData();
+                    }
                     if (tab === 'asset_vendor_inventory') {
                         if (!window._loadAssetVendorInventory) {
                             window._loadAssetVendorInventory = () => {
