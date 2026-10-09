@@ -231,4 +231,94 @@
         </div>
     </div>
 </div>
+
+    <!-- Analytics Modal -->
+    <teleport to="body">
+        <transition name="fade">
+            <div v-if="analyticsModalOpen"
+                class="fixed inset-0 z-[2000] flex items-end md:items-center justify-center md:p-4 overlay-motion-sheet">
+                <div @click="analyticsModalOpen = false" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm overlay-backdrop">
+                </div>
+                <div
+                    class="mobile-sheet modal-width-form radius-sheet modal-sheet-surface z-[2001]">
+                    <div
+                        class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
+                        <div class="modal-header-copy">
+                            <div class="modal-header-icon text-white bg-ppp-accent">
+                                <i class="fa-solid fa-chart-simple text-body"></i>
+                            </div>
+                            <div>
+                                <div class="type-heading-sm text-slate-900">{{ analyticsForm.ID ? 'Edit Analitik' : 'Tambah Analitik' }}</div>
+                                <div class="type-body-sm text-slate-400 uppercase mt-0.5">Konten Module
+                                </div>
+                            </div>
+                        </div>
+                        <button @click="analyticsModalOpen = false" aria-label="Tutup modal"
+                            class="icon-utility-button icon-utility-round"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div class="p-6 overflow-y-auto custom-scrollbar flex-1">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div class="md:col-span-2">
+                                <label for="analytics-judul" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Judul
+                                    <span class="text-danger">*</span></label>
+                                <input id="analytics-judul" name="analytics_judul" v-model="analyticsForm.Judul" type="text" placeholder="Judul konten"
+                                    class="form-input" />
+                            </div>
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Platform</label>
+                                <div @click="toggleSearchSelect($event, 'analyticsPlatform')"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="analyticsForm.Platform ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ analyticsForm.Platform || 'Pilih Platform' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </div>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'analyticsPlatform'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in (platformOptions)" :key="opt"
+                                                @click="analyticsForm.Platform = opt; searchSelectOpen = null"
+                                                :class="['popover-option', analyticsForm.Platform === opt ? 'popover-option-active' : '']">
+                                                {{ opt }}</div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div>
+                                <label for="analytics-id-post"
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">ID Post</label>
+                                <input id="analytics-id-post" name="analytics_id_post" v-model="analyticsForm.ID_Post" @input="queueAnalyticsIdPostSync($event.target.value)" type="text" placeholder="Post ID (sinkron dari Feed Konten)" class="form-input" />
+                            </div>
+                            <div>
+                                <label for="analytics-views"
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Views</label>
+                                <input id="analytics-views" name="analytics_views" v-model.number="analyticsForm.Views" type="number" min="0" class="form-input" />
+                            </div>
+                            <div>
+                                <label for="analytics-likes"
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Likes</label>
+                                <input id="analytics-likes" name="analytics_likes" v-model.number="analyticsForm.Likes" type="number" min="0" class="form-input" />
+                            </div>
+                            <div>
+                                <label for="analytics-comments"
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Comments</label>
+                                <input id="analytics-comments" name="analytics_comments" v-model.number="analyticsForm.Comments" type="number" min="0"
+                                    class="form-input" />
+                            </div>
+                            <div>
+                                <label for="analytics-shares"
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Shares</label>
+                                <input id="analytics-shares" name="analytics_shares" v-model.number="analyticsForm.Shares" type="number" min="0" class="form-input" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer-bar modal-footer-actions">
+                        <button @click="analyticsModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
+                        <button @click="saveAnalytics" :disabled="submitting" class="primary-cta-button">{{ submitting ? 'Menyimpan...' : 'Simpan' }}</button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+    </teleport>
 @endverbatim

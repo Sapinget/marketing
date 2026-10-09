@@ -197,4 +197,147 @@
                         </div>
 
                     </div>
+
+    <!-- Program Promo Modal -->
+    <teleport to="body">
+        <transition name="fade">
+            <div v-if="promoModalOpen"
+                class="fixed inset-0 z-[2000] flex items-end md:items-center justify-center md:p-4 overlay-motion-sheet">
+                <div @click="promoModalOpen = false" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm overlay-backdrop">
+                </div>
+                <div
+                    class="mobile-sheet modal-width-form radius-sheet modal-sheet-surface">
+                    <div
+                        class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
+                        <div class="modal-header-copy">
+                            <div
+                                class="modal-header-icon bg-amber text-light border border-amber">
+                                <i class="fa-solid fa-bullhorn"></i>
+                            </div>
+                            <div>
+                                <div class="type-heading-sm text-slate-900">{{ promoModalType === 'create' ? 'Tambah Program' : 'Edit Program' }}</div>
+                                <div class="type-body-sm text-slate-400 uppercase mt-0.5">Program &
+                                    Promo</div>
+                            </div>
+                        </div>
+                        <button @click="promoModalOpen = false" aria-label="Tutup modal"
+                            class="icon-utility-button icon-utility-round"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div class="p-6 overflow-y-auto flex-1 space-y-4">
+                        <!-- Kategori -->
+                        <div>
+                            <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Kategori
+                                Promo</label>
+                            <div class="relative search-select-container">
+                                <div @click="toggleSearchSelect($event, 'promoKategori')"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="promoForm.Kategori ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ promoForm.Kategori || 'Pilih Kategori' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </div>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'promoKategori'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in kategoriPromoOptions" :key="opt"
+                                                @click="promoForm.Kategori = opt; searchSelectOpen = null"
+                                                :class="['popover-option', promoForm.Kategori === opt ? 'popover-option-active' : '']">
+                                                {{ opt }}</div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                        </div>
+                        <!-- Nama Program -->
+                        <div>
+                            <label for="promo-program" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Nama
+                                Program <span class="text-danger">*</span></label>
+                            <input id="promo-program" name="promo_program" v-model="promoForm.Program" type="text" placeholder="Promo Cashback..."
+                                class="form-input" />
+                        </div>
+                        <!-- Varian -->
+                        <div>
+                            <label for="promo-varian" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Varian
+                                / Unit</label>
+                            <input id="promo-varian" name="promo_varian" v-model="promoForm.Warna" type="text" placeholder="Semua Tipe / Galaxy S25..."
+                                class="form-input" />
+                        </div>
+                        <!-- Harga -->
+                        <div>
+                            <label for="promo-harga" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Nominal
+                                Potongan (Rp)</label>
+                            <input id="promo-harga" name="promo_harga" v-model.number="promoForm.Harga" type="number" min="0"
+                                class="form-input text-right" />
+                        </div>
+                        <!-- Periode -->
+                        <div class="surface-panel-soft space-y-3">
+                            <label
+                                class="block text-body-sm font-bold text-slate-400 uppercase text-center">Periode
+                                Berlaku</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <!-- Preset dropdown -->
+                                <div class="relative search-select-container">
+                                    <div @click="toggleSearchSelect($event, 'promoPeriode')"
+                                        class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                        <span
+                                            :class="promoPeriodePreset ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ promoPeriodePreset === 'stock' ? 'Selama Stok Ada' : promoPeriodePreset === 'custom' ? 'Tanggal Custom' : 'Pilih Preset' }}</span>
+                                        <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                    </div>
+                                    <transition name="fade">
+                                        <div v-if="searchSelectOpen === 'promoPeriode'" :style="popoverStyle"
+                                            class="search-select-popover">
+                                            <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                                <div @click="promoPeriodePreset = 'stock'; applyPromoPeriodePreset(); searchSelectOpen = null"
+                                                    :class="['popover-option', promoPeriodePreset === 'stock' ? 'popover-option-active' : '']">
+                                                    Selama Stok Ada</div>
+                                                <div @click="promoPeriodePreset = 'custom'; applyPromoPeriodePreset(); searchSelectOpen = null"
+                                                    :class="['popover-option', promoPeriodePreset === 'custom' ? 'popover-option-active' : '']">
+                                                    Tanggal Custom</div>
+                                            </div>
+                                        </div>
+                                    </transition>
+                                </div>
+                                <!-- Date range pickers -->
+                                <div class="flex gap-1.5">
+                                    <button type="button" @click="openCalendar($event, 'form', '', 'promoDate1')"
+                                        class="select-trigger-button-form toolbar-trigger-field-form">
+                                        <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
+                                        <span
+                                            :class="promoTempDate.start ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ promoTempDate.start ? formatShortDate(promoTempDate.start) : 'Mulai' }}</span>
+                                    </button>
+                                    <button type="button" @click="openCalendar($event, 'form', '', 'promoDate2')"
+                                        class="select-trigger-button-form toolbar-trigger-field-form">
+                                        <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
+                                        <span
+                                            :class="promoTempDate.end ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ promoTempDate.end ? formatShortDate(promoTempDate.end) : 'Selesai' }}</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <input id="promo-periode" name="promo_periode" v-model="promoForm.Periode" type="text"
+                                placeholder="Ketik periode manual atau pilih preset di atas..."
+                                class="form-input bg-white font-medium" />
+                        </div>
+                        <!-- Rules -->
+                        <div>
+                            <label for="promo-rules" class="type-body-sm font-bold text-slate-400 uppercase mb-2">S&K
+                                / Rules</label>
+                            <textarea id="promo-rules" name="promo_rules" v-model="promoForm.Rules" rows="3" placeholder="Syarat dan ketentuan berlaku..."
+                                class="form-input resize-none"></textarea>
+                        </div>
+                        <!-- Benefit -->
+                        <div>
+                            <label for="promo-benefit"
+                                class="type-body-sm font-bold text-slate-400 uppercase mb-2">Benefit</label>
+                            <textarea id="promo-benefit" name="promo_benefit" v-model="promoForm.Benefit" rows="3" placeholder="Keuntungan yang didapat..."
+                                class="form-input resize-none"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer-bar modal-footer-actions">
+                        <button @click="promoModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
+                        <button @click="savePromo" :disabled="submitting" class="primary-cta-button">{{ submitting ? 'Menyimpan...' : 'Simpan' }}</button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+    </teleport>
 @endverbatim

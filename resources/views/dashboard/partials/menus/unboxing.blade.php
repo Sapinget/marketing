@@ -259,4 +259,91 @@
                             </div>
                         </div>
                     </div>
+
+    <!-- Unboxing Modal -->
+    <teleport to="body">
+        <transition name="fade">
+            <div v-if="unboxingModalOpen"
+                class="fixed inset-0 z-[2000] flex items-end md:items-center justify-center md:p-4 overlay-motion-sheet">
+                <div @click="unboxingModalOpen = false" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm overlay-backdrop">
+                </div>
+                <div
+                    class="mobile-sheet modal-width-form radius-sheet modal-sheet-surface z-[2001]">
+                    <div
+                        class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
+                        <div class="modal-header-copy">
+                            <div
+                                class="modal-header-icon w-12 h-12 rounded-2xl bg-amber text-light border border-amber">
+                                <i
+                                    :class="['fa-solid text-heading-lg', unboxingModalType === 'create' ? 'fa-plus' : 'fa-pen-to-square']"></i>
+                            </div>
+                            <div>
+                                <h2 class="type-heading-sm font-bold text-slate-900">{{ unboxingModalType === 'create' ? 'Tambah Unboxing' : 'Edit Unboxing' }}</h2>
+                                <p class="text-body-sm text-slate-400 uppercase mt-0.5">{{ unboxingModalType === 'create' ? 'Tambah konten unboxing baru' : 'Perbarui detail konten unboxing' }}</p>
+                            </div>
+                        </div>
+                        <button @click="unboxingModalOpen = false" aria-label="Tutup modal"
+                            class="icon-utility-button icon-utility-round"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div class="p-5 md:p-6 overflow-y-auto custom-scrollbar flex-1">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="md:col-span-2">
+                                <label for="unboxing-judul" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Judul
+                                    Unboxing <span class="text-danger">*</span></label>
+                                <input id="unboxing-judul" name="unboxing_judul" v-model="unboxingForm.Nama" type="text"
+                                    placeholder="Contoh: Unboxing Samsung S24 Ultra" class="form-input" />
+                            </div>
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Status</label>
+                                <div @click="toggleSearchSelect($event, 'unboxingStatus')"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="unboxingForm.Status ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ unboxingForm.Status || 'Pilih Status' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </div>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'unboxingStatus'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in unboxingStatusOptions" :key="opt"
+                                                @click="unboxingForm.Status = opt; searchSelectOpen = null"
+                                                :class="['popover-option', unboxingForm.Status === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div>
+                                <label for="unboxing-upload-date" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Tanggal
+                                    Upload</label>
+                                <button id="unboxing-upload-date" type="button" @click="openCalendar($event, 'form', '', 'unboxingUploadDate')"
+                                    class="select-trigger-button-form toolbar-trigger-field-form w-full">
+                                    <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
+                                    <span
+                                        :class="unboxingForm.Upload_Date ? 'text-slate-700 font-medium' : 'text-slate-400'">
+                                        {{ unboxingForm.Upload_Date ? formatShortDate(unboxingForm.Upload_Date) : 'Pilih tanggal upload' }}
+                                    </span>
+                                    <i class="fa-solid fa-chevron-down ml-auto text-overline text-slate-300"></i>
+                                </button>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="unboxing-link-video" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Link
+                                    Video</label>
+                                <input id="unboxing-link-video" name="unboxing_link_video" v-model="unboxingForm.Link" type="url" placeholder="https://..."
+                                    class="form-input" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer-bar modal-footer-actions">
+                        <button @click="unboxingModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
+                        <button @click="saveUnboxing" :disabled="submitting" class="primary-cta-button primary-cta-button--accent">
+                            <i :class="['fa-solid', submitting ? 'fa-spinner fa-spin' : 'fa-floppy-disk']"></i>
+                            <span>{{ submitting ? 'Menyimpan...' : 'Simpan' }}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+    </teleport>
 @endverbatim

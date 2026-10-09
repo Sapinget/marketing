@@ -71,16 +71,14 @@ class MarketingDashboardShellTest extends TestCase
     }
 
     /**
-     * Modal yang dulu dititipkan di budgeting.blade.php kini tinggal di menu pemiliknya (Batch A);
-     * test kontrak field membaca gabungan sumbernya.
+     * Modal yang dulu dititipkan di budgeting.blade.php kini tinggal di menu pemiliknya;
+     * test kontrak field membaca gabungan semua menu.
      */
     protected function modalHostSource(): string
     {
-        $menus = resource_path('views/dashboard/partials/menus/');
-
         return implode("\n", array_map(
-            fn (string $menu) => (string) file_get_contents($menus.$menu.'.blade.php'),
-            ['budgeting', 'harga-kompetitor', 'laporan-event', 'nama-stock', 'order-online', 'unit-ditanya', 'claim-garansi', 'keep-barang']
+            fn (string $path) => (string) file_get_contents($path),
+            glob(resource_path('views/dashboard/partials/menus/*.blade.php')) ?: []
         ));
     }
 
@@ -570,7 +568,7 @@ class MarketingDashboardShellTest extends TestCase
             'talent-bonus' => file_get_contents(resource_path('views/dashboard/partials/menus/talent-bonus.blade.php')),
             'bonus-report' => file_get_contents(resource_path('views/dashboard/partials/menus/bonus-report.blade.php')),
             'unboxing' => file_get_contents(resource_path('views/dashboard/partials/menus/unboxing.blade.php')),
-            'budgeting' => file_get_contents(resource_path('views/dashboard/partials/menus/budgeting.blade.php')),
+            'budgeting' => $this->modalHostSource(),
             'top-content' => file_get_contents(resource_path('views/dashboard/partials/menus/top-content.blade.php')),
             'low-content' => file_get_contents(resource_path('views/dashboard/partials/menus/low-content.blade.php')),
         ];
@@ -949,7 +947,6 @@ class MarketingDashboardShellTest extends TestCase
         $budgetingPartial = file_get_contents(resource_path('views/dashboard/partials/menus/budgeting.blade.php'));
 
         $this->assertIsString($budgetingPartial);
-        $this->assertHtmlContains('</teleport>', $budgetingPartial);
         $this->assertHtmlNotContains("</teleport>\n    </div>\n@endverbatim", $budgetingPartial);
         $this->assertHtmlNotContains('</main>', $budgetingPartial);
     }
@@ -1021,7 +1018,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_analytics_id_post_input_queues_meta_metric_sync_while_typing(): void
     {
-        $budgetingPartial = file_get_contents(resource_path('views/dashboard/partials/menus/budgeting.blade.php'));
+        $budgetingPartial = $this->modalHostSource();
         $analyticsOperationsPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-distribution-analytics-operations.blade.php'));
 
         $this->assertIsString($budgetingPartial);
@@ -4389,7 +4386,7 @@ HTML, $html);
     public function test_master_plan_modal_uses_compact_template_styling(): void
     {
         $html = $this->renderDashboardHtmlWithShellCss();
-        $budgetingPartial = file_get_contents(resource_path('views/dashboard/partials/menus/budgeting.blade.php'));
+        $budgetingPartial = $this->modalHostSource();
 
         $this->assertIsString($budgetingPartial);
         $this->assertHtmlContains('class="modal-header-icon bg-amber text-light"', $budgetingPartial);

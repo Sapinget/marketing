@@ -112,4 +112,118 @@
         </div>
     </div>
 </div>
+
+    <!-- Calendar Day Detail Modal -->
+    <teleport to="body">
+        <transition name="fade">
+            <div v-if="calendarDayModalOpen" class="fixed inset-0 z-[5000] flex items-center justify-center p-4 overlay-motion-dialog">
+                <div @click="calendarDayModalOpen = false" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm overlay-backdrop">
+                </div>
+                <div
+                    class="modal-width-form radius-dialog modal-dialog-surface-scroll overlay-dialog-surface">
+                    <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-white">
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-900">Jadwal & Event</h3>
+                            <p class="text-body-sm text-slate-400 font-medium mt-0.5 uppercase">{{ calendarDayModalDate }}</p>
+                        </div>
+                        <button @click="calendarDayModalOpen = false" aria-label="Tutup modal"
+                            class="icon-utility-button icon-utility-round">
+                            <i class="fa-solid fa-xmark text-sm"></i>
+                        </button>
+                    </div>
+                    <div class="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-4 bg-slate-50/30">
+                        <div v-if="calendarDayModalItems.length === 0"
+                            class="flex flex-col items-center justify-center py-10 text-slate-300">
+                            <i class="fa-solid fa-calendar-xmark text-3xl mb-3 opacity-20"></i>
+                            <p class="text-body font-bold uppercase">Tidak ada jadwal</p>
+                        </div>
+                        <div v-else class="space-y-3">
+                            <div v-for="item in calendarDayModalItems" :key="item.ID || item.Nama_Event"
+                                :class="['p-3 rounded-xl border transition-all', item.TYPE === 'event' ? 'bg-slate-50 border-slate-100' : 'bg-white border-slate-100']">
+
+                                <template v-if="item.TYPE === 'content'">
+                                    <div class="flex items-start justify-between gap-2 mb-1.5">
+                                        <div class="flex items-center gap-2">
+                                            <i
+                                                :class="getPlatformIcon(item.Platform || (item.Platforms || '').split(',')[0]) + ' text-body text-slate-400'"></i>
+                                            <span
+                                                class="text-body font-bold text-slate-700">{{ platformDisplayName(item.Platform || (item.Platforms || '').split(',')[0]) }}</span>
+                                        </div>
+                                        <span
+                                            class="status-badge-fixed inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap bg-amber text-light uppercase">{{ item.Status }}</span>
+                                    </div>
+                                    <h4 class="text-[12px] font-bold text-slate-900 leading-[1.2] mb-1 uppercase">{{ item.Judul }}</h4>
+                                    <div class="flex items-center gap-2.5 flex-wrap">
+                                        <div class="flex items-center gap-1.5">
+                                            <div
+                                                class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-overline font-bold text-slate-600 flex-shrink-0 overflow-hidden">
+                                                <img v-if="resolveUserAvatarUrl(item.Editor)"
+                                                    :src="resolveAvatarUrl(resolveUserAvatarUrl(item.Editor))"
+                                                    class="w-full h-full object-cover" alt="Foto Editor"
+                                                    @error="markMasterPlanEditorAvatarFailed(item.Editor)" />
+                                                <span v-else>{{ masterPersonInitials(item.Editor) }}</span>
+                                            </div>
+                                            <span class="text-body text-slate-700 font-semibold truncate max-w-[80px]">{{ personDisplayName(item.Editor) }}</span>
+                                        </div>
+                                        <div class="flex items-center gap-1.5">
+                                            <i class="fa-solid fa-clapperboard text-overline text-slate-300"></i>
+                                            <span class="text-body-sm font-medium text-slate-500">{{ item.Format_Konten || '-' }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2.5 pt-2 border-t border-slate-50 flex items-center justify-end">
+                                        <button @click="openEditModal(item); calendarDayModalOpen = false"
+                                            class="text-body-sm font-bold text-ppp-accent hover:underline">Edit
+                                            Detail <i class="fa-solid fa-arrow-right ml-1"></i></button>
+                                    </div>
+                                </template>
+
+                                <template v-else-if="item.TYPE === 'story'">
+                                    <div class="flex items-start justify-between gap-2 mb-1.5">
+                                        <div class="flex items-center gap-2">
+                                            <i class="fa-solid fa-clapperboard text-xs text-danger"></i>
+                                            <span
+                                                class="text-body-sm font-bold text-danger uppercase">Story</span>
+                                        </div>
+                                        <span v-if="item.Status"
+                                            class="status-badge-fixed inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap bg-danger text-light uppercase">{{ item.Status }}</span>
+                                    </div>
+                                    <h4 class="text-[12px] font-bold text-slate-900 leading-[1.2] mb-1 uppercase">{{ item.Story_Schedule || item.Story }}</h4>
+                                    <div class="flex items-center gap-2.5 flex-wrap">
+                                        <div class="flex items-center gap-1.5">
+                                            <i class="fa-solid fa-clock text-overline text-slate-300"></i>
+                                            <span class="text-body-sm font-medium text-slate-500">{{ item.Jam || '-' }}</span>
+                                        </div>
+                                        <div class="flex items-center gap-1.5">
+                                            <i class="fa-solid fa-note-sticky text-overline text-slate-300"></i>
+                                            <span class="text-body-sm font-medium text-slate-500">{{ item.Catatan || '-' }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2.5 pt-2 border-t border-slate-50 flex items-center justify-end">
+                                        <button @click="openEditStoryModal(item); calendarDayModalOpen = false"
+                                            class="text-body-sm font-bold text-danger hover:underline">Edit
+                                            Story <i class="fa-solid fa-arrow-right ml-1"></i></button>
+                                    </div>
+                                </template>
+
+                                <template v-else>
+                                    <div class="flex items-center gap-2.5">
+                                        <div
+                                            class="w-8 h-8 rounded-lg flex items-center justify-center text-white bg-amber">
+                                            <i class="fa-solid fa-star text-body-sm"></i>
+                                        </div>
+                                        <div>
+                                            <span
+                                                class="text-overline font-black uppercase text-amber">Hari Raya</span>
+                                            <h4 class="text-[12px] font-bold text-slate-900 leading-[1.2] mb-1 uppercase">{{ item.Nama_Event }}</h4>
+                                        </div>
+                                    </div>
+                                </template>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </transition>
+    </teleport>
 @endverbatim

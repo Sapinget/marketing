@@ -207,4 +207,85 @@
         </div>
     </div>
 </div>
+
+    <!-- Distribution Modal -->
+    <teleport to="body">
+        <transition name="fade">
+            <div v-if="distModalOpen"
+                class="fixed inset-0 z-[2000] flex items-end md:items-center justify-center md:p-4 overlay-motion-sheet">
+                <div @click="distModalOpen = false" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm overlay-backdrop"></div>
+                <div
+                    class="mobile-sheet modal-width-form radius-sheet modal-sheet-surface z-[2001]">
+                    <div
+                        class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
+                        <div class="modal-header-copy">
+                            <div class="modal-header-icon text-white bg-ppp-accent">
+                                <i class="fa-solid fa-share-nodes text-body"></i>
+                            </div>
+                            <div>
+                                <div class="type-heading-sm text-slate-900">{{ distributionForm.ID ? 'Edit Distribusi' : 'Tambah Distribusi' }}</div>
+                                <div class="type-body-sm text-slate-400 uppercase mt-0.5">Konten Module
+                                </div>
+                            </div>
+                        </div>
+                        <button @click="distModalOpen = false" aria-label="Tutup modal"
+                            class="icon-utility-button icon-utility-round"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div class="p-6 overflow-y-auto custom-scrollbar flex-1">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <div class="md:col-span-2">
+                                <label for="distribution-judul" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Judul
+                                    <span class="text-danger">*</span></label>
+                                <input id="distribution-judul" name="distribution_judul" v-model="distributionForm.Judul" type="text" placeholder="Judul konten"
+                                    class="form-input" />
+                            </div>
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Platform</label>
+                                <div @click="toggleSearchSelect($event, 'distPlatform')"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="distributionForm.Platform ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ distributionForm.Platform || 'Pilih Platform' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </div>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'distPlatform'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in (platformOptions)" :key="opt"
+                                                @click="distributionForm.Platform = opt; searchSelectOpen = null"
+                                                :class="['popover-option', distributionForm.Platform === opt ? 'popover-option-active' : '']">
+                                                {{ opt }}</div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div>
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Tanggal
+                                    Publish</label>
+                                <button type="button" @click="openCalendar($event, 'form', '', 'distribution')"
+                                    class="select-trigger-button-form toolbar-trigger-field-form">
+                                    <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
+                                    <span
+                                        :class="distributionForm.Tanggal_Publish ? 'text-slate-700 font-medium' : 'text-slate-400'">
+                                        {{ distributionForm.Tanggal_Publish ? formatShortDate(distributionForm.Tanggal_Publish) : 'Pilih tanggal publish' }}
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="distribution-link"
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Link</label>
+                                <input id="distribution-link" name="distribution_link" v-model="distributionForm.Link" type="text" placeholder="https://..."
+                                    class="form-input" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer-bar modal-footer-actions">
+                        <button @click="distModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
+                        <button @click="saveDistribution" :disabled="submitting" class="primary-cta-button">{{ submitting ? 'Menyimpan...' : 'Simpan' }}</button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+    </teleport>
 @endverbatim

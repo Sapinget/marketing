@@ -738,6 +738,18 @@ $dashboardPage('/cs/keep-barang', 'dashboard.cs.keep-barang', 'dashboard.pages.c
 // URL lama /unit_ditanya (sebelum penyeragaman /cs/*) tetap hidup.
 Route::redirect('/unit_ditanya', '/cs/unit-ditanya', 301)->name('dashboard.unit-ditanya');
 
+// Batch C: Complain Tracker
+// (route batch C ditambahkan di bawah baris ini)
+
+// Batch D: Marketing
+// (route batch D ditambahkan di bawah baris ini)
+
+// Batch E: Analisa Konten
+// (route batch E ditambahkan di bawah baris ini)
+
+// Batch F: Dashboard & Konten
+// (route batch F ditambahkan di bawah baris ini)
+
 Route::get('/api/promo-pamflets/file/{filename}', function (string $filename) {
     abort_unless(preg_match('/^[A-Za-z0-9._-]+$/', $filename) === 1, 404);
     $path = storage_path('app/public/promo-pamflets/'.$filename);

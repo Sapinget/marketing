@@ -237,6 +237,7 @@
                     'dashboard.partials.menus.asset-vendor-inventory',
                     'dashboard.partials.menus.ads-log',
                     'dashboard.partials.menus.budgeting',
+                    'dashboard.partials.menus.content-modal',
                     'dashboard.partials.menus.market-pasar',
                     'dashboard.partials.menus.market-intelijen-harga',
                     'dashboard.partials.menus.market-audit-harga',
@@ -260,6 +261,14 @@
                         'dashboard.partials.menus.service',
                         'dashboard.partials.menus.claim-garansi',
                         'dashboard.partials.menus.keep-barang',
+
+                        // Batch C
+
+                        // Batch D
+
+                        // Batch E
+
+                        // Batch F
                     ];
                 @endphp
                 @if($dedicatedMenuView ?? null)

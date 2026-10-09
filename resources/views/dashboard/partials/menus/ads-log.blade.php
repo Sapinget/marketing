@@ -254,4 +254,149 @@
                     </div>
                 </div>
             </div>
+
+    <!-- Ads Log Modal -->
+    <teleport to="body">
+        <transition name="fade">
+            <div v-if="adsModalOpen"
+                class="fixed inset-0 z-[2000] flex items-end md:items-center justify-center md:p-4 overlay-motion-sheet">
+                <div @click="adsModalOpen = false" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm overlay-backdrop"></div>
+                <div
+                    class="mobile-sheet modal-width-form radius-sheet modal-sheet-surface">
+                    <div class="modal-header-bar radius-sheet-top">
+                        <div class="modal-header-copy">
+                            <div class="modal-header-icon bg-amber text-white">
+                                <i class="fa-solid fa-rectangle-ad text-heading-lg"></i>
+                            </div>
+                            <div>
+                                <div class="type-heading-sm font-bold text-slate-800">{{ adsModalType === 'create' ? 'Tambah Iklan' : 'Edit Iklan' }}</div>
+                                <div class="type-body-sm text-slate-400 uppercase">Ads Performance
+                                    Log</div>
+                            </div>
+                        </div>
+                        <button @click="adsModalOpen = false" class="icon-utility-button icon-utility-danger"><i
+                                class="fa-solid fa-xmark text-sm"></i></button>
+                    </div>
+                    <div class="flex-1 overflow-y-auto p-6 space-y-4">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="col-span-2">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Tanggal <span class="text-danger">*</span></label>
+                                <button @click="openCalendar($event, 'form', '', 'adsTanggal')"
+                                    class="select-trigger-button-form toolbar-trigger-field-form">
+                                    <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
+                                    <span :class="adsForm.Tanggal ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ adsForm.Tanggal || 'Pilih tanggal' }}</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="ads-nama" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Nama Iklan /
+                                Campaign <span class="text-danger">*</span></label>
+                            <input id="ads-nama" name="ads_nama" v-model="adsForm.Nama" type="text" class="form-input-compact"
+                                placeholder="Contoh: Promo Lebaran Reel" />
+                        </div>
+                        <div>
+                            <label for="ads-id-ads" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">ID Ads
+                                (Optional)</label>
+                            <input id="ads-id-ads" name="ads_id_ads" v-model="adsForm.ID_Ads" type="text"
+                                class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-body font-mono outline-none focus:border-ppp-accent"
+                                placeholder="ID dari Ads Manager" />
+                        </div>
+                        <div>
+                            <label class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Platform</label>
+                            <div class="relative search-select-container">
+                                <button type="button" @click="toggleSearchSelect($event, 'ads_platform')"
+                                    class="select-trigger-button toolbar-trigger-field">
+                                    <span class="truncate"
+                                        :class="adsForm.Platform ? 'text-slate-700' : 'text-slate-400'">{{ adsForm.Platform || 'Pilih Platform' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-overline text-slate-400"></i>
+                                </button>
+                                <div v-if="searchSelectOpen === 'ads_platform'" :style="popoverStyle"
+                                    class="search-select-popover search-select-popover--compact max-h-60 overflow-y-auto">
+                                    <div v-for="platform in adsPlatformOptions" :key="platform"
+                                        @click="adsForm.Platform = platform; searchSelectOpen = null"
+                                        class="popover-option">
+                                        {{ platform }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Kategori</label>
+                            <div class="relative search-select-container">
+                                <button type="button" @click="toggleSearchSelect($event, 'ads_kategori')"
+                                    class="select-trigger-button toolbar-trigger-field">
+                                    <span class="truncate"
+                                        :class="adsForm.Kategori ? 'text-slate-700' : 'text-slate-400'">{{ adsForm.Kategori || 'Pilih Kategori' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-overline text-slate-400"></i>
+                                </button>
+                                <div v-if="searchSelectOpen === 'ads_kategori'" :style="popoverStyle"
+                                    class="search-select-popover search-select-popover--compact max-h-60 overflow-y-auto">
+                                    <div v-for="k in adsKategoriOptions" :key="k"
+                                        @click="adsForm.Kategori = k; searchSelectOpen = null" class="popover-option">
+                                        {{ k }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="border-t border-slate-100 pt-4">
+                            <p class="text-body-sm font-bold text-slate-400 uppercase mb-3">
+                                Engagement Metrics</p>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label for="ads-jangkauan" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Jangkauan
+                                        (Reach)</label>
+                                    <input id="ads-jangkauan" name="ads_jangkauan" v-model.number="adsForm.Jangkauan" type="number" min="0"
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-body text-right outline-none focus:border-ppp-accent" />
+                                </div>
+                                <div>
+                                    <label for="ads-suka" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Suka
+                                        / Like</label>
+                                    <input id="ads-suka" name="ads_suka" v-model.number="adsForm.Suka" type="number" min="0"
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-body text-right outline-none focus:border-ppp-accent" />
+                                </div>
+                                <div>
+                                    <label for="ads-komentar" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Komentar</label>
+                                    <input id="ads-komentar" name="ads_komentar" v-model.number="adsForm.Komentar" type="number" min="0"
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-body text-right outline-none focus:border-ppp-accent" />
+                                </div>
+                                <div>
+                                    <label for="ads-share" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Share</label>
+                                    <input id="ads-share" name="ads_share" v-model.number="adsForm.Share" type="number" min="0"
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-body text-right outline-none focus:border-ppp-accent" />
+                                </div>
+                            </div>
+                            <div class="mt-3 bg-slate-50 rounded-xl px-4 py-3 flex items-center justify-between">
+                                <span class="text-body-sm font-bold text-slate-400 uppercase">Score (Auto)</span>
+                                <span class="text-display-sm font-bold"
+                                    :class="adsComputedScore >= 70 ? 'text-success' : adsComputedScore >= 40 ? 'text-amber' : 'text-slate-400'">{{ adsComputedScore }}</span>
+                            </div>
+                        </div>
+                        <div class="border-t border-slate-100 pt-4">
+                            <p class="text-body-sm font-bold text-slate-400 uppercase mb-3">Keuangan
+                            </p>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label for="ads-biaya" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Biaya
+                                        Iklan (Spent)</label>
+                                    <input id="ads-biaya" name="ads_biaya" v-model.number="adsForm.Biaya" type="number" min="0"
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-body text-right outline-none focus:border-ppp-accent" />
+                                </div>
+                                <div>
+                                    <label for="ads-sisa-saldo" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Sisa
+                                        Saldo Platform</label>
+                                    <input id="ads-sisa-saldo" name="ads_sisa_saldo" v-model.number="adsForm.Sisa_Saldo" type="number" min="0"
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-body text-right outline-none focus:border-ppp-accent" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer-bar modal-footer-actions">
+                        <button @click="adsModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
+                        <button @click="saveAdsRow" :disabled="submitting"
+                            class="px-5 py-2.5 rounded-xl bg-amber text-white text-body font-bold hover:bg-amber transition-all disabled:opacity-60">
+                            {{ submitting ? 'Menyimpan...' : 'Simpan' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+    </teleport>
 @endverbatim

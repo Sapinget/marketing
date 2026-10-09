@@ -305,4 +305,352 @@
                 </div>
 
             </div>
+
+    <!-- Sell Out Modal -->
+    <teleport to="body">
+        <transition name="fade">
+            <div v-if="sellOutModalOpen"
+                class="fixed inset-0 z-[2000] flex items-end md:items-center justify-center md:p-4 overlay-motion-sheet">
+                <div @click="sellOutModalOpen = false" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm overlay-backdrop">
+                </div>
+                <div
+                    class="mobile-sheet modal-width-detail radius-sheet modal-sheet-surface">
+                    <div
+                        class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="modal-header-icon bg-success text-light border border-success">
+                                <i class="fa-solid fa-arrow-trend-up"></i>
+                            </div>
+                            <div>
+                                <div class="type-heading-sm text-slate-900">{{ sellOutModalType === 'create' ? 'Tambah Target' : 'Edit Target' }}</div>
+                                <div class="type-body-sm text-slate-400 uppercase mt-0.5">Sell Out
+                                    Target</div>
+                            </div>
+                        </div>
+                        <button @click="sellOutModalOpen = false" aria-label="Tutup modal"
+                            class="icon-utility-button icon-utility-round"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div class="p-6 overflow-y-auto flex-1 space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <!-- Vendor -->
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Vendor</label>
+                                <div @click="toggleSearchSelect($event, 'sotVendor')"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="sellOutForm.Vendor ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ sellOutForm.Vendor || 'Pilih / Ketik Vendor' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </div>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'sotVendor'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari vendor sell out" placeholder="Cari vendor..."
+                                                class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in sellOutVendorOptions.filter(o => !searchSelectQuery || String(o || '').toLowerCase().includes(String(searchSelectQuery || '').toLowerCase()))"
+                                                :key="opt" @click="sellOutForm.Vendor = opt; searchSelectOpen = null"
+                                                :class="['popover-option', sellOutForm.Vendor === opt ? 'popover-option-active' : '']">
+                                                {{ opt }}</div>
+                                        </div>
+                                    </div>
+                                </transition>
+                                <label for="sell-out-vendor-manual" class="sr-only">Vendor sell out manual</label>
+                                <input id="sell-out-vendor-manual" name="sell_out_vendor_manual" v-model="sellOutForm.Vendor" type="text" placeholder="atau ketik manual..." autocomplete="off"
+                                    class="w-full bg-transparent border-0 px-4 pt-1 pb-0 text-body-sm text-slate-400 outline-none" />
+                            </div>
+                            <!-- Kategori -->
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Kategori</label>
+                                <div @click="toggleSearchSelect($event, 'sotKategori')"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="sellOutForm.Kategori ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ sellOutForm.Kategori || 'Pilih Kategori' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </div>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'sotKategori'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari opsi sell out" placeholder="Cari..."
+                                                class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in unitKategoriOptions.filter(o => !searchSelectQuery || String(o || '').toLowerCase().includes(String(searchSelectQuery || '').toLowerCase()))"
+                                                :key="opt"
+                                                @click="sellOutForm.Kategori = opt; sellOutForm.Brand = ''; sellOutForm.Seri = ''; buildSellOutProductName(); searchSelectOpen = null"
+                                                :class="['popover-option', sellOutForm.Kategori === opt ? 'popover-option-active' : '']">
+                                                {{ opt }}</div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <!-- Brand -->
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Brand</label>
+                                <div @click="toggleSearchSelect($event, 'sotBrand')"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="sellOutForm.Brand ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ sellOutForm.Brand || 'Pilih Brand' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </div>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'sotBrand'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari opsi sell out" placeholder="Cari..."
+                                                class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in getBrandOptions(sellOutForm.Kategori).filter(o => !searchSelectQuery || String(o || '').toLowerCase().includes(String(searchSelectQuery || '').toLowerCase()))"
+                                                :key="opt"
+                                                @click="sellOutForm.Brand = opt; sellOutForm.Seri = ''; buildSellOutProductName(); searchSelectOpen = null"
+                                                :class="['popover-option', sellOutForm.Brand === opt ? 'popover-option-active' : '']">
+                                                {{ opt }}</div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <!-- Seri -->
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Seri</label>
+                                <div @click="toggleSearchSelect($event, 'sotSeri')"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span :class="sellOutForm.Seri ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ sellOutForm.Seri || 'Pilih / Ketik Seri' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </div>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'sotSeri'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari atau ketik seri sell out" placeholder="Cari / Ketik..."
+                                                class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in getSeriOptions(sellOutForm.Kategori, sellOutForm.Brand).filter(o => !searchSelectQuery || String(o || '').toLowerCase().includes(String(searchSelectQuery || '').toLowerCase()))"
+                                                :key="opt"
+                                                @click="sellOutForm.Seri = opt; buildSellOutProductName(); searchSelectOpen = null"
+                                                :class="['popover-option', sellOutForm.Seri === opt ? 'popover-option-active' : '']">
+                                                {{ opt }}</div>
+                                        </div>
+                                    </div>
+                                </transition>
+                                <label for="sell-out-seri-manual" class="sr-only">Seri sell out manual</label>
+                                <input id="sell-out-seri-manual" name="sell_out_seri_manual" v-model="sellOutForm.Seri" @input="buildSellOutProductName" type="text" autocomplete="off"
+                                    placeholder="tambah data di menu Nama Stock"
+                                    class="w-full bg-transparent border-0 px-4 pt-1 pb-0 text-body-sm text-slate-400 outline-none" />
+                            </div>
+                            <!-- RAM -->
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">RAM</label>
+                                <div @click="toggleSearchSelect($event, 'sotRAM')"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span :class="sellOutForm.RAM ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ sellOutForm.RAM || 'Pilih RAM' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </div>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'sotRAM'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari opsi sell out" placeholder="Cari..."
+                                                class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in unitRAMOptions.filter(o => !searchSelectQuery || String(o || '').toLowerCase().includes(String(searchSelectQuery || '').toLowerCase()))"
+                                                :key="opt"
+                                                @click="sellOutForm.RAM = opt; buildSellOutProductName(); searchSelectOpen = null"
+                                                :class="['popover-option', sellOutForm.RAM === opt ? 'popover-option-active' : '']">
+                                                {{ opt }}</div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <!-- Internal -->
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Internal</label>
+                                <div @click="toggleSearchSelect($event, 'sotInternal')"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="sellOutForm.Internal ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ sellOutForm.Internal || 'Pilih Internal' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </div>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'sotInternal'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari opsi sell out" placeholder="Cari..."
+                                                class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in unitInternalOptions.filter(o => !searchSelectQuery || String(o || '').toLowerCase().includes(String(searchSelectQuery || '').toLowerCase()))"
+                                                :key="opt"
+                                                @click="sellOutForm.Internal = opt; buildSellOutProductName(); searchSelectOpen = null"
+                                                :class="['popover-option', sellOutForm.Internal === opt ? 'popover-option-active' : '']">
+                                                {{ opt }}</div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <!-- Size -->
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Ukuran</label>
+                                <div @click="toggleSearchSelect($event, 'sotSize')"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span :class="sellOutForm.Size ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ sellOutForm.Size || 'Pilih Ukuran' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </div>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'sotSize'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari opsi sell out" placeholder="Cari..."
+                                                class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in unitSizeOptions.filter(o => !searchSelectQuery || String(o || '').toLowerCase().includes(String(searchSelectQuery || '').toLowerCase()))"
+                                                :key="opt"
+                                                @click="sellOutForm.Size = opt; buildSellOutProductName(); searchSelectOpen = null"
+                                                :class="['popover-option', sellOutForm.Size === opt ? 'popover-option-active' : '']">
+                                                {{ opt }}</div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <!-- Kondisi -->
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Kondisi</label>
+                                <div @click="toggleSearchSelect($event, 'sotKondisi')"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="sellOutForm.Kondisi ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ sellOutForm.Kondisi || 'Pilih Kondisi' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </div>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'sotKondisi'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari opsi sell out" placeholder="Cari..."
+                                                class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in unitKondisiOptions.filter(o => !searchSelectQuery || String(o || '').toLowerCase().includes(String(searchSelectQuery || '').toLowerCase()))"
+                                                :key="opt"
+                                                @click="sellOutForm.Kondisi = opt; buildSellOutProductName(); searchSelectOpen = null"
+                                                :class="['popover-option', sellOutForm.Kondisi === opt ? 'popover-option-active' : '']">
+                                                {{ opt }}</div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <!-- Nama Produk (auto) -->
+                            <div class="col-span-2">
+                                <label for="sell-out-nama-produk" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Nama
+                                    Produk <span class="text-ppp-accent">(auto)</span></label>
+                                <input id="sell-out-nama-produk" name="sell_out_nama_produk" v-model="sellOutForm.Nama_Produk" type="text" disabled
+                                    class="w-full bg-slate-100 border border-slate-200 rounded-2xl px-4 py-3 text-body font-bold text-slate-500 outline-none cursor-not-allowed"
+                                    placeholder="Terisi otomatis dari field di atas..." />
+                            </div>
+                            <!-- Target Unit -->
+                            <div>
+                                <label for="sell-out-target-unit" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Target
+                                    Unit</label>
+                                <input id="sell-out-target-unit" name="sell_out_target_unit" v-model.number="sellOutForm.Target_Unit" type="number" min="0"
+                                    class="form-input text-right" />
+                            </div>
+                            <!-- Bonus per Unit -->
+                            <div>
+                                <label for="sell-out-bonus-nominal" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Bonus
+                                    / Unit (Rp)</label>
+                                <input id="sell-out-bonus-nominal" name="sell_out_bonus_nominal" v-model.number="sellOutForm.Bonus_Nominal" type="number" min="0"
+                                    class="form-input text-right" />
+                            </div>
+                            <!-- Realisasi -->
+                            <div>
+                                <label for="sell-out-realisasi-unit"
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Realisasi
+                                    (unit terjual)</label>
+                                <input id="sell-out-realisasi-unit" name="sell_out_realisasi_unit" v-model.number="sellOutForm.Realisasi_Unit" type="number" min="0"
+                                    class="form-input text-right" />
+                            </div>
+                            <!-- Preview bonus -->
+                            <div
+                                class="bg-success border border-success rounded-2xl px-4 py-3 flex items-center justify-between">
+                                <span class="text-body-sm font-bold text-success uppercase">Est.
+                                    Bonus</span>
+                                <span class="text-heading-sm font-bold text-success">{{ formatCurrency((sellOutForm.Realisasi_Unit || 0) >= (sellOutForm.Target_Unit || 0) && (sellOutForm.Target_Unit || 0) > 0 ? (sellOutForm.Realisasi_Unit || 0) * (sellOutForm.Bonus_Nominal || 0) : 0) }}</span>
+                            </div>
+                            <!-- Periode Start -->
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Periode
+                                    Mulai</label>
+                                <button type="button" @click="openCalendar($event, 'form', '', 'sotDate1')"
+                                    class="select-trigger-button-form toolbar-trigger-field-form">
+                                    <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
+                                    <span
+                                        :class="sellOutForm.Periode_Start ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ sellOutForm.Periode_Start ? formatFullDate(sellOutForm.Periode_Start) : 'Pilih Tanggal' }}</span>
+                                </button>
+                            </div>
+                            <!-- Periode End -->
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Periode
+                                    Selesai</label>
+                                <button type="button" @click="openCalendar($event, 'form', '', 'sotDate2')"
+                                    class="select-trigger-button-form toolbar-trigger-field-form">
+                                    <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
+                                    <span
+                                        :class="sellOutForm.Periode_End ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ sellOutForm.Periode_End ? formatFullDate(sellOutForm.Periode_End) : 'Pilih Tanggal' }}</span>
+                                </button>
+                            </div>
+                            <!-- Catatan -->
+                            <div class="col-span-2">
+                                <label for="sell-out-catatan"
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Catatan</label>
+                                <textarea id="sell-out-catatan" name="sell_out_catatan" v-model="sellOutForm.Catatan" rows="2" placeholder="Catatan tambahan..."
+                                    class="form-input resize-none"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer-bar modal-footer-actions">
+                        <button @click="sellOutModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
+                        <button @click="saveSellOut" :disabled="submitting"
+                            class="primary-cta-button primary-cta-button--success">{{ submitting ? 'Menyimpan...' : 'Simpan' }}</button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+    </teleport>
 @endverbatim

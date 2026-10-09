@@ -44,6 +44,18 @@ return [
         'service' => '/cs/service',
         'claim_garansi_asuransi' => '/cs/claim-garansi',
         'keep_barang' => '/cs/keep-barang',
+
+        // Batch C: Complain Tracker
+        // (entri batch C ditambahkan di bawah baris ini)
+
+        // Batch D: Marketing
+        // (entri batch D ditambahkan di bawah baris ini)
+
+        // Batch E: Analisa Konten
+        // (entri batch E ditambahkan di bawah baris ini)
+
+        // Batch F: Dashboard & Konten
+        // (entri batch F ditambahkan di bawah baris ini)
     ],
 
 ];
