@@ -66,6 +66,7 @@ return [
 
         // Batch F: Dashboard & Konten
         // (entri batch F ditambahkan di bawah baris ini)
+        'master' => '/konten/master-plan',
         'unboxing' => '/konten/unboxing',
         'ideation' => '/konten/ideation',
         'distribution' => '/konten/distribution',

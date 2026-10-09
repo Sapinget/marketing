@@ -117,7 +117,7 @@ class DashboardBatchF1Test extends TestCase
         }
 
         $this->assertStringContainsString("switchTab('dashboard')", $sidebar);
-        $this->assertStringContainsString("switchTab('master')", $sidebar);
+        // `master` dimigrasi di Batch F2 (DashboardBatchF2Test).
     }
 
     public function test_calendar_and_analytics_load_master_plan_data_when_opened_directly(): void

@@ -760,6 +760,7 @@ $dashboardPage('/analisa/followers-ig', 'dashboard.analisa.followers-ig', 'dashb
 
 // Batch F: Dashboard & Konten
 // (route batch F ditambahkan di bawah baris ini)
+$dashboardPage('/konten/master-plan', 'dashboard.konten.master-plan', 'dashboard.pages.konten.master-plan', 'master', 'dashboard.partials.menus.master-plan', $dashboardBackendUrl, ['dashboard.partials.menus.content-modal']);
 $dashboardPage('/konten/unboxing', 'dashboard.konten.unboxing', 'dashboard.pages.konten.unboxing', 'unboxing', 'dashboard.partials.menus.unboxing', $dashboardBackendUrl);
 $dashboardPage('/konten/ideation', 'dashboard.konten.ideation', 'dashboard.pages.konten.ideation', 'ideation', 'dashboard.partials.menus.ideation', $dashboardBackendUrl, ['dashboard.partials.menus.content-modal']);
 $dashboardPage('/konten/distribution', 'dashboard.konten.distribution', 'dashboard.pages.konten.distribution', 'distribution', 'dashboard.partials.menus.distribution', $dashboardBackendUrl);

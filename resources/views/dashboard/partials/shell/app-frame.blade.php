@@ -207,7 +207,6 @@
                 @php
                     $legacyMenus = [
                     'dashboard.partials.menus.dashboard',
-                    'dashboard.partials.menus.master-plan',
                     'dashboard.partials.menus.analisa-insight',
                     'dashboard.partials.menus.top-content',
                     'dashboard.partials.menus.low-content',
@@ -263,6 +262,7 @@
                         'dashboard.partials.menus.meta-followers',
 
                         // Batch F
+                        'dashboard.partials.menus.master-plan',
                         'dashboard.partials.menus.unboxing',
                         'dashboard.partials.menus.ideation',
                         'dashboard.partials.menus.distribution',

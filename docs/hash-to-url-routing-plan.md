@@ -1,6 +1,6 @@
 # Plan: Migrasi Menu Hash (`#tab`) ke URL Sendiri
 
-Status: direvisi 2026-10-09; Fase -1, Fase 0, Batch A dan Batch B (URL + isolasi markup) selesai di kode; fondasi Fase 1.5 sebagian; Fase 2 sebagian. **Belum ada verifikasi browser** untuk Batch A, Batch B dan percontohan (ekstensi Chrome tidak terhubung). Dibuat 2026-10-08.
+Status: direvisi 2026-10-09; Fase -1, Fase 0, Batch A–F (URL + isolasi markup; `dashboard` tetap di `/`) selesai di kode; fondasi Fase 1.5 sebagian; Fase 2 sebagian. **Belum ada verifikasi browser** untuk semua batch dan percontohan (ekstensi Chrome tidak terhubung). Dibuat 2026-10-08.
 Melengkapi `docs/one-menu-one-blade-roadmap.md` (target arsitektur penuh). Dokumen ini mengatur **urutan batch dan resep per menu** untuk:
 
 1. menghapus routing berbasis `#` (satu menu = satu URL), dan
@@ -101,10 +101,10 @@ Fase -1 → Fase 0 → Fase 1.5 fondasi → Batch A (URL + isolasi sekaligus, pe
 Urutan dari risiko terendah ke tertinggi.
 - [x] **Batch A** Tools & Settings (6 menu) selesai 2026-10-09 (URL, sidebar, markup terisolasi; script **tidak** diisolasi, lihat catatan di bawah; belum diuji browser). Mayoritas CRUD sederhana, `activity_logs`/`auth_users`/`settings` punya guard role sendiri.
 - [x] **Batch B** Customer Service (5) selesai 2026-10-09 (URL `/cs/*`, sidebar `<a href>`, markup terisolasi, modal order online / unit ditanya / claim garansi / keep barang dipindah dari budgeting ke menunya; service sudah punya modal sendiri; `/unit_ditanya` → 301 ke `/cs/unit-ditanya`; belum diuji browser). `unit_ditanya` hanya perlu link sidebar di batch ini; rename URL ke `/cs/unit-ditanya` (+ redirect dari `/unit_ditanya`) dikerjakan sebagai langkah terpisah di akhir batch.
-- [ ] **Batch C** Complain Tracker (3).
-- [ ] **Batch D** Marketing (4). `program_promo` terkait route publik `/promo`, jangan bentrok.
-- [ ] **Batch E** Analisa Konten (3). Bergantung pada importer Meta (`meta_story`, `meta_feed`, `meta_followers`).
-- [ ] **Batch F** Dashboard & Konten (8). Paling berat: `dashboard` dan `master` memuat banyak state bersama (`app-script-summary-computed-cluster`, `master-content-operations`). Tab `dashboard` dipakai sebagai default `/`, jadi `/` harus tetap menampilkannya (jangan redirect).
+- [x] **Batch C** Complain Tracker (3) selesai 2026-10-09 (`/complain/*`, dikerjakan agent paralel di worktree, digabung `8ec382b`; belum diuji browser).
+- [x] **Batch D** Marketing (4) selesai 2026-10-09 (`/marketing/*`, `d015ec0`; `budgeting` tidak punya modal sendiri; belum diuji browser). `program_promo` terkait route publik `/promo`, jangan bentrok.
+- [x] **Batch E** Analisa Konten (3) selesai 2026-10-09 (`/analisa/story-ig`, `/analisa/feed-konten`, `/analisa/followers-ig`, `4f00f08`; belum diuji browser). Bergantung pada importer Meta (`meta_story`, `meta_feed`, `meta_followers`).
+- [x] **Batch F** Dashboard & Konten: 7 dari 8 menu selesai 2026-10-09 (`/konten/master-plan`, `unboxing`, `ideation`, `distribution`, `analytics`, `calendar`, `story`; F1 oleh agent `9bdeaad`, `master` oleh lead). **`dashboard` sengaja tetap di `/`** karena `/` juga menjadi host tab tersembunyi lewat `#hash` (`analisa_insight`, `top/low_content`, `bonus_report`, `talent_bonus`, `editor_performance`, `profile`, `market_*`). Belum diuji browser.
 
 ### Fase 1.5: Isolasi per menu (inti "1 menu 1 blade")
 
@@ -137,6 +137,12 @@ Catatan Batch A (2026-10-09):
 - Ukuran (server-side, `php` kernel lokal): `/` 2,27 → 2,05 MB; `/settings` 0,98 MB; `/settings/users` 0,97; `/tools/harga-kompetitor` 0,98; `/tools/laporan-event` 0,98 (gzip ±152 KB vs 286 KB di baseline). Semua halaman Batch A ±52% lebih kecil dari baseline `/`.
 
 Catatan Batch B (2026-10-09): `/` turun ke 1,83 MB (gzip 241 KB); tiap halaman `/cs/*` 0,96–1,00 MB (gzip ±153 KB). Script `customer-service-crud` dan `claim-menus` tetap bersama (dipakai export PDF dan budgeting). `proses_claim` (tab tersembunyi, memakai data service) tetap di `$legacyMenus`.
+
+Catatan Batch C–F (2026-10-09, dikerjakan 4 agent paralel di git worktree lalu digabung; satu konflik trivial di daftar `$legacyMenus`):
+- `budgeting.blade.php` dikosongkan dari modal host (311 → 25 KB); semua modal ada di menu pemilik. Modal konten generik (`modalOpen`) dan daftar colab ada di `menus/content-modal.blade.php` (tetap di `$legacyMenus`; halaman yang membutuhkannya memuatnya lewat argumen ke-7 `$extraViews` pada `$dashboardPage`: ideation, calendar, master-plan). Modal story diekstrak ke `menus/story-modal.blade.php` (dipakai `story` dan `calendar`).
+- `calendar` dan `analytics` sekarang memuat data master plan saat dibuka langsung (`runActiveTabProtectedLoaders`); sebelumnya hanya `master`/`ideation`.
+- Ukuran akhir (server-side): `/` 1,46 MB; semua 36 halaman menu 0,95–1,02 MB (gzip ±150–159 KB), semuanya 200 dan lolos `node --check`. Test: 428 lulus. Anggaran ukuran halaman dedicated di test: 1,15 MB.
+- Sisa di `$legacyMenus` (dirender di `/`): `dashboard`, `analisa-insight`, `top-content`, `low-content`, `profile`, `bonus-report`, `talent-bonus`, `editor-performance`, `market-*` (7), `content-modal`, plus menu yang sudah punya URL (`pricelist-katalog`, `template-background`, `apple-katalog`, `img-repo`, `asset-vendor-inventory`, `promo-pamflet`), yang bisa dikeluarkan di Fase 3 karena `switchTab`/`#hash` sudah dialihkan lewat `tab_urls`.
 
 Pemetaan script ke menu (isi saat mengerjakan, contoh awal dari `one-menu-one-blade-roadmap.md`):
 
