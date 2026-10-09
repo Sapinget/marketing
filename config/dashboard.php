@@ -47,6 +47,9 @@ return [
 
         // Batch C: Complain Tracker
         // (entri batch C ditambahkan di bawah baris ini)
+        'input_claim' => '/complain/input-claim',
+        'garansi_cermati' => '/complain/garansi-cermati',
+        'garansi_resmi' => '/complain/garansi-resmi',
 
         // Batch D: Marketing
         // (entri batch D ditambahkan di bawah baris ini)

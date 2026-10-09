@@ -220,9 +220,6 @@
                     'dashboard.partials.menus.unboxing',
                     'dashboard.partials.menus.top-content',
                     'dashboard.partials.menus.low-content',
-                    'dashboard.partials.menus.input-claim',
-                    'dashboard.partials.menus.garansi-cermati',
-                    'dashboard.partials.menus.garansi-resmi',
                     'dashboard.partials.menus.profile',
                     'dashboard.partials.menus.program-promo',
                     'dashboard.partials.menus.promo-pamflet',
@@ -263,6 +260,9 @@
                         'dashboard.partials.menus.keep-barang',
 
                         // Batch C
+                        'dashboard.partials.menus.input-claim',
+                        'dashboard.partials.menus.garansi-cermati',
+                        'dashboard.partials.menus.garansi-resmi',
 
                         // Batch D
 

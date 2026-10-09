@@ -741,6 +741,9 @@ Route::redirect('/unit_ditanya', '/cs/unit-ditanya', 301)->name('dashboard.unit-
 
 // Batch C: Complain Tracker
 // (route batch C ditambahkan di bawah baris ini)
+$dashboardPage('/complain/input-claim', 'dashboard.complain.input-claim', 'dashboard.pages.complain.input-claim', 'input_claim', 'dashboard.partials.menus.input-claim', $dashboardBackendUrl);
+$dashboardPage('/complain/garansi-cermati', 'dashboard.complain.garansi-cermati', 'dashboard.pages.complain.garansi-cermati', 'garansi_cermati', 'dashboard.partials.menus.garansi-cermati', $dashboardBackendUrl);
+$dashboardPage('/complain/garansi-resmi', 'dashboard.complain.garansi-resmi', 'dashboard.pages.complain.garansi-resmi', 'garansi_resmi', 'dashboard.partials.menus.garansi-resmi', $dashboardBackendUrl);
 
 // Batch D: Marketing
 // (route batch D ditambahkan di bawah baris ini)
