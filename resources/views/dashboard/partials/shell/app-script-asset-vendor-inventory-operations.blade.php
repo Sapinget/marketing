@@ -1,4 +1,14 @@
 @verbatim
+                const aviSearch = ref('');
+
+                const aviPage = ref(1);
+
+                const aviModalOpen = ref(false);
+
+                const aviModalType = ref('create');
+
+                const aviForm = ref({ ID: null, source_id: '', vendor: '', brand: '', seri: '', imei: '', quantity: 1, condition: 'New', purchase_date: '', notes: '' });
+
                 // Asset Vendor Inventory
                 const loadAssetVendorInventory = () => {
                     ensureRunApi().withSuccessHandler(d => { aviData.value = Array.isArray(d) ? d : []; }).withFailureHandler(() => {}).getAssetVendorInventoryData();
@@ -97,5 +107,11 @@
                     openAviModal,
                     saveAvi,
                     deleteAvi,
-                });
+                
+                    aviSearch,
+                    aviPage,
+                    aviModalOpen,
+                    aviModalType,
+                    aviForm,
+});
 @endverbatim

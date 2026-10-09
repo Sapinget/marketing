@@ -199,25 +199,10 @@
                 const analyticsPage = ref(1);
 
                 const masterTotalPages = computed(() => Math.max(1, Math.ceil(filteredMasterPlanData.value.length / PAGE_SIZE)));
-                const distributionTotalPages = computed(() => Math.max(1, Math.ceil(filteredDistributionData.value.length / PAGE_SIZE)));
-                const analyticsTotalPages = computed(() => Math.max(1, Math.ceil(filteredAnalyticsData.value.length / PAGE_SIZE)));
 
                 const pagedMasterPlanData = computed(() => filteredMasterPlanData.value.slice((masterPage.value - 1) * PAGE_SIZE, masterPage.value * PAGE_SIZE));
-                const pagedDistributionData = computed(() => filteredDistributionData.value.slice((distributionPage.value - 1) * PAGE_SIZE, distributionPage.value * PAGE_SIZE));
-                const pagedAnalyticsData = computed(() => filteredAnalyticsData.value.slice((analyticsPage.value - 1) * PAGE_SIZE, analyticsPage.value * PAGE_SIZE));
 
-                const BOARD_COL_SIZE = 10;
                 const boardPages = ref({});
-                const pagedKanbanBuckets = computed(() => {
-                    const b = kanbanBuckets.value;
-                    const result = {};
-                    for (const status of [ideationDraftLabel.value, ideationProgressLabel, ideationDoneLabel]) {
-                        const items = b[status] || [];
-                        const p = boardPages.value[status] || 1;
-                        result[status] = items.slice((p - 1) * BOARD_COL_SIZE, p * BOARD_COL_SIZE);
-                    }
-                    return result;
-                });
 
                 watch(() => [masterSearch.value, masterFilterRange.value.start, masterFilterRange.value.end], () => { masterPage.value = 1; boardPages.value = createBoardPages(); });
                 watch(() => [contentTableSearch.value, commonDateFilter.value.start, commonDateFilter.value.end], () => { distributionPage.value = 1; analyticsPage.value = 1; });
@@ -236,8 +221,6 @@
 
                 // Story pagination
                 const storyPage = ref(1);
-                const storyTotalPages = computed(() => Math.max(1, Math.ceil(filteredStories.value.length / PAGE_SIZE)));
-                const pagedStories = computed(() => filteredStories.value.slice((storyPage.value - 1) * PAGE_SIZE, storyPage.value * PAGE_SIZE));
                 watch(() => storyTab.value, () => { storyPage.value = 1; });
 
                 // Unboxing filtered + pagination
@@ -249,8 +232,6 @@
                     return matchSearch && matchDate;
                 }).sort((a, b) => (b.Upload_Date || '').localeCompare(a.Upload_Date || '')));
                 const unboxingPage = ref(1);
-                const unboxingTotalPages = computed(() => Math.max(1, Math.ceil(filteredUnboxingData.value.length / PAGE_SIZE)));
-                const pagedUnboxingData = computed(() => filteredUnboxingData.value.slice((unboxingPage.value - 1) * PAGE_SIZE, unboxingPage.value * PAGE_SIZE));
                 watch(() => [unboxingSearch.value, commonDateFilter.value.start, commonDateFilter.value.end], () => { unboxingPage.value = 1; });
 
                 // Orderan Online filtered + pagination
@@ -262,8 +243,6 @@
                     return matchQ && matchDate;
                 }).sort((a, b) => (b.TANGGAL || '').localeCompare(a.TANGGAL || '')));
                 const orderanPage = ref(1);
-                const orderanTotalPages = computed(() => Math.max(1, Math.ceil(filteredOrderanOnlineData.value.length / PAGE_SIZE)));
-                const pagedOrderanOnlineData = computed(() => filteredOrderanOnlineData.value.slice((orderanPage.value - 1) * PAGE_SIZE, orderanPage.value * PAGE_SIZE));
                 watch(() => [orderanOnlineSearch.value, orderanOnlineDateRange.value.start, orderanOnlineDateRange.value.end], () => { orderanPage.value = 1; });
 
                 watch(() => [orderanOnlineForm.value['HARGA ONLINE'], orderanOnlineForm.value['NOMINAL CAIR']], ([h, c]) => {
@@ -282,8 +261,6 @@
                     return matchQ && matchDate && matchA;
                 }).sort((a, b) => (b.TANGGAL || '').localeCompare(a.TANGGAL || '')));
                 const unitDitanyaPage = ref(1);
-                const unitDitanyaTotalPages = computed(() => Math.max(1, Math.ceil(filteredUnitDitanyaData.value.length / PAGE_SIZE)));
-                const pagedUnitDitanyaData = computed(() => filteredUnitDitanyaData.value.slice((unitDitanyaPage.value - 1) * PAGE_SIZE, unitDitanyaPage.value * PAGE_SIZE));
                 watch(() => [unitDitanyaSearch.value, unitDitanyaDateRange.value.start, unitDitanyaDateRange.value.end, unitDitanyaAvailableFilter.value], () => { unitDitanyaPage.value = 1; });
 
                 // Service filtered + pagination
@@ -317,7 +294,6 @@
                 const keepBarangStatusFilter = ref('');
                 const keepBarangHandleByFilter = ref('');
                 const keepBarangModalOpen = ref(false);
-                const keepBarangModalType = ref('create');
                 const keepBarangForm = ref({});
                 const keepBarangPage = ref(1);
                 const buildStockNameLabel = (row = {}) => [row.KATEGORI, row.BRAND, row.SERI]
@@ -337,13 +313,6 @@
                     return String(value || '').trim();
                 };
 
-                const openKeepBarangModal = (type, row = null) => {
-                    keepBarangModalType.value = type;
-                    keepBarangForm.value = row ? { ...row, TYPE_HP: normalizeKeepBarangTypeHpValue(row.TYPE_HP) } : { TANGGAL_KEEP: todayStr(), RENCANA_PENGAMBILAN: '', NAMA: '', NOMOR_HP: '', NOMOR_HP_2: '', TYPE_HP: '', IMEI_FULL: '', DP_UANG_MUKA: 0, HARGA_JUAL: 0, HANDLE_BY: '', KASIR_BY: '', TEAM_GUDANG: '', DEADLINE_TEAM_GUDANG: '', STATUS: keepBarangStatusOptions.value[0] || '' };
-                    keepBarangModalOpen.value = true;
-                    if (!namaStockLoaded.value) loadNamaStockData();
-                };
-
                 const filteredKeepBarangData = computed(() => {
                     const q = (keepBarangSearch.value || '').toLowerCase();
                     return (keepBarangData.value || []).filter(r => {
@@ -354,32 +323,7 @@
                     }).sort((a, b) => (b.TANGGAL_KEEP || '').localeCompare(a.TANGGAL_KEEP || ''));
                 });
 
-                const keepBarangUniqueStatus = computed(() => [...new Set((keepBarangData.value || []).map(r => r.STATUS).filter(Boolean))].sort());
-                const keepBarangUniqueHandleBy = computed(() => [...new Set((keepBarangData.value || []).map(r => r.HANDLE_BY).filter(Boolean))].sort());
-                const keepBarangSummary = computed(() => {
-                    const rows = keepBarangData.value || [];
-                    return { total: rows.length, pending: rows.filter(r => r.STATUS === 'PENDING').length, done: rows.filter(r => r.STATUS === 'DONE').length, cancel: rows.filter(r => r.STATUS === 'CANCEL').length };
-                });
-                const keepBarangTotalPages = computed(() => Math.max(1, Math.ceil(filteredKeepBarangData.value.length / PAGE_SIZE)));
-                const pagedKeepBarangData = computed(() => filteredKeepBarangData.value.slice((keepBarangPage.value - 1) * PAGE_SIZE, keepBarangPage.value * PAGE_SIZE));
-
                 watch(() => [keepBarangSearch.value, keepBarangStatusFilter.value, keepBarangHandleByFilter.value], () => { keepBarangPage.value = 1; });
-
-                const keepBarangStatusClass = (status) => {
-                    if (status === 'PENDING') return 'bg-amber text-light';
-                    if (status === 'DONE') return 'bg-success text-light';
-                    if (status === 'CANCEL') return 'bg-danger text-light';
-                    return 'bg-secondary text-light';
-                };
-
-                const keepBarangSisaHariClass = (val) => {
-                    if (!val || val === '-') return 'text-slate-400';
-                    const n = parseInt(val);
-                    if (isNaN(n)) return 'text-slate-500';
-                    if (n <= 0) return 'text-danger font-bold';
-                    if (n <= 3) return 'text-amber font-bold';
-                    return 'text-slate-600';
-                };
 
                 const computeKeepBarangDerived = (form) => {
                     form['TYPE_HP'] = normalizeKeepBarangTypeHpValue(form['TYPE_HP']);
@@ -427,7 +371,5 @@
                     });
                 });
                 const claimPage = ref(1);
-                const claimTotalPages = computed(() => Math.max(1, Math.ceil(filteredClaimGaransiData.value.length / PAGE_SIZE)));
-                const pagedClaimGaransiData = computed(() => filteredClaimGaransiData.value.slice((claimPage.value - 1) * PAGE_SIZE, claimPage.value * PAGE_SIZE));
                 watch(() => [claimGaransiSearch.value, claimGaransiStatusFilter.value, claimGaransiGaransiFilter.value], () => { claimPage.value = 1; });
 @endverbatim

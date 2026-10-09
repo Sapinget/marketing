@@ -7,6 +7,14 @@ use Tests\TestCase;
 
 class DashboardPageRoutesTest extends TestCase
 {
+    /** Global browser/JS dan helper template yang sah dipakai ekspresi Vue tanpa dideklarasikan di setup(). */
+    private const TEMPLATE_GLOBALS = [
+        'window' => 1, 'document' => 1, 'Math' => 1, 'Number' => 1, 'String' => 1, 'Date' => 1, 'JSON' => 1, 'Array' => 1, 'Object' => 1,
+        'console' => 1, 'localStorage' => 1, 'navigator' => 1, 'true' => 1, 'false' => 1, 'null' => 1, 'undefined' => 1, 'NaN' => 1,
+        'Boolean' => 1, 'parseInt' => 1, 'parseFloat' => 1, 'isNaN' => 1, 'Intl' => 1, 'typeof' => 1, 'new' => 1, 'void' => 1, 'return' => 1,
+        'event' => 1, '$event' => 1, '$refs' => 1, '$emit' => 1, '$nextTick' => 1, 'this' => 1, 'else' => 1, 'delete' => 1, 'function' => 1, 'let' => 1, 'const' => 1, 'var' => 1,
+    ];
+
     /**
      * Halaman dashboard 1-2 MB: assertSee/assertStringContainsString mencetak seluruh isi saat gagal
      * dan membuat PHPUnit macet. Pakai pengecekan boolean dengan pesan singkat.
@@ -332,14 +340,30 @@ class DashboardPageRoutesTest extends TestCase
                 }
             }
 
+            // Nama yang diekspor script menu (`Object.assign(menuExports, { ... })`) juga harus dideklarasikan.
+            if (preg_match_all('/Object\.assign\(menuExports,\s*\{(.*?)\}\s*\)/s', $js, $exports)) {
+                foreach ($exports[1] as $list) {
+                    foreach (array_filter(array_map('trim', explode(',', $list))) as $name) {
+                        if (preg_match('/^[A-Za-z_$][\w$]*$/', $name) === 1 && ! isset($declared[$name])) {
+                            $missing[$uri][] = $name;
+                        }
+                    }
+                }
+            }
+
             $returnAt = strrpos($js, 'return {');
             $this->assertNotFalse($returnAt, "{$uri} has no setup return");
             $body = substr($js, $returnAt + 8);
             $body = substr($body, 0, (int) strpos($body, "\n                };"));
 
             foreach (explode("\n", $body) as $line) {
-                if (preg_match('/^\s*([A-Za-z_$][\w$]*),\s*$/', $line, $mm) && ! isset($declared[$mm[1]])) {
-                    $missing[$uri][] = $mm[1];
+                // Satu baris bisa memuat beberapa nama (`a, b, c,`).
+                if (preg_match('/^\s*([A-Za-z_$][\w$]*(?:\s*,\s*[A-Za-z_$][\w$]*)*)\s*,?\s*$/', $line, $mm)) {
+                    foreach (array_map('trim', explode(',', $mm[1])) as $name) {
+                        if (! isset($declared[$name])) {
+                            $missing[$uri][] = $name;
+                        }
+                    }
                 }
             }
         }
@@ -370,7 +394,10 @@ class DashboardPageRoutesTest extends TestCase
                 $isolated[$partial] = true;
             }
         }
-        // market-intelligence hanya dimuat di `/` (menu tersembunyi) lewat @unless di body-app-assembly.
+        // Script per menu (`menu-script-<menu>`) dimuat otomatis oleh App\Support\MenuScripts.
+        foreach (glob($shellDir.'menu-script-*.blade.php') ?: [] as $unit) {
+            $isolated[basename($unit, '.blade.php')] = true;
+        }
         $isolated['app-script-market-intelligence-operations'] = true;
         $this->assertNotEmpty($isolated);
 
@@ -484,5 +511,103 @@ class DashboardPageRoutesTest extends TestCase
 
             $this->assertStringContainsString('res.data.source_id', $source, basename($path).' must read the new id from data.source_id.');
         }
+    }
+
+    /**
+     * Penjaga "1 menu = 1 script": setiap nama yang dipakai ekspresi Vue di markup sebuah halaman (`@click`, `:class`, `v-if`,
+     * `{{ }}`) harus dideklarasikan di script halaman itu, kecuali variabel lokal template (alias v-for, parameter arrow) dan
+     * global browser/Vue (TEMPLATE_GLOBALS). Kalau tidak, template membaca properti yang tidak ada (diam-diam `undefined` di
+     * build produksi Vue). Memindahkan script antar menu lalu lupa memuatnya langsung ketahuan di sini.
+     */
+    private function unresolvedTemplateNames(bool $flagOn = true, bool $strict = true): array
+    {
+        config(['dashboard.url_routing' => $flagOn]);
+
+        // Semua nama yang dideklarasikan di partial script mana pun.
+        $everywhere = [];
+        $partials = array_merge(
+            glob(resource_path('views/dashboard/partials/shell/*.blade.php')) ?: [],
+            glob(resource_path('views/dashboard/partials/scripts/*.blade.php')) ?: []
+        );
+        foreach ($partials as $path) {
+            if (! str_contains(basename($path), 'script') && ! str_contains($path, '/scripts/')) {
+                continue;
+            }
+            preg_match_all('/^\s{0,20}(?:const|let|var|(?:async\s+)?function)\s+([A-Za-z_$][\w$]{3,})/m', (string) file_get_contents($path), $m);
+            $everywhere += array_flip($m[1]);
+        }
+
+        $unresolved = [];
+        foreach (array_merge([['/', 'dashboard']], array_values($this->dashboardPages())) as [$uri]) {
+            $html = $this->html($uri);
+            preg_match('#<script type="module">(.*?)</script>#s', $html, $mod);
+            $script = $mod[1] ?? '';
+            $markup = str_replace($script, '', $html);
+
+            $declared = [];
+            preg_match_all('/\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)|\bfunction\s+([A-Za-z_$][\w$]*)/', $script, $d);
+            $declared = array_flip(array_filter(array_merge($d[1], $d[2])));
+            preg_match_all('/\b(?:const|let|var)\s*\{([^}]*)\}/', $script, $d2);
+            foreach ($d2[1] as $group) {
+                foreach (explode(',', $group) as $part) {
+                    $segments = explode(':', $part);
+                    $declared[trim(preg_replace('/=.*/s', '', end($segments)))] = 1;
+                }
+            }
+
+            // Ekspresi Vue: atribut @x / :x / v-x dan {{ ... }}.
+            $expressions = [];
+            if (preg_match_all('/\s(?:@|:|v-)[\w.:-]+="([^"]*)"/', $markup, $a)) {
+                $expressions = array_merge($expressions, $a[1]);
+            }
+            if (preg_match_all('/\{\{(.*?)\}\}/s', $markup, $b)) {
+                $expressions = array_merge($expressions, $b[1]);
+            }
+
+            // Variabel lokal template (alias v-for, parameter arrow function, slot) bukan state setup().
+            $locals = [];
+            if (preg_match_all('/v-for="\\(?\\s*([^")]*?)\\s*\\)?\\s+(?:in|of)\\s/', $markup, $f)) {
+                foreach ($f[1] as $aliases) {
+                    foreach (explode(',', $aliases) as $alias) {
+                        $locals[trim($alias)] = true;
+                    }
+                }
+            }
+            foreach ($expressions as $expression) {
+                if (preg_match_all('/(?:\\(([\\w$,\\s{}]*)\\)|\\b([A-Za-z_$][\\w$]*))\\s*=>/', $expression, $arrows)) {
+                    foreach (array_merge($arrows[1], $arrows[2]) as $params) {
+                        foreach (preg_split('/[,\\s{}]+/', (string) $params) ?: [] as $param) {
+                            $locals[$param] = true;
+                        }
+                    }
+                }
+            }
+
+            foreach (array_unique($expressions) as $expression) {
+                $clean = str_replace('...', ' ', $expression);
+                // Teks literal template (`abc-${x}`) dibuang, isi ${...} dipertahankan; string biasa dibuang; kunci objek ({ a: 1 }) bukan referensi.
+                $clean = preg_replace_callback('/`([^`]*)`/s', fn (array $m) => ' '.implode(' ', preg_match_all('/\\$\\{([^}]*)\\}/', $m[1], $inner) ? $inner[1] : []).' ', (string) $clean);
+                $clean = preg_replace('/\'[^\']*\'|"[^"]*"/', ' ', (string) $clean);
+                $clean = preg_replace('/([{,]\\s*)[A-Za-z_$][\\w$]*\\s*:/', '$1 ', (string) $clean);
+                preg_match_all('/(?<![\w$.])([A-Za-z_$][\w$]{3,})/', (string) $clean, $ids);
+                foreach (array_unique($ids[1]) as $id) {
+                    if (($strict || isset($everywhere[$id])) && ! isset($declared[$id]) && ! isset($locals[$id]) && ! ($strict && isset(self::TEMPLATE_GLOBALS[$id]))) {
+                        $unresolved[$uri][$id] = true;
+                    }
+                }
+            }
+        }
+
+        return array_map(fn (array $ids) => array_keys($ids), $unresolved);
+    }
+
+    public function test_every_template_name_that_comes_from_a_script_is_declared_on_that_page(): void
+    {
+        $this->assertSame([], $this->unresolvedTemplateNames());
+    }
+
+    public function test_every_template_name_is_declared_on_every_page_with_the_flag_off(): void
+    {
+        $this->assertSame([], $this->unresolvedTemplateNames(false));
     }
 }

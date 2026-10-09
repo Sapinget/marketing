@@ -1,4 +1,73 @@
 @verbatim
+                const metaStorySearch = ref('');
+
+                const metaFeedAccount = ref('');
+
+                const metaFeedAccountSearch = ref('');
+
+                const metaFeedManualMetricFields = [
+                    { key: 'views', label: 'Views' },
+                    { key: 'reach', label: 'Reach' },
+                    { key: 'likes', label: 'Likes' },
+                    { key: 'comments', label: 'Komen' },
+                    { key: 'shares', label: 'Share' },
+                    { key: 'saves', label: 'Save' },
+                ];
+
+                const closeMetaFeedManualModal = () => {
+                    if (submitting.value) return;
+                    metaFeedManualModalOpen.value = false;
+                };
+
+                const buildMetaFeedManualRow = () => {
+                    const form = metaFeedManualForm.value || {};
+                    return {
+                        post_id: String(form.post_id || '').trim(),
+                        account: String(form.account || '').trim(),
+                        publish_time: toMetaManualDateTime(form.publish_time),
+                        post_type: String(form.post_type || '').trim() || 'IG reel',
+                        description: String(form.description || '').trim(),
+                        views: toMetaManualNumber(form.views),
+                        reach: toMetaManualNumber(form.reach),
+                        likes: toMetaManualNumber(form.likes),
+                        comments: toMetaManualNumber(form.comments),
+                        shares: toMetaManualNumber(form.shares),
+                        saves: toMetaManualNumber(form.saves),
+                    };
+                };
+
+                const saveMetaFeedManual = () => {
+                    if (submitting.value) return;
+                    const row = buildMetaFeedManualRow();
+                    if (!row.post_id) { showNotification('Post ID wajib diisi.'); return; }
+                    if (!row.account) { showNotification('Akun wajib diisi.'); return; }
+                    if (!row.publish_time) { showNotification('Tanggal publish wajib diisi.'); return; }
+
+                    const runner = ensureRunApi();
+                    const executeSave = (overwrite = false) => {
+                        submitting.value = true;
+                        runner.withSuccessHandler(result => {
+                            submitting.value = false;
+                            if (result?.requires_confirmation) {
+                                showConfirm(
+                                    'Data Feed Sudah Ada',
+                                    'Post ID ini sudah ada. Lanjutkan untuk menimpa data lama.',
+                                    () => executeSave(true),
+                                    'info'
+                                );
+                                return;
+                            }
+                            metaFeedManualModalOpen.value = false;
+                            showNotification('Data Feed berhasil ditambahkan.');
+                            refreshMetaDataset('feed');
+                        }).withFailureHandler(err => {
+                            submitting.value = false;
+                            notifyError('Simpan Feed gagal', err, 'Data Feed manual belum berhasil disimpan.');
+                        }).importMetaFeed([row], { overwrite });
+                    };
+                    executeSave(false);
+                };
+
                 // Meta IG: filter + summary + chart data
                 const _metaInRange = (dateStr, f) => { if (!f || !f.start) return true; return isDateInRange(dateStr, f.start, f.end || f.start); };
                 const filteredMetaStory = computed(() => {
@@ -273,5 +342,12 @@
                     metaStoryTop,
                     metaFeedTop,
                     metaShortDesc,
-                });
+                
+                    metaStorySearch,
+                    metaFeedAccount,
+                    metaFeedAccountSearch,
+                    metaFeedManualMetricFields,
+                    closeMetaFeedManualModal,
+                    saveMetaFeedManual,
+});
 @endverbatim

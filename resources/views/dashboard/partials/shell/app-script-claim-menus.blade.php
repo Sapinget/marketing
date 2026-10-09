@@ -23,12 +23,6 @@
                 const inputClaimPage = ref(1);
                 const garansiCermatiPage = ref(1);
                 const garansiResmiPage = ref(1);
-                const inputClaimTotalPages = computed(() => Math.max(1, Math.ceil(filteredInputClaimRows.value.length / PAGE_SIZE)));
-                const garansiCermatiTotalPages = computed(() => Math.max(1, Math.ceil(filteredGaransiCermatiRows.value.length / PAGE_SIZE)));
-                const garansiResmiTotalPages = computed(() => Math.max(1, Math.ceil(filteredGaransiResmiRows.value.length / PAGE_SIZE)));
-                const pagedInputClaimRows = computed(() => filteredInputClaimRows.value.slice((inputClaimPage.value - 1) * PAGE_SIZE, inputClaimPage.value * PAGE_SIZE));
-                const pagedGaransiCermatiRows = computed(() => filteredGaransiCermatiRows.value.slice((garansiCermatiPage.value - 1) * PAGE_SIZE, garansiCermatiPage.value * PAGE_SIZE));
-                const pagedGaransiResmiRows = computed(() => filteredGaransiResmiRows.value.slice((garansiResmiPage.value - 1) * PAGE_SIZE, garansiResmiPage.value * PAGE_SIZE));
                 watch(() => inputClaimSearch.value, () => { inputClaimPage.value = 1; });
                 watch(() => garansiCermatiSearch.value, () => { garansiCermatiPage.value = 1; });
                 watch(() => garansiResmiSearch.value, () => { garansiResmiPage.value = 1; });

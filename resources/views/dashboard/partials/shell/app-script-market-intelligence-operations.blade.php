@@ -1,4 +1,29 @@
 @verbatim
+                // Market Intelligence (from BOT SQLite)
+                const pasarData = ref({ total: 0, by_source: {}, bali_competitor: [], competitors: [], sources: [], updated_at: null });
+
+                const intelijenHargaData = ref({ summary: {}, rows: [] });
+
+                const auditHargaData = ref({ summary: {}, rows: [] });
+
+                const eksternalData = ref({ rows: [], sources: [], brands: [], by_source: {}, total: 0 });
+
+                const ihFilter = ref('');
+
+                const puraPriceChangesDirection = ref('all');
+
+                const eksternalChangesDirection = ref('all');
+
+                const marketIntelijenHargaPage = ref(1);
+
+                const marketIntelijenHargaAuditPage = ref(1);
+
+                const marketAuditHargaPage = ref(1);
+
+                const marketEksternalRowsPage = ref(1);
+
+                const marketEksternalChangesPage = ref(1);
+
                 // ── Market Intelligence Operations ────────────────────────────────────────────
 
                 const filteredIntelijenHarga = computed(() => {
@@ -329,7 +354,20 @@
                     eksternalSourceKeyFromName,
                     loadMarketEksternal,
                     loadMarketEksternalChanges,
-                });
+                
+                    pasarData,
+                    intelijenHargaData,
+                    auditHargaData,
+                    eksternalData,
+                    ihFilter,
+                    puraPriceChangesDirection,
+                    eksternalChangesDirection,
+                    marketIntelijenHargaPage,
+                    marketIntelijenHargaAuditPage,
+                    marketAuditHargaPage,
+                    marketEksternalRowsPage,
+                    marketEksternalChangesPage,
+});
 
                 // Market Intelligence: direct fetch ke Laravel API (bukan Apps Script)
                 menuLoaders.market_pasar = () => { loadMarketPasar(); };

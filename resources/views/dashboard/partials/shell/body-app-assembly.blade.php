@@ -48,6 +48,17 @@
     @include('dashboard.partials.shell.menu-scripts-asset-vendor')
     @include('dashboard.partials.shell.menu-scripts-market-intel')
 @endif
+{{-- Script milik menu (menu-script-<menu>): halaman menu memuat script menunya (+ view tambahan dan partial yang di-include menu); `/` memuat script dashboard, atau semua bila flag url_routing mati. --}}
+@php
+    $menuScriptViews = ($dedicatedMenuView ?? null)
+        ? \App\Support\MenuScripts::forViews(array_merge([$dedicatedMenuView], $dedicatedExtraViews ?? []))
+        : (config('dashboard.url_routing')
+            ? \App\Support\MenuScripts::forViews(['dashboard.partials.menus.dashboard'])
+            : \App\Support\MenuScripts::all());
+@endphp
+@foreach($menuScriptViews as $menuScriptView)
+    @include($menuScriptView)
+@endforeach
 @stack('menu-scripts')
 @include('dashboard.partials.shell.app-script-return-block')
 @include('dashboard.partials.shell.app-script-close')

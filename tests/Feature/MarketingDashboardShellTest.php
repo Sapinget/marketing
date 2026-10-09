@@ -82,6 +82,12 @@ class MarketingDashboardShellTest extends TestCase
         ));
     }
 
+    /** Sumber partial di partials/shell (mis. `menu-script-keep-barang`). */
+    protected function shellSource(string $name): string
+    {
+        return (string) file_get_contents(resource_path('views/dashboard/partials/shell/'.$name.'.blade.php'));
+    }
+
     private static ?string $dashboardUiCache = null;
 
     /**
@@ -116,7 +122,10 @@ class MarketingDashboardShellTest extends TestCase
         }
 
         // Script menu terisolasi (@push('menu-scripts')) tidak ada di `/`; tambahkan sekali agar kontrak sumbernya tetap teruji.
-        foreach (glob(resource_path('views/dashboard/partials/shell/menu-scripts-*.blade.php')) ?: [] as $path) {
+        foreach (array_merge(
+            glob(resource_path('views/dashboard/partials/shell/menu-scripts-*.blade.php')) ?: [],
+            glob(resource_path('views/dashboard/partials/shell/menu-script-*.blade.php')) ?: []
+        ) as $path) {
             $html .= "\n".view('dashboard.partials.shell.'.basename($path, '.blade.php'))->render();
         }
 
@@ -1017,7 +1026,7 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlContains('const loadMasterPlanData = async () => {', $masterContentOperationsPartial);
         $this->assertHtmlContains('const saveAnalytics = () => {', $distributionAnalyticsOperationsPartial);
         $this->assertHtmlContains('const buildContentRanking = (mode) => {', $insightTrendPartial);
-        $this->assertHtmlContains('const claimGaransiStats = computed(() => {', $insightTrendPartial);
+        $this->assertHtmlContains('const claimGaransiStats = computed(() => {', $insightTrendPartial.$this->shellSource('menu-script-analisa-insight'));
         $this->assertHtmlNotContains('const filteredMasterPlanData = computed(() => {', $protectedPartial);
         $this->assertHtmlNotContains('const loadMasterPlanData = async () => {', $protectedPartial);
         $this->assertHtmlNotContains('const buildContentRanking = (mode) => {', $protectedPartial);
@@ -1036,10 +1045,10 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlContains('const getMetaFeedPostId = (row) => normalizeMetaPostId(row?.post_id || row?.ID || row?.Post_ID || row?.ID_Post || row?.id_post || row?.[\'Post ID\'] || row?.[\'post id\'] || row?.media_id);', $analyticsOperationsPartial);
         $this->assertHtmlContains('const queueAnalyticsIdPostSync = (value, options = {}) => {', $analyticsOperationsPartial);
         $this->assertHtmlContains('if (!isInstagramAnalyticsPlatform()) return;', $analyticsOperationsPartial);
-        $this->assertHtmlContains('const bindAnalyticsIdPostDomSync = () => {', $analyticsOperationsPartial);
+        $this->assertHtmlContains('const bindAnalyticsIdPostDomSync = () => {', $analyticsOperationsPartial.$this->shellSource('menu-script-analytics'));
         $this->assertHtmlContains('const updateAnalyticsMetricInputs = () => {', $analyticsOperationsPartial);
-        $this->assertHtmlContains("fetch(resolveAppUrl('/api/meta-posts/feed'),", $analyticsOperationsPartial);
-        $this->assertHtmlContains("input.addEventListener('input', syncFromDomInput);", $analyticsOperationsPartial);
+        $this->assertHtmlContains("fetch(resolveAppUrl('/api/meta-posts/feed'),", $analyticsOperationsPartial.$this->shellSource('menu-script-analytics'));
+        $this->assertHtmlContains("input.addEventListener('input', syncFromDomInput);", $analyticsOperationsPartial.$this->shellSource('menu-script-analytics'));
         $this->assertHtmlContains('queueAnalyticsIdPostSync(value);', $analyticsOperationsPartial);
         $this->assertHtmlContains('queueAnalyticsIdPostSync,', file_get_contents(resource_path('views/dashboard/partials/shell/app-script-return-block.blade.php')));
     }
@@ -1192,8 +1201,8 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlNotContains("@include('dashboard.partials.shell.app-script-setup-tail')", $assemblyPartial);
         $this->assertHtmlContains('const saveBonusConfig = () => {', $reportingPartial);
         $this->assertHtmlNotContains('const adsComputedScore = computed(() => {', $reportingPartial);
-        $this->assertHtmlContains('const adsComputedScore = computed(() => {', $adsLogOperationsPartial);
-        $this->assertHtmlContains('const saveAdsRow = () => {', $adsLogOperationsPartial);
+        $this->assertHtmlContains('const adsComputedScore = computed(() => {', $adsLogOperationsPartial.$this->shellSource('menu-script-ads-log'));
+        $this->assertHtmlContains('const saveAdsRow = () => {', $adsLogOperationsPartial.$this->shellSource('menu-script-ads-log'));
         $this->assertHtmlContains('const saveHargaKompetitor = () => {', $priceCompetitorOperationsPartial);
         $this->assertHtmlContains('const saveLpjk = () => {', $lpjkOperationsPartial);
         $this->assertHtmlContains('const budgetCalculations = computed(() => {', $budgetingPartial);
@@ -1392,7 +1401,7 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertIsString($html);
         $this->assertHtmlContains('window.MarketingDashboardReportingExports', $html);
         $this->assertHtmlContains('const getReportingExportBridge_ = () => {', $html);
-        $this->assertHtmlContains('return bridge.exportAdsLogToPDF({', $html);
+        $this->assertHtmlContains('return bridge.exportAdsLogToPDF({', $html.$this->shellSource('menu-script-ads-log'));
         $this->assertHtmlNotContains("title: 'ADS PERFORMANCE REPORT',", $html);
         $this->assertHtmlNotContains("openPrintWindow_(html, 'Ads Report');", $html);
     }
@@ -1405,7 +1414,7 @@ class MarketingDashboardShellTest extends TestCase
         $response->assertOk();
         $this->assertIsString($html);
         $this->assertHtmlContains('window.MarketingDashboardReportingExports', $html);
-        $this->assertHtmlContains('return bridge.exportPriceComparisonToPDF({', $html);
+        $this->assertHtmlContains('return bridge.exportPriceComparisonToPDF({', $html.$this->shellSource('menu-script-harga-kompetitor'));
         $this->assertHtmlNotContains("title: 'ANALISIS HARGA & KOMPETITOR',", $html);
         $this->assertHtmlNotContains("openPrintWindow_(html, 'Harga Kompetitor');", $html);
     }
@@ -1418,7 +1427,7 @@ class MarketingDashboardShellTest extends TestCase
         $response->assertOk();
         $this->assertIsString($html);
         $this->assertHtmlContains('window.MarketingDashboardReportingExports', $html);
-        $this->assertHtmlContains('return bridge.exportLpjkDetailToPDF({', $html);
+        $this->assertHtmlContains('return bridge.exportLpjkDetailToPDF({', $html.$this->shellSource('menu-script-laporan-event'));
         $this->assertHtmlNotContains("title: 'LAPORAN PERTANGGUNGJAWABAN KEUANGAN',", $html);
         $this->assertHtmlNotContains('openPrintWindow_(html, `LPJK - ${lpjk.Nama_Event}`);', $html);
     }
@@ -1431,17 +1440,16 @@ class MarketingDashboardShellTest extends TestCase
         $response->assertOk();
         $this->assertIsString($html);
         $this->assertHtmlContains('window.MarketingDashboardReportingExports', $html);
-        $this->assertHtmlContains('return bridge.exportBudgetToPDF({', $html);
+        $this->assertHtmlContains('return bridge.exportBudgetToPDF({', $html.$this->shellSource('menu-script-budgeting'));
         $this->assertHtmlNotContains('<title>Budget Plan</title>', $html);
         $this->assertHtmlNotContains("openPrintWindow_(html, 'Budget Plan');", $html);
     }
 
     public function test_root_uses_shared_reporting_export_bridge_helper(): void
     {
-        $response = $this->get('/');
-        $html = $response->getContent();
-
-        $response->assertOk();
+        $this->get('/')->assertOk();
+        // Fungsi ekspor PDF kini hidup di script per menu; periksa seluruh UI gabungan.
+        $html = $this->renderDashboardHtml();
         $this->assertIsString($html);
         $this->assertHtmlContains('const getReportingExportBridge_ = () => {', $html);
         $this->assertGreaterThanOrEqual(1, substr_count($html, 'window.MarketingDashboardReportingExports'));
@@ -1511,7 +1519,7 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertIsString($html);
         $this->assertHtmlContains('window.MarketingDashboardSalesExports', $html);
         $this->assertHtmlContains('const getSalesExportBridge_ = () => {', $html);
-        $this->assertHtmlContains('return bridge.exportBonusToPDF({', $html);
+        $this->assertHtmlContains('return bridge.exportBonusToPDF({', $html.$this->shellSource('menu-script-bonus-report'));
         $this->assertHtmlNotContains("title: 'BONUS & PERFORMANCE PAYOUT REPORT',", $html);
         $this->assertHtmlNotContains("openPrintWindow_(html, 'Bonus Report');", $html);
     }
@@ -1524,7 +1532,7 @@ class MarketingDashboardShellTest extends TestCase
         $response->assertOk();
         $this->assertIsString($html);
         $this->assertHtmlContains('window.MarketingDashboardSalesExports', $html);
-        $this->assertHtmlContains('return bridge.exportPromoToPDF({', $html);
+        $this->assertHtmlContains('return bridge.exportPromoToPDF({', $html.$this->shellSource('menu-script-program-promo'));
         $this->assertHtmlNotContains("title: 'PROGRAM PROMO',", $html);
         $this->assertHtmlNotContains("openPrintWindow_(html, 'Program Promo');", $html);
     }
@@ -1537,7 +1545,7 @@ class MarketingDashboardShellTest extends TestCase
         $response->assertOk();
         $this->assertIsString($html);
         $this->assertHtmlContains('window.MarketingDashboardSalesExports', $html);
-        $this->assertHtmlContains('return bridge.exportSellOutToPDF({', $html);
+        $this->assertHtmlContains('return bridge.exportSellOutToPDF({', $html.$this->shellSource('menu-script-sell-out'));
         $this->assertHtmlNotContains("title: 'TARGET VENDOR (SELL OUT)',", $html);
         $this->assertHtmlNotContains("openPrintWindow_(html, 'Target Vendor Sell Out');", $html);
     }
@@ -1648,9 +1656,9 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_dashboard_contains_legacy_navigation_labels(): void
     {
-        $response = $this->get('/');
-
-        $response->assertOk();
+        $this->get('/')->assertOk();
+        // Judul menu kini ada di halaman masing-masing; periksa seluruh UI gabungan.
+        $html = $this->renderDashboardHtml();
         foreach ([
             'Dashboard',
             'Master Plan',
@@ -1673,7 +1681,7 @@ class MarketingDashboardShellTest extends TestCase
             'Editor Performance',
             'Keep Barang',
         ] as $label) {
-            $response->assertSee($label, false);
+            $this->assertHtmlContains($label, $html);
         }
     }
 

@@ -5,10 +5,7 @@
                 const metaStoryLoaded = ref(false);
                 const metaFeedLoaded = ref(false);
                 const metaUploading = ref(false);
-                const metaStorySearch = ref('');
                 const metaFeedSearch = ref('');
-                const metaFeedAccount = ref('');
-                const metaFeedAccountSearch = ref('');
                 const metaStoryDateFilter = ref({ start: '', end: '' });
                 const metaFeedDateFilter = ref({ start: '', end: '' });
                 const metaFeedManualModalOpen = ref(false);
@@ -26,36 +23,13 @@
                     saves: 0,
                 });
                 const metaFeedManualForm = ref(createMetaFeedManualForm());
-                const metaFeedManualMetricFields = [
-                    { key: 'views', label: 'Views' },
-                    { key: 'reach', label: 'Reach' },
-                    { key: 'likes', label: 'Likes' },
-                    { key: 'comments', label: 'Komen' },
-                    { key: 'shares', label: 'Share' },
-                    { key: 'saves', label: 'Save' },
-                ];
                 const bonusConfigLoaded = ref(false);
                 const budgetConfigLoaded = ref(false);
                 const tabDataLoaded = ref({});
 
-                // Nama Stock Helpers & Methods (already destructured in nama-stock-actions, reuse here)
-                const namaStockFilterKategoriOptions = computed(() => filteredUniqueFrom(namaStockRows.value, 'KATEGORI'));
                 const namaStockFilterBrandOptions = computed(() => filteredUniqueFrom(namaStockRows.value, 'BRAND', { KATEGORI: namaStockKategoriFilter.value }));
 
-                const namaStockFilteredRows = computed(() => {
-                    const q = (namaStockSearchQuery.value || '').toLowerCase().trim();
-                    return namaStockRows.value.filter(row => {
-                        const matchKategori = !namaStockKategoriFilter.value || String(row.KATEGORI || '').trim().toUpperCase() === String(namaStockKategoriFilter.value || '').trim().toUpperCase();
-                        const matchBrand = !namaStockBrandFilter.value || String(row.BRAND || '').trim().toUpperCase() === String(namaStockBrandFilter.value || '').trim().toUpperCase();
-                        const hay = `${row.KATEGORI || ''} ${row.BRAND || ''} ${row.SERI || ''}`.toLowerCase();
-                        const matchQuery = !q || hay.includes(q);
-                        return matchKategori && matchBrand && matchQuery;
-                    });
-                });
-
                 const namaStockPage = ref(1);
-                const namaStockTotalPages = computed(() => Math.max(1, Math.ceil(namaStockFilteredRows.value.length / PAGE_SIZE)));
-                const pagedNamaStockRows = computed(() => namaStockFilteredRows.value.slice((namaStockPage.value - 1) * PAGE_SIZE, namaStockPage.value * PAGE_SIZE));
                 watch(() => [namaStockSearchQuery.value, namaStockKategoriFilter.value, namaStockBrandFilter.value], () => { namaStockPage.value = 1; });
                 watch(() => namaStockKategoriFilter.value, () => {
                     if (!namaStockFilterBrandOptions.value.includes(namaStockBrandFilter.value)) {
@@ -243,10 +217,6 @@
                     metaFeedManualForm.value = createMetaFeedManualForm();
                     metaFeedManualModalOpen.value = true;
                 };
-                const closeMetaFeedManualModal = () => {
-                    if (submitting.value) return;
-                    metaFeedManualModalOpen.value = false;
-                };
                 const toMetaManualNumber = (value) => {
                     const parsed = parseInt(String(value ?? '').replace(/[^0-9-]/g, ''), 10);
                     return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
@@ -255,53 +225,6 @@
                     const raw = String(value || '').trim();
                     if (!raw) return '';
                     return raw.length === 16 ? `${raw.replace('T', ' ')}:00` : raw.replace('T', ' ');
-                };
-                const buildMetaFeedManualRow = () => {
-                    const form = metaFeedManualForm.value || {};
-                    return {
-                        post_id: String(form.post_id || '').trim(),
-                        account: String(form.account || '').trim(),
-                        publish_time: toMetaManualDateTime(form.publish_time),
-                        post_type: String(form.post_type || '').trim() || 'IG reel',
-                        description: String(form.description || '').trim(),
-                        views: toMetaManualNumber(form.views),
-                        reach: toMetaManualNumber(form.reach),
-                        likes: toMetaManualNumber(form.likes),
-                        comments: toMetaManualNumber(form.comments),
-                        shares: toMetaManualNumber(form.shares),
-                        saves: toMetaManualNumber(form.saves),
-                    };
-                };
-                const saveMetaFeedManual = () => {
-                    if (submitting.value) return;
-                    const row = buildMetaFeedManualRow();
-                    if (!row.post_id) { showNotification('Post ID wajib diisi.'); return; }
-                    if (!row.account) { showNotification('Akun wajib diisi.'); return; }
-                    if (!row.publish_time) { showNotification('Tanggal publish wajib diisi.'); return; }
-
-                    const runner = ensureRunApi();
-                    const executeSave = (overwrite = false) => {
-                        submitting.value = true;
-                        runner.withSuccessHandler(result => {
-                            submitting.value = false;
-                            if (result?.requires_confirmation) {
-                                showConfirm(
-                                    'Data Feed Sudah Ada',
-                                    'Post ID ini sudah ada. Lanjutkan untuk menimpa data lama.',
-                                    () => executeSave(true),
-                                    'info'
-                                );
-                                return;
-                            }
-                            metaFeedManualModalOpen.value = false;
-                            showNotification('Data Feed berhasil ditambahkan.');
-                            refreshMetaDataset('feed');
-                        }).withFailureHandler(err => {
-                            submitting.value = false;
-                            notifyError('Simpan Feed gagal', err, 'Data Feed manual belum berhasil disimpan.');
-                        }).importMetaFeed([row], { overwrite });
-                    };
-                    executeSave(false);
                 };
 
 @endverbatim

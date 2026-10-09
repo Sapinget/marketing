@@ -62,22 +62,13 @@
                 const hargaKompetitorDateFilter = ref({ start: '', end: '' });
                 const hargaKompetitorPage = ref(1);
                 const hargaKompetitorModalOpen = ref(false);
-                const hargaKompetitorModalType = ref('create');
                 const hargaKompetitorForm = ref({ ID: null, Nama_Produk: '', KATEGORI: '', BRAND: '', SERI: '', RAM: '', INTERNAL: '', SIZE: '', WARNA: '', Tanggal_Cek: '', Harga_Distributor_1: 0, Harga_Distributor_2: 0, Harga_Kompetitor: 0, Harga_Rencana_Jual: 0, Margin_Profit: 0, Selisih: 0 });
 
                 // Ads Log
                 const adsData = ref([]);
-                const adsSearch = ref('');
                 const adsDateFilter = ref({ start: '', end: '' });
-                const adsPage = ref(1);
                 const adsModalOpen = ref(false);
-                const adsModalType = ref('create');
                 const adsForm = ref({ ID: null, Nama: '', ID_Ads: '', Jangkauan: 0, Suka: 0, Komentar: 0, Share: 0, Rata_Komentar: 0, Tanggal: '', Biaya: 0, Sisa_Saldo: 0, Kategori: '' });
-                const adsPlatformOptions = ['Meta', 'Google', 'Mekari', 'Others'];
-                const adsKategoriOptions = computed(() => resolveNamaStockSettingOptions(
-                    ['Ads_Kategori', 'Kategori_Ads'],
-                    ['Branding', 'Promo', 'Product Launch', 'Event', 'Remarketing', 'Konten', 'Others']
-                ));
 
                 // Laporan Event (LPJK)
                 const lpjkData = ref([]);
@@ -90,8 +81,6 @@
                 const activeLpjkRow = ref(null);
                 const lpjkDetailData = ref([]);
                 const lpjkDetailItem = ref({ Master_ID: '', Kategori: 'Konsumsi', Nama_Pengeluaran: '', Satuan: 0, Jumlah: 1, Total: 0, Bukti: '' });
-                const lpjkExpenseCategories = ['Konsumsi', 'Dekorasi', 'Dokumentasi', 'Transportasi', 'Venue', 'Promosi', 'Perlengkapan', 'Lainnya'];
-                const lpjkStatusOptions = computed(() => settings.value.Status || []);
 
                 // Budgeting
                 const _budgetDefault = { meta: { costPerAd: 0, totalAds: 0, days: 30, balance: 0 }, google: { costPerAd: 0, totalAds: 0, days: 30, balance: 0 }, mekari: { visitor: { targetPerDay: 0, days: 30, balance: 0, topupCost: 0 }, broadcast: { costPerWeek: 0, weeks: 4, specialPrice: 0, balance: 0 } }, colabPartners: [], others: [] };
@@ -113,7 +102,6 @@
                     const lastDay = new Date(y, m + 1, 0).getDate();
                     return { start: `${y}-${pad(m + 1)}-01`, end: `${y}-${pad(m + 1)}-${pad(lastDay)}` };
                 })());
-                const showBudgetSettings = ref(false);
                 const showColabListModal = ref(false);
 
                 // Program Promo
@@ -121,45 +109,24 @@
                 const promoSearch = ref('');
                 const promoPage = ref(1);
                 const promoModalOpen = ref(false);
-                const promoModalType = ref('create');
                 const promoForm = ref({ ID: null, Kategori: '', Program: '', Warna: '', Harga: 0, Periode: 'Selama persediaan masih ada', Rules: '', Benefit: '' });
                 const promoPeriodePreset = ref('');
                 const promoTempDate = ref({ start: '', end: '' });
 
                 // Asset Vendor Inventory
                 const aviData = ref([]);
-                const aviSearch = ref('');
-                const aviPage = ref(1);
-                const aviModalOpen = ref(false);
-                const aviModalType = ref('create');
-                const aviForm = ref({ ID: null, source_id: '', vendor: '', brand: '', seri: '', imei: '', quantity: 1, condition: 'New', purchase_date: '', notes: '' });
 
                 // Sell Out
                 const sellOutData = ref([]);
                 const sellOutSearch = ref('');
                 const sellOutVendorFilter = ref('');
                 const sellOutMonth = ref(new Date().toISOString().substring(0, 7));
-                const sellOutPage = ref(1);
                 const sellOutModalOpen = ref(false);
-                const sellOutModalType = ref('create');
                 const sellOutForm = ref({ ID: null, Vendor: '', Kategori: '', Brand: '', Seri: '', RAM: '', Internal: '', Size: '', Kondisi: '', Nama_Produk: '', Target_Unit: 0, Bonus_Nominal: 0, Realisasi_Unit: 0, Periode_Start: '', Periode_End: '', Catatan: '' });
 
-                // Market Intelligence (from BOT SQLite)
-                const pasarData = ref({ total: 0, by_source: {}, bali_competitor: [], competitors: [], sources: [], updated_at: null });
-                const intelijenHargaData = ref({ summary: {}, rows: [] });
                 const puraPriceChangesData = ref({ summary: {}, rows: [] });
-                const auditHargaData = ref({ summary: {}, rows: [] });
-                const eksternalData = ref({ rows: [], sources: [], brands: [], by_source: {}, total: 0 });
                 const eksternalChangesData = ref({ rows: [], total: 0 });
-                const ihFilter = ref('');
-                const puraPriceChangesDirection = ref('all');
-                const eksternalChangesDirection = ref('all');
                 const eksternalSourceFilter = ref('');
                 const eksternalBrandFilter = ref('');
                 const eksternalBrandDebounce = ref(null);
-                const marketIntelijenHargaPage = ref(1);
-                const marketIntelijenHargaAuditPage = ref(1);
-                const marketAuditHargaPage = ref(1);
-                const marketEksternalRowsPage = ref(1);
-                const marketEksternalChangesPage = ref(1);
 @endverbatim

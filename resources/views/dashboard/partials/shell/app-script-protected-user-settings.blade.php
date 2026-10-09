@@ -387,33 +387,6 @@
                     return kanbanBuckets.value[statusGroup] || [];
                 };
 
-                const getIdeaAgeLabel = (item) => {
-                    const rawDate = String(item?.Tanggal_Rencana || '').trim();
-                    if (!rawDate) return 'Umur -';
-                    const source = new Date(rawDate);
-                    if (Number.isNaN(source.getTime())) return 'Umur -';
-                    const today = new Date();
-                    source.setHours(0, 0, 0, 0);
-                    today.setHours(0, 0, 0, 0);
-                    const diffDays = Math.max(0, Math.floor((today.getTime() - source.getTime()) / 86400000));
-                    return `Umur ${diffDays}h`;
-                };
-
-                const getIdeationTypeTone = (item) => {
-                    const raw = String(item?.Format_Konten || item?.ContentType || item?.Status || "general").trim().toUpperCase();
-                    const palettes = [
-                        { chip: "bg-amber text-white", card: "border-amber" },
-                        { chip: "bg-success text-white", card: "border-success" },
-                        { chip: "bg-amber text-white", card: "border-amber" },
-                        { chip: "bg-slate-500 text-white", card: "border-slate-500" },
-                        { chip: "bg-danger text-white", card: "border-danger" }
-                    ];
-                    const fixedMap = { "AD": 0, "COLAB": 1, "PROMO": 2, "EDUKASI": 3, "STORY": 4 };
-                    let idx = fixedMap[raw];
-                    if (idx === undefined) idx = raw.length % palettes.length;
-                    return palettes[idx];
-                };
-
                 const calculateScore = (row) => {
                     if (!row) return 0;
                     const likes = Number(row.Likes || 0);
@@ -432,8 +405,6 @@
                     if (score >= 20) return { label: "Avg", class: "bg-amber", icon: "fas fa-minus" };
                     return { label: "Low", class: "bg-slate-500", icon: "fas fa-arrow-down" };
                 };
-
-
 
                 const { formatNumber, formatWaNumber, calcAdminPct } = window.MarketingDashboardRuntimeHelpers;
 @endverbatim

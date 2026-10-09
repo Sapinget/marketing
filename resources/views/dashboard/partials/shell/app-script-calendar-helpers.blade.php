@@ -199,9 +199,6 @@
                     return Object.values(item.Distribution_Meta).some(d => d && typeof d === 'object' && d.link && typeof d.link === 'string');
                 };
                 const hasAnyMasterLink = (item) => !!String(item?.Link_Drive || '').trim();
-                const toProperCase = (value) => String(value || '')
-                    .toLowerCase()
-                    .replace(/\b\w/g, (char) => char.toUpperCase());
  
                 const formatFullDate = window.MarketingDashboardRuntimeHelpers?.formatFullDate || ((d) => {
                     if (!d) return '';
@@ -444,23 +441,8 @@
                     currentDateView.value = newDate;
                 };
 
-                const changeCalendarMonth = (delta) => {
-                    const newDate = new Date(calendarActiveDate.value);
-                    newDate.setMonth(newDate.getMonth() + delta);
-                    calendarActiveDate.value = newDate;
-                };
-
                 const getCalendarDaysInMonth = (date) => {
                     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-                };
-
-                const getCalendarEmptyDays = (date) => {
-                    return new Date(date.getFullYear(), date.getMonth(), 1).getDay();
-                };
-
-                const isTodayCalendar = (day) => {
-                    const today = new Date();
-                    return today.getDate() === day && today.getMonth() === calendarActiveDate.value.getMonth() && today.getFullYear() === calendarActiveDate.value.getFullYear();
                 };
 
                 const getCalendarItems = (day) => {
@@ -495,11 +477,4 @@
                     return true;
                 });
 
-                const openCalendarDayModal = (day) => {
-                    const year = calendarActiveDate.value.getFullYear();
-                    const month = calendarActiveDate.value.getMonth();
-                    calendarDayModalDate.value = `${day} ${monthNames[month]} ${year}`;
-                    calendarDayModalItems.value = getCalendarItems(day);
-                    calendarDayModalOpen.value = true;
-                };
 @endverbatim
