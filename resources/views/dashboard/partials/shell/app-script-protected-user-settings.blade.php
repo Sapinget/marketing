@@ -250,14 +250,37 @@
                     }).catch(() => {});
                 };
 
+                // Pindah ke tab: menu yang sudah punya URL dibuka lewat URL-nya, sisanya lewat hash (legacy).
+                const goToMigratedTab = (tab) => {
+                    const url = urlRouting ? tabUrls[tab] : null;
+                    if (!url) return false;
+                    localStorage.setItem("ppp_active_tab", tab);
+                    const prefix = window.location.pathname === '/8090' || window.location.pathname.startsWith('/8090/') ? '/8090' : '';
+                    if (window.location.pathname.replace(/\/$/, '') !== prefix + url) {
+                        window.location.assign(prefix + url);
+                    }
+                    return true;
+                };
+                // Klik sidebar berupa <a href>: biarkan browser membuka URL; bila flag mati, pakai navigasi hash.
+                const navigateTab = (event, tab) => {
+                    if (urlRouting && tabUrls[tab]) {
+                        localStorage.setItem("ppp_active_tab", tab);
+                        return;
+                    }
+                    event.preventDefault();
+                    switchTab(tab);
+                };
+
                 const switchTab = (tab) => {
                     if (tab === 'auth_users' && !canManageUsers.value) {
                         showNotification("Akses manajemen user hanya untuk Super Admin", "warning");
+                        if (goToMigratedTab('settings')) return;
                         activeTab.value = 'settings';
                         localStorage.setItem("ppp_active_tab", 'settings');
                         history.replaceState(null, '', '#settings');
                         return;
                     }
+                    if (goToMigratedTab(tab)) return;
                     localStorage.setItem("ppp_active_tab", tab);
 
                     const currentPath = window.location.pathname.replace(/\/$/, '') || '/';

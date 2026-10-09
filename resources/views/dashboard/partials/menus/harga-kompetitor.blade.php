@@ -237,4 +237,229 @@
                     </div>
                 </div>
             </div>
+
+    <!-- Harga Kompetitor Modal -->
+    <teleport to="body">
+        <transition name="fade">
+            <div v-if="hargaKompetitorModalOpen"
+                class="fixed inset-0 z-[2000] flex items-end md:items-center justify-center md:p-4 overlay-motion-sheet">
+                <div @click="hargaKompetitorModalOpen = false"
+                    class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm overlay-backdrop"></div>
+                <div
+                    class="mobile-sheet modal-width-form radius-sheet modal-sheet-surface">
+                    <div class="modal-header-bar radius-sheet-top">
+                        <div class="modal-header-copy">
+                            <div
+                                class="modal-header-icon bg-amber text-light">
+                                <i class="fa-solid fa-calculator"></i>
+                            </div>
+                            <div>
+                                <div class="type-heading-sm font-bold text-slate-800">{{ hargaKompetitorModalType === 'create' ? 'Tambah Data Harga' : 'Edit Data Harga' }}</div>
+                                <div class="type-body-sm text-slate-400">Analisa harga dan kompetitor</div>
+                            </div>
+                        </div>
+                        <button @click="hargaKompetitorModalOpen = false"
+                            class="icon-utility-button icon-utility-danger"><i
+                                class="fa-solid fa-xmark text-sm"></i></button>
+                    </div>
+                    <div class="harga-kompetitor-modal-body flex-1 overflow-y-auto p-4 space-y-3">
+                        <label for="harga-kompetitor-nama-produk" class="sr-only">Nama Produk</label>
+                        <input id="harga-kompetitor-nama-produk" name="harga_kompetitor_nama_produk" type="hidden"
+                            :value="[hargaKompetitorForm.BRAND, hargaKompetitorForm.SERI, hargaKompetitorForm.RAM, hargaKompetitorForm.INTERNAL, hargaKompetitorForm.SIZE, hargaKompetitorForm.WARNA].filter(Boolean).join(' ') || hargaKompetitorForm.Nama_Produk || ''" />
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Kategori</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'harga_kategori')"
+                                    :aria-expanded="searchSelectOpen === 'harga_kategori' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span :class="hargaKompetitorForm.KATEGORI ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ hargaKompetitorForm.KATEGORI || 'Pilih kategori' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'harga_kategori'" :style="popoverStyle" class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="harga_kategori_search" autocomplete="off" aria-label="Cari kategori harga" placeholder="Cari kategori..." class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in hargaKategoriOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))" :key="opt"
+                                                @click="hargaKompetitorForm.KATEGORI = opt; hargaKompetitorForm.BRAND = ''; hargaKompetitorForm.SERI = ''; searchSelectOpen = null"
+                                                :class="['popover-option', hargaKompetitorForm.KATEGORI === opt ? 'popover-option-active' : '']">{{ opt }}</div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Brand</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'harga_brand')"
+                                    :aria-expanded="searchSelectOpen === 'harga_brand' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span :class="hargaKompetitorForm.BRAND ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ hargaKompetitorForm.BRAND || 'Pilih brand' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'harga_brand'" :style="popoverStyle" class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="harga_brand_search" autocomplete="off" aria-label="Cari brand harga" placeholder="Cari brand..." class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in hargaBrandOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))" :key="opt"
+                                                @click="hargaKompetitorForm.BRAND = opt; hargaKompetitorForm.SERI = ''; searchSelectOpen = null"
+                                                :class="['popover-option', hargaKompetitorForm.BRAND === opt ? 'popover-option-active' : '']">{{ opt }}</div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Seri</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'harga_seri')"
+                                    :aria-expanded="searchSelectOpen === 'harga_seri' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span :class="hargaKompetitorForm.SERI ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ hargaKompetitorForm.SERI || 'Pilih seri' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'harga_seri'" :style="popoverStyle" class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="harga_seri_search" autocomplete="off" aria-label="Cari seri harga" placeholder="Cari seri..." class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in hargaSeriOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))" :key="opt"
+                                                @click="hargaKompetitorForm.SERI = opt; searchSelectOpen = null"
+                                                :class="['popover-option', hargaKompetitorForm.SERI === opt ? 'popover-option-active' : '']">{{ opt }}</div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div>
+                                <label for="harga-kompetitor-warna" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Warna</label>
+                                <input id="harga-kompetitor-warna" name="harga_kompetitor_warna" v-model="hargaKompetitorForm.WARNA" type="text" class="form-input-compact" placeholder="Warna" />
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2.5">
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">RAM</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'harga_ram')" :aria-expanded="searchSelectOpen === 'harga_ram' ? 'true' : 'false'" class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span :class="hargaKompetitorForm.RAM ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ hargaKompetitorForm.RAM || 'RAM' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade"><div v-if="searchSelectOpen === 'harga_ram'" :style="popoverStyle" class="search-select-popover"><div class="max-h-48 overflow-y-auto custom-scrollbar"><div v-for="opt in hargaRAMOptions" :key="opt" @click="hargaKompetitorForm.RAM = opt; searchSelectOpen = null" :class="['popover-option', hargaKompetitorForm.RAM === opt ? 'popover-option-active' : '']">{{ opt }}</div></div></div></transition>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Internal</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'harga_internal')" :aria-expanded="searchSelectOpen === 'harga_internal' ? 'true' : 'false'" class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span :class="hargaKompetitorForm.INTERNAL ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ hargaKompetitorForm.INTERNAL || 'Internal' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade"><div v-if="searchSelectOpen === 'harga_internal'" :style="popoverStyle" class="search-select-popover"><div class="max-h-48 overflow-y-auto custom-scrollbar"><div v-for="opt in hargaInternalOptions" :key="opt" @click="hargaKompetitorForm.INTERNAL = opt; searchSelectOpen = null" :class="['popover-option', hargaKompetitorForm.INTERNAL === opt ? 'popover-option-active' : '']">{{ opt }}</div></div></div></transition>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Size</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'harga_size')" :aria-expanded="searchSelectOpen === 'harga_size' ? 'true' : 'false'" class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span :class="hargaKompetitorForm.SIZE ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ hargaKompetitorForm.SIZE || 'Size' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade"><div v-if="searchSelectOpen === 'harga_size'" :style="popoverStyle" class="search-select-popover"><div class="max-h-48 overflow-y-auto custom-scrollbar"><div v-for="opt in hargaSizeOptions" :key="opt" @click="hargaKompetitorForm.SIZE = opt; searchSelectOpen = null" :class="['popover-option', hargaKompetitorForm.SIZE === opt ? 'popover-option-active' : '']">{{ opt }}</div></div></div></transition>
+                            </div>
+                        </div>
+                        <div class="harga-kompetitor-info-card bg-slate-50 p-2.5 rounded-xl text-body text-slate-600">
+                            <span class="font-bold">Nama Produk: </span>
+                            <span class="font-semibold text-slate-800">{{ [hargaKompetitorForm.BRAND, hargaKompetitorForm.SERI, hargaKompetitorForm.RAM, hargaKompetitorForm.INTERNAL, hargaKompetitorForm.SIZE, hargaKompetitorForm.WARNA].filter(Boolean).join(' ') || hargaKompetitorForm.Nama_Produk || '-' }}</span>
+                        </div>
+                        <div>
+                            <label class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Tanggal
+                                Cek</label>
+                            <button @click="openCalendar($event, 'form', '', 'hargaKompetitorCek')"
+                                class="select-trigger-button-form toolbar-trigger-field-form">
+                                <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
+                                <span
+                                    :class="hargaKompetitorForm.Tanggal_Cek ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ hargaKompetitorForm.Tanggal_Cek || 'Pilih tanggal' }}</span>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div>
+                                <label for="harga-kompetitor-distributor-1" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Harga
+                                    Distributor 1</label>
+                                <input id="harga-kompetitor-distributor-1" name="harga_kompetitor_distributor_1" v-model.number="hargaKompetitorForm.Harga_Distributor_1" type="number"
+                                    class="form-input-compact" />
+                            </div>
+                            <div>
+                                <label for="harga-kompetitor-distributor-2" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Harga
+                                    Distributor 2</label>
+                                <input id="harga-kompetitor-distributor-2" name="harga_kompetitor_distributor_2" v-model.number="hargaKompetitorForm.Harga_Distributor_2" type="number"
+                                    class="form-input-compact" />
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2.5">
+                            <div>
+                                <label for="harga-kompetitor-kompetitor" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Harga
+                                    Kompetitor</label>
+                                <input id="harga-kompetitor-kompetitor" name="harga_kompetitor_harga_kompetitor" v-model.number="hargaKompetitorForm.Harga_Kompetitor" type="number"
+                                    class="form-input-compact" />
+                            </div>
+                            <div>
+                                <label for="harga-kompetitor-rencana-jual" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Harga
+                                    Rencana Jual</label>
+                                <input id="harga-kompetitor-rencana-jual" name="harga_kompetitor_harga_rencana_jual" v-model.number="hargaKompetitorForm.Harga_Rencana_Jual" type="number"
+                                    class="form-input-compact" />
+                            </div>
+                        </div>
+                        <div class="harga-kompetitor-info-card bg-slate-50 p-2.5 rounded-xl text-body text-slate-600">
+                            <span class="font-bold">Margin Profit Otomatis: </span>
+                            <span
+                                :class="hargaKompetitorCalculatedMargin >= 0 ? 'text-success font-bold' : 'text-danger font-bold'">
+                                {{ formatCurrency(hargaKompetitorCalculatedMargin) }}
+                            </span>
+                            <div class="type-body-sm text-slate-400 mt-1">
+                                Dihitung dari Harga Rencana Jual - harga distributor tertinggi.
+                            </div>
+                        </div>
+                        <div class="harga-kompetitor-info-card rounded-xl border border-slate-100 bg-slate-50 p-2.5">
+                            <div class="flex items-start justify-between gap-2.5">
+                                <div class="min-w-0">
+                                    <div class="type-body-sm font-bold uppercase text-slate-400">Saran Harga</div>
+                                    <div class="mt-1 text-heading-sm font-bold text-slate-900">
+                                        {{ hargaKompetitorSuggestion.canSuggest ? formatCurrency(hargaKompetitorSuggestion.suggestedPrice) : '-' }}
+                                    </div>
+                                    <div class="mt-1 text-body-sm leading-relaxed text-slate-500">
+                                        <template v-if="hargaKompetitorSuggestion.canSuggest">
+                                            <template v-if="hargaKompetitorSuggestion.useCompetitiveSuggestion">
+                                                Kompetitor - Rp100.000, margin kompetitor {{ formatCurrency(hargaKompetitorSuggestion.competitorProfit) }}, estimasi profit {{ formatCurrency(hargaKompetitorSuggestion.suggestedProfit) }}.
+                                            </template>
+                                            <template v-else>
+                                                Modal + Rp100.000, karena margin kompetitor {{ formatCurrency(hargaKompetitorSuggestion.competitorProfit) }} <= Rp200.000.
+                                            </template>
+                                        </template>
+                                        <template v-else-if="!hargaKompetitorSuggestion.competitorPrice || !hargaKompetitorSuggestion.distributorCost">
+                                            Isi harga distributor dan kompetitor untuk menghitung saran.
+                                        </template>
+                                    </div>
+                                </div>
+                                <button @click="applyHargaKompetitorSuggestion" :disabled="!hargaKompetitorSuggestion.canSuggest"
+                                    class="primary-cta-button primary-cta-button--accent shrink-0">
+                                    Gunakan
+                                </button>
+                            </div>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-xl text-body text-slate-600">
+                            <span class="font-bold">Selisih (Rencana Jual - Kompetitor): </span>
+                            <span
+                                :class="(hargaKompetitorForm.Harga_Rencana_Jual - hargaKompetitorForm.Harga_Kompetitor) >= 0 ? 'text-success font-bold' : 'text-danger font-bold'">
+                                {{ formatCurrency((hargaKompetitorForm.Harga_Rencana_Jual || 0) - (hargaKompetitorForm.Harga_Kompetitor || 0)) }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="modal-footer-bar modal-footer-actions">
+                        <button @click="hargaKompetitorModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
+                        <button @click="saveHargaKompetitor" :disabled="submitting" class="primary-cta-button">
+                            <i v-if="submitting" class="fa-solid fa-circle-notch fa-spin"></i>
+                            {{ submitting ? 'Menyimpan...' : 'Simpan' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+    </teleport>
 @endverbatim

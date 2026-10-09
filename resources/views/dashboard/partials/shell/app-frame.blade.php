@@ -228,24 +228,18 @@
                     'dashboard.partials.menus.garansi-cermati',
                     'dashboard.partials.menus.garansi-resmi',
                     'dashboard.partials.menus.keep-barang',
-                    'dashboard.partials.menus.settings',
-                    'dashboard.partials.menus.nama-stock',
                     'dashboard.partials.menus.profile',
-                    'dashboard.partials.menus.auth-users',
-                    'dashboard.partials.menus.activity-logs',
                     'dashboard.partials.menus.program-promo',
                     'dashboard.partials.menus.promo-pamflet',
                     'dashboard.partials.menus.bonus-report',
                     'dashboard.partials.menus.talent-bonus',
                     'dashboard.partials.menus.editor-performance',
                     'dashboard.partials.menus.sell-out',
-                    'dashboard.partials.menus.harga-kompetitor',
                     'dashboard.partials.menus.pricelist-katalog',
                     'dashboard.partials.menus.template-background',
                     'dashboard.partials.menus.apple-katalog',
                     'dashboard.partials.menus.img-repo',
                     'dashboard.partials.menus.asset-vendor-inventory',
-                    'dashboard.partials.menus.laporan-event',
                     'dashboard.partials.menus.ads-log',
                     'dashboard.partials.menus.budgeting',
                     'dashboard.partials.menus.market-pasar',
@@ -257,13 +251,30 @@
                     'dashboard.partials.menus.market-ext-rumahgadget',
                     ];
                 @endphp
+                @php
+                    // Menu yang sudah punya URL sendiri; hanya tampil di `/` bila flag dashboard.url_routing dimatikan (rollback ke hash).
+                    $migratedMenus = [
+                        'dashboard.partials.menus.harga-kompetitor',
+                        'dashboard.partials.menus.laporan-event',
+                        'dashboard.partials.menus.settings',
+                        'dashboard.partials.menus.nama-stock',
+                        'dashboard.partials.menus.auth-users',
+                        'dashboard.partials.menus.activity-logs',
+                    ];
+                @endphp
                 @if($dedicatedMenuView ?? null)
                     @include($dedicatedMenuView)
                 @else
                     @foreach($legacyMenus as $legacyMenu)
                         @include($legacyMenu)
                     @endforeach
+                    @unless(config('dashboard.url_routing'))
+                        @foreach($migratedMenus as $migratedMenu)
+                            @include($migratedMenu)
+                        @endforeach
+                    @endunless
                 @endif
+                @include('dashboard.partials.shell.app-frame-global-overlays')
 @verbatim
             </main>
 @endverbatim

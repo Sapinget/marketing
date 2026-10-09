@@ -237,4 +237,113 @@
                             </div>
                         </section>
                     </div>
+
+    <!-- Nama Stock Form Modal -->
+    <teleport to="body">
+        <transition name="fade">
+            <div v-if="showNamaStockFormModal"
+                class="fixed inset-0 z-[2500] flex items-end md:items-center justify-center md:p-4 overlay-motion-sheet">
+                <div @click="closeNamaStockFormModal" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm overlay-backdrop">
+                </div>
+                <div
+                    class="mobile-sheet modal-width-form relative w-full bg-white radius-sheet border border-slate-200 overflow-hidden animate-fadeIn flex flex-col max-h-[90dvh]">
+                    <div
+                        class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
+                        <div class="modal-header-copy">
+                            <div
+                                class="modal-header-icon bg-secondary text-light border border-slate-200">
+                                <i class="fa-solid fa-boxes-stacked text-heading-sm"></i>
+                            </div>
+                            <div>
+                                <div class="type-title text-slate-900">{{ namaStockFormMode === 'create' ? 'Tambah Nama Stock' : 'Edit Nama Stock' }}</div>
+                                <div class="type-body-sm text-slate-400 uppercase mt-0.5">Master Stock</div>
+                            </div>
+                        </div>
+                        <button @click="closeNamaStockFormModal" class="icon-utility-button icon-utility-round">
+                            <i class="fa-solid fa-xmark text-xs"></i>
+                        </button>
+                    </div>
+                    <form @submit.prevent="submitNamaStockForm" class="flex flex-1 flex-col min-h-0">
+                        <div class="flex-1 overflow-y-auto p-6 space-y-4">
+                        <div class="space-y-1 relative search-select-container">
+                            <label
+                                class="type-meta font-semibold text-slate-500 uppercase">Kategori</label>
+                            <div @click="toggleSearchSelect($event, 'nama_stock_kategori')"
+                                class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white cursor-pointer flex items-center justify-between hover:bg-slate-50 transition-all">
+                                <span
+                                    :class="namaStockForm.KATEGORI ? 'text-slate-700 font-semibold' : 'text-slate-400'">{{ namaStockForm.KATEGORI || 'Pilih Kategori' }}</span>
+                                <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                            </div>
+                            <transition name="fade">
+                                <div v-if="searchSelectOpen === 'nama_stock_kategori'" :style="popoverStyle"
+                                    class="search-select-popover">
+                                    <div class="relative mb-2">
+                                        <i
+                                            class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                        <input id="nama-stock-kategori-search" name="search_select_query" v-model="searchSelectQuery" type="text" placeholder="Cari kategori..." autocomplete="off" aria-label="Cari kategori nama stock"
+                                            class="form-input-popover" @click.stop />
+                                    </div>
+                                    <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                        <div v-if="namaStockKategoriOptions.length === 0"
+                                            class="px-3 py-2 text-body text-slate-400 italic">Belum ada opsi kategori
+                                            di setting</div>
+                                        <div v-for="opt in namaStockKategoriOptions.filter(o => !searchSelectQuery || String(o || '').toLowerCase().includes(String(searchSelectQuery || '').toLowerCase()))"
+                                            :key="`ns-kat-${opt}`"
+                                            @click="namaStockForm.KATEGORI = opt; namaStockForm.BRAND = ''; namaStockForm.SERI = ''; searchSelectOpen = null"
+                                            :class="['popover-option', namaStockForm.KATEGORI === opt ? 'popover-option-active' : '']">
+                                            {{ opt }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </transition>
+                        </div>
+                        <div class="space-y-1 relative search-select-container">
+                            <label
+                                class="text-body-sm font-semibold text-slate-500 uppercase">Brand</label>
+                            <div @click="toggleSearchSelect($event, 'nama_stock_brand')"
+                                class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs bg-white cursor-pointer flex items-center justify-between hover:bg-slate-50 transition-all">
+                                <span
+                                    :class="namaStockForm.BRAND ? 'text-slate-700 font-semibold' : 'text-slate-400'">{{ namaStockForm.BRAND || 'Pilih Brand' }}</span>
+                                <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                            </div>
+                            <transition name="fade">
+                                <div v-if="searchSelectOpen === 'nama_stock_brand'" :style="popoverStyle"
+                                    class="search-select-popover">
+                                    <div class="relative mb-2">
+                                        <i
+                                            class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                        <input id="nama-stock-brand-search" name="search_select_query" v-model="searchSelectQuery" type="text" placeholder="Cari brand..." autocomplete="off" aria-label="Cari brand nama stock"
+                                            class="form-input-popover" @click.stop />
+                                    </div>
+                                    <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                        <div v-if="namaStockBrandOptions.length === 0"
+                                            class="px-3 py-2 text-body text-slate-400 italic">Pilih kategori dulu atau
+                                            lengkapi setting brand</div>
+                                        <div v-for="opt in namaStockBrandOptions.filter(o => !searchSelectQuery || String(o || '').toLowerCase().includes(String(searchSelectQuery || '').toLowerCase()))"
+                                            :key="`ns-brand-${opt}`"
+                                            @click="namaStockForm.BRAND = opt; namaStockForm.SERI = ''; searchSelectOpen = null"
+                                            :class="['popover-option', namaStockForm.BRAND === opt ? 'popover-option-active' : '']">
+                                            {{ opt }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </transition>
+                        </div>
+                        <div class="space-y-1">
+                            <label for="nama-stock-seri" class="text-body-sm font-semibold text-slate-500 uppercase">Seri</label>
+                            <input id="nama-stock-seri" name="nama_stock_seri" v-model.trim="namaStockForm.SERI" type="text" placeholder="Ketik seri"
+                                class="form-input-compact-white" />
+                        </div>
+                        </div>
+                        <div class="modal-footer-bar modal-footer-actions">
+                            <button type="button" @click="closeNamaStockFormModal"
+                                class="primary-cta-button primary-cta-button--neutral">Batal</button>
+                            <button type="submit"
+                                class="primary-cta-button">{{ namaStockFormMode === 'create' ? 'Tambah' : 'Simpan' }}</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </transition>
+    </teleport>
 @endverbatim

@@ -721,6 +721,14 @@ $dashboardPage('/ecommerce/tiktok-template', 'dashboard.ecommerce.tiktok-templat
 $dashboardPage('/inventory/asset-vendor', 'dashboard.inventory.asset-vendor', 'dashboard.pages.katalog.asset-vendor', 'asset_vendor_inventory', 'dashboard.partials.menus.asset-vendor-inventory');
 $dashboardPage('/promo-pamflet', 'dashboard.promo-pamflet', 'dashboard.pages.promo-pamflet', 'promo_pamflet', 'dashboard.partials.menus.promo-pamflet', $dashboardBackendUrl);
 
+// Batch A: Tools & Settings
+$dashboardPage('/tools/harga-kompetitor', 'dashboard.tools.harga-kompetitor', 'dashboard.pages.tools.harga-kompetitor', 'harga_kompetitor', 'dashboard.partials.menus.harga-kompetitor', $dashboardBackendUrl);
+$dashboardPage('/tools/laporan-event', 'dashboard.tools.laporan-event', 'dashboard.pages.tools.laporan-event', 'laporan_event', 'dashboard.partials.menus.laporan-event', $dashboardBackendUrl);
+$dashboardPage('/settings', 'dashboard.settings', 'dashboard.pages.settings.index', 'settings', 'dashboard.partials.menus.settings', $dashboardBackendUrl);
+$dashboardPage('/settings/nama-stock', 'dashboard.settings.nama-stock', 'dashboard.pages.settings.nama-stock', 'nama_stock', 'dashboard.partials.menus.nama-stock', $dashboardBackendUrl);
+$dashboardPage('/settings/users', 'dashboard.settings.users', 'dashboard.pages.settings.users', 'auth_users', 'dashboard.partials.menus.auth-users', $dashboardBackendUrl);
+$dashboardPage('/settings/activity-logs', 'dashboard.settings.activity-logs', 'dashboard.pages.settings.activity-logs', 'activity_logs', 'dashboard.partials.menus.activity-logs', $dashboardBackendUrl);
+
 Route::get('/unit_ditanya', function (MarketingDashboardShell $dashboardShell) use ($dashboardBackendUrl) {
     return response()->view('dashboard.index', array_merge(
         $dashboardShell->build($dashboardBackendUrl()),

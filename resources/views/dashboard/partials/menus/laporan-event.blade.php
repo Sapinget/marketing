@@ -227,4 +227,276 @@
                     </div>
                 </div>
             </div>
+
+    <!-- Laporan Event Modal -->
+    <teleport to="body">
+        <transition name="fade">
+            <div v-if="lpjkModalOpen"
+                class="fixed inset-0 z-[2000] flex items-end md:items-center justify-center md:p-4 overlay-motion-sheet">
+                <div @click="lpjkModalOpen = false" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm overlay-backdrop"></div>
+                <div
+                    class="mobile-sheet modal-width-form radius-sheet modal-sheet-surface">
+                    <div class="modal-header-bar radius-sheet-top">
+                        <div class="modal-header-copy">
+                            <div
+                                class="modal-header-icon bg-secondary text-light">
+                                <i class="fa-solid fa-calendar-check"></i>
+                            </div>
+                            <div>
+                                <div class="type-heading-sm font-bold text-slate-800">{{ lpjkModalType === 'create' ? 'Tambah Event' : 'Edit Event' }}</div>
+                                <div class="type-body-sm text-slate-400">Laporan kegiatan & anggaran</div>
+                            </div>
+                        </div>
+                        <button @click="lpjkModalOpen = false" class="icon-utility-button icon-utility-danger"><i
+                                class="fa-solid fa-xmark text-sm"></i></button>
+                    </div>
+                    <div class="flex-1 overflow-y-auto p-6 space-y-4">
+                        <div>
+                            <label for="lpjk-nama-event" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Nama
+                                Event</label>
+                            <input id="lpjk-nama-event" name="lpjk_nama_event" v-model="lpjkForm.Nama_Event" type="text" class="form-input-compact"
+                                placeholder="Contoh: Open Table Mall Hartono" />
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Tanggal</label>
+                                <button @click="openCalendar($event, 'form', '', 'lpjkTanggal')"
+                                    class="select-trigger-button-form toolbar-trigger-field-form">
+                                    <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
+                                    <span :class="lpjkForm.Tanggal ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ lpjkForm.Tanggal || 'Pilih tanggal' }}</span>
+                                </button>
+                            </div>
+                            <div>
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Status</label>
+                                <div class="relative search-select-container">
+                                    <button type="button" @click="toggleSearchSelect($event, 'lpjk_status')"
+                                        class="select-trigger-button toolbar-trigger-field">
+                                        <span class="truncate">{{ lpjkForm.Status || 'Pilih Status' }}</span>
+                                        <i class="fa-solid fa-chevron-down text-overline text-slate-400"></i>
+                                    </button>
+                                    <div v-if="searchSelectOpen === 'lpjk_status'" :style="popoverStyle"
+                                        class="search-select-popover search-select-popover--compact max-h-60 overflow-y-auto">
+                                        <div v-for="s in lpjkStatusOptions" :key="s"
+                                            @click="lpjkForm.Status = s; searchSelectOpen = null"
+                                            class="popover-option">
+                                            {{ s }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label for="lpjk-budget-rencana" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Budget
+                                    Rencana</label>
+                                <input id="lpjk-budget-rencana" name="lpjk_budget_rencana" v-model.number="lpjkForm.Budget_Rencana" type="number"
+                                    class="form-input-compact" />
+                            </div>
+                            <div>
+                                <label for="lpjk-realisasi-biaya" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Realisasi
+                                    Biaya</label>
+                                <input id="lpjk-realisasi-biaya" name="lpjk_realisasi_biaya" v-model.number="lpjkForm.Realisasi_Biaya" type="number"
+                                    class="form-input-compact" />
+                            </div>
+                        </div>
+                        <div>
+                            <label for="lpjk-keterangan" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Keterangan</label>
+                            <textarea id="lpjk-keterangan" name="lpjk_keterangan" v-model="lpjkForm.Keterangan" rows="2" class="form-input-compact resize-none"
+                                placeholder="Catatan tambahan..."></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer-bar modal-footer-actions">
+                        <button @click="lpjkModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
+                        <button @click="saveLpjk" :disabled="submitting" class="primary-cta-button">
+                            <i v-if="submitting" class="fa-solid fa-circle-notch fa-spin"></i>
+                            {{ submitting ? 'Menyimpan...' : 'Simpan' }}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+    </teleport>
+
+    <!-- LPJK Detail Modal -->
+    <teleport to="body">
+        <transition name="fade">
+            <div v-if="lpjkDetailModalOpen"
+                class="fixed inset-0 z-[2000] flex items-end md:items-center justify-center md:p-4 overlay-motion-dialog">
+                <div @click="closeLpjkDetail" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm overlay-backdrop"></div>
+                <div
+                    class="modal-width-wide radius-dialog modal-dialog-surface overlay-dialog-surface flex flex-col max-h-[92vh]">
+                    <div
+                        class="modal-header-bar radius-sheet-top shrink-0">
+                        <div class="modal-header-copy">
+                            <div
+                                class="modal-header-icon bg-slate-500 text-white">
+                                <i class="fa-solid fa-file-invoice-dollar"></i>
+                            </div>
+                            <div>
+                                <div class="type-heading-sm font-bold text-slate-800">Detail Keuangan: {{ activeLpjkRow && activeLpjkRow.Nama_Event }}</div>
+                                <div class="type-body-sm text-slate-400">Input Pengeluaran &amp; Cetak LPJK</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button @click="exportLpjkDetailToPDF" class="primary-cta-button primary-cta-button--danger primary-cta-button--icon-only" aria-label="Export PDF"><i
+                                    class="fa-solid fa-file-pdf"></i></button>
+                            <button @click="closeLpjkDetail" class="icon-utility-button icon-utility-danger"><i
+                                    class="fa-solid fa-xmark text-sm"></i></button>
+                        </div>
+                    </div>
+                    <div class="flex-1 overflow-y-auto p-6">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                            <!-- Add item form -->
+                            <div class="space-y-4">
+                                <div class="text-body-sm font-bold text-slate-500 uppercase mb-2">Tambah Pengeluaran
+                                </div>
+                                <div>
+                                    <label class="type-body-sm font-bold text-slate-400 uppercase mb-1">Kategori</label>
+                                    <div class="relative search-select-container">
+                                        <button type="button"
+                                            @click="toggleSearchSelect($event, 'lpjk_expense_category')"
+                                            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-body outline-none hover:border-ppp-accent transition-all flex items-center justify-between gap-2">
+                                            <span class="truncate">{{ lpjkDetailItem.Kategori || 'Pilih Kategori' }}</span>
+                                            <i class="fa-solid fa-chevron-down text-overline text-slate-400"></i>
+                                        </button>
+                                        <div v-if="searchSelectOpen === 'lpjk_expense_category'" :style="popoverStyle"
+                                            class="search-select-popover search-select-popover--compact max-h-60 overflow-y-auto">
+                                            <div v-for="cat in lpjkExpenseCategories" :key="cat"
+                                                @click="lpjkDetailItem.Kategori = cat; searchSelectOpen = null"
+                                                class="popover-option">
+                                                {{ cat }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="lpjk-detail-nama-pengeluaran" class="type-body-sm font-bold text-slate-400 uppercase mb-1">Nama
+                                        Pengeluaran</label>
+                                    <input id="lpjk-detail-nama-pengeluaran" name="lpjk_detail_nama_pengeluaran" v-model="lpjkDetailItem.Nama_Pengeluaran" type="text"
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-body outline-none focus:border-ppp-accent"
+                                        placeholder="Contoh: Print Undangan" />
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label for="lpjk-detail-satuan" class="type-body-sm font-bold text-slate-400 uppercase mb-1">Harga
+                                            Satuan</label>
+                                        <input id="lpjk-detail-satuan" name="lpjk_detail_satuan" v-model.number="lpjkDetailItem.Satuan" type="number"
+                                            @input="lpjkDetailItem.Total = (lpjkDetailItem.Satuan||0)*(lpjkDetailItem.Jumlah||0)"
+                                            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-body outline-none focus:border-ppp-accent" />
+                                    </div>
+                                    <div>
+                                        <label for="lpjk-detail-jumlah" class="type-body-sm font-bold text-slate-400 uppercase mb-1">Jumlah
+                                            (Qty)</label>
+                                        <input id="lpjk-detail-jumlah" name="lpjk_detail_jumlah" v-model.number="lpjkDetailItem.Jumlah" type="number"
+                                            @input="lpjkDetailItem.Total = (lpjkDetailItem.Satuan||0)*(lpjkDetailItem.Jumlah||0)"
+                                            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-body outline-none focus:border-ppp-accent" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="lpjk-detail-bukti" class="type-body-sm font-bold text-slate-400 uppercase mb-1">Bukti /
+                                        No. Nota</label>
+                                    <input id="lpjk-detail-bukti" name="lpjk_detail_bukti" v-model="lpjkDetailItem.Bukti" type="text"
+                                        class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-body outline-none focus:border-ppp-accent"
+                                        placeholder="Nota No 01" />
+                                </div>
+                                <div
+                                    class="bg-slate-50 p-3 rounded-xl flex justify-between items-center border border-slate-100">
+                                    <span class="text-body-sm font-bold text-slate-500 uppercase">Subtotal</span>
+                                    <span class="font-bold text-slate-800">{{ formatCurrency(lpjkDetailItem.Total || 0) }}</span>
+                                </div>
+                                <button @click="saveLpjkDetail"
+                                    :disabled="submitting || !lpjkDetailItem.Nama_Pengeluaran"
+                                    class="primary-cta-button w-full active:scale-95 disabled:opacity-50">
+                                    <i v-if="submitting" class="fa-solid fa-circle-notch fa-spin"></i>
+                                    {{ submitting ? 'Menyimpan...' : 'Tambahkan Item' }}
+                                </button>
+                            </div>
+                            <!-- Print area -->
+                            <div class="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-4 md:p-8 text-slate-900 overflow-hidden">
+                                <div class="text-center mb-8">
+                                    <h3 class="dashboard-summary-unit leading-snug">LAPORAN KEGIATAN
+                                        PENGGUNAAN<br />DANA {{ activeLpjkRow && activeLpjkRow.Nama_Event }}</h3>
+                                </div>
+                                <div class="space-y-4 text-sm">
+                                    <div class="flex items-start gap-3">
+                                        <span class="font-bold">A.</span>
+                                        <span class="font-bold">Pengeluaran</span>
+                                    </div>
+                                    <template v-for="(items, category, catIdx) in lpjkDetailGrouped" :key="category">
+                                        <div class="ml-6 space-y-3">
+                                            <div class="flex items-start gap-2">
+                                                <span class="font-bold">{{ catIdx + 1 }}.</span>
+                                                <span class="font-bold">Seksi {{ category }}</span>
+                                            </div>
+                                            <div class="overflow-x-auto">
+                                            <table class="w-full border-collapse text-body-sm min-w-[460px]">
+                                                <thead>
+                                                    <tr class="table-header-row">
+                                                        <th class="table-header-cell w-[5%] text-left">
+                                                            NO</th>
+                                                        <th class="table-header-cell w-[35%] text-left">
+                                                            NAMA PENGELUARAN</th>
+                                                        <th class="table-header-cell w-[15%] text-right">
+                                                            SATUAN</th>
+                                                        <th class="table-header-cell w-[8%] text-center">
+                                                            QTY</th>
+                                                        <th class="table-header-cell w-[17%] text-right">
+                                                            TOTAL BIAYA</th>
+                                                        <th class="table-header-cell w-[15%] text-center">
+                                                            BUKTI</th>
+                                                        <th class="table-header-cell w-[5%] text-center">
+                                                            #</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr v-for="(item, i) in items" :key="item.ID">
+                                                        <td class="border-b border-slate-200 px-2 py-2 text-center">
+                                                            {{ i + 1 }}</td>
+                                                        <td
+                                                            class="border-b border-slate-200 px-2 py-2 uppercase text-body-sm">
+                                                            {{ item.Nama_Pengeluaran }}</td>
+                                                        <td class="border-b border-slate-200 px-2 py-2 text-right">
+                                                            {{ formatCurrency(item.Satuan) }}</td>
+                                                        <td class="border-b border-slate-200 px-2 py-2 text-center">
+                                                            {{ item.Jumlah }}</td>
+                                                        <td
+                                                            class="border-b border-slate-200 px-2 py-2 text-right font-bold">
+                                                            {{ formatCurrency(item.Total) }}</td>
+                                                        <td
+                                                            class="border-b border-slate-200 px-2 py-2 text-center italic text-body-sm">
+                                                            {{ item.Bukti }}</td>
+                                                        <td class="border-b border-slate-200 px-1 py-1 text-center">
+                                                            <button @click="deleteLpjkDetail(item.ID)"
+                                                                class="text-slate-300 hover:text-danger transition px-2 py-1"><i
+                                                                    class="fa-solid fa-trash-can text-body-sm"></i></button>
+                                                        </td>
+                                                    </tr>
+                                                    <tr class="font-bold bg-slate-50">
+                                                        <td colspan="4"
+                                                            class="border-b border-slate-200 px-2 py-2 text-center uppercase text-body-sm">
+                                                            JUMLAH</td>
+                                                        <td class="border-b border-slate-200 px-2 py-2 text-right">
+                                                            {{ formatCurrency(items.reduce((s,d) => s + (Number(d.Total)||0), 0)) }}</td>
+                                                        <td colspan="2" class="border-b border-slate-200 px-2 py-2">
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            </div>
+                                        </div>
+                                    </template>
+                                    <div v-if="Object.keys(lpjkDetailGrouped).length === 0"
+                                        class="ml-6 text-body text-slate-400 italic py-4">Belum ada pengeluaran.
+                                        Tambahkan dari form di sebelah kiri.</div>
+                                    <div
+                                        class="mt-6 pt-4 border-t-2 border-double border-slate-200 flex justify-between items-center font-bold">
+                                        <span class="uppercase text-sm">TOTAL KESELURUHAN PENGELUARAN</span>
+                                        <span class="text-heading-sm underline decoration-double underline-offset-4">{{ formatCurrency(lpjkDetailTotal) }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </transition>
+    </teleport>
 @endverbatim

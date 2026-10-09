@@ -70,15 +70,54 @@ class MarketingDashboardShellTest extends TestCase
         return $html;
     }
 
+    /**
+     * Modal yang dulu dititipkan di budgeting.blade.php kini tinggal di menu pemiliknya (Batch A);
+     * test kontrak field membaca gabungan sumbernya.
+     */
+    protected function modalHostSource(): string
+    {
+        $menus = resource_path('views/dashboard/partials/menus/');
+
+        return implode("\n", array_map(
+            fn (string $menu) => (string) file_get_contents($menus.$menu.'.blade.php'),
+            ['budgeting', 'harga-kompetitor', 'laporan-event', 'nama-stock']
+        ));
+    }
+
+    private static ?string $dashboardUiCache = null;
+
+    /**
+     * Seluruh UI dashboard: `/` ditambah halaman menu yang sudah punya URL sendiri
+     * (menu itu tidak lagi dirender di `/`, lihat docs/hash-to-url-routing-plan.md).
+     * Tiap halaman hanya menyumbang bagian <main> dan overlay-nya; shell tidak diulang.
+     */
     protected function renderDashboardHtml(): string
     {
+        if (self::$dashboardUiCache !== null) {
+            return self::$dashboardUiCache;
+        }
+
         $response = $this->get('/');
         $html = $response->getContent();
 
         $response->assertOk();
         $this->assertIsString($html);
 
-        return $html;
+        foreach (\Illuminate\Support\Facades\Route::getRoutes()->getRoutes() as $route) {
+            if (! is_string($route->defaults['_dashboard_tab'] ?? null)) {
+                continue;
+            }
+
+            $page = $this->get('/'.ltrim($route->uri(), '/'))->getContent();
+            $start = strpos((string) $page, '<main');
+            $end = strrpos((string) $page, '</main>');
+
+            if ($start !== false && $end !== false) {
+                $html .= "\n".substr((string) $page, $start, $end - $start);
+            }
+        }
+
+        return self::$dashboardUiCache = $html;
     }
 
     protected function renderDashboardHtmlWithShellCss(): string
@@ -770,7 +809,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_dashboard_shell_budgeting_modals_expose_named_labeled_core_fields(): void
     {
-        $budgetingPartial = file_get_contents(resource_path('views/dashboard/partials/menus/budgeting.blade.php'));
+        $budgetingPartial = $this->modalHostSource();
 
         $this->assertIsString($budgetingPartial);
 
@@ -824,7 +863,7 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_dashboard_shell_budgeting_popover_search_fields_have_names_and_aria_labels(): void
     {
-        $budgetingPartial = file_get_contents(resource_path('views/dashboard/partials/menus/budgeting.blade.php'));
+        $budgetingPartial = $this->modalHostSource();
 
         $this->assertIsString($budgetingPartial);
         $this->assertHtmlContains('name="search_select_query"', $budgetingPartial);
@@ -4340,7 +4379,7 @@ HTML, $html);
         $html = $this->renderDashboardHtmlWithShellCss();
 
         $this->assertHtmlContains('Manajemen User', $html);
-        $this->assertHtmlContains("switchTab('auth_users')", $html);
+        $this->assertHtmlContains("navigateTab(\$event, 'auth_users')", $html);
         $this->assertHtmlContains("activeTab === 'auth_users'", $html);
         $this->assertHtmlContains('/api/auth/users', $html);
         $this->assertHtmlContains('authUserForm.username', $html);
@@ -4436,7 +4475,7 @@ HTML, $html);
 
         $this->assertIsString($sidebarNavAdminPartial);
         $this->assertHtmlContains('Activity Logs', $html);
-        $this->assertHtmlContains("switchTab('activity_logs')", $sidebarNavAdminPartial);
+        $this->assertHtmlContains("navigateTab(\$event, 'activity_logs')", $sidebarNavAdminPartial);
         $this->assertHtmlContains("activeTab === 'activity_logs'", $sidebarNavAdminPartial);
         $this->assertHtmlContains("activity_logs: { label: 'Activity Logs', category: 'Settings' }", $html);
         $this->assertHtmlContains("if (tab === 'activity_logs') {", $html);

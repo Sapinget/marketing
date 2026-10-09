@@ -110,6 +110,7 @@
                     // Navigation
                     activeTab,
                     switchTab,
+                    navigateTab,
 
                     // Utilities
                     formatNumber,

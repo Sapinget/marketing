@@ -8,6 +8,20 @@ use Tests\TestCase;
 class DashboardPageRoutesTest extends TestCase
 {
     /**
+     * Halaman dashboard 1-2 MB: assertSee/assertStringContainsString mencetak seluruh isi saat gagal
+     * dan membuat PHPUnit macet. Pakai pengecekan boolean dengan pesan singkat.
+     */
+    private function assertPageHas(string $html, string $needle, string $message = ''): void
+    {
+        $this->assertTrue(str_contains($html, $needle), $message !== '' ? $message : "Page should contain [{$needle}].");
+    }
+
+    private function assertPageLacks(string $html, string $needle, string $message = ''): void
+    {
+        $this->assertFalse(str_contains($html, $needle), $message !== '' ? $message : "Page should not contain [{$needle}].");
+    }
+
+    /**
      * @return array<string, array{0: string, 1: string}> uri => [uri, tab]
      */
     private function dashboardPages(): array
@@ -25,9 +39,14 @@ class DashboardPageRoutesTest extends TestCase
         return $pages;
     }
 
+    private function html(string $uri): string
+    {
+        return (string) $this->get($uri)->assertOk()->getContent();
+    }
+
     public function test_dashboard_pages_are_discovered(): void
     {
-        $this->assertGreaterThanOrEqual(7, count($this->dashboardPages()));
+        $this->assertGreaterThanOrEqual(13, count($this->dashboardPages()));
     }
 
     public function test_every_dashboard_page_renders_its_own_active_tab_without_cache(): void
@@ -36,7 +55,7 @@ class DashboardPageRoutesTest extends TestCase
             $response = $this->get($uri);
 
             $response->assertOk();
-            $response->assertSee("activeTab === '{$tab}'", false);
+            $this->assertPageHas((string) $response->getContent(), "activeTab === '{$tab}'", "{$uri} must render its own tab.");
             $this->assertStringContainsString('no-store', (string) $response->headers->get('Cache-Control'), "{$uri} must not be cached.");
         }
     }
@@ -66,7 +85,7 @@ class DashboardPageRoutesTest extends TestCase
 
         $this->assertIsString($settings);
         $this->assertIsString($tail);
-        $this->assertSame(1, substr_count($settings, "/api/menu-visits"), 'menu visit POST must live in one helper.');
+        $this->assertSame(1, substr_count($settings, '/api/menu-visits'), 'menu visit POST must live in one helper.');
         $this->assertStringContainsString('trackMenuVisit(tab);', $settings);
         $this->assertStringContainsString('trackMenuVisit(activeTab.value);', $tail);
     }
@@ -78,25 +97,25 @@ class DashboardPageRoutesTest extends TestCase
 
     public function test_dedicated_page_renders_only_its_own_menu_and_script(): void
     {
-        $page = $this->get('/ecommerce/tiktok-template')->assertOk();
-        $page->assertSee("activeTab === 'tiktok_template'", false);
-        $page->assertSee('const ttFile', false);
+        $page = $this->html('/ecommerce/tiktok-template');
+        $this->assertPageHas($page, "activeTab === 'tiktok_template'");
+        $this->assertPageHas($page, 'const ttFile');
         // Penanda khusus markup menu lain (sidebar/header memuat `activeTab === ...` umum, jadi tidak dipakai).
-        $page->assertDontSee('<!-- Budgeting tab -->', false);
-        $page->assertDontSee("activeTab === 'budgeting' && !budgetConfigLoaded", false);
+        $this->assertPageLacks($page, '<!-- Budgeting tab -->');
+        $this->assertPageLacks($page, "activeTab === 'budgeting' && !budgetConfigLoaded");
 
-        $legacy = $this->get('/')->assertOk();
-        $legacy->assertSee('<!-- Budgeting tab -->', false);
-        $legacy->assertDontSee('const ttFile', false);
-        $legacy->assertDontSee('ttDownloadAudit', false);
+        $legacy = $this->html('/');
+        $this->assertPageHas($legacy, '<!-- Budgeting tab -->');
+        $this->assertPageLacks($legacy, 'const ttFile');
+        $this->assertPageLacks($legacy, 'ttDownloadAudit');
     }
 
     public function test_dedicated_pages_are_much_lighter_than_the_legacy_dashboard(): void
     {
-        $legacySize = strlen($this->get('/')->getContent());
+        $legacySize = strlen($this->html('/'));
 
         foreach ($this->dashboardPages() as [$uri]) {
-            $this->assertLessThan($legacySize * 0.6, strlen($this->get($uri)->getContent()), "{$uri} should render far less than the full dashboard.");
+            $this->assertLessThan($legacySize * 0.6, strlen($this->html($uri)), "{$uri} should render far less than the full dashboard.");
         }
     }
 
@@ -115,5 +134,78 @@ class DashboardPageRoutesTest extends TestCase
         $this->assertStringNotContainsString('ttFile', $returnBlock);
         $this->assertStringContainsString("@stack('menu-scripts')", $assembly);
         $this->assertStringNotContainsString('app-script-tiktok-template-operations', $assembly);
+    }
+
+    public function test_tab_url_map_matches_routes_exactly(): void
+    {
+        $fromRoutes = [];
+        foreach ($this->dashboardPages() as [$uri, $tab]) {
+            $fromRoutes[$tab] = $uri;
+        }
+
+        $fromConfig = config('dashboard.tab_urls');
+        ksort($fromRoutes);
+        ksort($fromConfig);
+
+        $this->assertSame($fromRoutes, $fromConfig, 'config/dashboard.php tab_urls must list every dashboard page route.');
+    }
+
+    public function test_tab_urls_and_flag_are_exposed_to_the_shell_script(): void
+    {
+        $html = $this->html('/');
+
+        $this->assertPageHas($html, 'const urlRouting = true;');
+        $this->assertPageHas($html, '"\\/settings\\/users"');
+        $this->assertPageHas($html, 'window.location.replace(_prefix + _migratedUrl)');
+    }
+
+    public function test_batch_a_menus_leave_the_legacy_dashboard_and_render_on_their_own_urls(): void
+    {
+        $legacy = $this->html('/');
+        // Penanda markup/overlay milik tiap menu Batch A (bukan nama state, yang masih ada di script bersama).
+        $markers = [
+            '/tools/harga-kompetitor' => 'for="harga-kompetitor-nama-produk"',
+            '/tools/laporan-event' => 'v-if="lpjkDetailModalOpen"',
+            '/settings/nama-stock' => 'v-if="showNamaStockFormModal"',
+        ];
+
+        foreach ($markers as $uri => $marker) {
+            $this->assertPageLacks($legacy, $marker, "/ must not render {$uri} markup.");
+            $this->assertPageHas($this->html($uri), $marker, "{$uri} must render its own markup.");
+        }
+    }
+
+    public function test_every_dedicated_page_keeps_global_overlays(): void
+    {
+        // Konfirmasi hapus (confirmModal) dan popover kalender dipakai semua menu.
+        foreach (array_merge([['/', 'dashboard']], $this->dashboardPages()) as [$uri]) {
+            $html = $this->html($uri);
+
+            $this->assertPageHas($html, 'v-if="confirmModal.open"', "{$uri} lost the confirm modal.");
+            $this->assertPageHas($html, 'v-if="calendarOpen"', "{$uri} lost the calendar popover.");
+        }
+    }
+
+    public function test_flag_off_restores_migrated_menus_on_the_legacy_dashboard(): void
+    {
+        config(['dashboard.url_routing' => false]);
+
+        $html = $this->html('/');
+
+        $this->assertPageHas($html, 'const urlRouting = false;');
+        $this->assertPageHas($html, 'for="harga-kompetitor-nama-produk"');
+        $this->assertPageHas($html, 'v-if="showNamaStockFormModal"');
+    }
+
+    public function test_sidebar_links_to_batch_a_urls(): void
+    {
+        $sidebar = (string) file_get_contents(resource_path('views/dashboard/partials/shell/app-frame-sidebar-nav-admin.blade.php'));
+
+        foreach (['harga_kompetitor', 'laporan_event', 'settings', 'nama_stock', 'auth_users', 'activity_logs'] as $tab) {
+            $url = config('dashboard.tab_urls')[$tab];
+
+            $this->assertStringContainsString('href="'.$url.'" @click="navigateTab($event, \''.$tab.'\')"', $sidebar);
+            $this->assertStringNotContainsString("switchTab('{$tab}')", $sidebar);
+        }
     }
 }

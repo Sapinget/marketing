@@ -10,13 +10,22 @@
                 }
 @endverbatim
                 const _serverTab = @json($activeTab ?? null);
+                const urlRouting = @json((bool) config('dashboard.url_routing'));
+                const tabUrls = @json(config('dashboard.tab_urls', []));
 @verbatim
                 const _hashTab = window.location.hash.slice(1);
                 // Menus hidden from the sidebar must not be restored as the default landing tab.
                 const _hiddenTabs = ['pricelist_katalog', 'apple_katalog', 'template_background', 'img_repo', 'bonus_report', 'talent_bonus', 'editor_performance', 'market_pasar', 'market_intelijen_harga', 'market_audit_harga', 'market_eksternal', 'market_ext_goodponsel', 'market_ext_devstore', 'market_ext_rumahgadget', 'top_content_platform', 'low_content_platform', 'analisa_insight'];
                 const _restoredTab = localStorage.getItem("ppp_active_tab");
                 const _savedTab = _serverTab || _hashTab || (_hiddenTabs.includes(_restoredTab) ? null : _restoredTab) || "dashboard";
-                if (!_serverTab && !_hashTab && _savedTab) history.replaceState(null, '', '#' + _savedTab);
+                // Link lama `/#tab`, bookmark, dan tab tersimpan: pindahkan ke URL menu yang sudah dimigrasi.
+                const _migratedUrl = !_serverTab && urlRouting ? tabUrls[_savedTab] : null;
+                if (_migratedUrl) {
+                    const _prefix = window.location.pathname === '/8090' || window.location.pathname.startsWith('/8090/') ? '/8090' : '';
+                    window.location.replace(_prefix + _migratedUrl);
+                } else if (!_serverTab && !_hashTab && _savedTab) {
+                    history.replaceState(null, '', '#' + _savedTab);
+                }
                 const setDocumentScrollLock = (locked) => {
                     document.documentElement.classList.toggle('modal-scroll-lock', locked);
                     document.body.classList.toggle('modal-scroll-lock', locked);

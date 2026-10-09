@@ -175,6 +175,7 @@
                 // Tab Navigation & Data Loading
                 watch(() => activeTab.value, (newTab) => {
                     if (newTab === 'auth_users' && currentUser.value && !canManageUsers.value) {
+                        if (goToMigratedTab('settings')) return;
                         activeTab.value = 'settings';
                         localStorage.setItem("ppp_active_tab", 'settings');
                         history.replaceState(null, '', '#settings');

@@ -1,6 +1,6 @@
 # Plan: Migrasi Menu Hash (`#tab`) ke URL Sendiri
 
-Status: direvisi 2026-10-09; Fase -1 dan Fase 0 selesai; fondasi Fase 1.5 selesai sebagian (lihat checklist), percontohan isolasi: `tiktok_template`. Dibuat 2026-10-08.
+Status: direvisi 2026-10-09; Fase -1, Fase 0, dan Batch A (URL + isolasi markup) selesai di kode; fondasi Fase 1.5 sebagian; Fase 2 sebagian. **Belum ada verifikasi browser** untuk Batch A dan percontohan (ekstensi Chrome tidak terhubung). Dibuat 2026-10-08.
 Melengkapi `docs/one-menu-one-blade-roadmap.md` (target arsitektur penuh). Dokumen ini mengatur **urutan batch dan resep per menu** untuk:
 
 1. menghapus routing berbasis `#` (satu menu = satu URL), dan
@@ -99,7 +99,7 @@ Fase -1 → Fase 0 → Fase 1.5 fondasi → Batch A (URL + isolasi sekaligus, pe
 
 ### Fase 1: Migrasi per batch (satu PR per batch, urutan A → F)
 Urutan dari risiko terendah ke tertinggi.
-- [ ] **Batch A** Tools & Settings (6 menu). Mayoritas CRUD sederhana, `activity_logs`/`auth_users`/`settings` punya guard role sendiri.
+- [x] **Batch A** Tools & Settings (6 menu) selesai 2026-10-09 (URL, sidebar, markup terisolasi; script **tidak** diisolasi, lihat catatan di bawah; belum diuji browser). Mayoritas CRUD sederhana, `activity_logs`/`auth_users`/`settings` punya guard role sendiri.
 - [ ] **Batch B** Customer Service (5). `unit_ditanya` hanya perlu link sidebar di batch ini; rename URL ke `/cs/unit-ditanya` (+ redirect dari `/unit_ditanya`) dikerjakan sebagai langkah terpisah di akhir batch.
 - [ ] **Batch C** Complain Tracker (3).
 - [ ] **Batch D** Marketing (4). `program_promo` terkait route publik `/promo`, jangan bentrok.
@@ -121,13 +121,20 @@ Per menu (mengikuti batch Fase 1):
 - [ ] Pindahkan `app-script-<menu>-operations.blade.php` ke `@push('menu-scripts')` di page blade menu, bukan di `body-app-assembly`.
 - [ ] Hapus state/fungsi menu dari `return` block bersama dan dari `app-script-domain-state*.blade.php`; pindahkan ke script menu.
 - [ ] Hapus `@include` menu dari daftar `$legacyMenus` di `app-frame`.
-- [ ] Pindahkan blok `if (tab === '<tab>')` dan `tabDataKey` menu itu dari `runner-session-tail`/`switchTab` ke script menu (dipanggil saat `onMounted`).
+- [ ] (belum) Pindahkan blok `if (tab === '<tab>')` dan `tabDataKey` menu itu dari `runner-session-tail`/`switchTab` ke script menu (dipanggil saat `onMounted`).
 - [ ] Verifikasi: `view-source` halaman menu tidak memuat markup/script menu lain; error console bersih; ukuran HTML turun.
 - [ ] Test otomatis per menu: `assertDontSee` marker menu lain (mis. `activeTab === '<tab_lain>'`) pada halaman menu itu. Tambah ke `DedicatedMenuBladeViewsTest`.
 
 Percontohan isolasi (2026-10-09): `tiktok_template`. State-nya self-contained (semua nama `tt*`, tidak dipakai file lain). Script dipindah dari `body-app-assembly` ke `@push('menu-scripts')` di `pages/ecommerce/tiktok-template.blade.php`; menu keluar dari `$legacyMenus`, jadi `/` tidak lagi memuat markup maupun script TikTok. Sintaks JS semua halaman diperiksa dengan `node --check`, semua nama ekspor terdeklarasi, dan semua `tt*` di markup terekspor. **Belum diuji di browser** (ekstensi Chrome tidak terhubung): buka `/ecommerce/tiktok-template` setelah login, upload template, edit sel, ekspor.
 
 Temuan ukuran (rendered, server-side): markup menu 1,26 MB + script shell 0,84 MB dari total 2,27 MB. Isolasi markup saja sudah menurunkan halaman dedicated dari ~2,06 MB ke ~0,97 MB (gzip 255 → 157 KB), yaitu 57% lebih kecil dari `/`. Satu file `menus/budgeting.blade.php` saja 311 KB. Isolasi script (state) tambahan nanti memangkas sisa ~0,84 MB, tapi paling berisiko (ketergantungan silang), jadi dikerjakan per menu setelah markup.
+
+Catatan Batch A (2026-10-09):
+- **`budgeting.blade.php` ternyata "penampung modal"**: 20 `<teleport>` modal milik banyak menu (harga kompetitor, ads, LPJK x2, sell out, nama stock, story, order online, unit ditanya, claim garansi, keep barang, promo, unboxing, distribution, analytics, calendar day, modal konten generik `modalOpen`, colab) plus dua overlay **global**: `confirmModal` (konfirmasi hapus, dipakai `showConfirm` di banyak script) dan popover kalender (`calendarOpen`). Percontohan sebelumnya (`cc94277`) membuat halaman dedicated kehilangan dua overlay global itu (konfirmasi hapus di Settings/pricelist/asset vendor, date picker di asset vendor). Diperbaiki di Batch A: keduanya dipindah ke `shell/app-frame-global-overlays.blade.php`, selalu dirender di semua halaman, dijaga `test_every_dedicated_page_keeps_global_overlays`.
+- Modal milik Batch A dipindah dari budgeting ke menu pemiliknya: harga kompetitor → `harga-kompetitor`, LPJK (2) → `laporan-event`, nama stock → `nama-stock`. Modal menu lain **masih di budgeting** dan dipindah saat menu pemiliknya dimigrasi (Batch B–F). `modalOpen` generik (master/ideation/dst) pindah di Batch F.
+- **Script Batch A tidak diisolasi**: `price-competitor`/`lpjk` dipakai `summary-computed-cluster`, `export-*-pdf`, dan markup budgeting; `nama-stock-actions` dipakai `meta-ig-analytics`; `settings-cluster` (`settings`, `jsonApi`, `loadSettings`) dipakai hampir semua script dan dropdown. Dengan begitu flag rollback juga tetap berlaku (flag mati → `$migratedMenus` dirender lagi di `/`). Isolasi script menunggu Batch D (budgeting) / modul bersama.
+- Fase 2 (sebagian): `config('dashboard.tab_urls')` = satu sumber kebenaran (dicocokkan dengan route oleh `test_tab_url_map_matches_routes_exactly`); `/#tab` lama, tab tersimpan, dan `switchTab()` untuk tab yang punya URL dialihkan ke URL-nya (`goToMigratedTab`, `_migratedUrl` di bootstrap); sidebar Batch A memakai `<a href>` + `navigateTab()` (flag mati → hash lama). Belum: pemeliharaan `ppp_active_tab` untuk hidden tabs, dan pesan "Akses manajemen user hanya untuk Super Admin" hilang saat redirect ke `/settings` (reload).
+- Ukuran (server-side, `php` kernel lokal): `/` 2,27 → 2,05 MB; `/settings` 0,98 MB; `/settings/users` 0,97; `/tools/harga-kompetitor` 0,98; `/tools/laporan-event` 0,98 (gzip ±152 KB vs 286 KB di baseline). Semua halaman Batch A ±52% lebih kecil dari baseline `/`.
 
 Pemetaan script ke menu (isi saat mengerjakan, contoh awal dari `one-menu-one-blade-roadmap.md`):
 

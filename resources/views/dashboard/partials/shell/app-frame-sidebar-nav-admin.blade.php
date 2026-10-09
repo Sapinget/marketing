@@ -22,12 +22,12 @@
 -->
 
                 <div class="px-6 pb-1 pt-2.5 text-[9px] font-bold uppercase tracking-[0.14em] text-slate-300">Tools</div>
-                <div @click="switchTab('harga_kompetitor')"
+                <a href="/tools/harga-kompetitor" @click="navigateTab($event, 'harga_kompetitor')"
                     :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'harga_kompetitor' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
                     <i class="fa-solid fa-tags text-[11px] lg:text-[12px] w-4"></i>
                     <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Harga & Kompetitor</span>
                     <span v-if="activeTab === 'harga_kompetitor'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
-                </div>
+                </a>
 <!-- hidden: /katalog/template-background
                 <a href="/katalog/template-background"
                     :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'template_background' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
@@ -66,36 +66,36 @@
                     <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Template TikTok</span>
                     <span v-if="activeTab === 'tiktok_template'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
                 </a>
-                <div @click="switchTab('laporan_event')"
+                <a href="/tools/laporan-event" @click="navigateTab($event, 'laporan_event')"
                     :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'laporan_event' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
                     <i class="fa-solid fa-calendar-check text-[11px] lg:text-[12px] w-4"></i>
                     <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Laporan Event</span>
                     <span v-if="activeTab === 'laporan_event'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
-                </div>
+                </a>
 
                 <div class="px-6 pb-1 pt-2.5 text-[9px] font-bold uppercase tracking-[0.14em] text-slate-300">Settings</div>
-                <div @click="switchTab('settings')"
+                <a href="/settings" @click="navigateTab($event, 'settings')"
                     :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'settings' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
                     <i class="fa-solid fa-sliders text-[11px] lg:text-[12px] w-4"></i>
                     <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Settings</span>
                     <span v-if="activeTab === 'settings'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
-                </div>
-                <div @click="switchTab('nama_stock')"
+                </a>
+                <a href="/settings/nama-stock" @click="navigateTab($event, 'nama_stock')"
                     :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'nama_stock' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
                     <i class="fa-solid fa-tag text-[11px] lg:text-[12px] w-4"></i>
                     <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Nama Stock</span>
                     <span v-if="activeTab === 'nama_stock'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
-                </div>
-                <div v-if="canManageUsers" @click="switchTab('auth_users')"
+                </a>
+                <a v-if="canManageUsers" href="/settings/users" @click="navigateTab($event, 'auth_users')"
                     :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'auth_users' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
                     <i class="fa-solid fa-users-gear text-[11px] lg:text-[12px] w-4"></i>
                     <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Manajemen User</span>
                     <span v-if="activeTab === 'auth_users'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
-                </div>
-                <div @click="switchTab('activity_logs')"
+                </a>
+                <a href="/settings/activity-logs" @click="navigateTab($event, 'activity_logs')"
                     :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'activity_logs' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
                     <i class="fa-solid fa-clock-rotate-left text-[11px] lg:text-[12px] w-4"></i>
                     <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Activity Logs</span>
                     <span v-if="activeTab === 'activity_logs'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
-                </div>
+                </a>
 @endverbatim
