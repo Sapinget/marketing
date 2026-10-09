@@ -28,17 +28,17 @@
             <div class="flex items-center gap-2"><i class="fa-solid fa-boxes-stacked"></i>
                 <span>Dari db_analis: stok terisi <b>{{ ttStockInfo.filled }}</b> SKU, harga online terisi <b>{{ ttStockInfo.priced }}</b> SKU<template v-if="ttStockInfo.unmatched.length">, <b>{{ ttStockInfo.unmatched.length }}</b> SKU tidak cocok (nilai file tidak diubah)</template>.</span>
             </div>
-            <button @click="ttDownloadAudit" class="table-action-button" title="Download audit CSV"><i class="fa-solid fa-file-csv"></i></button>
+            <button @click="ttDownloadAudit" class="table-action-button" title="Download audit CSV"><i class="fa-solid fa-file-arrow-down"></i></button>
         </div>
         <details class="text-overline text-emerald-800/80">
             <summary class="cursor-pointer">Audit stok &amp; harga per SKU ({{ ttStockInfo.audit.length }})</summary>
             <div class="mt-1 max-h-72 overflow-auto bg-white/70 rounded-lg">
                 <table class="w-full text-left">
-                    <thead class="sticky top-0 bg-emerald-100"><tr>
-                        <th class="px-2 py-1">Produk</th><th class="px-2 py-1">Variasi</th>
-                        <th class="px-2 py-1 text-right">Stok file</th><th class="px-2 py-1 text-right">Stok DB</th>
-                        <th class="px-2 py-1 text-right">Harga file</th><th class="px-2 py-1 text-right">Harga DB</th>
-                        <th class="px-2 py-1">Sumber / catatan</th>
+                    <thead class="sticky top-0 bg-emerald-100"><tr class="table-header-row">
+                        <th class="table-header-cell">Produk</th><th class="table-header-cell">Variasi</th>
+                        <th class="table-header-cell text-right">Stok file</th><th class="table-header-cell text-right">Stok DB</th>
+                        <th class="table-header-cell text-right">Harga file</th><th class="table-header-cell text-right">Harga DB</th>
+                        <th class="table-header-cell">Sumber / catatan</th>
                     </tr></thead>
                     <tbody>
                         <tr v-for="(e, i) in ttStockInfo.audit" :key="i" class="border-t border-emerald-100" :class="e.stockDb === null ? 'text-slate-400' : ''">
