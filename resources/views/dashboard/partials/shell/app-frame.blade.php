@@ -273,6 +273,9 @@
                 @endphp
                 @if($dedicatedMenuView ?? null)
                     @include($dedicatedMenuView)
+                    @foreach(($dedicatedExtraViews ?? []) as $dedicatedExtraView)
+                        @include($dedicatedExtraView)
+                    @endforeach
                 @else
                     @foreach($legacyMenus as $legacyMenu)
                         @include($legacyMenu)

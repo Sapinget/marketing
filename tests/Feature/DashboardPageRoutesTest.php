@@ -243,4 +243,13 @@ class DashboardPageRoutesTest extends TestCase
             $this->assertStringNotContainsString("switchTab('{$tab}')", $sidebar);
         }
     }
+
+    public function test_dashboard_page_helper_accepts_extra_views(): void
+    {
+        $shell = (string) file_get_contents(resource_path('views/dashboard/partials/shell/app-frame.blade.php'));
+        $routes = (string) file_get_contents(base_path('routes/web.php'));
+
+        $this->assertStringContainsString('dedicatedExtraViews', $shell);
+        $this->assertStringContainsString('array $extraViews = []', $routes);
+    }
 }

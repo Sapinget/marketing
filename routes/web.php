@@ -704,11 +704,12 @@ Route::get('/promo', function (Request $request) {
 // Satu pintu untuk halaman menu dashboard yang punya URL sendiri (lihat docs/hash-to-url-routing-plan.md).
 // Route publik: shell menangani login di sisi klien; pengaman data ada di route API (dashboard.auth).
 // `_dashboard_tab` dipakai test untuk menemukan semua halaman menu secara otomatis.
-$dashboardPage = static function (string $uri, string $name, string $view, string $tab, string $menuView, ?Closure $backendUrl = null) {
-    return Route::get($uri, function (MarketingDashboardShell $dashboardShell) use ($view, $tab, $menuView, $backendUrl) {
+// `$extraViews`: partial tambahan yang dirender bersama menu (mis. modal konten generik yang dipakai beberapa menu).
+$dashboardPage = static function (string $uri, string $name, string $view, string $tab, string $menuView, ?Closure $backendUrl = null, array $extraViews = []) {
+    return Route::get($uri, function (MarketingDashboardShell $dashboardShell) use ($view, $tab, $menuView, $backendUrl, $extraViews) {
         return response()->view($view, array_merge(
             $dashboardShell->build($backendUrl ? $backendUrl() : rtrim(url('/'), '/')),
-            ['activeTab' => $tab, 'dedicatedMenuView' => $menuView]
+            ['activeTab' => $tab, 'dedicatedMenuView' => $menuView, 'dedicatedExtraViews' => $extraViews]
         ))->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
     })->name($name)->defaults('_dashboard_tab', $tab);
 };
