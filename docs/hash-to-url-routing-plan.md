@@ -1,6 +1,6 @@
 # Plan: Migrasi Menu Hash (`#tab`) ke URL Sendiri
 
-Status: draft, belum dikerjakan. Dibuat 2026-10-08.
+Status: direvisi 2026-10-09; prasyarat selesai (Fase -1), siap mulai Fase 0. Dibuat 2026-10-08.
 Melengkapi `docs/one-menu-one-blade-roadmap.md` (target arsitektur penuh). Dokumen ini mengatur **urutan batch dan resep per menu** untuk:
 
 1. menghapus routing berbasis `#` (satu menu = satu URL), dan
@@ -29,12 +29,12 @@ Menu yang sudah punya URL sendiri (pola yang akan ditiru):
 | `/repository-gambar`, `/inventory/asset-vendor` | `img_repo`, `asset_vendor_inventory` | `menus.*` (sidebar disembunyikan / tidak ada link) |
 | `/unit_ditanya` | `unit_ditanya` | memakai `dashboard.index` |
 
-### Menu yang masih hash dan tampil di sidebar (26 tab)
+### Menu yang masih hash dan tampil di sidebar (29 tab)
 
 | Batch | Grup | Tab |
 |---|---|---|
 | A | Tools & Settings | `harga_kompetitor`, `laporan_event`, `settings`, `nama_stock`, `auth_users`, `activity_logs` |
-| B | Customer Service | `orderan_online`, `unit_ditanya` (route ada, sidebar belum link), `service`, `claim_garansi_asuransi`, `keep_barang` |
+| B | Customer Service | `orderan_online`, `unit_ditanya` (route `/unit_ditanya` sudah ada; sidebar belum link; rename ke `/cs/unit-ditanya` = tugas terpisah), `service`, `claim_garansi_asuransi`, `keep_barang` |
 | C | Complain Tracker | `input_claim`, `garansi_cermati`, `garansi_resmi` |
 | D | Marketing | `program_promo`, `sell_out`, `ads_log`, `budgeting` |
 | E | Analisa Konten | `meta_story`, `meta_feed`, `meta_followers` |
@@ -72,16 +72,30 @@ Definition of done per menu: URL langsung berfungsi, sidebar tidak lagi memakai 
 
 ## 3. Fase
 
+### Urutan resmi
+Fase -1 → Fase 0 → Fase 1.5 fondasi → Batch A (URL + isolasi sekaligus, percontohan) → evaluasi go/no-go → Batch B–F (tiap batch: Fase 1 lalu 1.5 per menu). Fase 2 aktif sejak Batch A. Fase 3 di akhir.
+
+### Fase -1: Prasyarat (selesai 2026-10-09)
+- [x] Working tree di-commit sebagai baseline di branch `feat/hash-to-url-routing` (commit `4ec6667`), supaya PR batch tidak bercampur dengan perubahan lain. `public/build/.gitignore` yang terhapus sengaja tidak ikut di-commit.
+- [x] Suite test hijau (380 lulus). Dua test merah (`export buttons are icon only`, `menu table headers use shared classes`) disebabkan menu `tiktok-template`; diperbaiki di menunya, bukan di test.
+- [x] Batasan role Teknisi dihapus (shell Blade, legacy source, test).
+
 ### Fase 0: Persiapan (1 PR)
-- [ ] Tetapkan konvensi URL (tabel di bagian 4) dan minta persetujuan sebelum batch A.
+- [x] Konvensi URL (tabel di bagian 4) disetujui 2026-10-09. Satu sumber kebenaran: tabel ini; bila `one-menu-one-blade-roadmap.md` berbeda, samakan dokumen itu ke tabel ini.
 - [ ] Buat helper agar route tidak ditulis berulang: closure `$dashboardPage(string $view, string $tab, string $menuView)` di `routes/web.php`, dipakai route baru dan bisa dipakai ulang oleh route lama.
 - [ ] Tambah test generik: untuk semua route halaman, `GET` mengembalikan 200 dan memuat `activeTab === '<tab>'`.
-- [ ] Batasan role Teknisi dihapus dari lingkup: route baru tidak membedakan Teknisi, dan `TEKNISI_TABS` tidak dijaga di sisi server. Guard `v-if` lain (mis. `canManageSettings`) tetap seperti sekarang.
+- [x] Keputusan guard: route halaman tetap publik (shell menangani login di sisi klien lewat `/api/auth/session`, server tidak tahu user pada request halaman). Pengamanan nyata ada di API (`dashboard.auth` + `assertUserManagementAccess`/`assertSettingsManagementAccess`/`assertSensitiveLogAccess` di `routes/web.php`). Halaman admin (`auth_users`, `settings`, `activity_logs`) hanya cangkang; guard klien (`canManageUsers`, `canManageSettings`) tetap. Tidak ada middleware session baru. Test wajib: endpoint API tiap menu admin menolak akun non-admin (sebagian sudah ada di `HighRiskDomainRouteAuthorizationTest`).
+- [ ] Tambah test: halaman admin tanpa login tetap 200 (cangkang), dan API terkait 401/403.
+- [ ] Konvensi query string: filter menu disimpan sebagai query (`?q=`, `?status=`) hanya bila menu sudah punya state filter terpusat; selain itu tidak dipertahankan. Link lama `/?tab=...` tidak didukung (hanya `#tab`).
+- [ ] Perilaku URL tak dikenal: Laravel 404 bawaan. Trailing slash (`/cs/service/`) di-redirect 301 ke tanpa slash lewat satu aturan di helper route. `/#tab_tak_dikenal` jatuh ke `dashboard` seperti sekarang.
+- [ ] Pindahkan pencatatan kunjungan menu (`POST /api/menu-visits`, saat ini di dalam `runActiveTabProtectedLoaders` di `app-script-protected-user-settings.blade.php`) agar juga terpicu saat halaman dibuka langsung dengan `_serverTab`; tambah test/pengecekan manual bahwa satu kunjungan = satu catatan (jangan dobel).
+- [ ] Tetapkan anggaran performa dan kriteria go/no-go (lihat bagian 6) dan catat angka baseline: ukuran HTML `/`, jumlah request awal, waktu muat.
+- [ ] Rollback: satu flag config `config('dashboard.url_routing')` (default aktif); bila dimatikan, sidebar kembali memakai `switchTab` hash. Route baru tetap ada.
 
 ### Fase 1: Migrasi per batch (satu PR per batch, urutan A → F)
 Urutan dari risiko terendah ke tertinggi.
 - [ ] **Batch A** Tools & Settings (6 menu). Mayoritas CRUD sederhana, `activity_logs`/`auth_users`/`settings` punya guard role sendiri.
-- [ ] **Batch B** Customer Service (5). `unit_ditanya` hanya perlu link sidebar.
+- [ ] **Batch B** Customer Service (5). `unit_ditanya` hanya perlu link sidebar di batch ini; rename URL ke `/cs/unit-ditanya` (+ redirect dari `/unit_ditanya`) dikerjakan sebagai langkah terpisah di akhir batch.
 - [ ] **Batch C** Complain Tracker (3).
 - [ ] **Batch D** Marketing (4). `program_promo` terkait route publik `/promo`, jangan bentrok.
 - [ ] **Batch E** Analisa Konten (3). Bergantung pada importer Meta (`meta_story`, `meta_feed`, `meta_followers`).
@@ -89,9 +103,9 @@ Urutan dari risiko terendah ke tertinggi.
 
 ### Fase 1.5: Isolasi per menu (inti "1 menu 1 blade")
 
-Dikerjakan **setelah** tiap batch Fase 1 hijau (per menu, bukan sekaligus), kecuali langkah fondasi yang dikerjakan sekali di awal.
+Fondasi dikerjakan sekali **sebelum Batch A**. Isolasi per menu dikerjakan di PR batch yang sama dengan URL-nya (bukan sesudahnya), karena pola ini sudah dipilih sebagai percontohan di bagian 6.
 
-Fondasi (sekali, 1-2 PR, sebelum batch A selesai dipakai):
+Fondasi (sekali, 1-2 PR, sebelum Batch A dimulai):
 - [ ] Tambah `@stack('menu-scripts')` ke `partials/shell/body-app-assembly.blade.php` tepat sebelum `app-script-return-block` (script menu disisipkan di dalam `setup()` yang sama).
 - [ ] Mekanisme state per menu: tiap menu mengekspor state/fungsinya lewat satu objek (mis. `menuExports.<tab> = { ... }`) yang digabung otomatis ke `return`, menggantikan daftar manual di `app-script-return-block.blade.php`. Tanpa ini setiap menu yang dipisah tetap harus mengedit file 1122 baris itu.
 - [ ] `app-frame.blade.php`: ganti daftar `@include('...menus.*')` menjadi: include hanya `$dedicatedMenuView`; sisanya hanya untuk tab yang belum dimigrasi (daftar eksplisit `$legacyMenus`, menyusut tiap batch). Halaman `/` (tab `dashboard`) memuat dirinya sendiri.
@@ -104,6 +118,7 @@ Per menu (mengikuti batch Fase 1):
 - [ ] Hapus `@include` menu dari daftar `$legacyMenus` di `app-frame`.
 - [ ] Pindahkan blok `if (tab === '<tab>')` dan `tabDataKey` menu itu dari `runner-session-tail`/`switchTab` ke script menu (dipanggil saat `onMounted`).
 - [ ] Verifikasi: `view-source` halaman menu tidak memuat markup/script menu lain; error console bersih; ukuran HTML turun.
+- [ ] Test otomatis per menu: `assertDontSee` marker menu lain (mis. `activeTab === '<tab_lain>'`) pada halaman menu itu. Tambah ke `DedicatedMenuBladeViewsTest`.
 
 Pemetaan script ke menu (isi saat mengerjakan, contoh awal dari `one-menu-one-blade-roadmap.md`):
 
@@ -150,7 +165,7 @@ Kerjakan hanya bila menunya diaktifkan lagi: Performa, Intelijen Pasar, Top/Low 
 | `auth_users` | `/settings/users` |
 | `activity_logs` | `/settings/activity-logs` |
 | `orderan_online` | `/cs/order-online` |
-| `unit_ditanya` | `/unit_ditanya` (sudah ada; samakan ke `/cs/unit-ditanya` + redirect) |
+| `unit_ditanya` | `/unit_ditanya` sekarang; target `/cs/unit-ditanya` + redirect (langkah terpisah, akhir Batch B) |
 | `service` | `/cs/service` |
 | `claim_garansi_asuransi` | `/cs/claim-garansi` |
 | `keep_barang` | `/cs/keep-barang` |
@@ -187,6 +202,9 @@ Nama mengikuti `one-menu-one-blade-roadmap.md` bila berbeda; satu sumber kebenar
 | Loader data tidak jalan saat buka URL langsung | Langkah 5 resep; uji "buka URL langsung + refresh" untuk tiap menu. |
 | Guard role hanya di sisi sidebar | Fase 0: guard sisi server untuk menu admin (Teknisi di luar lingkup). |
 | Tab tersimpan di `localStorage` mengarahkan ke menu tersembunyi/usang | Pemetaan Fase 2 + `_hiddenTabs`. |
+| Worker proxy memblokir path baru | Dicek 2026-10-09: `worker-proxy/src/index.js` meneruskan semua path ke origin (hanya `/__health` yang ditangani sendiri), tidak ada allowlist. Aman; hindari memakai path `/__health`. |
+| Navigasi = reload penuh; tiap halaman memanggil ulang `/api/auth/session`, chat bootstrap, data global (master plan untuk dropdown) | Ukur di baseline (Fase 0); target go/no-go di bagian 6. Cache data global di `sessionStorage` bila perlu. |
+| Kunjungan menu dobel atau hilang setelah pindah ke URL | Lihat bullet menu-visits di Fase 0. |
 | Cache lama di browser/worker (`workers.dev`) | Header `no-store` pada route halaman (sudah di resep); beri tahu hard refresh setelah deploy. |
 | Migration/DB berbeda antara lokal dan production | Jalankan `php artisan migrate --force` di production tiap rilis (contoh: index `activity_logs`). |
 
@@ -202,4 +220,13 @@ Nama mengikuti `one-menu-one-blade-roadmap.md` bila berbeda; satu sumber kebenar
 | 2 | kecil, ikut batch A |
 | 3 | kecil |
 
-Rekomendasi: Fase 0, lalu fondasi Fase 1.5, lalu Batch A (URL + isolasi sekaligus) sebagai percontohan. Nilai hasilnya (ukuran HTML, waktu muat, jumlah file yang diubah per menu) sebelum lanjut ke batch lain. Bila fondasi 1.5 terlalu mahal, alternatif: selesaikan Fase 1 saja (URL) lebih dulu dan jadwalkan 1.5 terpisah; konsekuensinya halaman tetap berat.
+Rekomendasi (urutan resmi): Fase 0, lalu fondasi Fase 1.5, lalu Batch A (URL + isolasi sekaligus) sebagai percontohan.
+
+**Go/no-go setelah Batch A** (angka dibandingkan dengan baseline Fase 0):
+- HTML halaman menu Batch A turun minimal 30% dibanding `/`.
+- Request awal tidak bertambah lebih dari 1; waktu muat tidak lebih lambat dari baseline.
+- `php artisan test` hijau; tidak ada error console; tiap menu Batch A lolos verifikasi browser (buka langsung, refresh, back/forward).
+- Satu menu terisolasi menyentuh paling banyak: route, page blade, menu blade, script menunya, sidebar, test (tanpa mengedit `return` block 1122 baris).
+Bila salah satu gagal: berhenti, selesaikan hanya Fase 1 (URL) untuk batch lain dan jadwalkan 1.5 terpisah.
+
+Konsekuensi jalur URL-saja: halaman tetap berat karena semua menu dan script tetap dirender.
