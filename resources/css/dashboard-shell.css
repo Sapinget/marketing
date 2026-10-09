@@ -32,7 +32,7 @@
 
         body {
             font-family:
-                "Figtree",
+                "Lexend",
                 system-ui,
                 -apple-system,
                 sans-serif;
@@ -205,17 +205,14 @@
         }
 
         .dashboard-sidebar-shell {
+            --dashboard-shell-motion-duration: 300ms;
+            --dashboard-shell-motion-easing: cubic-bezier(0.4, 0, 0.2, 1);
             backface-visibility: hidden;
             contain: layout paint;
-            transition-duration: 300ms;
+            transition-duration: var(--dashboard-shell-motion-duration);
             transition-property: transform;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-timing-function: var(--dashboard-shell-motion-easing);
             will-change: transform;
-        }
-
-        .dashboard-sidebar-content {
-            transition: opacity 160ms ease;
-            will-change: opacity;
         }
 
         .dashboard-sidebar-nav {
@@ -223,14 +220,16 @@
         }
 
         .dashboard-main-shell {
+            --dashboard-shell-motion-duration: 300ms;
+            --dashboard-shell-motion-easing: cubic-bezier(0.4, 0, 0.2, 1);
             max-width: 100vw;
             width: 100%;
             min-width: 0;
             overflow-x: clip;
             overscroll-behavior-x: none;
-            transition-duration: 300ms;
+            transition-duration: var(--dashboard-shell-motion-duration);
             transition-property: padding-left;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-timing-function: var(--dashboard-shell-motion-easing);
             will-change: padding-left;
         }
 
@@ -584,13 +583,13 @@
         }
 
         .table-action-button.table-action-compact {
-            min-width: 32px;
-            width: 32px;
-            min-height: 32px;
-            height: 32px;
+            min-width: 36px;
+            width: 36px;
+            min-height: 36px;
+            height: 36px;
             padding: 0;
             border: 1px solid var(--ppp-line);
-            border-radius: 4px;
+            border-radius: 12px;
             background: var(--ppp-card);
         }
 
@@ -710,6 +709,7 @@
         }
 
         .table-header-cell {
+            border-radius: 0;
             color: var(--ppp-secondary);
             font-size: var(--fs-body-sm);
             font-weight: 700;
@@ -761,14 +761,14 @@
         }
 
         .icon-utility-button {
-            width: 32px;
-            min-width: 32px;
-            height: 32px;
-            min-height: 32px;
+            width: 36px;
+            min-width: 36px;
+            height: 36px;
+            min-height: 36px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            border-radius: 4px;
+            border-radius: 12px;
             color: var(--ppp-secondary);
             transition:
                 transform 0.18s ease,
@@ -1198,13 +1198,31 @@
         /* Auto-responsive button group: 2 buttons -> 2 cols, 3 -> 3 cols (max), evenly split. */
         .toolbar-actions {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
-            gap: 8px;
+            grid-template-columns: repeat(auto-fit, minmax(36px, 1fr));
+            gap: 6px;
             width: 100%;
         }
 
         .toolbar-actions>* {
             width: 100%;
+        }
+
+        .toolbar-actions .primary-cta-button {
+            overflow: hidden;
+            font-size: 0;
+            padding: 0;
+            min-width: 36px;
+            min-height: 36px;
+        }
+
+        .toolbar-actions .primary-cta-button > i,
+        .toolbar-actions .primary-cta-button > [class*="fa-"] {
+            font-size: 13px;
+            margin-right: 0;
+        }
+
+        .toolbar-actions .primary-cta-button > span {
+            display: none;
         }
 
         .table-toolbar-shell {
@@ -1248,6 +1266,18 @@
             padding: 0 10px;
             font-size: 12px;
             border-radius: 4px;
+        }
+
+        .toolbar-actions .primary-cta-button.primary-cta-button--icon-only,
+        .table-toolbar-shell .primary-cta-button.primary-cta-button--icon-only {
+            width: 36px;
+            min-width: 36px;
+            height: 36px;
+            min-height: 36px;
+            padding: 0;
+            gap: 0;
+            border-radius: 12px;
+            flex: 0 0 36px;
         }
 
         .toolbar-actions .toolbar-native-select,
@@ -2856,6 +2886,11 @@
             width: 100%;
         }
 
+        .catalog-table-colors-select,
+        .catalog-table-colors-select .select-trigger-button-compact {
+            width: 100%;
+        }
+
         .catalog-control-label {
             font-size: var(--fs-overline-xs);
             font-weight: 700;
@@ -3001,6 +3036,60 @@
         .toolbar-actions .primary-cta-button > span,
         .toolbar-actions .table-action-button > span {
             display: none;
+        }
+
+        @media (max-width: 639px) {
+            .master-plan-mobile-toolbar .table-toolbar-shell {
+                gap: 8px;
+                padding: 12px;
+                border-bottom: 0;
+            }
+
+            .master-plan-mobile-toolbar .table-toolbar-shell__left,
+            .master-plan-mobile-toolbar .table-toolbar-shell__right {
+                gap: 6px;
+            }
+
+            .master-plan-mobile-toolbar .table-toolbar-shell__right .toolbar-actions {
+                width: 100%;
+                margin-left: 0;
+            }
+
+            .toolbar-actions {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 6px;
+            }
+
+            .toolbar-actions > * {
+                min-width: 0;
+            }
+
+            .toolbar-actions .primary-cta-button:not(.primary-cta-button--icon-only) {
+                width: 100%;
+                min-width: 0;
+                height: 36px;
+                min-height: 36px;
+                padding: 0 12px;
+                gap: 6px;
+                font-size: var(--fs-body-sm);
+                line-height: 34px;
+                border-radius: 16px;
+            }
+
+            .toolbar-actions .primary-cta-button:first-child:nth-last-child(3) {
+                grid-column: 1 / -1;
+            }
+
+            .toolbar-actions .primary-cta-button:not(.primary-cta-button--icon-only) > i,
+            .toolbar-actions .primary-cta-button:not(.primary-cta-button--icon-only) > [class*="fa-"] {
+                margin: 0;
+                font-size: 12px;
+            }
+
+            .toolbar-actions .primary-cta-button:not(.primary-cta-button--icon-only) > span {
+                display: inline;
+                margin-left: 0;
+            }
         }
 
         .segmented-control {
@@ -3218,8 +3307,12 @@
             gap: 10px 16px;
             min-height: 56px;
             padding: 0.75rem 1rem;
-            background: rgb(248 250 252);
+            background: var(--ppp-card);
             border-top: 1px solid rgb(226 232 240);
+        }
+
+        .section-card-shell>.table-pager-bar:last-child {
+            border-radius: 0 0 24px 24px;
         }
 
         .table-pager-bar > :first-child {
@@ -3632,7 +3725,7 @@
             padding: 0 16px 0 40px;
             font-size: var(--fs-body-sm);
             line-height: 34px;
-            color: var(--ppp-text-secondary);
+            color: var(--ppp-secondary);
             outline: none;
             transition: all 0.15s ease;
         }
@@ -3848,6 +3941,55 @@
                 width: auto;
             }
 
+            .toolbar-actions .primary-cta-button {
+                font-size: 12px;
+                padding: 0 10px;
+                min-width: 0;
+            }
+
+            .toolbar-actions .primary-cta-button.primary-cta-button--icon-only {
+                width: 36px;
+                min-width: 36px;
+                height: 36px;
+                min-height: 36px;
+                padding: 0;
+                gap: 0;
+                flex: 0 0 36px;
+            }
+
+            .toolbar-actions .primary-cta-button > i,
+            .toolbar-actions .primary-cta-button > [class*="fa-"] {
+                font-size: 12px;
+            }
+
+            .toolbar-actions .primary-cta-button > span {
+                display: inline;
+            }
+
+            .toolbar-actions--desktop-icon-only .primary-cta-button {
+                width: 36px;
+                min-width: 36px;
+                height: 36px;
+                min-height: 36px;
+                padding: 0;
+                gap: 0;
+                flex: 0 0 36px;
+                overflow: hidden;
+                font-size: 0;
+                border-radius: 12px;
+            }
+
+            .toolbar-actions--desktop-icon-only .primary-cta-button > i,
+            .toolbar-actions--desktop-icon-only .primary-cta-button > [class*="fa-"] {
+                margin: 0;
+                font-size: 12px;
+                flex-shrink: 0;
+            }
+
+            .toolbar-actions--desktop-icon-only .primary-cta-button > span {
+                display: none;
+            }
+
             .table-toolbar-shell {
                 flex-direction: row;
                 align-items: center;
@@ -3889,15 +4031,15 @@
             }
 
             .toolbar-actions .table-action-button {
-                width: 32px;
-                min-width: 32px;
-                height: 32px;
-                min-height: 32px;
+                width: 36px;
+                min-width: 36px;
+                height: 36px;
+                min-height: 36px;
                 padding: 0;
                 gap: 0;
                 overflow: hidden;
                 font-size: 0;
-                border-radius: 4px;
+                border-radius: 12px;
             }
             .toolbar-actions .table-action-button > i,
             .toolbar-actions .table-action-button > [class*="fa-"] {
@@ -4083,17 +4225,17 @@
             inset: 0;
             pointer-events: none;
             position: fixed;
-            z-index: 5000;
+            z-index: 7000;
         }
 
         .calendar-anchor-active {
             position: relative;
-            z-index: 5010;
+            z-index: 7001;
         }
 
         .calendar-anchor-shell-active {
             position: relative;
-            z-index: 5010;
+            z-index: 2001;
         }
 
         .modal-sheet-surface.calendar-anchor-shell-active,
@@ -4102,7 +4244,7 @@
         .overlay-dialog-surface.calendar-anchor-shell-active,
         .modal-dialog-surface.calendar-anchor-shell-active,
         .modal-dialog-surface-scroll.calendar-anchor-shell-active {
-            z-index: 5010 !important;
+            z-index: 2001 !important;
         }
 
         .calendar-popover-panel {

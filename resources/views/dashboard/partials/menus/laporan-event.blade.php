@@ -139,14 +139,14 @@
                             </div>
                         </div>
                         <div class="table-toolbar-shell__right">
-                            <div class="toolbar-actions">
-                                <button @click="openLpjkModal('create')"
-                                    class="primary-cta-button primary-cta-button--accent active:scale-95"><i
-                                        class="fa-solid fa-plus text-overline"></i> Tambah</button>
+                            <div class="toolbar-actions toolbar-actions--desktop-icon-only">
+<button @click="openLpjkModal('create')"
+                                     class="primary-cta-button primary-cta-button--accent primary-cta-button--icon-only active:scale-95"
+                                     aria-label="Tambah Laporan Event"><i
+                                         class="fa-solid fa-plus"></i></button>
                                 <button @click="exportLpjkDetailToPDF"
-                                    class="primary-cta-button primary-cta-button--danger active:scale-95"><i
-                                        class="fa-solid fa-file-pdf text-[9px]"></i><span
-                                        class="ml-1">PDF</span></button>
+                                    class="primary-cta-button primary-cta-button--danger primary-cta-button--icon-only active:scale-95" aria-label="Export PDF"><i
+                                        class="fa-solid fa-file-pdf text-[9px]"></i></button>
                             </div>
                         </div>
                     </div>

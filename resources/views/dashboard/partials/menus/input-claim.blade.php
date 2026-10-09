@@ -27,7 +27,7 @@
                         <i :class="claimSheetSyncing ? 'fa-solid fa-rotate fa-spin' : 'fa-solid fa-cloud-arrow-down'"></i>
                         <span class="ml-1">{{ claimSheetSyncing ? 'Sinkronisasi...' : 'Import' }}</span>
                     </button>
-                    <button @click="exportInputClaimToExcel" class="primary-cta-button primary-cta-button--success active:scale-95"><i class="fa-solid fa-file-excel"></i><span class="ml-1">Excel</span></button>
+                    <button @click="exportInputClaimToExcel" class="primary-cta-button primary-cta-button--success primary-cta-button--icon-only active:scale-95" aria-label="Export Excel"><i class="fa-solid fa-file-excel"></i></button>
                 </div>
             </div>
         </div>

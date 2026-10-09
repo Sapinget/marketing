@@ -163,14 +163,14 @@
                                         class="fa-solid fa-xmark text-overline text-slate-400 hover:text-danger ml-1"></i>
                                 </button>
                             </div>
-                            <div class="toolbar-actions">
-                                <button @click="openAdsModal('create')"
-                                    class="primary-cta-button primary-cta-button--accent active:scale-95"><i
-                                        class="fa-solid fa-plus text-overline"></i> Tambah</button>
+                            <div class="toolbar-actions toolbar-actions--desktop-icon-only">
+<button @click="openAdsModal('create')"
+                                     class="primary-cta-button primary-cta-button--accent primary-cta-button--icon-only active:scale-95"
+                                     aria-label="Tambah Iklan"><i
+                                         class="fa-solid fa-plus"></i></button>
                                 <button @click="exportAdsLogToPDF"
-                                    class="primary-cta-button primary-cta-button--danger active:scale-95"><i
-                                        class="fa-solid fa-file-pdf text-[9px]"></i><span
-                                        class="ml-1">PDF</span></button>
+                                    class="primary-cta-button primary-cta-button--danger primary-cta-button--icon-only active:scale-95" aria-label="Export PDF"><i
+                                        class="fa-solid fa-file-pdf text-[9px]"></i></button>
                             </div>
                         </div>
                     </div>

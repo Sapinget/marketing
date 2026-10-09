@@ -3,6 +3,7 @@
                 const getFilterRef = (ctx) => {
                     if (ctx === 'orderanOnline' || activeTab.value === 'orderan_online') return orderanOnlineDateRange;
                     if (ctx === 'unitDitanya' || activeTab.value === 'unit_ditanya') return unitDitanyaDateRange;
+                    if (ctx === 'service' || activeTab.value === 'service') return serviceDateRange;
                     if (ctx === 'bonus') return bonusFilter;
                     if (ctx === 'hargaKompetitor') return hargaKompetitorDateFilter;
                     if (ctx === 'ads_log') return adsDateFilter;
@@ -32,9 +33,26 @@
                     const margin = 12;
                     const gap = 8;
                     const panelWidth = Math.min(Math.max(rect.width, 292), viewportWidth - (margin * 2), 340);
+                    const estimatedPanelHeight = calendarMode.value === 'filter' ? 386 : 356;
+
+                    const isModalAnchored = !!(calendarAnchorShellElement
+                        && typeof calendarAnchorShellElement.matches === 'function'
+                        && calendarAnchorShellElement.matches('.modal-sheet-surface, .modal-sheet-surface-mobile-center, .mobile-sheet, .overlay-dialog-surface, .modal-dialog-surface, .modal-dialog-surface-scroll'));
+
+                    if (isModalAnchored) {
+                        const centeredLeft = Math.max(margin, Math.round((viewportWidth - panelWidth) / 2));
+                        const centeredTop = Math.max(margin, Math.round((viewportHeight - estimatedPanelHeight) / 2));
+
+                        calendarAnchorStyle.value = {
+                            top: `${centeredTop}px`,
+                            left: `${centeredLeft}px`,
+                            width: `${Math.round(panelWidth)}px`,
+                        };
+                        return;
+                    }
+
                     const preferredLeft = rect.right - panelWidth;
                     const left = Math.min(Math.max(preferredLeft, margin), viewportWidth - panelWidth - margin);
-                    const estimatedPanelHeight = calendarMode.value === 'filter' ? 386 : 356;
                     const belowTop = rect.bottom + gap;
                     const aboveTop = rect.top - estimatedPanelHeight - gap;
                     const top = belowTop + estimatedPanelHeight <= viewportHeight - margin
@@ -83,6 +101,12 @@
                             initialDate = claimGaransiForm.value['TANGGAL_DIAMBIL'] ? new Date(claimGaransiForm.value['TANGGAL_DIAMBIL']) : new Date();
                         } else if (formContext === 'claimGaransi3') {
                             initialDate = claimGaransiForm.value['TANGGAL_ESTIMASI'] ? new Date(claimGaransiForm.value['TANGGAL_ESTIMASI']) : new Date();
+                        } else if (formContext === 'serviceClaimEstimasi') {
+                            initialDate = serviceClaimForm.value['TANGGAL_ESTIMASI'] ? new Date(serviceClaimForm.value['TANGGAL_ESTIMASI']) : new Date();
+                        } else if (formContext === 'serviceClaimDiambil') {
+                            initialDate = serviceClaimForm.value['TANGGAL_DIAMBIL'] ? new Date(serviceClaimForm.value['TANGGAL_DIAMBIL']) : new Date();
+                        } else if (formContext === 'serviceTanggal') {
+                            initialDate = serviceForm.value['TANGGAL'] ? new Date(serviceForm.value['TANGGAL']) : new Date();
                         } else if (formContext === 'distribution') {
                             initialDate = distributionForm.value.Tanggal_Publish ? new Date(distributionForm.value.Tanggal_Publish) : new Date();
                         } else if (formContext === 'promoDate1') {
@@ -132,6 +156,9 @@
                         else if (ctx === 'claimGaransi1') claimGaransiForm.value['TANGGAL_MASUK'] = '';
                         else if (ctx === 'claimGaransi2') claimGaransiForm.value['TANGGAL_DIAMBIL'] = '';
                         else if (ctx === 'claimGaransi3') claimGaransiForm.value['TANGGAL_ESTIMASI'] = '';
+                        else if (ctx === 'serviceClaimEstimasi') serviceClaimForm.value['TANGGAL_ESTIMASI'] = '';
+                        else if (ctx === 'serviceClaimDiambil') serviceClaimForm.value['TANGGAL_DIAMBIL'] = '';
+                        else if (ctx === 'serviceTanggal') serviceForm.value['TANGGAL'] = '';
                         else if (ctx === 'distribution') distributionForm.value.Tanggal_Publish = '';
                         else if (ctx === 'analytics') analyticsForm.value.Tanggal_Publish = '';
                         else if (ctx === 'promoDate1') { promoTempDate.value.start = ''; syncPromoPerideText(); }
@@ -193,6 +220,9 @@
                         if (ctx === 'claimGaransi1') return claimGaransiForm.value['TANGGAL_MASUK'];
                         if (ctx === 'claimGaransi2') return claimGaransiForm.value['TANGGAL_DIAMBIL'];
                         if (ctx === 'claimGaransi3') return claimGaransiForm.value['TANGGAL_ESTIMASI'];
+                        if (ctx === 'serviceClaimEstimasi') return serviceClaimForm.value['TANGGAL_ESTIMASI'];
+                        if (ctx === 'serviceClaimDiambil') return serviceClaimForm.value['TANGGAL_DIAMBIL'];
+                        if (ctx === 'serviceTanggal') return serviceForm.value['TANGGAL'];
                         if (ctx === 'distribution') return distributionForm.value.Tanggal_Publish;
                         if (ctx === 'analytics') return analyticsForm.value.Tanggal_Publish;
                         if (ctx === 'promoDate1') return promoTempDate.value.start;
@@ -245,6 +275,12 @@
                             claimGaransiForm.value['TANGGAL_DIAMBIL'] = dateStr;
                         } else if (calendarFormContext.value === 'claimGaransi3') {
                             claimGaransiForm.value['TANGGAL_ESTIMASI'] = dateStr;
+                        } else if (calendarFormContext.value === 'serviceClaimEstimasi') {
+                            serviceClaimForm.value['TANGGAL_ESTIMASI'] = dateStr;
+                        } else if (calendarFormContext.value === 'serviceClaimDiambil') {
+                            serviceClaimForm.value['TANGGAL_DIAMBIL'] = dateStr;
+                        } else if (calendarFormContext.value === 'serviceTanggal') {
+                            serviceForm.value['TANGGAL'] = dateStr;
                         } else if (calendarFormContext.value === 'distribution') {
                             distributionForm.value.Tanggal_Publish = dateStr;
                         } else if (calendarFormContext.value === 'analytics') {
@@ -321,6 +357,12 @@
                             return claimGaransiForm.value['TANGGAL_DIAMBIL'] === dateStr;
                         } else if (calendarFormContext.value === 'claimGaransi3') {
                             return claimGaransiForm.value['TANGGAL_ESTIMASI'] === dateStr;
+                        } else if (calendarFormContext.value === 'serviceClaimEstimasi') {
+                            return serviceClaimForm.value['TANGGAL_ESTIMASI'] === dateStr;
+                        } else if (calendarFormContext.value === 'serviceClaimDiambil') {
+                            return serviceClaimForm.value['TANGGAL_DIAMBIL'] === dateStr;
+                        } else if (calendarFormContext.value === 'serviceTanggal') {
+                            return serviceForm.value['TANGGAL'] === dateStr;
                         } else if (calendarFormContext.value === 'distribution') {
                             return distributionForm.value.Tanggal_Publish === dateStr;
                         } else if (calendarFormContext.value === 'analytics') {

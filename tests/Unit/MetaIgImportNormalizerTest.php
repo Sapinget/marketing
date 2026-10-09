@@ -74,4 +74,47 @@ class MetaIgImportNormalizerTest extends TestCase
         $this->assertSame(1500, $rows[0]['views']);
         $this->assertSame(35, $rows[0]['saves']);
     }
+
+    public function test_it_uses_reach_as_fallback_for_legacy_feed_rows_without_views_header(): void
+    {
+        $normalizer = new MetaIgImportNormalizer;
+
+        $rows = $normalizer->normalizeImportRows([
+            [
+                'Post ID' => '17912380476180806',
+                'Account username' => 'purapura.ponsel',
+                'Description' => 'Legacy feed image',
+                'Publish time' => '06/29/2024 10:30',
+                'Post type' => 'IG image',
+                'Reach' => '900',
+                'Comments' => '14',
+                'Shares' => '10',
+                'Saves' => '35',
+            ],
+        ], 'feed');
+
+        $this->assertCount(1, $rows);
+        $this->assertSame(900, $rows[0]['views']);
+        $this->assertSame(900, $rows[0]['reach']);
+    }
+
+    public function test_it_applies_pacific_standard_time_offset_before_dst_switch(): void
+    {
+        $normalizer = new MetaIgImportNormalizer;
+
+        $rows = $normalizer->normalizeImportRows([
+            [
+                'Post ID' => '18041592239756016',
+                'Account username' => 'purapura.ponsel',
+                'Publish time' => '03/08/2026 01:00',
+                'Comments' => '1',
+                'Shares' => '0',
+                'Saves' => '0',
+                'Reach' => '10',
+            ],
+        ], 'feed');
+
+        $this->assertCount(1, $rows);
+        $this->assertSame('2026-03-08 17:00:00', $rows[0]['publish_time']);
+    }
 }

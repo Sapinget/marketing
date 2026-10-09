@@ -23,7 +23,11 @@
                         formatShortDate: (dateStr) => {
                             if (!dateStr) return "-";
                             const date = new Date(dateStr);
-                            return date.toLocaleDateString("id-ID", { day: "2-digit", month: "short" });
+                            if (isNaN(date.getTime())) return "-";
+                            const day = String(date.getDate()).padStart(2, '0');
+                            const month = String(date.getMonth() + 1).padStart(2, '0');
+                            const year = date.getFullYear();
+                            return `${day}/${month}/${year}`;
                         },
                         formatFullDate: (dateStr) => {
                             if (!dateStr) return "-";
@@ -236,10 +240,6 @@
                 });
 
                 const switchTab = (tab) => {
-                    if (isTeknisi.value && !TEKNISI_TABS.has(tab)) {
-                        showNotification("Akses dibatasi untuk role Teknisi", "warning");
-                        return;
-                    }
                     if (tab === 'auth_users' && !canManageUsers.value) {
                         showNotification("Akses manajemen user hanya untuk Super Admin", "warning");
                         activeTab.value = 'settings';
@@ -247,13 +247,49 @@
                         history.replaceState(null, '', '#settings');
                         return;
                     }
-                    activeTab.value = tab;
                     localStorage.setItem("ppp_active_tab", tab);
-                    history.replaceState(null, '', '#' + tab);
-                    closeBottomNavMore();
-                    if (window.innerWidth < 768) {
-                        isSidebarOpen.value = false;
+
+                    const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+                    const dashboardPath = currentPath === '/8090' || currentPath.startsWith('/8090/') ? '/8090/' : '/';
+                    if (currentPath !== '/' && currentPath !== '/8090') {
+                        window.location.assign(dashboardPath + '#' + encodeURIComponent(tab));
+                        return;
                     }
+
+                    activeTab.value = tab;
+                    history.replaceState(null, '', '#' + tab);
+                    if (window.innerWidth < 1024) {
+                        sidebarOpen.value = false;
+                    }
+
+                    const tabDataKey = {
+                        unboxing: 'unboxing',
+                        orderan_online: 'orderanOnline',
+                        unit_ditanya: 'unitDitanya',
+                        claim_garansi_asuransi: 'claimGaransi',
+                        program_promo: 'promo',
+                        sell_out: 'sellOut',
+                        laporan_event: 'lpjk',
+                        ads_log: 'ads',
+                        harga_kompetitor: 'hargaKompetitor',
+                         asset_vendor_inventory: 'assetVendorInventory',
+                         proses_claim: 'serviceClaims',
+                         calendar: 'calendar',
+
+                    }[tab];
+
+                    if (tabDataKey) loadTabData(tabDataKey);
+
+                    // Track menu visit
+                    fetch(window.MarketingDashboardRuntimeHelpers.resolveAppUrl('/api/menu-visits'), {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                        },
+                        body: JSON.stringify({ tab_key: tab })
+                    }).catch(() => {});
+
                     // Calendar butuh story data (master plan & events sudah dimuat saat init).
                     if (tab === 'calendar' && storyData.value.length === 0) {
                         loadStoryData();
@@ -290,7 +326,6 @@
                     Format_Konten: "",
                     Platforms: [],
                     Colab: [],
-                    Editor: "",
                     Talent: [],
                     Status: "",
                     Tanggal_Rencana: todayStr(),

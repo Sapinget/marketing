@@ -126,6 +126,11 @@
                     priceColor: '#ffffff',
                     srpColor: 'rgba(255,255,255,0.5)',
                     srpFontSize: 11,
+                    priceShape: 'plain',
+                    priceBadgeBg: 'rgba(255,255,255,0.18)',
+                    showHematBadge: true,
+                    hematBadgeBg: '#16a34a',
+                    hematBadgeColor: '#ffffff',
                     rowGap: 5,
                     rowSep: true,
                     rowsPerPage: 3,
@@ -142,6 +147,14 @@
                     if (!val) return '—';
                     return Number(val).toLocaleString('id-ID');
                 };
+
+                const appleSavings = (variant, price) => {
+                    const iboxPrice = Number(variant?.harga_kondisi?.EXIBOX || 0);
+                    const currentPrice = Number(price || 0);
+                    return iboxPrice > currentPrice ? iboxPrice - currentPrice : 0;
+                };
+
+                const formatAppleSavings = (amount) => amount > 0 ? `Hemat Rp ${Number(amount).toLocaleString('id-ID')}` : '';
 
                 const appleModelKey = (modelName) => String(modelName || '').toUpperCase().replace(/[()]/g, '').replace(/\s+/g, ' ').trim();
 
@@ -269,7 +282,7 @@
                 // ── data loading ─────────────────────────────────────────────────────────────
 
                 const loadAppleProducts = () => {
-                    fetch('/api/apple-products')
+                    fetch(window.MarketingDashboardRuntimeHelpers.resolveAppUrl('/api/apple-products'))
                         .then((r) => r.json())
                         .then((json) => {
                             appleProducts.value = Array.isArray(json.data) ? json.data : [];
@@ -280,7 +293,7 @@
 
                 const syncAppleProducts = () => {
                     appleSyncing.value = true;
-                    fetch('/api/apple-products/sync', {
+                    fetch(window.MarketingDashboardRuntimeHelpers.resolveAppUrl('/api/apple-products/sync'), {
                         method: 'POST',
                         headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '', 'Content-Type': 'application/json' },
                     })
@@ -296,7 +309,7 @@
 
                 const appleLoadImages = (category) => {
                     if (appleImageMap.value[category]) return;
-                    fetch(`/api/apple-images/${encodeURIComponent(category)}`)
+                    fetch(window.MarketingDashboardRuntimeHelpers.resolveAppUrl(`/api/apple-images/${encodeURIComponent(category)}`))
                         .then((r) => r.json())
                         .then((json) => {
                             const map = {};
@@ -429,6 +442,33 @@
                 watch(appleCfg, (cfg) => {
                     localStorage.setItem('ppp_apple_canvas_cfg', JSON.stringify(cfg || {}));
                 }, { deep: true });
+
+                const appleTemplateConfig = (template) => {
+                    const layout = template?.layout_config && typeof template.layout_config === 'object'
+                        ? template.layout_config
+                        : {};
+                    const cardConfig = layout.card_config && typeof layout.card_config === 'object'
+                        ? layout.card_config
+                        : {};
+                    const isCatalog = (template?.output_mode || 'katalog') === 'katalog';
+
+                    return {
+                        ...applyCfgDefaults(),
+                        ...layout,
+                        ...(isCatalog ? cardConfig : {}),
+                        padding: layout.padding ?? layout.x ?? undefined,
+                        topOffset: layout.topOffset ?? layout.y ?? undefined,
+                        headerHeight: layout.headerHeight,
+                        rowHeight: layout.rowHeight,
+                    };
+                };
+
+                watch(appleSelectedTemplateId, (templateId) => {
+                    const template = catalogTemplates.value.find((item) => item.ID === templateId);
+                    if (!template) return;
+                    appleCfg.value = { ...appleCfg.value, ...appleTemplateConfig(template) };
+                    appleColumnsPerRow.value = Number(template.layout_config?.cardColumns || appleColumnsPerRow.value || 4);
+                });
 
                 const appleCanvasPresetForColumns = (columns) => ({
                     3: { padding: 150, gap: 60, imageHeight: 128, modelFontSize: 15, srpFontSize: 11, rowGap: 5, rowsPerPage: 3 },
@@ -644,13 +684,35 @@
                             ctx.lineTo(priceRightX, curY + srpFs * 0.18);
                             ctx.stroke();
                         }
-                        ctx.font         = `700 ${pFs}px Inter, Arial, sans-serif`;
-                        ctx.fillStyle    = cfg.priceColor || '#ffffff';
-                        ctx.textAlign    = 'right';
+                        const priceY = srpText ? curY + srpFs + 2 : rowMidY;
+                        const savings = appleSavings(variant, price);
+                        ctx.font = `700 ${pFs}px ${cfg.fontFamily || 'Inter, Arial, sans-serif'}`;
+                        ctx.fillStyle = cfg.priceColor || '#ffffff';
+                        ctx.textAlign = 'right';
                         ctx.textBaseline = srpText ? 'top' : 'middle';
-                        ctx.fillText(priceText, priceRightX, srpText ? curY + srpFs + 2 : rowMidY);
+                        if (cfg.priceShape && cfg.priceShape !== 'plain') {
+                            const priceBgWidth = ctx.measureText(priceText).width + 12;
+                            const priceBgHeight = pFs + 8;
+                            ctx.fillStyle = cfg.priceBadgeBg || 'rgba(255,255,255,0.18)';
+                            appleDrawRoundedRect(ctx, priceRightX - priceBgWidth, priceY - priceBgHeight / 2, priceBgWidth, priceBgHeight, cfg.priceShape === 'pill' ? priceBgHeight / 2 : 6);
+                            ctx.fill();
+                            ctx.fillStyle = cfg.priceColor || '#ffffff';
+                        }
+                        ctx.fillText(priceText, priceRightX - (cfg.priceShape && cfg.priceShape !== 'plain' ? 6 : 0), priceY);
+                        if (cfg.showHematBadge && savings > 0) {
+                            const savingsText = formatAppleSavings(savings);
+                            ctx.font = `700 ${Math.max(8, pFs - 3)}px ${cfg.fontFamily || 'Inter, Arial, sans-serif'}`;
+                            ctx.fillStyle = cfg.hematBadgeBg || '#16a34a';
+                            const badgeWidth = Math.min(cardW * 0.9, ctx.measureText(savingsText).width + 12);
+                            appleDrawRoundedRect(ctx, x + (cardW - badgeWidth) / 2, priceY + pFs + 4, badgeWidth, Math.max(16, pFs + 4), 8);
+                            ctx.fill();
+                            ctx.fillStyle = cfg.hematBadgeColor || '#ffffff';
+                            ctx.textAlign = 'center';
+                            ctx.textBaseline = 'middle';
+                            ctx.fillText(savingsText, x + cardW / 2, priceY + pFs + 4 + Math.max(16, pFs + 4) / 2);
+                        }
 
-                        curY += currentRowH + rGap;
+                        curY += currentRowH + rGap + (cfg.showHematBadge && savings > 0 ? pFs + 8 : 0);
                     });
 
                     return curY - y;

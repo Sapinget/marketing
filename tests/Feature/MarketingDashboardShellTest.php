@@ -151,6 +151,36 @@ class MarketingDashboardShellTest extends TestCase
         $response->assertSee('window.MARKETING_BACKEND_URL=', false);
     }
 
+    public function test_8090_shell_resolves_dashboard_api_requests_against_its_configured_backend_url(): void
+    {
+        $response = $this->get('/8090', ['Host' => 'dashboard.example.test']);
+        $html = $response->getContent();
+
+        $response->assertOk();
+        $this->assertIsString($html);
+        $this->assertHtmlMatches('/window\.MARKETING_BACKEND_URL=.*8090/', $html);
+        $this->assertHtmlContains('return `${String(window.MARKETING_BACKEND_URL).replace(/\\/+$/, \'\')}${url}`;', $html);
+        $this->assertHtmlNotContains("fetch('/api/", $html);
+        $this->assertHtmlNotContains('fetch(`/api/', $html);
+        $this->assertHtmlContains("fetch(window.MarketingDashboardRuntimeHelpers.resolveAppUrl('/api/img-repo/upload'), { method: 'POST', body: fd })", $html);
+        $this->assertHtmlNotContains("fetch(window.MarketingDashboardRuntimeHelpers.resolveAppUrl('/api/img-repo/upload'), { method: 'POST', headers:", $html);
+    }
+
+    public function test_promo_pamflet_watcher_runs_after_current_user_initialization(): void
+    {
+        $response = $this->get('/');
+        $html = $response->getContent();
+
+        $response->assertOk();
+        $this->assertIsString($html);
+        $this->assertHtmlNotContains("watch(activeTab, (newTab) => {\n                    if (newTab === 'promo_pamflet' && currentUser.value)", $html);
+        $this->assertHtmlContains("if (newTab === 'promo_pamflet') {\n                        promoPamflet.fetchData();", $html);
+        $this->assertLessThan(
+            strpos($html, "watch(() => activeTab.value, (newTab) => {"),
+            strpos($html, 'const currentUser = ref(loadStoredUser());')
+        );
+    }
+
     public function test_root_applies_security_headers_and_accessible_viewport(): void
     {
         $response = $this->get('/');
@@ -381,7 +411,8 @@ class MarketingDashboardShellTest extends TestCase
         foreach ([
             'button @click="openAuthUserModal(\'create\')"',
             '<i class="fa-solid fa-user-plus"></i>',
-            '<span>Tambah User</span>',
+            'primary-cta-button--icon-only',
+            'aria-label="Tambah User"',
             'label for="auth-user-username"',
             'input id="auth-user-username" name="auth_user_username"',
             'label for="auth-user-nama"',
@@ -801,7 +832,6 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlContains('aria-label="Cari tipe claim garansi"', $budgetingPartial);
         $this->assertHtmlContains('aria-label="Cari type HP keep barang"', $budgetingPartial);
         $this->assertHtmlContains('aria-label="Cari ecommerce order online"', $budgetingPartial);
-        $this->assertHtmlContains('aria-label="Cari editor master plan"', $budgetingPartial);
         $this->assertHtmlContains('aria-label="Cari kategori nama stock"', $budgetingPartial);
         $this->assertHtmlContains('aria-label="Cari brand nama stock"', $budgetingPartial);
     }
@@ -1142,7 +1172,6 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlContains('const hasBlockingOverlayOpen = computed(() => Boolean(', $watcherPartial);
         $this->assertHtmlContains('onMounted(async () => {', $watcherPartial);
         $this->assertHtmlContains('onBeforeUnmount(() => {', $watcherPartial);
-        $this->assertHtmlContains('watch([currentUser, activeTab], ([user, tab]) => {', $watcherPartial);
         $this->assertHtmlContains('watch(() => activeTab.value, (newTab) => {', $watcherPartial);
         $this->assertHtmlContains('runActiveTabProtectedLoaders(newTab);', $watcherPartial);
         $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-cache-bootstrap-loaders')", $assemblyPartial);
@@ -1604,6 +1633,84 @@ class MarketingDashboardShellTest extends TestCase
         }
     }
 
+    public function test_dashboard_shell_does_not_render_mobile_bottom_navigation(): void
+    {
+        $html = $this->renderDashboardHtml();
+
+        $this->assertHtmlNotContains('class="bottom-nav', $html);
+        $this->assertHtmlNotContains('bottomNavMoreOpen', $html);
+    }
+
+    public function test_dashboard_sidebar_and_main_canvas_use_shared_motion_timing(): void
+    {
+        $dashboardShellCss = file_get_contents(resource_path('css/dashboard-shell.css'));
+
+        $this->assertIsString($dashboardShellCss);
+        $this->assertHtmlContains('--dashboard-shell-motion-duration: 300ms;', $dashboardShellCss);
+        $this->assertHtmlContains('--dashboard-shell-motion-easing: cubic-bezier(0.4, 0, 0.2, 1);', $dashboardShellCss);
+        $this->assertHtmlContains('transition-duration: var(--dashboard-shell-motion-duration);', $dashboardShellCss);
+        $this->assertHtmlContains('transition-timing-function: var(--dashboard-shell-motion-easing);', $dashboardShellCss);
+        $this->assertHtmlNotContains('.dashboard-shell-layout {', $dashboardShellCss);
+        $this->assertHtmlNotContains('padding-left: var(--dashboard-sidebar-offset);', $dashboardShellCss);
+        $this->assertHtmlNotContains('translateX(calc(var(--dashboard-sidebar-offset) - var(--dashboard-sidebar-width)))', $dashboardShellCss);
+        $this->assertHtmlNotContains('.dashboard-sidebar-content {', $dashboardShellCss);
+        $this->assertHtmlNotContains('transition: opacity var(--dashboard-shell-motion-duration) var(--dashboard-shell-motion-easing);', $dashboardShellCss);
+        $this->assertHtmlNotContains('transition: opacity 160ms ease;', $dashboardShellCss);
+    }
+
+    public function test_dashboard_desktop_sidebar_and_canvas_share_one_layout_offset(): void
+    {
+        $appFramePartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-frame.blade.php'));
+        $sidebarPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-frame-sidebar.blade.php'));
+
+        $this->assertIsString($appFramePartial);
+        $this->assertIsString($sidebarPartial);
+        $this->assertHtmlContains('v-if="currentUser && !appLoading" class="min-h-[100dvh] bg-slate-50"', $appFramePartial);
+        $this->assertHtmlContains('lg:hidden transition-opacity duration-300 ease-out', $appFramePartial);
+        $this->assertHtmlContains("paddingLeft: sidebarCollapsed ? '0px' : '15rem'", $appFramePartial);
+        $bootstrapNavigationPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-bootstrap-navigation.blade.php'));
+        $interactionHelpersPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-shell-interaction-helpers.blade.php'));
+        $returnBlockPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-return-block.blade.php'));
+        $lifecycleWatchersPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-lifecycle-watchers.blade.php'));
+        $runnerSessionTailPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-runner-session-tail.blade.php'));
+        $protectedUserSettingsPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-protected-user-settings.blade.php'));
+
+        $this->assertHtmlContains('const isMobileViewport = ref(window.innerWidth < 1024);', $bootstrapNavigationPartial);
+        $this->assertHtmlContains("const savedSidebarCollapsed = localStorage.getItem('sidebarCollapsed') === '1';", $bootstrapNavigationPartial);
+        $this->assertHtmlNotContains("['1', 'true'].includes(localStorage.getItem('sidebarCollapsed'))", $bootstrapNavigationPartial);
+        $this->assertHtmlContains('const sidebarOpen = ref(false);', $bootstrapNavigationPartial);
+        $this->assertHtmlContains('const sidebarCollapsed = ref(savedSidebarCollapsed);', $bootstrapNavigationPartial);
+        $this->assertHtmlContains('const isDesktopViewport = () => window.innerWidth >= 1024;', $interactionHelpersPartial);
+        $this->assertHtmlContains('sidebarCollapsed.value = !sidebarCollapsed.value;', $interactionHelpersPartial);
+        $this->assertHtmlContains("localStorage.setItem('sidebarCollapsed', sidebarCollapsed.value ? '1' : '0');", $interactionHelpersPartial);
+        $this->assertHtmlContains('sidebarOpen.value = !sidebarOpen.value;', $interactionHelpersPartial);
+        $this->assertHtmlContains('sidebarOpen.value = false;', $interactionHelpersPartial);
+        $this->assertHtmlContains('sidebarOpen,', $returnBlockPartial);
+        $this->assertHtmlContains('sidebarCollapsed,', $returnBlockPartial);
+        $this->assertHtmlNotContains('isSidebarOpen,', $returnBlockPartial);
+        $this->assertHtmlContains('if (window.innerWidth < 1024) {', $lifecycleWatchersPartial);
+        $this->assertHtmlContains('sidebarOpen.value = false;', $lifecycleWatchersPartial);
+        $this->assertHtmlContains('if (window.innerWidth < 1024) sidebarOpen.value = false;', $lifecycleWatchersPartial);
+        $this->assertHtmlContains('isMobileViewport.value = window.innerWidth < 1024;', $runnerSessionTailPartial);
+        $this->assertHtmlContains('if (window.innerWidth >= 1024) settingsDetailModalOpen.value = false;', $runnerSessionTailPartial);
+        $this->assertHtmlContains('if (window.innerWidth < 1024) {', $protectedUserSettingsPartial);
+        $this->assertHtmlContains('sidebarOpen.value = false;', $protectedUserSettingsPartial);
+        $this->assertHtmlContains("'dashboard-sidebar-shell fixed inset-y-0 left-0 z-[80] lg:z-40 bg-white border-r border-slate-100 flex flex-col overflow-hidden w-60'", $sidebarPartial);
+        $this->assertHtmlContains(":style=\"{ transform: sidebarOpen || (!isMobileViewport && !sidebarCollapsed) ? 'translateX(0)' : 'translateX(-100%)' }\"", $sidebarPartial);
+        $this->assertHtmlNotContains('lg:translate-x-0', $sidebarPartial);
+        $this->assertHtmlContains('class="dashboard-sidebar-content min-w-[15rem] flex h-full flex-col relative"', $sidebarPartial);
+        $this->assertHtmlContains('class="dashboard-sidebar-brand relative px-4 h-16 flex items-center gap-3 border-b border-slate-100 flex-shrink-0 bg-white"', $sidebarPartial);
+        $this->assertHtmlContains('class="dashboard-sidebar-logo w-9 h-9 rounded-xl bg-white overflow-hidden flex items-center justify-center shrink-0 shadow-sm ring-1 ring-slate-100"', $sidebarPartial);
+        $this->assertHtmlContains('class="h-full w-full object-contain p-1"', $sidebarPartial);
+        $this->assertHtmlContains('class="min-w-0 flex-1"', $sidebarPartial);
+        $this->assertHtmlContains('class="text-[10px] lg:text-[11px] font-black tracking-wide text-slate-900 leading-tight"', $sidebarPartial);
+        $this->assertHtmlContains('class="text-[7px] lg:text-[8px] text-slate-400 uppercase tracking-[0.18em]"', $sidebarPartial);
+        $this->assertHtmlContains('class="w-11 h-11 rounded-lg flex items-center justify-center text-slate-400 hover:bg-slate-50 hover:text-slate-600 transition-all lg:hidden"', $sidebarPartial);
+        $this->assertHtmlContains('@click="sidebarOpen = false"', $sidebarPartial);
+        $this->assertHtmlNotContains('opacity-0 pointer-events-none', $sidebarPartial);
+        $this->assertHtmlNotContains('opacity-100', $sidebarPartial);
+    }
+
     public function test_dashboard_shell_uses_blade_vue_app_script_wrapper_partials_instead_of_raw_legacy_script_wrapper(): void
     {
         $appAssemblyPartial = file_get_contents(resource_path('views/dashboard/partials/shell/body-app-assembly.blade.php'));
@@ -1643,7 +1750,7 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlContains('const appLoading = ref(true);', $bootstrapNavigationPartial);
         $this->assertHtmlContains("if ('scrollRestoration' in history) {", $bootstrapNavigationPartial);
         $this->assertHtmlContains("history.scrollRestoration = 'manual';", $bootstrapNavigationPartial);
-        $this->assertHtmlContains('const groupForTab = (tab) => {', $bootstrapNavigationPartial);
+        $this->assertHtmlContains('const groupForTab = () => null;', $bootstrapNavigationPartial);
     }
 
     public function test_master_plans_api_returns_database_rows_for_legacy_frontend(): void
@@ -2043,7 +2150,6 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlContains('@click="$refs.metaStoryUpload?.click()"', $storyHtml);
         $this->assertHtmlContains('class="primary-cta-button primary-cta-button--accent primary-cta-button--icon-only active:scale-95"', $storyHtml);
         $this->assertHtmlContains('aria-label="Upload CSV Story IG"', $storyHtml);
-        $this->assertHtmlContains('title="Upload CSV"', $storyHtml);
         $this->assertHtmlContains('<i :class="metaUploading ? \'fa-solid fa-spinner fa-spin\' : \'fa-solid fa-upload\'"></i>', $storyHtml);
         $this->assertHtmlContains('aria-label="Import Folder Story IG"', $storyHtml);
         $this->assertHtmlContains('<i :class="metaUploading ? \'fa-solid fa-spinner fa-spin\' : \'fa-solid fa-folder-open\'"></i>', $storyHtml);
@@ -2055,7 +2161,6 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlContains('@click="$refs.metaFeedUpload?.click()"', $feedHtml);
         $this->assertHtmlContains('class="primary-cta-button primary-cta-button--accent primary-cta-button--icon-only active:scale-95"', $feedHtml);
         $this->assertHtmlContains('aria-label="Upload CSV Feed Konten"', $feedHtml);
-        $this->assertHtmlContains('title="Upload CSV"', $feedHtml);
         $this->assertHtmlContains('<i :class="metaUploading ? \'fa-solid fa-spinner fa-spin\' : \'fa-solid fa-upload\'"></i>', $feedHtml);
         $this->assertHtmlContains('aria-label="Import Folder Feed Konten"', $feedHtml);
         $this->assertHtmlContains('<i :class="metaUploading ? \'fa-solid fa-spinner fa-spin\' : \'fa-solid fa-folder-open\'"></i>', $feedHtml);
@@ -2184,8 +2289,8 @@ class MarketingDashboardShellTest extends TestCase
         ));
 
         $this->assertIsString($sidebarNavSources);
-        $this->assertHtmlContains('fa-solid fa-clapperboard text-[11px] w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110', $sidebarNavSources);
-        $this->assertHtmlNotContains('fa-brands fa-instagram text-[11px] w-3.5 text-center relative z-10 transition-transform duration-300 group-hover:scale-110', $sidebarNavSources);
+        $this->assertHtmlContains('fa-solid fa-clapperboard text-[11px] lg:text-[12px] w-4', $sidebarNavSources);
+        $this->assertHtmlNotContains('fa-brands fa-instagram', $sidebarNavSources);
     }
 
     public function test_meta_story_and_feed_wait_for_meta_data_before_showing_empty_tables(): void
@@ -2273,7 +2378,7 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlContains('background: var(--ppp-card) !important;', $html);
         $this->assertHtmlContains('background: rgb(248 250 252) !important;', $html);
         $this->assertHtmlNotContains('background: rgb(var(--ppp-bg-rgb) / 0.5) !important;', $html);
-        $this->assertHtmlContains('--ppp-table-row-hover-bg: rgb(255 251 242);', $appCss);
+        $this->assertHtmlContains('--ppp-table-row-hover-bg: #e2e8f0;', $appCss);
         $this->assertHtmlContains('--ppp-table-freeze-hover-bg: var(--ppp-table-row-hover-bg);', $appCss);
         $this->assertHtmlContains('#app table tbody tr,', $html);
         $this->assertHtmlContains('#app table tbody tr>td {', $html);
@@ -2536,6 +2641,15 @@ HTML, $html);
         $this->assertHtmlContains('.getMasterPlanData();', $html);
     }
 
+    public function test_toolbar_create_buttons_are_icon_only(): void
+    {
+        $html = $this->get('/')->assertOk()->getContent();
+
+        $this->assertHtmlContains('aria-label="Buat Ide"', $html);
+        $this->assertHtmlNotContains('<i class="fa-solid fa-plus mr-2"></i>Buat Ide', $html);
+        $this->assertHtmlNotContains('<i class="fa-solid fa-plus mr-2"></i>Tambah Plan', $html);
+    }
+
     public function test_ideation_board_card_has_delete_button(): void
     {
         $html = $this->renderDashboardHtml();
@@ -2592,18 +2706,18 @@ HTML, $html);
 
         $this->assertTrue(str_contains($html, 'bg-blue-50 border border-blue-100') || str_contains($html, 'bg-ppp-accent text-light shadow-sm'));
         $this->assertTrue(str_contains($html, 'bg-rose-50 border border-rose-100') || str_contains($html, '>Story</span>'));
-        $this->assertTrue(str_contains($html, 'bg-amber-50') || str_contains($html, '>Hari Raya</span>'));
-        $this->assertHtmlContains('>Konten</span>', $html);
-        $this->assertHtmlContains('>Story</span>', $html);
-        $this->assertHtmlContains('>Hari Raya</span>', $html);
+        $this->assertTrue(str_contains($html, 'bg-amber-50') || str_contains($html, '>Event {{'));
+        $this->assertHtmlContains('> Konten {{', $html);
+        $this->assertHtmlContains('> Story {{', $html);
+        $this->assertHtmlContains('> Event {{', $html);
     }
 
     public function test_content_calendar_date_cells_grow_with_item_count_without_inner_scroll(): void
     {
         $html = $this->renderDashboardHtml();
 
-        $this->assertHtmlContains('class="min-h-[140px] bg-slate-50/50 rounded-2xl border border-dashed border-slate-100"', $html);
-        $this->assertHtmlContains(":class=\"['min-h-[140px] rounded-2xl border p-3 transition-all group relative cursor-pointer'", $html);
+        $this->assertHtmlContains('class="min-h-[120px] xl:min-h-[140px] bg-slate-50/50 rounded-2xl border border-dashed border-slate-100"', $html);
+        $this->assertHtmlContains(":class=\"['min-h-[120px] xl:min-h-[140px] rounded-2xl border p-2.5 xl:p-3 transition-all group relative cursor-pointer'", $html);
         $this->assertHtmlContains('<div class="space-y-1.5">', $html);
         $this->assertHtmlNotContains('overflow-y-auto pr-0.5 custom-scrollbar max-h-[calc(100%-24px)]', $html);
         $this->assertHtmlNotContains('aspect-square md:aspect-video rounded-2xl border p-2 md:p-3', $html);
@@ -2720,7 +2834,7 @@ HTML, $html);
         $this->assertHtmlContains('--ppp-table-freeze-index-width: 56px;', $appCss);
         $this->assertHtmlContains('--ppp-table-freeze-action-width: 96px;', $appCss);
         $this->assertHtmlContains('--ppp-table-freeze-header-bg: var(--ppp-card);', $appCss);
-        $this->assertHtmlContains('--ppp-table-row-hover-bg: rgb(255 251 242);', $appCss);
+        $this->assertHtmlContains('--ppp-table-row-hover-bg: #e2e8f0;', $appCss);
         $this->assertHtmlContains('--ppp-table-freeze-hover-bg: var(--ppp-table-row-hover-bg);', $appCss);
         $this->assertHtmlNotContains('--ppp-table-freeze-divider:', $appCss);
         $this->assertHtmlContains('overflow-x: clip;', $dashboardShellCss);
@@ -2745,6 +2859,9 @@ HTML, $html);
         $this->assertHtmlContains('class="table-header-cell lpjk-event-cell">Event</th>', file_get_contents(resource_path('views/dashboard/partials/menus/laporan-event.blade.php')));
         $this->assertHtmlContains('.table-header-row {', $dashboardShellCss);
         $this->assertHtmlContains('.table-header-cell {', $dashboardShellCss);
+        $this->assertHtmlContains('border-radius: 0;', $dashboardShellCss);
+        $this->assertHtmlNotContains('.section-card-shell>div:first-child table thead tr th:first-child {', $dashboardShellCss);
+        $this->assertHtmlNotContains('.section-card-shell>div:first-child table thead tr th:last-child,', $dashboardShellCss);
         $this->assertHtmlContains('.table-header-index {', $dashboardShellCss);
         $this->assertHtmlContains('.table-header-action {', $dashboardShellCss);
         $this->assertHtmlContains('background: var(--ppp-table-freeze-bg) !important;', $dashboardShellCss);
@@ -2854,8 +2971,8 @@ HTML, $html);
         $this->assertHtmlContains('.primary-cta-button--danger {', $html);
         $this->assertHtmlContains('background: rgb(248 250 252);', $html);
         $this->assertHtmlContains('color: var(--ppp-secondary);', $html);
-        $this->assertHtmlContains('class="primary-cta-button primary-cta-button--success active:scale-95"', $html);
-        $this->assertHtmlContains('class="primary-cta-button primary-cta-button--danger active:scale-95"', $html);
+        $this->assertHtmlContains('class="primary-cta-button primary-cta-button--success primary-cta-button--icon-only active:scale-95"', $html);
+        $this->assertHtmlContains('class="primary-cta-button primary-cta-button--danger primary-cta-button--icon-only active:scale-95"', $html);
         $this->assertHtmlContains('class="primary-cta-button primary-cta-button--link"', $html);
         $this->assertHtmlNotContains('class="h-9 px-2.5 sm:px-4 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-600 text-[10px] font-bold uppercase hover:bg-emerald-600 hover:text-white transition-all active:scale-95 flex items-center gap-1.5"', $html);
         $this->assertHtmlNotContains('class="h-9 px-2.5 sm:px-4 rounded-xl bg-slate-800 text-white text-[10px] font-bold uppercase hover:bg-slate-900 transition-all active:scale-95 flex items-center gap-1.5"', $html);
@@ -2884,12 +3001,12 @@ HTML, $html);
         $this->assertHtmlContains('.surface-panel-soft {', $html);
         $this->assertHtmlContains('popover-option-active', $html);
         $this->assertHtmlContains('.primary-cta-button {', $html);
-        $this->assertHtmlContains('class="form-input-auth"', $html);
-        $this->assertHtmlContains('class="w-full max-w-[320px] text-center"', $html);
-        $this->assertHtmlContains('class="w-16 h-16 object-contain mx-auto mb-5"', $html);
-        $this->assertHtmlContains('class="text-xl font-semibold text-slate-900 mb-1"', $html);
-        $this->assertHtmlContains('class="space-y-3 mb-5"', $html);
-        $this->assertHtmlContains('class="w-full h-9 bg-slate-900 text-white rounded-xl text-body-sm font-bold uppercase', $html);
+        $this->assertHtmlContains('class="field-input"', $html);
+        $this->assertHtmlContains('class="field-label"', $html);
+        $this->assertHtmlContains('class="text-2xl font-black tracking-tight text-slate-900"', $html);
+        $this->assertHtmlContains('class="mt-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-slate-400"', $html);
+        $this->assertHtmlContains('class="space-y-4" @submit.prevent="handleLogin"', $html);
+        $this->assertHtmlContains('class="field-input pr-12"', $html);
         $this->assertHtmlContains('class="form-input-compact-white"', $html);
         $this->assertHtmlContains('class="form-input-search"', $html);
         $this->assertHtmlContains('class="form-input-popover"', $html);
@@ -2951,6 +3068,10 @@ HTML, $html);
         $this->assertHtmlContains('.toolbar-actions .select-trigger-button-compact,', $html);
         $this->assertHtmlContains('.table-toolbar-shell .select-trigger-button-compact {', $html);
         $this->assertHtmlContains('.table-toolbar-shell__right .select-trigger-button-compact {', $html);
+        $this->assertHtmlContains('@media (max-width: 639px) {', $html);
+        $this->assertHtmlContains('grid-template-columns: repeat(2, minmax(0, 1fr));', $html);
+        $this->assertHtmlContains('.toolbar-actions .primary-cta-button:first-child:nth-last-child(3) {', $html);
+        $this->assertHtmlContains('grid-column: 1 / -1;', $html);
         $this->assertHtmlContains('min-height: 36px;', $html);
         $this->assertHtmlContains('height: 36px;', $html);
         $this->assertHtmlContains('padding: 0 14px;', $html);
@@ -2966,17 +3087,16 @@ HTML, $html);
         $this->assertHtmlNotContains('.form-input-search {'."\n".'            width: 100%;'."\n".'            background: var(--ppp-bg);'."\n".'            border: 1px solid var(--ppp-line);'."\n".'            border-radius: 12px;'."\n".'            padding: 4px 12px 4px 32px;'."\n".'            font-size: 12px;', $html);
     }
 
-    public function test_export_buttons_only_use_pdf_or_excel_labels(): void
+    public function test_export_buttons_are_icon_only_and_accessibly_labeled(): void
     {
         $html = $this->renderDashboardHtmlWithShellCss();
 
-        $this->assertHtmlContains('class="fa-solid fa-file-pdf"></i> PDF', $html);
-        $this->assertHtmlContains('class="fa-solid fa-file-excel text-[9px]"></i> Excel', $html);
-        $this->assertHtmlContains('<i class="fa-solid fa-file-excel"></i> Excel', $html);
-        $this->assertHtmlContains('class="fa-solid fa-file-pdf text-[9px]"', $html);
-        $this->assertHtmlContains('class="fa-solid fa-file-excel"></i><span', $html);
-        $this->assertHtmlContains('class="primary-cta-button primary-cta-button--danger active:scale-95"', $html);
-        $this->assertHtmlContains('class="primary-cta-button primary-cta-button--success active:scale-95"', $html);
+        $this->assertHtmlContains('aria-label="Export PDF"', $html);
+        $this->assertHtmlContains('aria-label="Export Excel"', $html);
+        $this->assertHtmlContains('class="primary-cta-button primary-cta-button--danger primary-cta-button--icon-only', $html);
+        $this->assertHtmlContains('class="primary-cta-button primary-cta-button--success primary-cta-button--icon-only', $html);
+        $this->assertHtmlNotContains('class="ml-1">Excel</span>', $html);
+        $this->assertHtmlNotContains('class="ml-1">PDF</span>', $html);
         $this->assertHtmlContains('const exportPromoToPDF = () => {', $html);
         $this->assertHtmlContains('const exportAdsLogToPDF = () => {', $html);
         $this->assertHtmlContains('const exportPriceComparisonToPDF = () => {', $html);
@@ -2993,6 +3113,35 @@ HTML, $html);
         $this->assertHtmlNotContains('class="primary-cta-button primary-cta-button--neutral active:scale-95"><i class="fa-solid fa-file-pdf', $html);
         $this->assertHtmlNotContains('>CSV</button>', $html);
         $this->assertHtmlNotContains('fa-file-csv', $html);
+    }
+
+    public function test_primary_icon_only_buttons_use_aria_labels_without_titles(): void
+    {
+        $menuPaths = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(resource_path('views/dashboard/partials/menus')));
+
+        foreach ($menuPaths as $menuPath) {
+            if (! $menuPath->isFile() || $menuPath->getExtension() !== 'php') {
+                continue;
+            }
+
+            $menuHtml = file_get_contents($menuPath->getPathname());
+
+            $this->assertIsString($menuHtml);
+            preg_match_all('/<button\b[^>]*primary-cta-button--icon-only[^>]*>/s', $menuHtml, $buttons);
+
+            foreach ($buttons[0] as $button) {
+                $this->assertMatchesRegularExpression('/\baria-label="[^"]+"/', $button, "{$menuPath} primary icon-only buttons require an aria-label.");
+                $this->assertDoesNotMatchRegularExpression('/\btitle=/', $button, "{$menuPath} primary icon-only buttons must not use title attributes.");
+            }
+        }
+
+        foreach (['master-plan.blade.php', 'story.blade.php'] as $fileName) {
+            $menuHtml = file_get_contents(resource_path("views/dashboard/partials/menus/{$fileName}"));
+
+            $this->assertIsString($menuHtml);
+            $this->assertHtmlContains('primary-cta-button--icon-only', $menuHtml);
+            $this->assertHtmlContains('aria-label=', $menuHtml);
+        }
     }
 
     public function test_primary_cta_filter_trigger_and_modal_footer_buttons_use_shared_classes(): void
@@ -3146,7 +3295,8 @@ HTML, $html);
     {
         $html = $this->renderDashboardHtmlWithShellCss();
 
-        $this->assertHtmlContains('const SESSION_IDLE_TIMEOUT_MS = 15 * 60 * 1000;', $html);
+        $this->assertHtmlContains('const SESSION_IDLE_TIMEOUT_MINUTES = 60;', $html);
+        $this->assertHtmlContains('const SESSION_IDLE_TIMEOUT_MS = SESSION_IDLE_TIMEOUT_MINUTES * 60 * 1000;', $html);
         $this->assertHtmlContains('const SESSION_HEARTBEAT_MS = 60 * 1000;', $html);
         $this->assertHtmlContains('const syncSessionHeartbeat = () => {', $html);
         $this->assertHtmlContains('if (idleFor >= SESSION_IDLE_TIMEOUT_MS) {', $html);
@@ -3155,7 +3305,7 @@ HTML, $html);
         $this->assertHtmlContains("jsonApi('/api/auth/heartbeat'", $html);
         $this->assertHtmlContains('window.addEventListener("keydown", markClientActivity, true);', $html);
         $this->assertHtmlContains('sessionHeartbeatTimerId = window.setInterval(syncSessionHeartbeat, SESSION_HEARTBEAT_MS);', $html);
-        $this->assertHtmlContains('Sesi login berakhir karena tidak ada aktivitas selama 15 menit.', $html);
+        $this->assertHtmlContains('Sesi login berakhir karena tidak ada aktivitas selama ${SESSION_IDLE_TIMEOUT_MINUTES} menit.', $html);
         $this->assertHtmlContains('const verifyCurrentSession = (message = "") => {', $html);
         $this->assertHtmlContains('const handleBrowserPageShow = (event) => {', $html);
         $this->assertHtmlContains('if (event?.persisted && ensureRunApi().isWebProxy && !localStorage.getItem("ppp_user")) {', $html);
@@ -3165,9 +3315,6 @@ HTML, $html);
         $this->assertHtmlContains('window.addEventListener("focus", handleBrowserFocus, true);', $html);
         $this->assertHtmlContains('window.removeEventListener("pageshow", handleBrowserPageShow);', $html);
         $this->assertHtmlContains('Sesi login sudah berakhir. Silakan login kembali.', $html);
-        $this->assertHtmlContains('error?.superseded', $html);
-        $this->assertHtmlContains('result?.superseded', $html);
-        $this->assertHtmlContains('anda sudah login di perangkat lain', $html);
     }
 
     public function test_link_ctas_are_consistent_between_mobile_and_desktop_cards(): void
@@ -3220,7 +3367,7 @@ HTML, $html);
         $this->assertHtmlContains('Mini Chat Panel', $chatPanelPartial);
         $this->assertHtmlContains('class="chat-backdrop glass-backdrop fixed inset-0 z-[299] transition-opacity"', $chatPanelPartial);
         $this->assertHtmlContains('class="fixed inset-0 z-[300] glass-backdrop flex items-start justify-center pt-16 md:pt-24"', $chatPanelPartial);
-        $this->assertHtmlContains('glass-backdrop md:hidden', $appFramePartial);
+        $this->assertHtmlContains('glass-backdrop lg:hidden', $appFramePartial);
         $this->assertHtmlContains('glass-backdrop p-0 md:p-6', $metaFeedPartial);
         $this->assertHtmlContains('.glass-backdrop,', $dashboardShellCss);
         $this->assertHtmlContains('.overlay-backdrop {', $dashboardShellCss);
@@ -3303,7 +3450,7 @@ HTML, $html);
         $this->assertHtmlContains('.type-title {', $html);
         $this->assertHtmlContains('#app * {', $html);
         $this->assertHtmlContains('letter-spacing: 0 !important;', $html);
-        $this->assertHtmlContains('class="type-body font-medium">Dashboard</span>', $html);
+        $this->assertHtmlContains('class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Dashboard</span>', $html);
         $this->assertHtmlContains("class=\"text-[9px] uppercase tracking-widest text-slate-400\">{{ currentUser?.role || '-' }}", $html);
         $this->assertHtmlContains('class="type-meta uppercase text-slate-400 mb-2">{{ dashboardTodayLabel }}', $html);
         $this->assertHtmlContains('<h2 class="text-xl font-semibold text-slate-900">{{ dashboardGreeting }}</h2>', $html);
@@ -3542,7 +3689,8 @@ HTML, $html);
         $this->assertHtmlContains('.calendar-anchor-active {', $html);
         $this->assertHtmlContains('.calendar-anchor-shell-active {', $html);
         $this->assertHtmlContains('.modal-sheet-surface.calendar-anchor-shell-active,', $html);
-        $this->assertHtmlContains('z-index: 5010;', $html);
+        $this->assertHtmlContains('z-index: 7000;', $html);
+        $this->assertHtmlContains('z-index: 2001 !important;', $html);
         $this->assertHtmlContains('backdrop-filter: blur(6px);', $html);
         $this->assertHtmlContains('background: rgb(15 23 42 / 0.08);', $html);
         $this->assertHtmlContains('.calendar-popover-weekdays,', $html);
@@ -3675,7 +3823,7 @@ HTML, $html);
 
             $this->assertIsString($html);
 
-            preg_match_all('/<div class="toolbar-actions">([\s\S]*?)<\/div>/', $html, $matches);
+            preg_match_all('/<div class="toolbar-actions(?: toolbar-actions--desktop-icon-only)?">([\s\S]*?)<\/div>/', $html, $matches);
 
             foreach ($matches[1] as $index => $toolbarHtml) {
                 $plusPosition = strpos($toolbarHtml, 'fa-plus');
@@ -3697,20 +3845,20 @@ HTML, $html);
             }
 
             $this->assertDoesNotMatchRegularExpression(
-                '/<div class="toolbar-actions">[\s\S]{0,1600}<div class="relative(?: group)? search-select-container"/',
+                '/<div class="toolbar-actions(?: toolbar-actions--desktop-icon-only)?">[\s\S]{0,1600}<div class="relative(?: group)? search-select-container"/',
                 $html,
                 basename($menuFile).' should place filters before toolbar action groups.'
             );
         }
 
         foreach ([
-            'claim-garansi.blade.php' => '/<div class="toolbar-actions">[\s\S]*?openClaimGaransiModal\(\'create\'\)[\s\S]*?exportExcel[\s\S]*?exportPdf[\s\S]*?<\/div>/',
-            'keep-barang.blade.php' => '/<div class="toolbar-actions">[\s\S]*?openKeepBarangModal\(\'create\'\)[\s\S]*?exportKeepBarangToExcel[\s\S]*?exportKeepBarangToPDF[\s\S]*?<\/div>/',
-            'master-plan.blade.php' => '/<div class="toolbar-actions">[\s\S]*?openCreateModal[\s\S]*?exportExcel[\s\S]*?exportPdf[\s\S]*?<\/div>/',
-            'order-online.blade.php' => '/<div class="toolbar-actions">[\s\S]*?openOrderanOnlineModal\(\'create\'\)[\s\S]*?exportExcel[\s\S]*?exportPdf[\s\S]*?<\/div>/',
-            'sell-out.blade.php' => '/<div class="toolbar-actions">[\s\S]*?openSellOutModal\(\'create\'\)[\s\S]*?exportSellOutToExcel[\s\S]*?exportSellOutToPDF[\s\S]*?<\/div>/',
-            'unboxing.blade.php' => '/<div class="toolbar-actions">[\s\S]*?openUnboxingModal\(\'create\'\)[\s\S]*?exportExcel[\s\S]*?exportPdf[\s\S]*?<\/div>/',
-            'unit-ditanya.blade.php' => '/<div class="toolbar-actions">[\s\S]*?openUnitDitanyaModal\(\'create\'\)[\s\S]*?exportExcel[\s\S]*?exportPdf[\s\S]*?<\/div>/',
+            'claim-garansi.blade.php' => '/<div class="toolbar-actions(?: toolbar-actions--desktop-icon-only)?">[\s\S]*?openClaimGaransiModal\(\'create\'\)[\s\S]*?exportExcel[\s\S]*?exportPdf[\s\S]*?<\/div>/',
+            'keep-barang.blade.php' => '/<div class="toolbar-actions(?: toolbar-actions--desktop-icon-only)?">[\s\S]*?openKeepBarangModal\(\'create\'\)[\s\S]*?exportKeepBarangToExcel[\s\S]*?exportKeepBarangToPDF[\s\S]*?<\/div>/',
+            'master-plan.blade.php' => '/<div class="toolbar-actions(?: toolbar-actions--desktop-icon-only)?">[\s\S]*?openCreateModal[\s\S]*?exportExcel[\s\S]*?exportPdf[\s\S]*?<\/div>/',
+            'order-online.blade.php' => '/<div class="toolbar-actions(?: toolbar-actions--desktop-icon-only)?">[\s\S]*?openOrderanOnlineModal\(\'create\'\)[\s\S]*?exportExcel[\s\S]*?exportPdf[\s\S]*?<\/div>/',
+            'sell-out.blade.php' => '/<div class="toolbar-actions(?: toolbar-actions--desktop-icon-only)?">[\s\S]*?openSellOutModal\(\'create\'\)[\s\S]*?exportSellOutToExcel[\s\S]*?exportSellOutToPDF[\s\S]*?<\/div>/',
+            'unboxing.blade.php' => '/<div class="toolbar-actions(?: toolbar-actions--desktop-icon-only)?">[\s\S]*?openUnboxingModal\(\'create\'\)[\s\S]*?exportExcel[\s\S]*?exportPdf[\s\S]*?<\/div>/',
+            'unit-ditanya.blade.php' => '/<div class="toolbar-actions(?: toolbar-actions--desktop-icon-only)?">[\s\S]*?openUnitDitanyaModal\(\'create\'\)[\s\S]*?exportExcel[\s\S]*?exportPdf[\s\S]*?<\/div>/',
         ] as $fileName => $pattern) {
             $menuHtml = file_get_contents(resource_path("views/dashboard/partials/menus/{$fileName}"));
 
@@ -3723,9 +3871,9 @@ HTML, $html);
         }
 
         foreach ([
-            'claim-garansi.blade.php' => '/<div class="table-toolbar-shell__right">[\s\S]*?filter_claim_status[\s\S]*?filter_claim_garansi[\s\S]*?<div class="toolbar-actions">[\s\S]*?openClaimGaransiModal\(\'create\'\)[\s\S]*?exportExcel[\s\S]*?exportPdf[\s\S]*?<\/div>/',
-            'keep-barang.blade.php' => '/<div class="table-toolbar-shell__right">[\s\S]*?keep_status_filter[\s\S]*?keep_handle_filter[\s\S]*?<div class="toolbar-actions">[\s\S]*?openKeepBarangModal\(\'create\'\)[\s\S]*?exportKeepBarangToExcel[\s\S]*?exportKeepBarangToPDF[\s\S]*?<\/div>/',
-            'unit-ditanya.blade.php' => '/<div class="table-toolbar-shell__right">[\s\S]*?unitDitanya[\s\S]*?filter_available[\s\S]*?<div class="toolbar-actions">[\s\S]*?openUnitDitanyaModal\(\'create\'\)[\s\S]*?exportExcel[\s\S]*?exportPdf[\s\S]*?<\/div>/',
+            'claim-garansi.blade.php' => '/<div class="table-toolbar-shell__right">[\s\S]*?filter_claim_status[\s\S]*?filter_claim_garansi[\s\S]*?<div class="toolbar-actions(?: toolbar-actions--desktop-icon-only)?">[\s\S]*?openClaimGaransiModal\(\'create\'\)[\s\S]*?exportExcel[\s\S]*?exportPdf[\s\S]*?<\/div>/',
+            'keep-barang.blade.php' => '/<div class="table-toolbar-shell__right">[\s\S]*?keep_status_filter[\s\S]*?keep_handle_filter[\s\S]*?<div class="toolbar-actions(?: toolbar-actions--desktop-icon-only)?">[\s\S]*?openKeepBarangModal\(\'create\'\)[\s\S]*?exportKeepBarangToExcel[\s\S]*?exportKeepBarangToPDF[\s\S]*?<\/div>/',
+            'unit-ditanya.blade.php' => '/<div class="table-toolbar-shell__right">[\s\S]*?unitDitanya[\s\S]*?filter_available[\s\S]*?<div class="toolbar-actions(?: toolbar-actions--desktop-icon-only)?">[\s\S]*?openUnitDitanyaModal\(\'create\'\)[\s\S]*?exportExcel[\s\S]*?exportPdf[\s\S]*?<\/div>/',
         ] as $fileName => $pattern) {
             $menuHtml = file_get_contents(resource_path("views/dashboard/partials/menus/{$fileName}"));
 
@@ -3749,6 +3897,36 @@ HTML, $html);
             $this->assertHtmlNotContains('title="Reset"', $menuHtml);
             $this->assertHtmlNotContains('<span>Reset</span>', $menuHtml);
             $this->assertHtmlNotContains('Muat Ulang', $menuHtml);
+        }
+    }
+
+    public function test_desktop_icon_only_table_toolbars_use_the_desktop_modifier(): void
+    {
+        foreach ([
+            'ads-log.blade.php' => 'openAdsModal',
+            'analytics.blade.php' => 'exportExcel',
+            'claim-garansi.blade.php' => 'openClaimGaransiModal',
+            'distribution.blade.php' => 'exportExcel',
+            'harga-kompetitor.blade.php' => 'openHargaKompetitorModal',
+            'keep-barang.blade.php' => 'openKeepBarangModal',
+            'laporan-event.blade.php' => 'openLpjkModal',
+            'low-content.blade.php' => 'exportExcel',
+            'master-plan.blade.php' => 'openCreateModal',
+            'order-online.blade.php' => 'openOrderanOnlineModal',
+            'program-promo.blade.php' => 'openPromoModal',
+            'sell-out.blade.php' => 'openSellOutModal',
+            'top-content.blade.php' => 'exportExcel',
+            'unboxing.blade.php' => 'openUnboxingModal',
+            'unit-ditanya.blade.php' => 'openUnitDitanyaModal',
+        ] as $fileName => $action) {
+            $menuHtml = file_get_contents(resource_path("views/dashboard/partials/menus/{$fileName}"));
+
+            $this->assertIsString($menuHtml);
+            $this->assertMatchesRegularExpression(
+                '/<div class="hidden md:block[^>]*>[\\s\\S]*?<div class="toolbar-actions toolbar-actions--desktop-icon-only">[\\s\\S]*?'.$action.'/',
+                $menuHtml,
+                "{$fileName} should mark its desktop icon-only toolbar."
+            );
         }
     }
 
@@ -3853,7 +4031,7 @@ HTML, $html);
 
         $this->assertHtmlContains('class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold whitespace-nowrap"', $html);
         $this->assertHtmlContains('class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap"', $html);
-        $this->assertHtmlContains('class="inline-flex items-center px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase whitespace-nowrap"', $html);
+        $this->assertHtmlContains('class="status-badge-fixed inline-flex items-center px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase whitespace-nowrap"', $html);
     }
 
     public function test_print_headers_render_logo_on_left_of_company_text(): void
@@ -4041,14 +4219,14 @@ HTML, $html);
         $this->assertHtmlContains('.nav-accordion-active .type-body-sm {', $appCss);
         $this->assertHtmlContains('font-weight: 400;', $appCss);
         $this->assertHtmlNotContains('border-left: 3px solid var(--ppp-accent);', $appCss);
-         $this->assertHtmlContains('.dashboard-sidebar-nav {', $dashboardShellCss);
-         $this->assertHtmlContains('transition-property: transform;', $dashboardShellCss);
-         $this->assertHtmlContains('cubic-bezier(0.4, 0, 0.2, 1)', $dashboardShellCss);
-         $this->assertHtmlNotContains('.nav-accordion-active', $dashboardShellCss);
-         $this->assertHtmlNotContains('sidebar-accordion', $dashboardShellCss);
-          $this->assertHtmlContains('sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white', $sidebarNavSources);
-          $this->assertHtmlNotContains('shadow-sm', $sidebarNavSources);
-         $this->assertHtmlContains('h-1.5 w-1.5 rounded-full bg-white', $sidebarNavSources);
+        $this->assertHtmlContains('.dashboard-sidebar-nav {', $dashboardShellCss);
+        $this->assertHtmlContains('transition-property: transform;', $dashboardShellCss);
+        $this->assertHtmlContains('cubic-bezier(0.4, 0, 0.2, 1)', $dashboardShellCss);
+        $this->assertHtmlNotContains('.nav-accordion-active', $dashboardShellCss);
+        $this->assertHtmlNotContains('sidebar-accordion', $dashboardShellCss);
+        $this->assertHtmlContains('sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white', $sidebarNavSources);
+        $this->assertHtmlNotContains('shadow-sm', $sidebarNavSources);
+        $this->assertHtmlContains('h-1.5 w-1.5 rounded-full bg-white', $sidebarNavSources);
     }
 
     public function test_design_system_route_renders_from_laravel_view(): void

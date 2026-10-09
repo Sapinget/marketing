@@ -286,6 +286,29 @@
                 const pagedUnitDitanyaData = computed(() => filteredUnitDitanyaData.value.slice((unitDitanyaPage.value - 1) * PAGE_SIZE, unitDitanyaPage.value * PAGE_SIZE));
                 watch(() => [unitDitanyaSearch.value, unitDitanyaDateRange.value.start, unitDitanyaDateRange.value.end, unitDitanyaAvailableFilter.value], () => { unitDitanyaPage.value = 1; });
 
+                // Service filtered + pagination
+                const filteredServiceData = computed(() => (serviceData.value || []).filter(r => {
+                    const q = (serviceSearch.value || '').toLowerCase();
+                    const matchQ = !q || String(r.NAMA_CUSTOMER || r.nama_customer || r.NAMA || r.nama || '').toLowerCase().includes(q) || String(r.NO_SERVICE || r.no_service || '').toLowerCase().includes(q) || String(r.TYPE_UNIT || r.type_unit || r.TIPE || r.tipe || r.MODEL || r.model || '').toLowerCase().includes(q);
+                    const rangeEnd = serviceDateRange.value.end || serviceDateRange.value.start;
+                    const matchDate = !serviceDateRange.value.start || isDateInRange(r.TANGGAL || r.tanggal || r.TANGGAL_MASUK || r.tanggal_masuk, serviceDateRange.value.start, rangeEnd);
+                    return matchQ && matchDate;
+                }).sort((a, b) => (b.TANGGAL || b.TANGGAL_MASUK || '').localeCompare(a.TANGGAL || a.TANGGAL_MASUK || '')));
+                const servicePage = ref(1);
+                const serviceTotalPages = computed(() => Math.max(1, Math.ceil(filteredServiceData.value.length / PAGE_SIZE)));
+                const pagedServiceData = computed(() => filteredServiceData.value.slice((servicePage.value - 1) * PAGE_SIZE, servicePage.value * PAGE_SIZE));
+                watch(() => [serviceSearch.value, serviceDateRange.value.start, serviceDateRange.value.end], () => { servicePage.value = 1; });
+
+                // Service claim filtered + pagination
+                const filteredServiceClaimData = computed(() => (serviceClaimsData.value || []).filter(r => {
+                    const q = (serviceClaimSearch.value || '').toLowerCase();
+                    return !q || String(r.NAMA_CUSTOMER || '').toLowerCase().includes(q) || String(r.NO_SERVICE || '').toLowerCase().includes(q) || String(r.TIPE || '').toLowerCase().includes(q) || String(r.IMEI_SN || '').toLowerCase().includes(q);
+                }).sort((a, b) => (b.TANGGAL_MASUK || '').localeCompare(a.TANGGAL_MASUK || '')));
+                const serviceClaimPage = ref(1);
+                const serviceClaimTotalPages = computed(() => Math.max(1, Math.ceil(filteredServiceClaimData.value.length / PAGE_SIZE)));
+                const pagedServiceClaimData = computed(() => filteredServiceClaimData.value.slice((serviceClaimPage.value - 1) * PAGE_SIZE, serviceClaimPage.value * PAGE_SIZE));
+                watch(() => serviceClaimSearch.value, () => { serviceClaimPage.value = 1; });
+
                 // Claim Garansi filtered + pagination
                 // Keep Barang
                 const keepBarangData = ref([]);

@@ -134,26 +134,13 @@
                     }
                     return null;
                 };
-                const _parseMetaDate = (s) => {
-                    const m = String(s || '').trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})/);
-                    if (!m) return null;
-                    const [, mm, dd, yyyy, hh, mi] = m;
-                    const pacificUtcMs = Date.UTC(Number(yyyy), Number(mm) - 1, Number(dd), Number(hh) + 7, Number(mi), 0);
-                    const gmt8 = new Date(pacificUtcMs + (8 * 60 * 60 * 1000));
-                    const y = gmt8.getUTCFullYear();
-                    const mo = String(gmt8.getUTCMonth() + 1).padStart(2, '0');
-                    const d = String(gmt8.getUTCDate()).padStart(2, '0');
-                    const h = String(gmt8.getUTCHours()).padStart(2, '0');
-                    const min = String(gmt8.getUTCMinutes()).padStart(2, '0');
-                    return `${y}-${mo}-${d} ${h}:${min}:00`;
-                };
                 const _normalizeMetaRow = (raw) => {
                     const o = { raw_payload: raw };
                     Object.keys(raw).forEach(h => {
                         const ck = _META_KEYMAP[String(h).trim().toLowerCase()];
                         if (!ck) return;
                         const v = raw[h];
-                        if (ck === 'publish_time') o[ck] = _parseMetaDate(v);
+                        if (ck === 'publish_time') o[ck] = (v == null ? '' : String(v).trim());
                         else if (_META_NUM.has(ck)) { const n = parseInt(String(v).replace(/[^0-9-]/g, ''), 10); o[ck] = Number.isFinite(n) ? n : (String(v).trim() === '' ? 0 : null); }
                         else o[ck] = (v == null ? '' : String(v));
                     });

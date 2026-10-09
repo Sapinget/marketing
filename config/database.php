@@ -75,6 +75,24 @@ return [
             ]) : [],
         ],
 
+        'ppp_source' => [
+            'driver' => 'mysql',
+            'host' => env('PPP_SOURCE_DB_HOST', '127.0.0.1'),
+            'port' => env('PPP_SOURCE_DB_PORT', '3306'),
+            'database' => env('PPP_SOURCE_DB_DATABASE', 'forge'),
+            'username' => env('PPP_SOURCE_DB_USERNAME', 'forge'),
+            'password' => env('PPP_SOURCE_DB_PASSWORD', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                (defined('Pdo\\Mysql::ATTR_SSL_CA') ? Mysql::ATTR_SSL_CA : PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
         'pgsql' => [
             'driver' => 'pgsql',
             'url' => env('DB_URL'),

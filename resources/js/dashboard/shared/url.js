@@ -5,10 +5,13 @@ const csrfHeader = () => {
 
 export const resolveAppUrl = (url) => {
     if (!url || /^https?:\/\//i.test(url)) return url;
-    if (window.MARKETING_BACKEND_URL) {
-        return `${String(window.MARKETING_BACKEND_URL).replace(/\/+$/, '')}${url}`;
+
+    const backendUrl = String(window.MARKETING_BACKEND_URL || '').replace(/\/+$/, '');
+    if (!backendUrl || new URL(backendUrl, window.location.origin).origin !== window.location.origin) {
+        return url;
     }
-    return url;
+
+    return `${backendUrl}${url}`;
 };
 
 export const jsonApi = async (url, options = {}) => {

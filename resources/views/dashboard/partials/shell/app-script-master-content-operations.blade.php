@@ -5,8 +5,8 @@
                         ID: null,
                         Judul: "",
                         Format_Konten: "",
-                        Colab: [],
                         Editor: "",
+                        Colab: [],
                         Talent: [],
                         Tanggal_Rencana: todayStr(),
                         Status: statusOptions.value[0] || '',
@@ -57,8 +57,8 @@
                         ID: item.ID,
                         Judul: item.Judul || "",
                         Format_Konten: item.Format_Konten || "",
-                        Colab: colab,
                         Editor: item.Editor || "",
+                        Colab: colab,
                         Talent: talent,
                         Tanggal_Rencana: item.Tanggal_Rencana || "",
                         Status: item.Status || statusOptions.value[0] || '',
@@ -159,8 +159,8 @@
 
                 const saveMasterPlan = async () => {
                     if (submitting.value) return;
-                    if (!masterForm.value.Judul || !masterForm.value.Editor) {
-                        showNotification("Judul dan Editor wajib diisi");
+                    if (!masterForm.value.Judul) {
+                        showNotification("Judul wajib diisi");
                         return;
                     }
 
@@ -171,9 +171,9 @@
                         ID: masterForm.value.ID || null,
                         Judul: masterForm.value.Judul,
                         Format_Konten: masterForm.value.Format_Konten,
+                        Editor: masterForm.value.Editor || '',
                         Platforms: Array.isArray(masterForm.value.Platforms) ? masterForm.value.Platforms.join(', ') : (masterForm.value.Platforms || ''),
                         Colab: Array.isArray(masterForm.value.Colab) ? masterForm.value.Colab.join(', ') : (masterForm.value.Colab || ''),
-                        Editor: masterForm.value.Editor,
                         Talent: Array.isArray(masterForm.value.Talent) ? masterForm.value.Talent.join(', ') : (masterForm.value.Talent || ''),
                         Skrip: masterForm.value.Skrip || 'Tidak',
                         Caption: masterForm.value.Caption || 'Tidak',

@@ -1997,7 +1997,7 @@
 
                 <div class="py-2 space-y-1 flex-1 overflow-y-auto">
                     <!-- Dashboard Menu -->
-                    <div v-if="!isTeknisi" @click="switchTab('dashboard')"
+                    <div @click="switchTab('dashboard')"
                         :class="['flex items-center justify-between px-5 py-3 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'dashboard' ? 'sidebar-nav-item-active bg-gradient-to-r from-ppp-accent to-[#3D4FDB] text-white' : 'text-slate-500 hover:bg-slate-50']">
                         <div v-if="activeTab === 'dashboard'"
                             class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
@@ -2010,7 +2010,7 @@
                     </div>
 
                     <!-- Konten Accordion -->
-                    <div v-if="!isTeknisi" class="select-none">
+                    <div class="select-none">
                         <!-- Accordion Header -->
                         <div @click="toggleMenuGroup('konten')"
                             :class="['flex items-center justify-between px-5 py-3 cursor-pointer group transition-all duration-300', ['master','ideation','distribution','analytics','calendar','story','unboxing'].includes(activeTab) ? 'text-ppp-accent' : 'text-slate-500 hover:bg-slate-50']">
@@ -2107,7 +2107,7 @@
                     </div>
 
                     <!-- Marketing Accordion -->
-                    <div v-if="!isTeknisi" class="select-none">
+                    <div class="select-none">
                         <div @click="toggleMenuGroup('marketing')"
                             :class="['flex items-center justify-between px-5 py-3 cursor-pointer group transition-all duration-300', ['program_promo','sell_out','ads_log','budgeting'].includes(activeTab) ? 'text-ppp-accent' : 'text-slate-500 hover:bg-slate-50']">
                             <div class="flex items-center gap-3">
@@ -2167,7 +2167,7 @@
 
 
                     <!-- Analisa Konten Accordion -->
-                    <div v-if="!isTeknisi" class="select-none">
+                    <div class="select-none">
                         <div @click="toggleMenuGroup('analisa')"
                             :class="['flex items-center justify-between px-5 py-3 cursor-pointer group transition-all duration-300', ['top_content_platform','low_content_platform','analisa_insight','meta_story','meta_feed'].includes(activeTab) ? 'text-ppp-accent' : 'text-slate-500 hover:bg-slate-50']">
                             <div class="flex items-center gap-3">
@@ -2233,8 +2233,8 @@
                             </div>
                         </transition>
                     </div>
-                    <!-- Customer Service Accordion (non-Teknisi) -->
-                    <div v-if="!isTeknisi" class="select-none">
+                    <!-- Customer Service Accordion -->
+                    <div class="select-none">
                         <div @click="toggleMenuGroup('cs')"
                             :class="['flex items-center justify-between px-5 py-3 cursor-pointer group transition-all duration-300', ['orderan_online','unit_ditanya','claim_garansi_asuransi','keep_barang'].includes(activeTab) ? 'text-ppp-accent' : 'text-slate-500 hover:bg-slate-50']">
                             <div class="flex items-center gap-3">
@@ -2287,18 +2287,8 @@
                         </transition>
                     </div>
 
-                    <!-- Claim Garansi (Teknisi only - standalone, no accordion) -->
-                    <div v-if="isTeknisi" @click="switchTab('claim_garansi_asuransi')"
-                        :class="['flex items-center gap-3 px-5 py-3 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'claim_garansi_asuransi' ? 'sidebar-nav-item-active bg-gradient-to-r from-ppp-accent to-[#3D4FDB] text-white' : 'text-slate-500 hover:bg-slate-50']">
-                        <div v-if="activeTab === 'claim_garansi_asuransi'"
-                            class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
-                        </div>
-                        <i
-                            class="fa-solid fa-shield-heart text-[12px] w-4 text-center relative z-10 transition-transform duration-300 group-hover:scale-110"></i>
-                        <span class="type-body font-medium tracking-wide relative z-10">Claim Garansi</span>
-                    </div>
                     <!-- Performa Accordion -->
-                    <div v-if="!isTeknisi" class="select-none">
+                    <div class="select-none">
                         <div @click="toggleMenuGroup('performa')"
                             :class="['flex items-center justify-between px-5 py-3 cursor-pointer group transition-all duration-300', ['bonus_report','talent_bonus','editor_performance'].includes(activeTab) ? 'text-ppp-accent' : 'text-slate-500 hover:bg-slate-50']">
                             <div class="flex items-center gap-3">
@@ -2344,7 +2334,7 @@
                     </div>
 
                     <!-- Harga & Kompetitor -->
-                    <div v-if="!isTeknisi" @click="switchTab('harga_kompetitor')"
+                    <div @click="switchTab('harga_kompetitor')"
                         :class="['flex items-center gap-3 px-5 py-3 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'harga_kompetitor' ? 'sidebar-nav-item-active bg-gradient-to-r from-ppp-accent to-[#3D4FDB] text-white' : 'text-slate-500 hover:bg-slate-50']">
                         <div v-if="activeTab === 'harga_kompetitor'"
                             class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
@@ -2355,7 +2345,7 @@
                     </div>
 
                     <!-- Laporan Event -->
-                    <div v-if="!isTeknisi" @click="switchTab('laporan_event')"
+                    <div @click="switchTab('laporan_event')"
                         :class="['flex items-center gap-3 px-5 py-3 cursor-pointer relative overflow-hidden group transition-all duration-300', activeTab === 'laporan_event' ? 'sidebar-nav-item-active bg-gradient-to-r from-ppp-accent to-[#3D4FDB] text-white' : 'text-slate-500 hover:bg-slate-50']">
                         <div v-if="activeTab === 'laporan_event'"
                             class="absolute inset-0 bg-white/10 translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-300 ease-out">
@@ -2366,7 +2356,7 @@
                     </div>
 
                     <!-- Settings Group -->
-                    <div v-if="!isTeknisi">
+                    <div>
                         <div @click="toggleMenuGroup('settings')"
                             :class="['flex items-center justify-between px-5 py-3 cursor-pointer group transition-all duration-300', ['settings','nama_stock'].includes(activeTab) ? 'text-ppp-accent' : 'text-slate-500 hover:bg-slate-50']">
                             <div class="flex items-center gap-3">
@@ -13336,21 +13326,15 @@
                     }
                 };
                 const currentUser = ref(loadStoredUser());
-                const isTeknisi = computed(() => {
-                    const role = currentUser.value?.role || '';
-                    return role.trim().toLowerCase() === 'teknisi';
-                });
                 const hasPermission = (tab, action) => {
-                    if (isTeknisi.value && tab !== 'claim_garansi_asuransi') return false;
                     const permissions = currentUser.value?.permissions;
-                    if (!permissions || Object.keys(permissions).length === 0) return !isTeknisi.value;
+                    if (!permissions || Object.keys(permissions).length === 0) return true;
                     const rule = permissions[tab];
                     if (Array.isArray(rule)) return rule.includes(action);
                     if (rule && typeof rule === 'object') return rule[action] === true;
                     return false;
                 };
                 const authBootstrapPending = ref(true);
-                const TEKNISI_TABS = new Set(['claim_garansi_asuransi', 'profile']);
                 const loginForm = ref({ username: "", pin: "" });
 
 
@@ -14261,26 +14245,13 @@
                 // CSV header (urutan bebas) -> key kanonik
                 const _META_KEYMAP = { 'post id': 'post_id', 'account username': 'account', 'account name': 'account_name', 'description': 'description', 'duration (sec)': 'duration', 'publish time': 'publish_time', 'permalink': 'permalink', 'post type': 'post_type', 'views': 'views', 'reach': 'reach', 'likes': 'likes', 'shares': 'shares', 'comments': 'comments', 'saves': 'saves', 'follows': 'follows', 'profile visits': 'profile_visits', 'replies': 'replies', 'navigation': 'navigation', 'link clicks': 'link_clicks', 'sticker taps': 'sticker_taps' };
                 const _META_NUM = new Set(['views', 'reach', 'likes', 'shares', 'comments', 'saves', 'follows', 'profile_visits', 'replies', 'navigation', 'link_clicks', 'sticker_taps', 'duration']);
-                const _parseMetaDate = (s) => {
-                    const m = String(s || '').trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})/);
-                    if (!m) return null;
-                    const [, mm, dd, yyyy, hh, mi] = m;
-                    const pacificUtcMs = Date.UTC(Number(yyyy), Number(mm) - 1, Number(dd), Number(hh) + 7, Number(mi), 0);
-                    const gmt8 = new Date(pacificUtcMs + (8 * 60 * 60 * 1000));
-                    const y = gmt8.getUTCFullYear();
-                    const mo = String(gmt8.getUTCMonth() + 1).padStart(2, '0');
-                    const d = String(gmt8.getUTCDate()).padStart(2, '0');
-                    const h = String(gmt8.getUTCHours()).padStart(2, '0');
-                    const min = String(gmt8.getUTCMinutes()).padStart(2, '0');
-                    return `${y}-${mo}-${d} ${h}:${min}:00`;
-                };
                 const _normalizeMetaRow = (raw) => {
                     const o = { raw_payload: raw };
                     Object.keys(raw).forEach(h => {
                         const ck = _META_KEYMAP[String(h).trim().toLowerCase()];
                         if (!ck) return;
                         const v = raw[h];
-                        if (ck === 'publish_time') o[ck] = _parseMetaDate(v);
+                        if (ck === 'publish_time') o[ck] = (v == null ? '' : String(v).trim());
                         else if (_META_NUM.has(ck)) { const n = parseInt(String(v).replace(/[^0-9-]/g, ''), 10); o[ck] = Number.isFinite(n) ? n : (String(v).trim() === '' ? 0 : null); }
                         else o[ck] = (v == null ? '' : String(v));
                     });
@@ -14686,10 +14657,6 @@
                 });
 
                 const switchTab = (tab) => {
-                    if (isTeknisi.value && !TEKNISI_TABS.has(tab)) {
-                        showNotification("Akses dibatasi untuk role Teknisi", "warning");
-                        return;
-                    }
                     activeTab.value = tab;
                     localStorage.setItem("ppp_active_tab", tab);
                     history.replaceState(null, '', '#' + tab);
@@ -16708,10 +16675,6 @@
                             currentUser.value = result.user;
                             localStorage.setItem("ppp_user", JSON.stringify(result.user));
                             loginForm.value = { username: "", pin: "" };
-                            if (isTeknisi.value) {
-                                activeTab.value = 'claim_garansi_asuransi';
-                                localStorage.setItem("ppp_active_tab", 'claim_garansi_asuransi');
-                            }
                             await loadSettings();
                             await loadMasterPlanData();
                             await loadAnalyticsData();
@@ -19356,14 +19319,6 @@
 
                 // --- Watchers (Moved to end to ensure all functions/refs are initialized) ---
 
-                // Technician Guard
-                watch([currentUser, activeTab], ([user, tab]) => {
-                    if (isTeknisi.value && !TEKNISI_TABS.has(tab)) {
-                        activeTab.value = 'claim_garansi_asuransi';
-                        localStorage.setItem("ppp_active_tab", 'claim_garansi_asuransi');
-                    }
-                }, { immediate: true });
-
                 watch(hasBlockingOverlayOpen, (locked) => {
                     setDocumentScrollLock(locked);
                 }, { immediate: true });
@@ -19480,7 +19435,6 @@
 
                     // Auth & user
                     currentUser,
-                    isTeknisi,
                     loginForm,
                     handleLogin,
                     logout,

@@ -115,7 +115,7 @@ class MetaIgPostsImportTest extends TestCase
 
     public function test_story_import_can_scan_export_meta_folder_and_skip_feed_files(): void
     {
-        $directory = sys_get_temp_dir().'/meta-import-'.uniqid();
+        $directory = base_path('export-meta/meta-import-'.uniqid());
         File::ensureDirectoryExists($directory);
 
         $storyFile = $directory.'/test-meta-story.csv';
@@ -219,11 +219,71 @@ class MetaIgPostsImportTest extends TestCase
             ->assertJsonPath('status', 'success')
             ->assertJsonPath('inserted', 0)
             ->assertJsonPath('updated', 1);
+    }
+
+    public function test_import_folder_rejects_directories_outside_export_meta(): void
+    {
+        $directory = sys_get_temp_dir().'/meta-import-'.uniqid();
+        File::ensureDirectoryExists($directory);
+
+        try {
+            $this->postJson('/api/meta-posts/story/import-folder', ['directory' => $directory])
+                ->assertUnprocessable();
+        } finally {
+            File::deleteDirectory($directory);
+        }
+    }
+
+    public function test_import_folder_rejects_symlinks_that_resolve_outside_export_meta(): void
+    {
+        $outsideDirectory = sys_get_temp_dir().'/meta-import-'.uniqid();
+        $link = base_path('export-meta/meta-import-link-'.uniqid());
+        File::ensureDirectoryExists($outsideDirectory);
+
+        try {
+            symlink($outsideDirectory, $link);
+
+            $this->postJson('/api/meta-posts/story/import-folder', ['directory' => $link])
+                ->assertUnprocessable();
+        } finally {
+            if (is_link($link)) {
+                unlink($link);
+            }
+            File::deleteDirectory($outsideDirectory);
+        }
+    }
+
+    public function test_analytics_import_routes_require_an_analytics_import_role(): void
+    {
+        $this->actingAsDashboardUser(['role' => 'talent']);
+
+        $this->postJson('/api/meta-posts/story/import-folder')
+            ->assertForbidden();
+    }
+
+    public function test_feed_import_converts_pacific_standard_time_before_dst_switch(): void
+    {
+        $this->postJson('/api/meta-posts/feed/import', [
+            'rows' => [
+                [
+                    'Post ID' => '18041592239756016',
+                    'Account username' => 'purapura.ponsel',
+                    'Description' => 'DST boundary feed',
+                    'Publish time' => '03/08/2026 01:00',
+                    'Post type' => 'REEL',
+                    'Reach' => '10',
+                    'Comments' => '1',
+                    'Shares' => '0',
+                    'Saves' => '0',
+                ],
+            ],
+        ])->assertOk()
+            ->assertJsonPath('inserted', 1);
 
         $this->assertDatabaseHas('meta_ig_posts', [
-            'post_id' => '17912380476180805',
-            'description' => 'Feed overwrite',
-            'views' => 1500,
+            'post_id' => '18041592239756016',
+            'dataset' => 'feed',
+            'publish_time' => '2026-03-08 17:00:00',
         ]);
     }
 }

@@ -27,10 +27,6 @@
                     }
                 };
                 const currentUser = ref(loadStoredUser());
-                const isTeknisi = computed(() => {
-                    const role = currentUser.value?.role || '';
-                    return role.trim().toLowerCase() === 'teknisi';
-                });
                 const canManageUsers = computed(() => {
                     const roleKey = String(currentUser.value?.role_key || '').trim().toLowerCase();
                     return roleKey === 'super_admin';
@@ -40,16 +36,14 @@
                     return roleKey === 'super_admin' || roleKey === 'admin';
                 });
                 const hasPermission = (tab, action) => {
-                    if (isTeknisi.value && tab !== 'claim_garansi_asuransi') return false;
                     const permissions = currentUser.value?.permissions;
-                    if (!permissions || Object.keys(permissions).length === 0) return !isTeknisi.value;
+                    if (!permissions || Object.keys(permissions).length === 0) return true;
                     const rule = permissions[tab];
                     if (Array.isArray(rule)) return rule.includes(action);
                     if (rule && typeof rule === 'object') return rule[action] === true;
                     return false;
                 };
                 const authBootstrapPending = ref(true);
-                const TEKNISI_TABS = new Set(['claim_garansi_asuransi', 'profile']);
                 const loginForm = ref({ username: "", pin: "" });
                 const showPin = ref(false);
                 const rememberUsername = ref(false);

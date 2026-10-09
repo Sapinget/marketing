@@ -13,6 +13,7 @@
     "require-dev": {
         "andreapollastri/checkpoint": "^1.1",
         "fakerphp/faker": "^1.23",
+        "laramint/laravel-brain": "^2.7",
         "laravel/pint": "^1.27",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^7.10",

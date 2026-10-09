@@ -50,11 +50,11 @@
                                         <template v-else>Semua Tanggal</template>
                                         <i v-if="metaFeedDateFilter.start" @click.stop="metaFeedDateFilter = { start: '', end: '' }" class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-danger"></i>
                                     </button>
-                                    <button type="button" @click="$refs.metaFeedUpload?.click()" class="primary-cta-button primary-cta-button--accent primary-cta-button--icon-only active:scale-95" :disabled="metaUploading" aria-label="Upload CSV Feed Konten" title="Upload CSV">
+                                    <button type="button" @click="$refs.metaFeedUpload?.click()" class="primary-cta-button primary-cta-button--accent primary-cta-button--icon-only active:scale-95" :disabled="metaUploading" aria-label="Upload CSV Feed Konten">
                                         <i :class="metaUploading ? 'fa-solid fa-spinner fa-spin' : 'fa-solid fa-upload'"></i>
                                     </button>
                                     <input ref="metaFeedUpload" id="meta-feed-upload" name="meta_feed_upload" type="file" accept=".csv" class="hidden" aria-label="Upload CSV meta feed" @change="handleMetaFileInput($event, 'feed')" />
-                                    <button @click="importMetaFolder('feed')" class="primary-cta-button primary-cta-button--neutral primary-cta-button--icon-only active:scale-95" :disabled="metaUploading" aria-label="Import Folder Feed Konten" title="Import Folder">
+                                    <button @click="importMetaFolder('feed')" class="primary-cta-button primary-cta-button--neutral primary-cta-button--icon-only active:scale-95" :disabled="metaUploading" aria-label="Import Folder Feed Konten">
                                         <i :class="metaUploading ? 'fa-solid fa-spinner fa-spin' : 'fa-solid fa-folder-open'"></i>
                                     </button>
                                 </div>

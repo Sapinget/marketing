@@ -14,9 +14,10 @@ use Illuminate\Support\Str;
 
 class DashboardAuth
 {
-    public const SESSION_IDLE_TIMEOUT_MINUTES = 15;
-
-    public const SESSION_SUPERSEDED_MESSAGE = 'anda sudah login di perangkat lain';
+    public static function sessionIdleTimeoutMinutes(): int
+    {
+        return (int) env('DASHBOARD_SESSION_IDLE_TIMEOUT_MINUTES', 60);
+    }
 
     public const ROLE_SUPER_ADMIN = 'super_admin';
 
@@ -29,8 +30,6 @@ class DashboardAuth
     public const ROLE_BRAND_AMBASADOR = 'brand_ambasador';
 
     public const ROLE_TALENT = 'talent';
-
-    protected const ACTIVE_SESSION_KEY = 'dashboard_active_session_id';
 
     protected ?string $sessionFailureReason = null;
 
@@ -75,6 +74,16 @@ class DashboardAuth
     }
 
     public function canImportAnalytics(?User $user): bool
+    {
+        return $this->canAccessSensitiveLogs($user);
+    }
+
+    public function canManageMasterPlanData(?User $user): bool
+    {
+        return $this->canAccessSensitiveLogs($user);
+    }
+
+    public function canManageLpjkData(?User $user): bool
     {
         return $this->canAccessSensitiveLogs($user);
     }
@@ -204,12 +213,7 @@ class DashboardAuth
         $user = Auth::user();
 
         if ($user instanceof User) {
-            $activeSessionId = (string) ($user->active_session_id ?? '');
-            $currentSessionId = (string) request()->session()->get(self::ACTIVE_SESSION_KEY, '');
-
-            if ($activeSessionId === '' || hash_equals($activeSessionId, $currentSessionId)) {
-                $this->markOffline($user, 'logout');
-            }
+            $this->markOffline($user, 'logout');
         }
 
         Auth::guard('web')->logout();
@@ -227,20 +231,12 @@ class DashboardAuth
         }
 
         $now = now();
-        $currentSessionId = (string) $request->session()->get(self::ACTIVE_SESSION_KEY, '');
-        $activeSessionId = (string) ($user->active_session_id ?? '');
         $lastActivityTimestamp = $request->session()->get('dashboard_last_activity_at');
         $sessionExpiresAt = $user->session_expires_at;
 
-        if ($activeSessionId !== '' && ! hash_equals($activeSessionId, $currentSessionId)) {
-            $this->supersedeSession($request, $user);
-
-            return false;
-        }
-
         if (is_numeric($lastActivityTimestamp)) {
             $lastActivity = now()->setTimestamp((int) $lastActivityTimestamp);
-            if ($lastActivity->diffInSeconds($now, false) > self::SESSION_IDLE_TIMEOUT_MINUTES * 60) {
+            if ($lastActivity->diffInSeconds($now, false) > self::sessionIdleTimeoutMinutes() * 60) {
                 $this->expireSession($request, $user);
 
                 return false;
@@ -259,13 +255,7 @@ class DashboardAuth
     public function touchPresence(User $user, string $event = 'heartbeat'): User
     {
         $now = now();
-        $expiresAt = $now->copy()->addMinutes(self::SESSION_IDLE_TIMEOUT_MINUTES);
-        $activeSessionId = (string) request()->session()->get(self::ACTIVE_SESSION_KEY, '');
-
-        if ($event === 'login' || $activeSessionId === '') {
-            $activeSessionId = Str::random(64);
-            request()->session()->put(self::ACTIVE_SESSION_KEY, $activeSessionId);
-        }
+        $expiresAt = $now->copy()->addMinutes(self::sessionIdleTimeoutMinutes());
 
         request()->session()->put('dashboard_last_activity_at', $now->timestamp);
 
@@ -273,7 +263,6 @@ class DashboardAuth
             'is_online' => true,
             'last_seen_at' => $now,
             'session_expires_at' => $expiresAt,
-            'active_session_id' => $activeSessionId,
         ])->save();
 
         if ($event === 'login') {
@@ -290,12 +279,10 @@ class DashboardAuth
         $user->forceFill([
             'is_online' => false,
             'session_expires_at' => null,
-            'active_session_id' => null,
             'last_seen_at' => now(),
         ])->save();
 
         request()->session()->forget('dashboard_last_activity_at');
-        request()->session()->forget(self::ACTIVE_SESSION_KEY);
         $this->logSessionEvent($user, $event);
 
         return $user->refresh();
@@ -310,29 +297,14 @@ class DashboardAuth
         $request->session()->regenerateToken();
     }
 
-    protected function supersedeSession(Request $request, User $user): void
-    {
-        $this->sessionFailureReason = 'superseded';
-        $this->logSessionEvent($user, 'superseded', [
-            'replaced_by_session' => $user->active_session_id,
-        ]);
-        Auth::guard('web')->logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-    }
-
     public function sessionFailurePayload(): array
     {
-        if ($this->sessionFailureReason === 'superseded') {
-            return [
-                'message' => self::SESSION_SUPERSEDED_MESSAGE,
-                'superseded' => true,
-            ];
-        }
-
         if ($this->sessionFailureReason === 'expired') {
             return [
-                'message' => 'Sesi login berakhir karena tidak ada aktivitas selama 15 menit.',
+                'message' => sprintf(
+                    'Sesi login berakhir karena tidak ada aktivitas selama %d menit.',
+                    self::sessionIdleTimeoutMinutes()
+                ),
                 'expired' => true,
             ];
         }

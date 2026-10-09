@@ -100,11 +100,11 @@
                                                 </div>
                                             </div>
                                             <div class="toolbar-actions">
-                                                <button v-if="!isSettingTabObject(activeSettingTab)" @click="addSettingOption(activeSettingTab)" class="primary-cta-button primary-cta-button--accent active:scale-95">
-                                                    <i class="fa-solid fa-plus text-body-sm"></i> Tambah
-                                                </button>
-                                                <button v-if="!isSettingTabObject(activeSettingTab)" @click="toggleSettingsBulkAdd" :class="showSettingsBulkAdd ? 'bg-slate-900 text-white border-slate-900 hover:bg-black hover:border-black' : 'primary-cta-button--neutral'" class="primary-cta-button active:scale-95">
-                                                    <i class="fa-solid fa-layer-group text-body-sm"></i> Tambah Banyak
+<button v-if="!isSettingTabObject(activeSettingTab)" @click="addSettingOption(activeSettingTab)" class="primary-cta-button primary-cta-button--accent primary-cta-button--icon-only active:scale-95" aria-label="Tambah Opsi">
+                                                     <i class="fa-solid fa-plus"></i>
+                                                 </button>
+                                                <button v-if="!isSettingTabObject(activeSettingTab)" @click="toggleSettingsBulkAdd" :class="showSettingsBulkAdd ? 'bg-slate-900 text-white border-slate-900 hover:bg-black hover:border-black' : 'primary-cta-button--neutral'" class="primary-cta-button primary-cta-button--icon-only active:scale-95" aria-label="Tambah Banyak Opsi">
+                                                    <i class="fa-solid fa-layer-group"></i>
                                                 </button>
                                                 <button v-if="!isSettingTabObject(activeSettingTab)" @click="sortSettingOptions(activeSettingTab)" class="primary-cta-button primary-cta-button--neutral active:scale-95">
                                                     <i class="fa-solid fa-arrow-down-a-z text-body-sm"></i> Urutkan
@@ -291,11 +291,11 @@
 
                                     <div class="settings-surface flex-1 overflow-y-auto p-4 space-y-4">
                                         <div class="grid grid-cols-2 gap-2">
-                                            <button v-if="!isSettingTabObject(activeSettingTab)" @click="addSettingOption(activeSettingTab)" class="primary-cta-button primary-cta-button--accent active:scale-95">
-                                                <i class="fa-solid fa-plus text-body-sm"></i> Tambah
-                                            </button>
-                                            <button v-if="!isSettingTabObject(activeSettingTab)" @click="toggleSettingsBulkAdd" :class="showSettingsBulkAdd ? 'bg-slate-900 text-white border-slate-900 hover:bg-black hover:border-black' : 'primary-cta-button--neutral'" class="primary-cta-button active:scale-95">
-                                                <i class="fa-solid fa-layer-group text-body-sm"></i> Banyak
+<button v-if="!isSettingTabObject(activeSettingTab)" @click="addSettingOption(activeSettingTab)" class="primary-cta-button primary-cta-button--accent primary-cta-button--icon-only active:scale-95" aria-label="Tambah Opsi">
+                                                 <i class="fa-solid fa-plus"></i>
+                                             </button>
+                                            <button v-if="!isSettingTabObject(activeSettingTab)" @click="toggleSettingsBulkAdd" :class="showSettingsBulkAdd ? 'bg-slate-900 text-white border-slate-900 hover:bg-black hover:border-black' : 'primary-cta-button--neutral'" class="primary-cta-button primary-cta-button--icon-only active:scale-95" aria-label="Tambah Banyak Opsi">
+                                                <i class="fa-solid fa-layer-group"></i>
                                             </button>
                                             <button v-if="!isSettingTabObject(activeSettingTab)" @click="sortSettingOptions(activeSettingTab)" class="primary-cta-button primary-cta-button--neutral active:scale-95">
                                                 <i class="fa-solid fa-arrow-down-a-z text-body-sm"></i> Urutkan

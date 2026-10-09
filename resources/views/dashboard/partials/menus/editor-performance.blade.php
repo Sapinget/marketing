@@ -53,7 +53,7 @@
                     </div>
                     <div class="dashboard-summary-card-compact stat-card relative overflow-hidden group">
                         <div class="absolute -right-4 -bottom-4 opacity-5"><i class="fa-solid fa-eye text-[120px]"></i></div>
-                        <p class="dashboard-summary-title">Total Reach</p>
+                        <p class="dashboard-summary-title">Total Views</p>
                         <div class="flex items-baseline gap-2">
                             <span class="dashboard-summary-value">{{ formatNumber(editorDashboardData.totalViews) }}</span>
                             <span class="dashboard-summary-unit">Views</span>

@@ -30,7 +30,7 @@ export default defineConfig({
             ],
             refresh: true,
             fonts: [
-                bunny('Figtree', {
+                bunny('Lexend', {
                     weights: [400, 500, 600, 700, 800],
                 }),
             ],

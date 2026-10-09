@@ -52,9 +52,9 @@
                                 </div>
                                 <div class="table-toolbar-shell__right">
                                     <div class="toolbar-actions">
-                                        <button @click="openClaimGaransiModal('create')" class="primary-cta-button primary-cta-button--accent active:scale-95"><i class="fa-solid fa-plus mr-2"></i>Tambah</button>
-                                        <button @click="exportExcel" class="primary-cta-button primary-cta-button--success active:scale-95"><i class="fa-solid fa-file-excel"></i><span class="ml-1">Excel</span></button>
-                                        <button @click="exportPdf" class="primary-cta-button primary-cta-button--danger active:scale-95"><i class="fa-solid fa-file-pdf"></i><span class="ml-1">PDF</span></button>
+                                        <button @click="openClaimGaransiModal('create')" class="primary-cta-button primary-cta-button--accent primary-cta-button--icon-only active:scale-95" aria-label="Tambah Claim Garansi"><i class="fa-solid fa-plus"></i></button>
+                                        <button @click="exportExcel" class="primary-cta-button primary-cta-button--success primary-cta-button--icon-only active:scale-95" aria-label="Export Excel"><i class="fa-solid fa-file-excel"></i></button>
+                                        <button @click="exportPdf" class="primary-cta-button primary-cta-button--danger primary-cta-button--icon-only active:scale-95" aria-label="Export PDF"><i class="fa-solid fa-file-pdf"></i></button>
                                     </div>
                                 </div>
                             </div>
@@ -187,18 +187,17 @@
                                             </div>
                                         </transition>
                                     </div>
-                                    <div class="toolbar-actions">
-                                        <button @click="openClaimGaransiModal('create')"
-                                            class="primary-cta-button primary-cta-button--accent active:scale-95"><i
-                                                class="fa-solid fa-plus mr-2"></i>Tambah</button>
+                                    <div class="toolbar-actions toolbar-actions--desktop-icon-only">
+<button @click="openClaimGaransiModal('create')"
+                                             class="primary-cta-button primary-cta-button--accent primary-cta-button--icon-only active:scale-95"
+                                             aria-label="Tambah Claim Garansi"><i
+                                                 class="fa-solid fa-plus"></i></button>
                                         <button @click="exportExcel"
-                                            class="primary-cta-button primary-cta-button--success active:scale-95"><i
-                                                class="fa-solid fa-file-excel"></i><span
-                                                class="ml-1">Excel</span></button>
+                                            class="primary-cta-button primary-cta-button--success primary-cta-button--icon-only active:scale-95" aria-label="Export Excel"><i
+                                                class="fa-solid fa-file-excel"></i></button>
                                         <button @click="exportPdf"
-                                            class="primary-cta-button primary-cta-button--danger active:scale-95"><i
-                                                class="fa-solid fa-file-pdf"></i><span
-                                                class="ml-1">PDF</span></button>
+                                            class="primary-cta-button primary-cta-button--danger primary-cta-button--icon-only active:scale-95" aria-label="Export PDF"><i
+                                                class="fa-solid fa-file-pdf"></i></button>
                                     </div>
                                 </div>
                             </div>

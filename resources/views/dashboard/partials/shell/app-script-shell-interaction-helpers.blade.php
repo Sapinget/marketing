@@ -1,16 +1,18 @@
 @verbatim
-                const persistSidebarState = () => {
-                    if (isMobileViewport.value) return;
-                    localStorage.setItem('sidebarCollapsed', String(!isSidebarOpen.value));
-                };
+                const isDesktopViewport = () => window.innerWidth >= 1024;
 
                 const toggleSidebar = () => {
-                    isSidebarOpen.value = !isSidebarOpen.value;
-                    persistSidebarState();
+                    if (isDesktopViewport()) {
+                        sidebarCollapsed.value = !sidebarCollapsed.value;
+                        localStorage.setItem('sidebarCollapsed', sidebarCollapsed.value ? '1' : '0');
+                        return;
+                    }
+
+                    sidebarOpen.value = !sidebarOpen.value;
                 };
 
                 const closeSidebar = () => {
-                    isSidebarOpen.value = false;
+                    sidebarOpen.value = false;
                 };
 
                 let horizontalPanStart = null;

@@ -1,5 +1,9 @@
+@php($sessionIdleTimeoutMinutes = \App\Support\DashboardAuth::sessionIdleTimeoutMinutes())
 @verbatim
                 const ensureRunApi = () => createWebRunner();
+@endverbatim
+                const SESSION_IDLE_TIMEOUT_MINUTES = {{ $sessionIdleTimeoutMinutes }};
+@verbatim
                 const _setRunnerFactory = window.MarketingDashboardRuntimeHelpers?.setRunnerFactory;
                 if (typeof _setRunnerFactory === 'function') {
                     _setRunnerFactory(() => createWebRunner());
@@ -37,7 +41,7 @@
                 };
 
                 const refreshDashboard = () => Promise.resolve();
-                const SESSION_IDLE_TIMEOUT_MS = 15 * 60 * 1000;
+                const SESSION_IDLE_TIMEOUT_MS = SESSION_IDLE_TIMEOUT_MINUTES * 60 * 1000;
                 const SESSION_HEARTBEAT_MS = 60 * 1000;
                 let lastClientActivityAt = Date.now();
                 let sessionHeartbeatTimerId = null;
@@ -73,21 +77,10 @@
                                     return;
                                 }
 
-                                if (result?.superseded) {
-                                    clearSessionState("anda sudah login di perangkat lain", "warning");
-                                    resolve(false);
-                                    return;
-                                }
-
                                 clearSessionState(message, "warning");
                                 resolve(false);
                             })
                             .withFailureHandler((error) => {
-                                if (error?.superseded) {
-                                    clearSessionState("anda sudah login di perangkat lain", "warning");
-                                    resolve(false);
-                                    return;
-                                }
                                 if (error?.status === 401 || error?.expired) {
                                     clearSessionState(message || "Sesi login berakhir. Silakan login kembali.", "warning");
                                     resolve(false);
@@ -133,14 +126,10 @@
                     if (idleFor >= SESSION_IDLE_TIMEOUT_MS) {
                         runner
                             .withSuccessHandler(() => {
-                                clearSessionState("Sesi login berakhir karena tidak ada aktivitas selama 15 menit.", "warning");
+                                clearSessionState(`Sesi login berakhir karena tidak ada aktivitas selama ${SESSION_IDLE_TIMEOUT_MINUTES} menit.`, "warning");
                             })
-                            .withFailureHandler((error) => {
-                                if (error?.superseded) {
-                                    clearSessionState("anda sudah login di perangkat lain", "warning");
-                                    return;
-                                }
-                                clearSessionState("Sesi login berakhir karena tidak ada aktivitas selama 15 menit.", "warning");
+                            .withFailureHandler(() => {
+                                clearSessionState(`Sesi login berakhir karena tidak ada aktivitas selama ${SESSION_IDLE_TIMEOUT_MINUTES} menit.`, "warning");
                             })
                             .logout();
                         return;
@@ -155,12 +144,8 @@
                             }
                         })
                         .withFailureHandler((error) => {
-                            if (error?.superseded) {
-                                clearSessionState("anda sudah login di perangkat lain", "warning");
-                                return;
-                            }
                             if (error?.status === 401 || error?.expired) {
-                                clearSessionState("Sesi login berakhir karena tidak ada aktivitas selama 15 menit.", "warning");
+                                clearSessionState(`Sesi login berakhir karena tidak ada aktivitas selama ${SESSION_IDLE_TIMEOUT_MINUTES} menit.`, "warning");
                                 return;
                             }
                             notifyError('', error, 'Gagal memperbarui status online.');
@@ -184,11 +169,9 @@
                             localStorage.setItem("ppp_user", JSON.stringify(result.user));
                             markClientActivity();
                             loginForm.value = { username: "", pin: "" };
-                            if (isTeknisi.value) {
-                                activeTab.value = 'claim_garansi_asuransi';
-                                localStorage.setItem("ppp_active_tab", 'claim_garansi_asuransi');
+                            if (canManageSettings.value) {
+                                await loadSettings();
                             }
-                            await loadSettings();
                             await loadMasterPlanData();
                             await loadAnalyticsData();
                             await loadDistributionData();
@@ -226,8 +209,8 @@
                     clearPopoverTriggerState();
                 };
                 const handleResize = () => {
-                    isMobileViewport.value = window.innerWidth < 768;
-                    if (window.innerWidth >= 768) settingsDetailModalOpen.value = false;
+                    isMobileViewport.value = window.innerWidth < 1024;
+                    if (window.innerWidth >= 1024) settingsDetailModalOpen.value = false;
                     searchSelectOpen.value = null;
                     clearPopoverTriggerState();
                 };
@@ -275,10 +258,14 @@
                         loadKeepBarangData();
                     }
                     if (!settingsLoaded.value && tab !== 'dashboard') {
-                        loadSettings();
+                        if (canManageSettings.value) {
+                            loadSettings();
+                        }
                     }
                     if (tab === 'settings') {
-                        loadSettings();
+                        if (canManageSettings.value) {
+                            loadSettings();
+                        }
                     }
                     if (tab === 'auth_users' && canManageUsers.value) {
                         loadAuthUsers();
@@ -306,6 +293,9 @@
                     if (tab === 'pricelist_katalog') {
                         loadPricelistCatalogData();
                     }
+                    if (tab === 'template_background') {
+                        if (!catalogTemplatesLoaded.value) loadCatalogTemplates();
+                    }
                     if (tab === 'apple_katalog') {
                         loadAppleData();
                     }
@@ -323,6 +313,7 @@
                         'unboxing': 'unboxing',
                         'orderan_online': 'orderanOnline',
                         'unit_ditanya': 'unitDitanya',
+                        'service': 'service',
                         'claim_garansi_asuransi': 'claimGaransi',
                         'program_promo': 'promo',
                         'sell_out': 'sellOut',
@@ -333,7 +324,11 @@
                         'calendar': 'calendar'
                     };
                     const dataKey = TAB_DATA_MAP[tab];
-                    if (dataKey) loadTabData(dataKey);
+                    if (tab === 'service') {
+                        loadServiceData().then(() => {
+                            tabDataLoaded.value = Object.assign({}, tabDataLoaded.value, { service: true });
+                        });
+                    } else if (dataKey) loadTabData(dataKey);
 
                     // Market Intelligence — direct fetch to Laravel API (not Apps Script)
                     if (tab === 'market_pasar') loadMarketPasar();

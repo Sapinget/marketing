@@ -29,8 +29,9 @@
             </div>
             <div class="toolbar-actions">
                 <button @click="openCreateStoryModal"
-                    class="primary-cta-button primary-cta-button--accent active:scale-95">
-                    <i class="fa-solid fa-plus mr-2"></i>Tambah Story
+                    class="primary-cta-button primary-cta-button--accent primary-cta-button--icon-only active:scale-95"
+                    aria-label="Tambah Story">
+                    <i class="fa-solid fa-plus"></i>
                 </button>
             </div>
         </div>

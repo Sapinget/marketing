@@ -42,14 +42,15 @@
                         </div>
                         <div class="toolbar-actions">
                             <button @click="exportBudgetToExcel"
-                                class="primary-cta-button primary-cta-button--success active:scale-95"><i
-                                    class="fa-solid fa-file-excel text-[9px]"></i> Excel</button>
+                                class="primary-cta-button primary-cta-button--success primary-cta-button--icon-only active:scale-95" aria-label="Export Excel"><i
+                                    class="fa-solid fa-file-excel text-[9px]"></i></button>
                             <button @click="exportBudgetToPDF"
-                                class="primary-cta-button primary-cta-button--danger active:scale-95"><i
-                                    class="fa-solid fa-file-pdf text-[9px]"></i> PDF</button>
+                                class="primary-cta-button primary-cta-button--danger primary-cta-button--icon-only active:scale-95" aria-label="Export PDF"><i
+                                    class="fa-solid fa-file-pdf text-[9px]"></i></button>
                             <button @click="showBudgetSettings = !showBudgetSettings"
-                                class="primary-cta-button primary-cta-button--neutral active:scale-95"><i
-                                    class="fa-solid fa-sliders text-overline"></i> Atur</button>
+                                class="primary-cta-button primary-cta-button--neutral primary-cta-button--icon-only active:scale-95"
+                                aria-label="Atur Budget"><i
+                                    class="fa-solid fa-sliders text-[9px]"></i></button>
                         </div>
                     </div>
                 </section>
@@ -72,8 +73,8 @@
                                     class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-danger"></i>
                             </button>
                             <button @click="budgetDateFilter = { start: '', end: '' }"
-                                class="primary-cta-button primary-cta-button--neutral w-full sm:w-auto" title="Reset"><i
-                                    class="fa-solid fa-rotate-left text-body-sm"></i><span>Reset</span></button>
+                                class="icon-utility-button icon-utility-bordered" title="Reset" aria-label="Reset"><i
+                                    class="fa-solid fa-rotate-left text-body-sm"></i></button>
                         </div>
                     </div>
                 </div>
@@ -175,10 +176,10 @@
                     <div class="pb-4 border-b border-slate-100">
                         <div class="flex justify-between items-center mb-3">
                             <div class="text-body-sm font-bold text-slate-500 uppercase">Partner Colab</div>
-                            <button type="button"
-                                @click="budgetConfig.colabPartners.push({name: '', packageCost: 0, slots: 0})"
-                                class="text-body-sm bg-slate-100 px-2 py-1 rounded-lg hover:bg-slate-200 transition text-slate-600"><i
-                                    class="fa-solid fa-plus mr-1"></i>Tambah</button>
+<button type="button"
+                                 @click="budgetConfig.colabPartners.push({name: '', packageCost: 0, slots: 0})"
+                                 class="primary-cta-button primary-cta-button--neutral primary-cta-button--icon-only" aria-label="Tambah Partner Colab"><i
+                                     class="fa-solid fa-plus"></i></button>
                         </div>
                         <div v-for="(partner, idx) in budgetConfig.colabPartners" :key="'cp'+idx"
                             class="grid grid-cols-1 md:grid-cols-4 gap-2 mb-2 bg-slate-50 p-3 rounded-xl border border-slate-100 relative">
@@ -219,10 +220,10 @@
                     <div class="pb-4">
                         <div class="flex justify-between items-center mb-3">
                             <div class="text-body-sm font-bold text-slate-500 uppercase">Platform Lainnya</div>
-                            <button type="button"
-                                @click="budgetConfig.others.push({name: '', costPerUnit: 0, quantity: 1, duration: 1, balance: 0})"
-                                class="text-body-sm bg-slate-100 px-2 py-1 rounded-lg hover:bg-slate-200 transition text-slate-600"><i
-                                    class="fa-solid fa-plus mr-1"></i>Tambah</button>
+<button type="button"
+                                 @click="budgetConfig.others.push({name: '', costPerUnit: 0, quantity: 1, duration: 1, balance: 0})"
+                                 class="primary-cta-button primary-cta-button--neutral primary-cta-button--icon-only" aria-label="Tambah Platform Lainnya"><i
+                                     class="fa-solid fa-plus"></i></button>
                         </div>
                         <div v-for="(item, idx) in budgetConfig.others" :key="'oth'+idx"
                             class="grid grid-cols-2 md:grid-cols-6 gap-2 mb-2 bg-slate-50 p-3 rounded-xl border border-slate-100 relative">
@@ -757,8 +758,8 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button @click="exportLpjkDetailToPDF" class="primary-cta-button primary-cta-button--danger"><i
-                                    class="fa-solid fa-file-pdf"></i> PDF</button>
+                            <button @click="exportLpjkDetailToPDF" class="primary-cta-button primary-cta-button--danger primary-cta-button--icon-only" aria-label="Export PDF"><i
+                                    class="fa-solid fa-file-pdf"></i></button>
                             <button @click="closeLpjkDetail" class="icon-utility-button icon-utility-danger"><i
                                     class="fa-solid fa-xmark text-sm"></i></button>
                         </div>
@@ -1431,38 +1432,7 @@
                                     </transition>
                                 </div>
 
-                                <!-- 6. Editor, Talent & Tanggal Rencana -->
-                                <div class="relative search-select-container">
-                                    <label
-                                        class="type-body-sm font-bold text-slate-400 uppercase mb-2">Editor <span class="text-danger">*</span></label>
-                                    <div @click="toggleSearchSelect($event, 'editor')"
-                                        class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
-                                        <span :class="masterForm.Editor ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ masterForm.Editor || 'Pilih Editor' }}</span>
-                                        <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
-                                    </div>
-                                    <transition name="fade">
-                                        <div v-if="searchSelectOpen === 'editor'" :style="popoverStyle"
-                                            class="search-select-popover">
-                                            <div class="relative mb-2">
-                                                <i
-                                                    class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
-                                                <input v-model="searchSelectQuery" type="text" name="search_select_query"
-                                                    autocomplete="off" aria-label="Cari editor master plan" placeholder="Cari editor..."
-                                                    class="form-input-popover" @click.stop />
-                                            </div>
-                                            <div class="max-h-48 overflow-y-auto custom-scrollbar">
-                                                <div v-for="opt in filteredEditorOptions" :key="opt"
-                                                    @click="masterForm.Editor = opt; searchSelectOpen = null"
-                                                    :class="['popover-option', masterForm.Editor === opt ? 'popover-option-active' : '']">
-                                                    {{ opt }} </div>
-                                                <div v-if="filteredEditorOptions.length === 0"
-                                                    class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
-                                                    Tidak ditemukan</div>
-                                            </div>
-                                        </div>
-                                    </transition>
-                                </div>
-
+                                <!-- 6. Talent & Tanggal Rencana & Editor -->
                                 <div class="relative search-select-container">
                                     <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Tanggal
                                         Rencana</label>
@@ -1472,6 +1442,40 @@
                                         <span
                                             :class="masterForm.Tanggal_Rencana ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ masterForm.Tanggal_Rencana ? formatFullDate(masterForm.Tanggal_Rencana) : 'Pilih Tanggal' }}</span>
                                     </button>
+                                </div>
+
+                                <div class="relative search-select-container">
+                                    <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Editor</label>
+                                    <div @click="toggleSearchSelect($event, 'editor')"
+                                        class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                        <span
+                                            :class="masterForm.Editor ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ masterForm.Editor || 'Pilih Editor' }}</span>
+                                        <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                    </div>
+                                    <transition name="fade">
+                                        <div v-if="searchSelectOpen === 'editor'" :style="popoverStyle"
+                                            class="search-select-popover">
+                                            <div class="relative mb-2">
+                                                <i
+                                                    class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                                <input v-model="searchSelectQuery" type="text" name="editor_search"
+                                                    autocomplete="off" aria-label="Cari editor master plan" placeholder="Cari editor..."
+                                                    class="form-input-popover" @click.stop />
+                                            </div>
+                                            <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                                <div @click="selectEditor('')"
+                                                    :class="['popover-option', !masterForm.Editor ? 'popover-option-active' : '']">
+                                                    - Tanpa Editor -
+                                                </div>
+                                                <div v-for="opt in filteredEditorOptions" :key="opt" @click="selectEditor(opt)"
+                                                    :class="['popover-option', masterForm.Editor === opt ? 'popover-option-active' : '']">
+                                                    {{ opt }} </div>
+                                                <div v-if="filteredEditorOptions.length === 0"
+                                                    class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
+                                                    Tidak ditemukan</div>
+                                            </div>
+                                        </div>
+                                    </transition>
                                 </div>
 
                                 <div class="relative md:col-span-2 search-select-container">
@@ -1996,9 +2000,43 @@
                                 Reference (Opsional)</label>
                             <input id="story-link" name="story_link" v-model="storyForm.Link" type="url" placeholder="https://..." class="form-input" />
                         </div>
-                        <div class="relative search-select-container">
-                            <label
-                                class="type-body-sm font-bold text-slate-400 uppercase mb-2">Status</label>
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Editor</label>
+                                <div @click="toggleSearchSelect($event, 'unboxingEditor')"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="unboxingForm.Editor ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ unboxingForm.Editor || 'Pilih Editor' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </div>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'unboxingEditor'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="unboxing_editor_search"
+                                                autocomplete="off" aria-label="Cari editor unboxing" placeholder="Cari editor..."
+                                                class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div @click="unboxingForm.Editor = ''; searchSelectOpen = null"
+                                                :class="['popover-option', !unboxingForm.Editor ? 'popover-option-active' : '']">
+                                                - Tanpa Editor -
+                                            </div>
+                                            <div v-for="opt in filteredEditorOptions" :key="opt"
+                                                @click="unboxingForm.Editor = opt; searchSelectOpen = null"
+                                                :class="['popover-option', unboxingForm.Editor === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                            <div v-if="filteredEditorOptions.length === 0"
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
+                                                Tidak ditemukan</div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Status</label>
                             <div @click="toggleSearchSelect($event, 'storyStatus')"
                                 class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
                                 <span :class="storyForm.Status ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ storyForm.Status || 'Pilih Status' }}</span>
@@ -2263,7 +2301,7 @@
                             </div>
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Status</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Status</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'orderan_status')"
                                     :aria-expanded="searchSelectOpen === 'orderan_status' ? 'true' : 'false'"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
@@ -2885,7 +2923,7 @@
                             </div>
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Status</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Status</label>
                                 <button type="button" @click="toggleSearchSelect($event, 'claim_status')"
                                     :aria-expanded="searchSelectOpen === 'claim_status' ? 'true' : 'false'"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
@@ -3191,7 +3229,7 @@
                             </div>
                             <div class="col-span-2">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Status</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Status</label>
                                 <div class="relative search-select-container">
                                     <button type="button" @click="toggleSearchSelect($event, 'keep_form_status')"
                                         class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
@@ -3374,61 +3412,29 @@
                         class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
                         <div class="modal-header-copy">
                             <div
-                                :class="['modal-header-icon text-white', unboxingModalType === 'create' ? 'bg-amber' : 'bg-ppp-accent']">
+                                class="modal-header-icon w-12 h-12 rounded-2xl bg-amber text-light border border-amber">
                                 <i
-                                    :class="['fa-solid text-body', unboxingModalType === 'create' ? 'fa-plus' : 'fa-pen-to-square']"></i>
+                                    :class="['fa-solid text-heading-lg', unboxingModalType === 'create' ? 'fa-plus' : 'fa-pen-to-square']"></i>
                             </div>
                             <div>
-                                <div class="type-heading-sm text-slate-900">{{ unboxingModalType === 'create' ? 'Tambah Unboxing' : 'Edit Unboxing' }}</div>
-                                <div class="type-body-sm text-slate-400 uppercase mt-0.5">Konten Module
-                                </div>
+                                <h2 class="type-heading-sm font-bold text-slate-900">{{ unboxingModalType === 'create' ? 'Tambah Unboxing' : 'Edit Unboxing' }}</h2>
+                                <p class="text-body-sm text-slate-400 uppercase mt-0.5">{{ unboxingModalType === 'create' ? 'Tambah konten unboxing baru' : 'Perbarui detail konten unboxing' }}</p>
                             </div>
                         </div>
                         <button @click="unboxingModalOpen = false" aria-label="Tutup modal"
                             class="icon-utility-button icon-utility-round"><i class="fa-solid fa-xmark"></i></button>
                     </div>
-                    <div class="p-6 overflow-y-auto custom-scrollbar flex-1">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="p-5 md:p-6 overflow-y-auto custom-scrollbar flex-1">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="md:col-span-2">
-                                <label for="unboxing-judul" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Judul
+                                <label for="unboxing-judul" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Judul
                                     Unboxing <span class="text-danger">*</span></label>
                                 <input id="unboxing-judul" name="unboxing_judul" v-model="unboxingForm.Nama" type="text"
                                     placeholder="Contoh: Unboxing Samsung S24 Ultra" class="form-input" />
                             </div>
                             <div class="relative search-select-container">
                                 <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Editor</label>
-                                <div @click="toggleSearchSelect($event, 'unboxingEditor')"
-                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
-                                    <span
-                                        :class="unboxingForm.Editor ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ unboxingForm.Editor || 'Pilih Editor' }}</span>
-                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
-                                </div>
-                                <transition name="fade">
-                                    <div v-if="searchSelectOpen === 'unboxingEditor'" :style="popoverStyle"
-                                        class="search-select-popover">
-                                        <div class="relative mb-2">
-                                            <i
-                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
-                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
-                                                autocomplete="off" aria-label="Cari editor unboxing" placeholder="Cari editor..."
-                                                class="form-input-popover" @click.stop />
-                                        </div>
-                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
-                                            <div v-for="opt in filteredEditorOptions" :key="opt"
-                                                @click="unboxingForm.Editor = opt; searchSelectOpen = null"
-                                                :class="['popover-option', unboxingForm.Editor === opt ? 'popover-option-active' : '']">
-                                                {{ opt }}</div>
-                                            <div v-if="filteredEditorOptions.length === 0"
-                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
-                                                Tidak ditemukan</div>
-                                        </div>
-                                    </div>
-                                </transition>
-                            </div>
-                            <div class="relative search-select-container">
-                                <label
-                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Status</label>
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Status</label>
                                 <div @click="toggleSearchSelect($event, 'unboxingStatus')"
                                     class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
                                     <span
@@ -3448,28 +3454,32 @@
                                 </transition>
                             </div>
                             <div>
-                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Tanggal
+                                <label for="unboxing-upload-date" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Tanggal
                                     Upload</label>
-                                <button type="button" @click="openCalendar($event, 'form', '', 'unboxingUploadDate')"
-                                    class="select-trigger-button-form toolbar-trigger-field-form">
+                                <button id="unboxing-upload-date" type="button" @click="openCalendar($event, 'form', '', 'unboxingUploadDate')"
+                                    class="select-trigger-button-form toolbar-trigger-field-form w-full">
                                     <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
                                     <span
                                         :class="unboxingForm.Upload_Date ? 'text-slate-700 font-medium' : 'text-slate-400'">
                                         {{ unboxingForm.Upload_Date ? formatShortDate(unboxingForm.Upload_Date) : 'Pilih tanggal upload' }}
                                     </span>
+                                    <i class="fa-solid fa-chevron-down ml-auto text-overline text-slate-300"></i>
                                 </button>
                             </div>
                             <div class="md:col-span-2">
-                                <label for="unboxing-link-video" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Link
+                                <label for="unboxing-link-video" class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Link
                                     Video</label>
-                                <input id="unboxing-link-video" name="unboxing_link_video" v-model="unboxingForm.Link" type="text" placeholder="https://..."
+                                <input id="unboxing-link-video" name="unboxing_link_video" v-model="unboxingForm.Link" type="url" placeholder="https://..."
                                     class="form-input" />
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer-bar modal-footer-actions">
                         <button @click="unboxingModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
-                        <button @click="saveUnboxing" :disabled="submitting" class="primary-cta-button">{{ submitting ? 'Menyimpan...' : 'Simpan' }}</button>
+                        <button @click="saveUnboxing" :disabled="submitting" class="primary-cta-button primary-cta-button--accent">
+                            <i :class="['fa-solid', submitting ? 'fa-spinner fa-spin' : 'fa-floppy-disk']"></i>
+                            <span>{{ submitting ? 'Menyimpan...' : 'Simpan' }}</span>
+                        </button>
                     </div>
                 </div>
             </div>

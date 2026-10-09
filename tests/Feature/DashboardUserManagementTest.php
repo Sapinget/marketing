@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
 use Tests\TestCase;
 
 class DashboardUserManagementTest extends TestCase
@@ -157,6 +158,20 @@ class DashboardUserManagementTest extends TestCase
         $this->getJson('/api/auth/users')
             ->assertForbidden()
             ->assertSee('Forbidden');
+    }
+
+    public function test_dashboard_user_create_and_update_routes_are_throttled(): void
+    {
+        foreach ([
+            ['POST', '/api/auth/users'],
+            ['PUT', '/api/auth/users/{user}'],
+        ] as [$method, $uri]) {
+            $route = collect(Route::getRoutes()->getRoutes())
+                ->first(fn ($route) => $route->uri() === ltrim($uri, '/') && in_array($method, $route->methods(), true));
+
+            $this->assertNotNull($route);
+            $this->assertContains('throttle:10,1', $route->middleware());
+        }
     }
 
     public function test_authenticated_user_can_create_dashboard_user_from_api(): void

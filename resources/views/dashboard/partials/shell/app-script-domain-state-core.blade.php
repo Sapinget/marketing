@@ -47,6 +47,25 @@
                 const unitDitanyaSortBy = ref('TANGGAL');
                 const unitDitanyaSortDesc = ref(true);
 
+                const serviceData = ref([]);
+                const serviceSearch = ref('');
+                const serviceDateRange = ref(getDefaultDateRange());
+                const serviceModalOpen = ref(false);
+                const serviceForm = ref({});
+                const serviceClaimsData = ref([]);
+                const serviceClaimSearch = ref('');
+                const serviceClaimModalOpen = ref(false);
+                const serviceClaimForm = ref({});
+                const openServiceModal = (type = 'create', row = null) => {
+                    csModalType.value = type;
+                    serviceForm.value = row ? { ...row } : { TANGGAL: todayStr(), NO_SERVICE: '', NAMA_CUSTOMER: '', WA_CUSTOMER: '', TYPE_UNIT: '', IMEI_SN: '', KERUSAKAN: '', STATUS: '', KETERANGAN: '', TOTAL: 0, HANDLE_BY: '' };
+                    serviceModalOpen.value = true;
+                };
+                const openServiceClaimModal = (row = null) => {
+                    serviceClaimForm.value = row ? { ...row } : {};
+                    serviceClaimModalOpen.value = true;
+                };
+
                 const claimGaransiSearch = ref('');
                 const claimGaransiLokasiFilter = ref('');
                 const claimGaransiStatusFilter = ref('');
@@ -90,8 +109,10 @@
                     return openOrderanOnlineModalRuntime(type, row);
                 };
                 const openUnitDitanyaModal = (type = 'create', row = null) => {
+                    const result = openUnitDitanyaModalRuntime(type, row);
                     ensureNamaStockLoaded();
-                    return openUnitDitanyaModalRuntime(type, row);
+
+                    return result;
                 };
                 const openClaimGaransiModal = (type = 'create', row = null) => {
                     ensureNamaStockLoaded();

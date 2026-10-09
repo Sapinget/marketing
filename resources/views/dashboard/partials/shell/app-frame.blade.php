@@ -180,8 +180,8 @@
     </transition>
 
     <div v-if="currentUser && !appLoading" class="min-h-[100dvh] bg-slate-50">
-        <div data-sidebar-backdrop @click="isSidebarOpen ? closeSidebar() : null"
-            :class="['fixed inset-0 z-[70] glass-backdrop md:hidden transition-opacity duration-300 ease-out', isSidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none']">
+        <div data-sidebar-backdrop @click="sidebarOpen ? closeSidebar() : null"
+            :class="['fixed inset-0 z-[70] glass-backdrop lg:hidden transition-opacity duration-300 ease-out', sidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none']">
         </div>
 @endverbatim
         @include('dashboard.partials.shell.chat-panel')
@@ -189,12 +189,12 @@
 @verbatim
         <div
             class="dashboard-main-shell min-h-[100dvh]"
-            :style="isMobileViewport ? null : { paddingLeft: isSidebarOpen ? '15rem' : '0px' }">
+            :style="isMobileViewport ? null : { paddingLeft: sidebarCollapsed ? '0px' : '15rem' }">
 @endverbatim
             @include('dashboard.partials.shell.app-frame-header')
 @verbatim
 
-            <main class="p-4 pb-[calc(3.75rem+1rem+env(safe-area-inset-bottom,0px))] md:p-6 md:pb-[calc(3.75rem+1.5rem)] lg:pb-6 space-y-4">
+            <main class="p-4 pb-6 md:p-6 space-y-4">
                 <div class="flex items-center gap-2 text-body text-slate-400">
                     <template v-for="(item, idx) in breadcrumbItems" :key="idx">
                         <span :class="idx === breadcrumbItems.length - 1 ? 'text-ppp-nav-text font-medium' : ''">{{ item }}</span>
@@ -219,6 +219,7 @@
                 @include('dashboard.partials.menus.low-content')
                 @include('dashboard.partials.menus.order-online')
                 @include('dashboard.partials.menus.unit-ditanya')
+                @include('dashboard.partials.menus.service')
                 @include('dashboard.partials.menus.claim-garansi')
                 @include('dashboard.partials.menus.input-claim')
                 @include('dashboard.partials.menus.garansi-cermati')
@@ -230,15 +231,26 @@
                 @include('dashboard.partials.menus.auth-users')
                 @include('dashboard.partials.menus.activity-logs')
                 @include('dashboard.partials.menus.program-promo')
+                @if(($dedicatedMenuView ?? null) !== 'dashboard.partials.menus.promo-pamflet')
+                    @include('dashboard.partials.menus.promo-pamflet')
+                @endif
                 @include('dashboard.partials.menus.bonus-report')
                 @include('dashboard.partials.menus.talent-bonus')
                 @include('dashboard.partials.menus.editor-performance')
                 @include('dashboard.partials.menus.sell-out')
                 @include('dashboard.partials.menus.harga-kompetitor')
-                @include('dashboard.partials.menus.pricelist-katalog')
-                @include('dashboard.partials.menus.apple-katalog')
-                @include('dashboard.partials.menus.img-repo')
-                @include('dashboard.partials.menus.asset-vendor-inventory')
+                @if($dedicatedMenuView ?? null)
+                    @include($dedicatedMenuView)
+                @else
+                    @include('dashboard.partials.menus.pricelist-katalog')
+                    @include('dashboard.partials.menus.template-background')
+                    @include('dashboard.partials.menus.apple-katalog')
+                    @include('dashboard.partials.menus.img-repo')
+                    @include('dashboard.partials.menus.asset-vendor-inventory')
+                @endif
+                @if(($dedicatedMenuView ?? null) !== 'dashboard.partials.menus.tiktok-template')
+                    @include('dashboard.partials.menus.tiktok-template')
+                @endif
                 @include('dashboard.partials.menus.laporan-event')
                 @include('dashboard.partials.menus.ads-log')
                 @include('dashboard.partials.menus.budgeting')
@@ -246,10 +258,12 @@
                 @include('dashboard.partials.menus.market-intelijen-harga')
                 @include('dashboard.partials.menus.market-audit-harga')
                 @include('dashboard.partials.menus.market-eksternal')
+                @include('dashboard.partials.menus.market-ext-goodponsel')
+                @include('dashboard.partials.menus.market-ext-devstore')
+                @include('dashboard.partials.menus.market-ext-rumahgadget')
 @verbatim
             </main>
 @endverbatim
-        @include('dashboard.partials.shell.app-frame-bottom-nav')
 @verbatim
         </div>
     </div>

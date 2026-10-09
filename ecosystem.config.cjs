@@ -1,0 +1,42 @@
+module.exports = {
+  apps: [
+    {
+      name: 'marketing-laravel',
+      script: './scripts/launchers/start-laravel-server.command',
+      interpreter: 'bash',
+      cwd: __dirname,
+      autorestart: true,
+      max_restarts: 20,
+      restart_delay: 3000,
+      env: { PORT: '8090' },
+    },
+    {
+      name: 'marketing-queue',
+      script: './scripts/launchers/start-queue-worker.command',
+      interpreter: 'bash',
+      cwd: __dirname,
+      autorestart: true,
+      max_restarts: 20,
+      restart_delay: 3000,
+    },
+    {
+      name: 'marketing-cloudflared',
+      script: '/opt/homebrew/bin/cloudflared',
+      args: 'tunnel --url http://127.0.0.1:8090 --logfile ./storage/logs/cloudflared-marketing.log',
+      interpreter: 'none',
+      cwd: __dirname,
+      autorestart: true,
+      max_restarts: 20,
+      restart_delay: 5000,
+    },
+    {
+      name: 'marketing-worker-origin-sync',
+      script: './scripts/launchers/sync-worker-origin.command',
+      interpreter: 'bash',
+      cwd: __dirname,
+      autorestart: true,
+      max_restarts: 20,
+      restart_delay: 5000,
+    },
+  ],
+};

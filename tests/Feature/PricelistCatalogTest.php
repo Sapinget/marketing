@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Support\DashboardAuth;
 use App\Support\PricelistSheetImporter;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class PricelistCatalogTest extends TestCase
@@ -40,6 +42,86 @@ CSV;
         ]);
     }
 
+    public function test_non_settings_managers_cannot_mutate_pricelist_or_catalog_templates(): void
+    {
+        $nonAdminRoles = [
+            DashboardAuth::ROLE_KASIR,
+            DashboardAuth::ROLE_OPERASIONAL,
+            DashboardAuth::ROLE_BRAND_AMBASADOR,
+            DashboardAuth::ROLE_TALENT,
+        ];
+
+        foreach ($nonAdminRoles as $role) {
+            $this->actingAsDashboardUser(['role' => $role]);
+
+            $this->postJson('/api/pricelist-products/sync')->assertForbidden();
+            $this->putJson('/api/pricelist-products/PL-1', ['is_active' => false])->assertForbidden();
+            $this->postJson('/api/apple-products/sync')->assertForbidden();
+            $this->postJson('/api/catalog-templates', ['name' => 'Blocked', 'format' => 'story'])->assertForbidden();
+            $this->putJson('/api/catalog-templates/CT-1', ['name' => 'Blocked', 'format' => 'story'])->assertForbidden();
+            $this->deleteJson('/api/catalog-templates/CT-1')->assertForbidden();
+            $this->post('/api/catalog-templates/CT-1/background')->assertForbidden();
+            $this->postJson('/api/catalog-templates/CT-1/thumbnail', ['thumbnail_data' => 'data:image/png;base64,eA=='])->assertForbidden();
+
+            $this->getJson('/api/pricelist-products')->assertOk();
+            $this->getJson('/api/apple-products')->assertOk();
+            $this->getJson('/api/catalog-templates')->assertOk();
+        }
+    }
+
+    public function test_settings_managers_can_mutate_pricelist_and_catalog_templates(): void
+    {
+        foreach ([DashboardAuth::ROLE_SUPER_ADMIN, DashboardAuth::ROLE_ADMIN] as $role) {
+            $this->actingAsDashboardUser(['role' => $role]);
+
+            $sourceId = 'PL-'.$role;
+            DB::table('pricelist_products')->insert([
+                'source_id' => $sourceId,
+                'source_sheet' => 'SAMSUNG',
+                'source_row' => $role === DashboardAuth::ROLE_SUPER_ADMIN ? 1 : 2,
+                'nama_produk' => 'Galaxy '.$role,
+                'is_active' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $this->putJson('/api/pricelist-products/'.$sourceId, ['is_active' => false])
+                ->assertOk()
+                ->assertJsonPath('data.is_active', 0);
+
+            $template = $this->postJson('/api/catalog-templates', ['name' => 'Allowed '.$role, 'format' => 'story'])
+                ->assertCreated()
+                ->json('data');
+
+            $this->putJson('/api/catalog-templates/'.$template['ID'], ['name' => 'Allowed Updated '.$role, 'format' => 'story'])
+                ->assertOk()
+                ->assertJsonPath('data.name', 'Allowed Updated '.$role);
+
+            $this->deleteJson('/api/catalog-templates/'.$template['ID'])
+                ->assertOk();
+        }
+    }
+
+    public function test_unauthenticated_requests_cannot_access_pricelist_or_catalog_routes(): void
+    {
+        auth()->logout();
+        session()->flush();
+
+        $this->getJson('/api/pricelist-products')->assertUnauthorized();
+        $this->postJson('/api/pricelist-products/sync')->assertUnauthorized();
+        $this->putJson('/api/pricelist-products/PL-1', ['is_active' => false])->assertUnauthorized();
+        $this->getJson('/api/apple-products')->assertUnauthorized();
+        $this->postJson('/api/apple-products/sync')->assertUnauthorized();
+        $this->getJson('/api/catalog-templates')->assertUnauthorized();
+        $this->getJson('/api/catalog-templates/background/test.png')->assertUnauthorized();
+        $this->getJson('/api/catalog-templates/thumbnail/test.png')->assertUnauthorized();
+        $this->postJson('/api/catalog-templates', ['name' => 'Blocked', 'format' => 'story'])->assertUnauthorized();
+        $this->putJson('/api/catalog-templates/CT-1', ['name' => 'Blocked', 'format' => 'story'])->assertUnauthorized();
+        $this->deleteJson('/api/catalog-templates/CT-1')->assertUnauthorized();
+        $this->post('/api/catalog-templates/CT-1/background')->assertUnauthorized();
+        $this->postJson('/api/catalog-templates/CT-1/thumbnail', ['thumbnail_data' => 'data:image/png;base64,eA=='])->assertUnauthorized();
+    }
+
     public function test_catalog_template_api_creates_template_and_uploads_background(): void
     {
         $this->actingAsDashboardUser();
@@ -47,9 +129,12 @@ CSV;
         $template = $this->postJson('/api/catalog-templates', [
             'name' => 'Story Android',
             'format' => 'story',
-            'layout_config' => ['x' => 80, 'y' => 520],
+            'output_mode' => 'katalog',
+            'layout_config' => ['x' => 80, 'y' => 520, 'cardColumns' => 4],
         ])->assertCreated()
             ->assertJsonPath('data.name', 'Story Android')
+            ->assertJsonPath('data.output_mode', 'katalog')
+            ->assertJsonPath('data.layout_config.cardColumns', 4)
             ->assertJsonPath('data.canvas_width', 1080)
             ->assertJsonPath('data.canvas_height', 1920)
             ->json('data');
@@ -58,6 +143,12 @@ CSV;
             'background' => UploadedFile::fake()->image('background.png', 1080, 1920),
         ])->assertOk()
             ->assertJsonPath('status', 'success');
+
+        $this->postJson('/api/catalog-templates/'.$template['ID'].'/thumbnail', [
+            'thumbnail_data' => 'data:image/png;base64,'.base64_encode('fake-png-content'),
+        ])->assertOk()
+            ->assertJsonPath('status', 'success')
+            ->assertJsonPath('data.thumbnail_url', fn ($val) => filled($val));
 
         $this->assertDatabaseHas('catalog_templates', [
             'source_id' => $template['ID'],

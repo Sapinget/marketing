@@ -47,7 +47,7 @@
                                 mode: 'web-proxy',
                                 user: payload && payload.authenticated ? payload.user || null : null,
                                 expired: payload?.expired === true,
-                                superseded: payload?.superseded === true,
+
                                 message: payload?.message || '',
                             }));
                         },
@@ -133,6 +133,8 @@
                         getUnboxingData() { return fetchJson_('/api/unboxing').then(r => r.data || []); },
                         getOrderanOnlineData() { return fetchJson_('/api/orderan-online').then(r => r.data || []); },
                         getUnitDitanyaData() { return fetchJson_('/api/unit-ditanya').then(r => r.data || []); },
+                        getServiceData() { return fetchJson_('/api/service').then(r => r.data || []); },
+                        getServiceClaimsData() { return fetchJson_('/api/service-claims').then(r => r.data || []); },
                         getClaimGaransiData() { return fetchJson_('/api/claim-garansi').then(r => r.data || []); },
                         getKeepBarangData() { return fetchJson_('/api/keep-barang').then(r => r.data || []); },
                         getPromoData() { return fetchJson_('/api/program-promo').then(r => r.data || []); },
@@ -161,6 +163,19 @@
                                 body: formData,
                             }).then(r => { if (!r.ok) return r.json().then(e => { throw e; }); return r.json(); });
                         },
+                        uploadCatalogThumbnail(dataUrl, id) {
+                            const cookie = document.cookie.split('; ').find((row) => row.startsWith('XSRF-TOKEN='));
+                            const token = cookie ? decodeURIComponent(cookie.split('=')[1]) : '';
+                            return fetch(resolveAppUrl(`/api/catalog-templates/${encodeURIComponent(id)}/thumbnail`), {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Accept': 'application/json',
+                                    ...(token ? { 'X-XSRF-TOKEN': token } : {}),
+                                },
+                                body: JSON.stringify({ thumbnail_data: dataUrl }),
+                            }).then(r => { if (!r.ok) return r.json().then(e => { throw e; }); return r.json(); });
+                        },
                         saveStory(data) {
                             const id = data.ID; const url = id ? `/api/story-schedules/${encodeURIComponent(id)}` : '/api/story-schedules';
                             return jsonApi(url, { method: id ? 'PUT' : 'POST', body: JSON.stringify(data) });
@@ -176,6 +191,17 @@
                         saveUnitDitanya(data) {
                             const id = data.ID; const url = id ? `/api/unit-ditanya/${encodeURIComponent(id)}` : '/api/unit-ditanya';
                             return jsonApi(url, { method: id ? 'PUT' : 'POST', body: JSON.stringify(data) });
+                        },
+                        saveService(data) {
+                            const id = data.ID; const url = id ? `/api/service/${encodeURIComponent(id)}` : '/api/service';
+                            return jsonApi(url, { method: id ? 'PUT' : 'POST', body: JSON.stringify(data) });
+                        },
+                        transferServiceClaim(serviceSourceId) {
+                            return jsonApi('/api/service-claims/transfer', { method: 'POST', body: JSON.stringify({ service_source_id: serviceSourceId }) });
+                        },
+                        saveServiceClaim(data) {
+                            const id = data.ID; const url = `/api/service-claims/${encodeURIComponent(id)}`;
+                            return jsonApi(url, { method: 'PUT', body: JSON.stringify(data) });
                         },
                         saveClaimGaransi(data) {
                             const id = data.ID; const url = id ? `/api/claim-garansi/${encodeURIComponent(id)}` : '/api/claim-garansi';
@@ -209,6 +235,7 @@
                         deleteUnboxing(id) { return jsonApi(`/api/unboxing/${encodeURIComponent(id)}`, { method: 'DELETE' }); },
                         deleteOrderanOnline(id) { return jsonApi(`/api/orderan-online/${encodeURIComponent(id)}`, { method: 'DELETE' }); },
                         deleteUnitDitanya(id) { return jsonApi(`/api/unit-ditanya/${encodeURIComponent(id)}`, { method: 'DELETE' }); },
+                        deleteService(id) { return jsonApi(`/api/service/${encodeURIComponent(id)}`, { method: 'DELETE' }); },
                         deleteClaimGaransi(id) { return jsonApi(`/api/claim-garansi/${encodeURIComponent(id)}`, { method: 'DELETE' }); },
                         deleteKeepBarang(id) { return jsonApi(`/api/keep-barang/${encodeURIComponent(id)}`, { method: 'DELETE' }); },
                         deletePromo(id) { return jsonApi(`/api/program-promo/${encodeURIComponent(id)}`, { method: 'DELETE' }); },

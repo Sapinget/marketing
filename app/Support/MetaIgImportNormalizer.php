@@ -136,6 +136,10 @@ class MetaIgImportNormalizer
             $normalized[$field] = $this->normalizeInteger($mapped[$field] ?? null, true);
         }
 
+        if ($dataset === 'feed' && $this->canonicalKeyMissingFromRow($row, 'views') && $normalized['views'] === 0 && $normalized['reach'] > 0) {
+            $normalized['views'] = $normalized['reach'];
+        }
+
         return $normalized;
     }
 
@@ -198,6 +202,17 @@ class MetaIgImportNormalizer
         }
 
         return false;
+    }
+
+    private function canonicalKeyMissingFromRow(array $row, string $targetKey): bool
+    {
+        foreach (array_keys($row) as $header) {
+            if ($this->canonicalKeyForHeader($header) === $targetKey) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private function readCsvRows(string $filePath): array

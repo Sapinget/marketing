@@ -144,14 +144,14 @@
                                         class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-danger"></i>
                                 </button>
                             </div>
-                            <div class="toolbar-actions">
-                                <button @click="openHargaKompetitorModal('create')"
-                                    class="primary-cta-button primary-cta-button--accent active:scale-95"><i
-                                        class="fa-solid fa-plus"></i> Tambah</button>
+                            <div class="toolbar-actions toolbar-actions--desktop-icon-only">
+<button @click="openHargaKompetitorModal('create')"
+                                     class="primary-cta-button primary-cta-button--accent primary-cta-button--icon-only active:scale-95"
+                                     aria-label="Tambah Harga Kompetitor"><i
+                                         class="fa-solid fa-plus"></i></button>
                                 <button @click="exportPriceComparisonToPDF"
-                                    class="primary-cta-button primary-cta-button--danger active:scale-95"><i
-                                        class="fa-solid fa-file-pdf"></i><span
-                                        class="ml-1">PDF</span></button>
+                                    class="primary-cta-button primary-cta-button--danger primary-cta-button--icon-only active:scale-95" aria-label="Export PDF"><i
+                                        class="fa-solid fa-file-pdf"></i></button>
                             </div>
                         </div>
                     </div>

@@ -44,7 +44,7 @@
                     return (items || []).filter((item) => item?.name !== '.DS_Store');
                 };
 
-                const imgRepoThumbUrl = (path) => '/api/img-repo/serve?path=' + encodeURIComponent(path);
+                const imgRepoThumbUrl = (path) => window.MarketingDashboardRuntimeHelpers.resolveAppUrl('/api/img-repo/serve?path=' + encodeURIComponent(path));
 
                 async function imgRepoBrowse(path = '') {
                     imgRepoLoading.value = true;
@@ -52,7 +52,7 @@
                     imgRepoSelected.value = null;
                     imgRepoRenameItem.value = null;
                     try {
-                        const res = await fetch('/api/img-repo/browse?path=' + encodeURIComponent(path));
+                        const res = await fetch(window.MarketingDashboardRuntimeHelpers.resolveAppUrl('/api/img-repo/browse?path=' + encodeURIComponent(path)));
                         if (!res.ok) throw new Error('HTTP ' + res.status);
                         const json = await res.json();
                         imgRepoPath.value  = json.path;
@@ -75,7 +75,7 @@
                         const fd = new FormData();
                         fd.append('path', imgRepoPath.value);
                         fd.append('name', name);
-                        const res = await fetch('/api/img-repo/mkdir', { method: 'POST', body: fd });
+                        const res = await fetch(window.MarketingDashboardRuntimeHelpers.resolveAppUrl('/api/img-repo/mkdir'), { method: 'POST', body: fd });
                         if (!res.ok) { const j = await res.json(); throw new Error(j.message || 'Error'); }
                         imgRepoMkdirOpen.value = false;
                         imgRepoMkdirName.value = '';
@@ -96,7 +96,7 @@
                         const fd = new FormData();
                         fd.append('path', item.path);
                         fd.append('name', name);
-                        const res = await fetch('/api/img-repo/rename', { method: 'POST', body: fd });
+                        const res = await fetch(window.MarketingDashboardRuntimeHelpers.resolveAppUrl('/api/img-repo/rename'), { method: 'POST', body: fd });
                         if (!res.ok) { const j = await res.json(); throw new Error(j.message || 'Error'); }
                         imgRepoRenameItem.value = null;
                         imgRepoRenameName.value = '';
@@ -112,7 +112,7 @@
                     if (!confirm('Hapus "' + item.name + '"?\nTidak bisa dibatalkan.')) return;
                     imgRepoBusy.value = true;
                     try {
-                        const res = await fetch('/api/img-repo/delete', {
+                        const res = await fetch(window.MarketingDashboardRuntimeHelpers.resolveAppUrl('/api/img-repo/delete'), {
                             method: 'DELETE',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ path: item.path }),
@@ -135,7 +135,7 @@
                         const fd = new FormData();
                         fd.append('path', imgRepoPath.value);
                         for (const f of files) fd.append('files[]', f);
-                        const res = await fetch('/api/img-repo/upload', { method: 'POST', body: fd });
+                        const res = await fetch(window.MarketingDashboardRuntimeHelpers.resolveAppUrl('/api/img-repo/upload'), { method: 'POST', body: fd });
                         if (!res.ok) { const j = await res.json(); throw new Error(j.message || 'Error'); }
                         event.target.value = '';
                         await imgRepoBrowse(imgRepoPath.value);

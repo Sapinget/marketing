@@ -113,10 +113,25 @@ $rowValue = static fn ($row, string $key) => isset($row->{$key}) ? $row->{$key} 
 $masterPlanValidate = function (array $payload): void {
     abort_if(blank($payload['Judul'] ?? null), 422, 'Judul wajib diisi.');
     abort_if(mb_strlen($payload['Judul'] ?? '') > 500, 422, 'Judul maksimal 500 karakter.');
-    abort_if(blank($payload['Editor'] ?? null), 422, 'Editor wajib diisi.');
     abort_if(mb_strlen($payload['Editor'] ?? '') > 200, 422, 'Editor maksimal 200 karakter.');
     abort_if(mb_strlen($payload['Talent'] ?? '') > 1000, 422, 'Talent maksimal 1000 karakter.');
 };
+
+$masterPlanValidationRules = [
+    'ID' => ['nullable'],
+    'Judul' => ['required', 'string', 'max:500'],
+    'Format_Konten' => ['nullable'],
+    'Platforms' => ['nullable'],
+    'Colab' => ['nullable'],
+    'Editor' => ['nullable', 'string', 'max:200'],
+    'Talent' => ['nullable', 'string', 'max:1000'],
+    'Skrip' => ['nullable'],
+    'Caption' => ['nullable'],
+    'Status' => ['nullable'],
+    'Tanggal_Rencana' => ['nullable', 'date_format:Y-m-d'],
+    'Distribution_Meta' => ['nullable'],
+    'Link_Drive' => ['nullable'],
+];
 
 $masterPlanPayload = fn (array $payload, ?string $sourceId = null) => [
     'source_id' => $sourceId ?: (filled($payload['ID'] ?? null) ? (string) $payload['ID'] : 'master-'.now()->format('YmdHis').'-'.substr(md5((string) microtime(true)), 0, 6)),
@@ -255,6 +270,54 @@ $analyticsResponse = fn ($row) => [
     'Shares' => $row->shares,
 ];
 
+$distributionValidationRules = [
+    'ID' => ['nullable', 'string', 'max:100'],
+    'Master_ID' => ['required', 'string', 'max:100'],
+    'Judul' => ['nullable', 'string', 'max:500'],
+    'Platform' => ['required', 'string', 'max:100'],
+    'Tanggal_Publish' => ['nullable', 'date_format:Y-m-d'],
+    'Link' => ['nullable', 'string', 'max:2000'],
+    'Type' => ['nullable', 'string', 'max:100'],
+];
+$analyticsValidationRules = [
+    'ID' => ['nullable'],
+    'Master_ID' => ['required', 'string', 'max:100'],
+    'Judul' => ['nullable', 'string', 'max:500'],
+    'Platform' => ['required', 'string', 'max:100'],
+    'ID_Post' => ['nullable', 'string', 'max:255'],
+    'Tanggal_Publish' => ['nullable', 'date_format:Y-m-d'],
+    'Views' => ['nullable', 'integer', 'min:0'],
+    'Likes' => ['nullable', 'integer', 'min:0'],
+    'Comments' => ['nullable', 'integer', 'min:0'],
+    'Shares' => ['nullable', 'integer', 'min:0'],
+];
+$lpjkValidationRules = [
+    'ID' => ['nullable', 'string', 'max:100'],
+    'Nama_Event' => ['required', 'string', 'max:500'],
+    'Tanggal' => ['nullable', 'date_format:Y-m-d'],
+    'Budget_Rencana' => ['nullable', 'integer', 'min:0'],
+    'Realisasi_Biaya' => ['nullable', 'integer', 'min:0'],
+    'Status' => ['nullable', 'string', 'max:100'],
+    'Keterangan' => ['nullable', 'string', 'max:5000'],
+];
+$lpjkDetailValidationRules = [
+    'ID' => ['nullable', 'string', 'max:100'],
+    'Master_ID' => ['required', 'string', 'max:100'],
+    'Kategori' => ['nullable', 'string', 'max:255'],
+    'Nama_Pengeluaran' => ['nullable', 'string', 'max:500'],
+    'Satuan' => ['nullable', 'string', 'max:100'],
+    'Jumlah' => ['nullable', 'integer', 'min:1'],
+    'Total' => ['nullable', 'integer', 'min:0'],
+    'Bukti' => ['nullable', 'string', 'max:2000'],
+];
+$configPayload = static function (Request $request): array {
+    $payload = $request->validate(['*' => ['nullable']]);
+    abort_if(array_is_list($payload), 422, 'Konfigurasi harus berupa objek.');
+    abort_if(strlen((string) json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)) > 65536, 422, 'Konfigurasi terlalu besar.');
+
+    return $payload;
+};
+
 // Print-job: store (POST) + serve (GET) for browser-native popup printing.
 // Single-use random token is the access control for GET.
 Route::get('/print-job/{token}', function (string $token) {
@@ -268,6 +331,34 @@ Route::get('/print-job/{token}', function (string $token) {
         return response('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Print Tidak Ditemukan</title></head><body style="font-family:Arial,sans-serif;padding:40px;text-align:center"><p>Dokumen print tidak ditemukan atau sudah kedaluwarsa. Silakan coba cetak lagi.</p></body></html>', 404)
             ->header('Content-Type', 'text/html; charset=UTF-8');
     }
+
+    $autoPrintScript = <<<'HTML'
+<script>
+(() => {
+    const waitForAssets = () => {
+        const fontsReady = document.fonts?.ready?.catch(() => undefined) ?? Promise.resolve();
+        const imagePromises = Array.from(document.images ?? []).map((image) => image.complete
+            ? Promise.resolve()
+            : new Promise((resolve) => {
+                image.addEventListener('load', resolve, { once: true });
+                image.addEventListener('error', resolve, { once: true });
+            })
+        );
+
+        return Promise.all([fontsReady, Promise.all(imagePromises)]);
+    };
+
+    const print = () => waitForAssets().finally(() => setTimeout(() => window.print(), 150));
+    document.readyState === 'complete'
+        ? print()
+        : window.addEventListener('load', print, { once: true });
+    window.addEventListener('afterprint', () => window.close(), { once: true });
+})();
+</script>
+HTML;
+    $html = str_contains($html, '</body>')
+        ? str_replace('</body>', $autoPrintScript.'</body>', $html)
+        : $html.$autoPrintScript;
 
     // Do NOT forget on first GET: the popup load itself is one GET, and a reload/refresh
     // would otherwise 404 ("Print Tidak Ditemukan"). The 5-minute cache TTL handles cleanup.
@@ -304,7 +395,7 @@ Route::get('/api/auth/avatar/{filename}', function (string $filename) {
     VerifyCsrfToken::class,
     StartSession::class,
     ShareErrorsFromSession::class,
-]);
+])->middleware('throttle:60,1');
 
 // POST /print-job - browser-native print flow submits final HTML here.
 Route::post('/print-job', function () {
@@ -315,9 +406,9 @@ Route::post('/print-job', function () {
     if (strlen($html) > 512000) {
         return response()->json(['error' => 'HTML payload too large (max 500KB)'], 413);
     }
-    $sanitized = strip_tags($html, '<div><span><p><br><hr><table><thead><tbody><tr><th><td><h1><h2><h3><h4><h5><h6><ul><ol><li><img><a><strong><em><b><i><u><s><pre><code><blockquote><section><article><header><footer><main><aside><figure><figcaption><style><script><link><meta><title>');
+    $sanitized = strip_tags($html, '<div><span><p><br><hr><table><thead><tbody><tr><th><td><h1><h2><h3><h4><h5><h6><ul><ol><li><img><a><strong><em><b><i><u><s><pre><code><blockquote><section><article><header><footer><main><aside><figure><figcaption><style><link><meta><title>');
     $sanitized = preg_replace('/<([a-z]+[a-z0-9]*)\s[^>]*?(on\w+)=["\'][^"\']*["\']/i', '<$1', $sanitized);
-    $sanitized = preg_replace('/<script\b[^>]*>/i', '<script>', $sanitized);
+    $sanitized = preg_replace('/href=["\']\s*javascript:[^"\']*["\']/i', '', $sanitized);
     $token = bin2hex(random_bytes(16));
     cache()->put('ppp_print_job_'.$token, $sanitized, now()->addMinutes(5));
 
@@ -378,7 +469,7 @@ Route::post('/api/auth/logout', function (DashboardAuth $dashboardAuth) {
     return response()->json([
         'status' => 'success',
     ]);
-});
+})->middleware(['dashboard.auth', 'throttle:10,1']);
 
 Route::prefix('__db')->group(function (): void {
     $schema = Schema::connection(DB::getDefaultConnection());
@@ -471,11 +562,12 @@ Route::prefix('__db')->group(function (): void {
     });
 });
 
-Route::any('/8090/{path?}', function (MarketingDashboardShell $dashboardShell, ?string $path = null) {
+Route::match(['GET', 'HEAD'], '/8090/{path?}', function (MarketingDashboardShell $dashboardShell, ?string $path = null) {
     $publicBaseUrl = request()->getSchemeAndHttpHost().'/8090';
     URL::forceRootUrl($publicBaseUrl);
 
     $normalizedPath = trim((string) $path, '/');
+    abort_if(str_contains(rawurldecode($normalizedPath), '..'), 404);
 
     if ($normalizedPath === '') {
         return response()
@@ -486,8 +578,10 @@ Route::any('/8090/{path?}', function (MarketingDashboardShell $dashboardShell, ?
     }
 
     $publicFile = public_path($normalizedPath);
-    if (is_file($publicFile)) {
-        $extension = strtolower(pathinfo($publicFile, PATHINFO_EXTENSION));
+    $realPublic = realpath(public_path());
+    $realFile = realpath($publicFile);
+    if ($realFile && str_starts_with($realFile, $realPublic.DIRECTORY_SEPARATOR) && is_file($realFile)) {
+        $extension = strtolower(pathinfo($realFile, PATHINFO_EXTENSION));
         $contentType = match ($extension) {
             'css' => 'text/css; charset=UTF-8',
             'js', 'mjs' => 'text/javascript; charset=UTF-8',
@@ -499,10 +593,10 @@ Route::any('/8090/{path?}', function (MarketingDashboardShell $dashboardShell, ?
             'ico' => 'image/x-icon',
             'woff' => 'font/woff',
             'woff2' => 'font/woff2',
-            default => mime_content_type($publicFile) ?: 'application/octet-stream',
+            default => mime_content_type($realFile) ?: 'application/octet-stream',
         };
 
-        return response()->file($publicFile, ['Content-Type' => $contentType]);
+        return response()->file($realFile, ['Content-Type' => $contentType]);
     }
 
     $targetPath = '/'.$normalizedPath;
@@ -529,8 +623,15 @@ Route::any('/8090/{path?}', function (MarketingDashboardShell $dashboardShell, ?
     return app(Kernel::class)->handle($subRequest);
 })->where('path', '.*');
 
-Route::get('/', function (MarketingDashboardShell $dashboardShell) {
-    $backendUrl = rtrim(url('/'), '/');
+$dashboardBackendUrl = static function (): string {
+    $host = request()->header('X-Forwarded-Host') ?: request()->getHost();
+    $protocol = request()->header('X-Forwarded-Proto') ?: request()->getScheme();
+
+    return rtrim($protocol.'://'.$host, '/');
+};
+
+Route::get('/', function (MarketingDashboardShell $dashboardShell) use ($dashboardBackendUrl) {
+    $backendUrl = $dashboardBackendUrl();
 
     // No-store: always serve the freshest dashboard frontend so browser caching
     // can't keep stale print/export code after a deploy.
@@ -545,21 +646,167 @@ Route::get('/design-system', function () {
     return response()->view('reference.design-system');
 });
 
+Route::get('/promo', function (Request $request) {
+    $promos = Schema::hasTable('program_promo')
+        ? DB::table('program_promo')
+            ->select(['kategori', 'program', 'warna', 'harga', 'periode', 'rules', 'benefit'])
+            ->orderByDesc('created_at')
+            ->get()
+        : collect();
+    $categories = $promos
+        ->pluck('kategori')
+        ->filter(fn ($category) => filled($category))
+        ->unique()
+        ->values();
+    $selectedCategory = trim((string) $request->query('kategori', ''));
+
+    if ($selectedCategory !== '' && $categories->contains($selectedCategory)) {
+        $promos = $promos->where('kategori', $selectedCategory)->values();
+    } else {
+        $selectedCategory = '';
+    }
+
+    $pamfletCategoryRows = Schema::hasTable('promo_pamflet_categories')
+        ? DB::table('promo_pamflet_categories')->orderBy('nama', 'asc')->pluck('nama')->filter(fn ($c) => filled($c))
+        : collect();
+    $pamflets = Schema::hasTable('promo_pamflets')
+        ? DB::table('promo_pamflets')
+            ->select(['id', 'source_id', 'nama', 'kategori', 'deskripsi', 'file_path', 'created_at'])
+            ->orderByDesc('created_at')
+            ->get()
+        : collect();
+    $pamfletCategories = $pamfletCategoryRows
+        ->merge($pamflets->pluck('kategori')->filter(fn ($c) => filled($c)))
+        ->unique()
+        ->sort()
+        ->values();
+    $selectedPamfletCategory = trim((string) $request->query('pamflet_kategori', ''));
+
+    if ($selectedPamfletCategory !== '' && $pamfletCategories->contains($selectedPamfletCategory)) {
+        $pamflets = $pamflets->where('kategori', $selectedPamfletCategory)->values();
+    } else {
+        $selectedPamfletCategory = '';
+    }
+
+    $activeTab = $request->query('tab') === 'pamflet' ? 'pamflet' : 'program';
+
+    return response()->view('promo.index', compact(
+        'categories',
+        'promos',
+        'selectedCategory',
+        'pamflets',
+        'pamfletCategories',
+        'selectedPamfletCategory',
+        'activeTab'
+    ));
+})->name('promo.index');
+
+Route::get('/katalog/android', function (MarketingDashboardShell $dashboardShell) use ($dashboardBackendUrl) {
+    return response()->view('dashboard.pages.katalog.pricelist', array_merge(
+        $dashboardShell->build($dashboardBackendUrl()),
+        [
+            'activeTab' => 'pricelist_katalog',
+            'dedicatedMenuView' => 'dashboard.partials.menus.pricelist-katalog',
+        ]
+    ))->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+})->name('dashboard.katalog.pricelist');
+
+Route::get('/katalog/apple', function (MarketingDashboardShell $dashboardShell) use ($dashboardBackendUrl) {
+    return response()->view('dashboard.pages.katalog.apple', array_merge(
+        $dashboardShell->build($dashboardBackendUrl()),
+        [
+            'activeTab' => 'apple_katalog',
+            'dedicatedMenuView' => 'dashboard.partials.menus.apple-katalog',
+        ]
+    ))->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+})->name('dashboard.katalog.apple');
+
+Route::get('/katalog/template-background', function (MarketingDashboardShell $dashboardShell) use ($dashboardBackendUrl) {
+    return response()->view('dashboard.pages.katalog.template-background', array_merge(
+        $dashboardShell->build($dashboardBackendUrl()),
+        [
+            'activeTab' => 'template_background',
+            'dedicatedMenuView' => 'dashboard.partials.menus.template-background',
+        ]
+    ))->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+})->name('dashboard.katalog.template-background');
+
+Route::get('/repository-gambar', function (MarketingDashboardShell $dashboardShell) {
+    return response()->view('dashboard.pages.katalog.img-repo', array_merge(
+        $dashboardShell->build(rtrim(url('/'), '/')),
+        [
+            'activeTab' => 'img_repo',
+            'dedicatedMenuView' => 'dashboard.partials.menus.img-repo',
+        ]
+    ))->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+})->name('dashboard.img-repo');
+
+Route::get('/ecommerce/tiktok-template', function (MarketingDashboardShell $dashboardShell) {
+    return response()->view('dashboard.pages.ecommerce.tiktok-template', array_merge(
+        $dashboardShell->build(rtrim(url('/'), '/')),
+        [
+            'activeTab' => 'tiktok_template',
+            'dedicatedMenuView' => 'dashboard.partials.menus.tiktok-template',
+        ]
+    ))->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+})->name('dashboard.ecommerce.tiktok-template');
+
+Route::get('/inventory/asset-vendor', function (MarketingDashboardShell $dashboardShell) {
+    return response()->view('dashboard.pages.katalog.asset-vendor', array_merge(
+        $dashboardShell->build(rtrim(url('/'), '/')),
+        [
+            'activeTab' => 'asset_vendor_inventory',
+            'dedicatedMenuView' => 'dashboard.partials.menus.asset-vendor-inventory',
+        ]
+    ))->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+})->name('dashboard.inventory.asset-vendor');
+
+Route::get('/promo-pamflet', function (MarketingDashboardShell $dashboardShell) use ($dashboardBackendUrl) {
+    return response()->view('dashboard.pages.promo-pamflet', array_merge(
+        $dashboardShell->build($dashboardBackendUrl()),
+        [
+            'activeTab' => 'promo_pamflet',
+            'dedicatedMenuView' => 'dashboard.partials.menus.promo-pamflet',
+        ]
+    ))->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+})->name('dashboard.promo-pamflet');
+
+Route::get('/unit_ditanya', function (MarketingDashboardShell $dashboardShell) use ($dashboardBackendUrl) {
+    return response()->view('dashboard.index', array_merge(
+        $dashboardShell->build($dashboardBackendUrl()),
+        ['activeTab' => 'unit_ditanya']
+    ))->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+})->name('dashboard.unit-ditanya');
+
+Route::get('/api/promo-pamflets/file/{filename}', function (string $filename) {
+    abort_unless(preg_match('/^[A-Za-z0-9._-]+$/', $filename) === 1, 404);
+    $path = storage_path('app/public/promo-pamflets/'.$filename);
+    abort_unless(File::exists($path), 404);
+
+    return response()->file($path, ['Cache-Control' => 'public, max-age=86400']);
+});
+
 Route::middleware('dashboard.auth')->group(function () use (
 
     $actorLabel,
     $actorUserId,
     $analyticsPayload,
     $analyticsResponse,
+    $analyticsValidationRules,
+    $configPayload,
     $dedupeNamaStockRows,
     $distributionPayload,
     $distributionResponse,
+    $distributionValidationRules,
+    $lpjkDetailValidationRules,
+    $lpjkValidationRules,
     $logCrudActivity,
     $requireLpjkIdBySourceId,
     $masterPlanPayload,
     $requireMasterPlanIdBySourceId,
     $masterPlanResponse,
     $masterPlanValidate,
+    $masterPlanValidationRules,
     $nullableDate,
     $rowValue,
     $syncFromMetaIg
@@ -594,6 +841,12 @@ Route::middleware('dashboard.auth')->group(function () use (
         abort_unless($user instanceof User, 401);
         abort_unless(app(DashboardAuth::class)->canImportAnalytics($user), 403, 'Forbidden');
     };
+    $assertDomainManagementAccess = static function (): void {
+        $user = auth()->user();
+
+        abort_unless($user instanceof User, 401);
+        abort_unless(app(DashboardAuth::class)->canAccessSensitiveLogs($user), 403, 'Forbidden');
+    };
 
     Route::post('/api/auth/heartbeat', function (DashboardAuth $dashboardAuth) {
         $user = auth()->user();
@@ -605,7 +858,7 @@ Route::middleware('dashboard.auth')->group(function () use (
             'status' => 'success',
             'user' => $dashboardAuth->userPayload($updatedUser),
         ]);
-    });
+    })->middleware('throttle:60,1');
 
     Route::get('/api/chat/users', function (DashboardAuth $dashboardAuth) {
         $user = auth()->user();
@@ -739,7 +992,8 @@ Route::middleware('dashboard.auth')->group(function () use (
         $receiver = User::query()->findOrFail((int) $payload['receiver_id']);
         abort_if($authUser->is($receiver), 422, 'Tidak bisa chat ke akun sendiri.');
 
-        $message = trim(strip_tags((string) $payload['message']));
+        $message = preg_replace('/<(script|style)\b[^>]*>.*?<\/\1>/is', '', (string) $payload['message']);
+        $message = trim(strip_tags($message));
         abort_if($message === '', 422, 'Pesan wajib diisi.');
 
         $chatMessage = ChatMessage::query()->create([
@@ -803,6 +1057,7 @@ Route::middleware('dashboard.auth')->group(function () use (
     Route::get('/api/chat/typing/{user}', function (User $user) {
         $authUser = auth()->user();
         abort_unless($authUser instanceof User, 401);
+        abort_if($authUser->is($user), 422);
 
         $isTyping = cache()->get('chat_typing_'.$authUser->getKey().'_from_'.$user->getKey(), false);
 
@@ -815,7 +1070,7 @@ Route::middleware('dashboard.auth')->group(function () use (
         return response()->json([
             'data' => $dashboardAuth->listUsers(),
         ]);
-    });
+    })->middleware('throttle:30,1');
 
     Route::post('/api/auth/users', function (DashboardAuth $dashboardAuth) use ($assertUserManagementAccess, $logCrudActivity) {
         $assertUserManagementAccess();
@@ -866,7 +1121,7 @@ Route::middleware('dashboard.auth')->group(function () use (
             'status' => 'success',
             'data' => $dashboardAuth->userPayload($user),
         ]);
-    });
+    })->middleware('throttle:10,1');
 
     Route::put('/api/auth/users/{user}', function (User $user, DashboardAuth $dashboardAuth) use ($assertUserManagementAccess, $logCrudActivity) {
         $assertUserManagementAccess();
@@ -912,7 +1167,7 @@ Route::middleware('dashboard.auth')->group(function () use (
             'status' => 'success',
             'data' => $dashboardAuth->userPayload($updatedUser),
         ]);
-    });
+    })->middleware('throttle:10,1');
 
     Route::delete('/api/auth/users/{user}', function (User $user, DashboardAuth $dashboardAuth) use ($assertUserManagementAccess, $logCrudActivity) {
         $assertUserManagementAccess();
@@ -937,30 +1192,35 @@ Route::middleware('dashboard.auth')->group(function () use (
         return response()->json([
             'status' => 'success',
         ]);
-    });
+    })->middleware('throttle:30,1');
 
     Route::put('/api/auth/profile', function (DashboardAuth $dashboardAuth) use ($logCrudActivity) {
         $payload = request()->validate([
             'nama' => ['required', 'string', 'max:255'],
         ]);
 
+        $name = trim(strip_tags((string) $payload['nama']));
+        abort_if($name === '', 422, 'Nama wajib diisi.');
+
         $user = auth()->user();
         abort_unless($user instanceof User, 401);
         $before = $user->only(['id', 'username', 'name', 'email', 'avatar']);
-        $updatedUser = $dashboardAuth->updateProfileName($user, $payload['nama']);
+        $updatedUser = $dashboardAuth->updateProfileName($user, $name);
         $logCrudActivity('users', 'update', (string) $updatedUser->username, $updatedUser->getKey(), $before, $updatedUser->only(['id', 'username', 'name', 'email', 'avatar']));
 
         return response()->json([
             'status' => 'success',
             'user' => $dashboardAuth->userPayload($updatedUser),
         ]);
-    });
+    })->middleware('throttle:30,1');
 
     Route::post('/api/auth/avatar', function (Request $request, DashboardAuth $dashboardAuth) use ($logCrudActivity) {
         $payload = $request->validate([
             'avatar' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
             'user_id' => ['nullable', 'integer', 'exists:users,id'],
         ]);
+
+        abort_unless(@getimagesize($payload['avatar']->getRealPath()) !== false, 422, 'File avatar harus berupa gambar valid.');
 
         $authUser = auth()->user();
         abort_unless($authUser instanceof User, 401);
@@ -999,13 +1259,23 @@ Route::middleware('dashboard.auth')->group(function () use (
             'status' => 'success',
             'user' => $dashboardAuth->userPayload($updatedUser),
         ]);
-    });
+    })->middleware('throttle:30,1');
 
     Route::put('/api/auth/pin', function (DashboardAuth $dashboardAuth) use ($logCrudActivity) {
         $payload = request()->validate([
             'old_pin' => ['required', 'string', 'max:100'],
             'new_pin' => ['required', 'string', 'min:6', 'max:100', 'confirmed'],
         ]);
+
+        abort_if(
+            str_contains((string) $payload['old_pin'], "\0") ||
+            trim((string) $payload['old_pin']) === '' ||
+            str_contains((string) $payload['new_pin'], "\0") ||
+            trim((string) $payload['new_pin']) === '' ||
+            strlen(trim((string) $payload['new_pin'])) < 6,
+            422,
+            'PIN tidak valid.'
+        );
 
         $user = auth()->user();
         abort_unless($user instanceof User, 401);
@@ -1028,7 +1298,7 @@ Route::middleware('dashboard.auth')->group(function () use (
         return response()->json([
             'status' => 'success',
         ]);
-    });
+    })->middleware('throttle:15,1');
 
     Route::get('/api/activity-logs', function () use ($assertSensitiveLogAccess) {
         $assertSensitiveLogAccess();
@@ -1070,6 +1340,39 @@ Route::middleware('dashboard.auth')->group(function () use (
         return response()->json(['data' => $rows]);
     });
 
+    Route::post('/api/menu-visits', function (Request $request) use ($actorUserId, $actorLabel) {
+        $tabKey = trim((string) $request->input('tab_key', ''));
+        abort_if($tabKey === '' || mb_strlen($tabKey) > 100, 422, 'tab_key tidak valid.');
+
+        DB::table('menu_visits')->insert([
+            'user_id' => $actorUserId(),
+            'actor_label' => $actorLabel(),
+            'tab_key' => $tabKey,
+            'created_at' => now(),
+        ]);
+
+        return response()->json(['status' => 'ok']);
+    })->middleware('throttle:120,1');
+
+    Route::get('/api/menu-visits/stats', function () use ($assertSensitiveLogAccess) {
+        $assertSensitiveLogAccess();
+
+        $days = (int) request()->query('days', 30);
+        $days = $days > 0 && $days <= 365 ? $days : 30;
+
+        $rows = DB::table('menu_visits')
+            ->where('created_at', '>=', now()->subDays($days))
+            ->select('tab_key', DB::raw('COUNT(*) as total_visits'))
+            ->groupBy('tab_key')
+            ->orderByDesc('total_visits')
+            ->get();
+
+        return response()->json([
+            'range_days' => $days,
+            'data' => $rows,
+        ]);
+    });
+
     Route::get('/api/master-plans', function () use ($rowValue) {
         $rows = DB::table('master_plans')
             ->orderByDesc('tanggal_rencana')
@@ -1097,8 +1400,9 @@ Route::middleware('dashboard.auth')->group(function () use (
         return response()->json(['data' => $rows]);
     });
 
-    Route::post('/api/master-plans', function () use ($actorLabel, $actorUserId, $logCrudActivity, $masterPlanPayload, $masterPlanResponse, $masterPlanValidate) {
-        $payload = request()->all();
+    Route::post('/api/master-plans', function () use ($assertDomainManagementAccess, $actorLabel, $actorUserId, $logCrudActivity, $masterPlanPayload, $masterPlanResponse, $masterPlanValidate, $masterPlanValidationRules) {
+        $assertDomainManagementAccess();
+        $payload = request()->validate($masterPlanValidationRules);
         $masterPlanValidate($payload);
         $row = $masterPlanPayload($payload);
         $row['created_at'] = now();
@@ -1116,10 +1420,11 @@ Route::middleware('dashboard.auth')->group(function () use (
         return response()->json(['status' => 'success', 'data' => $masterPlanResponse($stored)], 201);
     });
 
-    Route::put('/api/master-plans/{sourceId}', function (string $sourceId) use ($actorLabel, $actorUserId, $logCrudActivity, $masterPlanPayload, $masterPlanResponse, $masterPlanValidate) {
+    Route::put('/api/master-plans/{sourceId}', function (string $sourceId) use ($assertDomainManagementAccess, $actorLabel, $actorUserId, $logCrudActivity, $masterPlanPayload, $masterPlanResponse, $masterPlanValidate, $masterPlanValidationRules) {
+        $assertDomainManagementAccess();
         abort_unless(DB::table('master_plans')->where('source_id', $sourceId)->exists(), 404);
         $before = DB::table('master_plans')->where('source_id', $sourceId)->first();
-        $payload = request()->all();
+        $payload = request()->validate($masterPlanValidationRules);
         $masterPlanValidate($payload);
 
         $row = $masterPlanPayload($payload, $sourceId);
@@ -1135,7 +1440,8 @@ Route::middleware('dashboard.auth')->group(function () use (
         return response()->json(['status' => 'success', 'data' => $masterPlanResponse($stored)]);
     });
 
-    Route::delete('/api/master-plans/{sourceId}', function (string $sourceId) use ($logCrudActivity) {
+    Route::delete('/api/master-plans/{sourceId}', function (string $sourceId) use ($assertDomainManagementAccess, $logCrudActivity) {
+        $assertDomainManagementAccess();
         abort_unless(DB::table('master_plans')->where('source_id', $sourceId)->exists(), 404);
         $stored = DB::table('master_plans')->where('source_id', $sourceId)->first();
 
@@ -1244,7 +1550,8 @@ Route::middleware('dashboard.auth')->group(function () use (
         return response()->json(['data' => $rows]);
     });
 
-    Route::post('/api/google-sheet-claim/sync', function () {
+    Route::post('/api/google-sheet-claim/sync', function () use ($assertRawSheetManagementAccess) {
+        $assertRawSheetManagementAccess();
         set_time_limit(180);
         $spreadsheetId = trim((string) env('MARKETING_GOOGLE_SHEET_ID', ''));
         $exitCode = Artisan::call('marketing:sync-google-sheet', [
@@ -1303,8 +1610,19 @@ Route::middleware('dashboard.auth')->group(function () use (
         $assertRawSheetManagementAccess();
 
         $sheetName = urldecode($sheetName);
-        $rows = request()->all('data')['data'] ?? request()->all();
-        abort_unless(is_array($rows), 422, 'Data harus berupa array.');
+        $input = request()->all();
+        if (array_key_exists('data', $input)) {
+            $validated = request()->validate([
+                'data' => ['required', 'array', 'max:10000'],
+                'data.*' => ['array', 'max:100'],
+            ]);
+            $rows = $validated['data'];
+        } else {
+            $validated = request()->validate([
+                '*' => ['array', 'max:100'],
+            ]);
+            $rows = $validated;
+        }
         if ($sheetName === 'Nama_Stock') {
             $rows = $dedupeNamaStockRows($rows);
         }
@@ -1488,7 +1806,17 @@ Route::middleware('dashboard.auth')->group(function () use (
         abort_unless(in_array($dataset, ['story', 'feed'], true), 404);
 
         $directory = (string) request()->input('directory', base_path('export-meta'));
-        $result = app(MetaIgImportNormalizer::class)->loadImportRowsFromDirectory($directory, $dataset);
+        $importRoot = realpath(base_path('export-meta'));
+        $resolvedDirectory = realpath($directory);
+        abort_unless($importRoot !== false && $resolvedDirectory !== false, 422, 'Direktori import tidak valid.');
+        abort_unless(
+            $resolvedDirectory === $importRoot || str_starts_with($resolvedDirectory, $importRoot.DIRECTORY_SEPARATOR),
+            422,
+            'Direktori import harus berada di export-meta.',
+        );
+        abort_unless(is_dir($resolvedDirectory), 422, 'Direktori import tidak valid.');
+
+        $result = app(MetaIgImportNormalizer::class)->loadImportRowsFromDirectory($resolvedDirectory, $dataset);
         $rows = app(MetaIgImportNormalizer::class)->normalizeImportRows($result['rows'], $dataset);
         $overwrite = filter_var(request()->input('overwrite', false), FILTER_VALIDATE_BOOLEAN);
         $duplicates = $inspectMetaPostDuplicates($rows, $dataset);
@@ -1609,8 +1937,19 @@ Route::middleware('dashboard.auth')->group(function () use (
     Route::put('/api/settings', function () use ($assertSettingsManagementAccess, $logCrudActivity) {
         $assertSettingsManagementAccess();
 
-        $payload = request()->all();
-        $settings = is_array($payload['data'] ?? null) ? $payload['data'] : $payload;
+        $input = request()->all();
+        if (array_key_exists('data', $input)) {
+            $validated = request()->validate([
+                'data' => ['required', 'array', 'max:100'],
+                'data.*' => ['array', 'max:1000'],
+            ]);
+            $settings = $validated['data'];
+        } else {
+            $validated = request()->validate([
+                '*' => ['array', 'max:1000'],
+            ]);
+            $settings = $validated;
+        }
         $before = DB::table('marketing_settings')
             ->orderBy('key')
             ->get(['key', 'values'])
@@ -1661,8 +2000,9 @@ Route::middleware('dashboard.auth')->group(function () use (
         return response()->json(['data' => $rows]);
     });
 
-    Route::post('/api/distributions', function () use ($actorUserId, $distributionPayload, $distributionResponse, $logCrudActivity, $requireMasterPlanIdBySourceId) {
-        $row = $distributionPayload(request()->all());
+    Route::post('/api/distributions', function (Request $request) use ($assertDomainManagementAccess, $actorUserId, $distributionPayload, $distributionResponse, $logCrudActivity, $requireMasterPlanIdBySourceId, $distributionValidationRules) {
+        $assertDomainManagementAccess();
+        $row = $distributionPayload($request->validate($distributionValidationRules));
         abort_if(blank($row['master_id']) || blank($row['platform']), 422, 'Master_ID dan Platform wajib diisi.');
         $row['created_at'] = now();
         $row['master_plan_id'] = $requireMasterPlanIdBySourceId($row['master_id']);
@@ -1676,11 +2016,12 @@ Route::middleware('dashboard.auth')->group(function () use (
         return response()->json(['status' => 'success', 'data' => $distributionResponse($stored)], 201);
     });
 
-    Route::put('/api/distributions/{id}', function (int $id) use ($actorUserId, $distributionPayload, $distributionResponse, $logCrudActivity, $requireMasterPlanIdBySourceId) {
+    Route::put('/api/distributions/{id}', function (int $id, Request $request) use ($assertDomainManagementAccess, $actorUserId, $distributionPayload, $distributionResponse, $logCrudActivity, $requireMasterPlanIdBySourceId, $distributionValidationRules) {
+        $assertDomainManagementAccess();
         abort_unless(DB::table('distributions')->where('id', $id)->exists(), 404);
         $before = DB::table('distributions')->where('id', $id)->first();
 
-        $row = $distributionPayload(request()->all());
+        $row = $distributionPayload($request->validate($distributionValidationRules));
         abort_if(blank($row['master_id']) || blank($row['platform']), 422, 'Master_ID dan Platform wajib diisi.');
         $row['master_plan_id'] = $requireMasterPlanIdBySourceId($row['master_id']);
         $row['updated_by_user_id'] = $actorUserId();
@@ -1692,7 +2033,8 @@ Route::middleware('dashboard.auth')->group(function () use (
         return response()->json(['status' => 'success', 'data' => $distributionResponse($stored)]);
     });
 
-    Route::delete('/api/distributions/{id}', function (int $id) use ($logCrudActivity) {
+    Route::delete('/api/distributions/{id}', function (int $id) use ($assertDomainManagementAccess, $logCrudActivity) {
+        $assertDomainManagementAccess();
         abort_unless(DB::table('distributions')->where('id', $id)->exists(), 404);
         $stored = DB::table('distributions')->where('id', $id)->first();
 
@@ -1730,8 +2072,9 @@ Route::middleware('dashboard.auth')->group(function () use (
         return response()->json(['data' => $rows]);
     });
 
-    Route::post('/api/analytics', function () use ($actorUserId, $analyticsPayload, $analyticsResponse, $logCrudActivity, $requireMasterPlanIdBySourceId, $syncFromMetaIg) {
-        $row = $analyticsPayload(request()->all());
+    Route::post('/api/analytics', function (Request $request) use ($assertDomainManagementAccess, $actorUserId, $analyticsPayload, $analyticsResponse, $logCrudActivity, $requireMasterPlanIdBySourceId, $syncFromMetaIg, $analyticsValidationRules) {
+        $assertDomainManagementAccess();
+        $row = $analyticsPayload($request->validate($analyticsValidationRules));
         abort_if(blank($row['master_id']) || blank($row['platform']), 422, 'Master_ID dan Platform wajib diisi.');
         $row['created_at'] = now();
         $row['master_plan_id'] = $requireMasterPlanIdBySourceId($row['master_id']);
@@ -1746,11 +2089,12 @@ Route::middleware('dashboard.auth')->group(function () use (
         return response()->json(['status' => 'success', 'data' => $analyticsResponse($stored)], 201);
     });
 
-    Route::put('/api/analytics/{id}', function (int $id) use ($actorUserId, $analyticsPayload, $analyticsResponse, $logCrudActivity, $requireMasterPlanIdBySourceId, $syncFromMetaIg) {
+    Route::put('/api/analytics/{id}', function (int $id, Request $request) use ($assertDomainManagementAccess, $actorUserId, $analyticsPayload, $analyticsResponse, $logCrudActivity, $requireMasterPlanIdBySourceId, $syncFromMetaIg, $analyticsValidationRules) {
+        $assertDomainManagementAccess();
         abort_unless(DB::table('analytics')->where('id', $id)->exists(), 404);
         $before = DB::table('analytics')->where('id', $id)->first();
 
-        $row = $analyticsPayload(request()->all());
+        $row = $analyticsPayload($request->validate($analyticsValidationRules));
         abort_if(blank($row['master_id']) || blank($row['platform']), 422, 'Master_ID dan Platform wajib diisi.');
         $row['master_plan_id'] = $requireMasterPlanIdBySourceId($row['master_id']);
         $row['updated_by_user_id'] = $actorUserId();
@@ -1763,7 +2107,8 @@ Route::middleware('dashboard.auth')->group(function () use (
         return response()->json(['status' => 'success', 'data' => $analyticsResponse($stored)]);
     });
 
-    Route::delete('/api/analytics/{id}', function (int $id) use ($logCrudActivity) {
+    Route::delete('/api/analytics/{id}', function (int $id) use ($assertDomainManagementAccess, $logCrudActivity) {
+        $assertDomainManagementAccess();
         abort_unless(DB::table('analytics')->where('id', $id)->exists(), 404);
         $stored = DB::table('analytics')->where('id', $id)->first();
 
@@ -1790,7 +2135,8 @@ Route::middleware('dashboard.auth')->group(function () use (
         return response()->json(['data' => DB::table($table)->orderBy($orderBy, $dir)->get()->map($map)]);
     };
 
-    $genericUpsert = fn (string $table, callable $build) => function () use ($build, $logCrudActivity, $table) {
+    $genericUpsert = fn (string $table, callable $build) => function () use ($assertDomainManagementAccess, $build, $logCrudActivity, $table) {
+        $assertDomainManagementAccess();
         $payload = request()->all();
         $row = $build($payload);
         $row['created_at'] = now();
@@ -1801,7 +2147,8 @@ Route::middleware('dashboard.auth')->group(function () use (
         return response()->json(['status' => 'success', 'data' => $stored], 201);
     };
 
-    $genericUpdate = fn (string $table, callable $build) => function (string $sourceId) use ($build, $logCrudActivity, $table) {
+    $genericUpdate = fn (string $table, callable $build) => function (string $sourceId) use ($assertDomainManagementAccess, $build, $logCrudActivity, $table) {
+        $assertDomainManagementAccess();
         abort_unless(DB::table($table)->where('source_id', $sourceId)->exists(), 404);
         $before = DB::table($table)->where('source_id', $sourceId)->first();
         DB::table($table)->where('source_id', $sourceId)->update($build(request()->all(), $sourceId));
@@ -1811,7 +2158,8 @@ Route::middleware('dashboard.auth')->group(function () use (
         return response()->json(['status' => 'success', 'data' => $stored]);
     };
 
-    $genericDelete = fn (string $table) => function (string $sourceId) use ($logCrudActivity, $table) {
+    $genericDelete = fn (string $table) => function (string $sourceId) use ($assertDomainManagementAccess, $logCrudActivity, $table) {
+        $assertDomainManagementAccess();
         abort_unless(DB::table($table)->where('source_id', $sourceId)->exists(), 404);
         $stored = DB::table($table)->where('source_id', $sourceId)->first();
         DB::table($table)->where('source_id', $sourceId)->delete();
@@ -1843,8 +2191,11 @@ Route::middleware('dashboard.auth')->group(function () use (
             'ID' => $row->source_id,
             'name' => $row->name,
             'format' => $row->format,
+            'output_mode' => $row->output_mode,
             'background_path' => $row->background_path,
             'background_url' => filled($row->background_path) ? '/api/catalog-templates/background/'.rawurlencode((string) $row->background_path) : null,
+            'thumbnail_path' => $row->thumbnail_path,
+            'thumbnail_url' => filled($row->thumbnail_path) ? '/api/catalog-templates/thumbnail/'.rawurlencode((string) $row->thumbnail_path) : null,
             'canvas_width' => (int) $row->canvas_width,
             'canvas_height' => (int) $row->canvas_height,
             'layout_config' => $layoutConfig,
@@ -1965,6 +2316,210 @@ Route::middleware('dashboard.auth')->group(function () use (
         return ['kategori' => $p['Kategori'] ?? null, 'program' => $p['Program'] ?? null, 'warna' => $p['Warna'] ?? null, 'harga' => (int) ($p['Harga'] ?? 0), 'periode' => $p['Periode'] ?? null, 'rules' => $p['Rules'] ?? null, 'benefit' => $p['Benefit'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()];
     }));
     Route::delete('/api/program-promo/{sourceId}', $genericDelete('program_promo'));
+
+    // Promo Pamflet Categories
+    Route::get('/api/promo-pamflet-categories', function () {
+        return response()->json([
+            'data' => DB::table('promo_pamflet_categories')->orderBy('nama', 'asc')->get()
+        ]);
+    });
+
+    Route::post('/api/promo-pamflet-categories', function (Request $request) use ($assertDomainManagementAccess, $logCrudActivity, $makeSourceId) {
+        $assertDomainManagementAccess();
+        $payload = $request->validate([
+            'nama' => ['required', 'string', 'max:255'],
+        ]);
+        $sourceId = $makeSourceId('CAT-PAMFLET', null);
+        $row = [
+            'source_id' => $sourceId,
+            'nama' => trim($payload['nama']),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+        DB::table('promo_pamflet_categories')->insert($row);
+        $stored = DB::table('promo_pamflet_categories')->where('source_id', $sourceId)->first();
+        $logCrudActivity('promo_pamflet_categories', 'create', (string) $stored->source_id, is_numeric($stored->id ?? null) ? (int) $stored->id : null, null, (array) $stored);
+
+        return response()->json(['status' => 'success', 'data' => $stored], 201);
+    });
+
+    $updatePromoPamfletCategory = function (string $id, Request $request) use ($assertDomainManagementAccess, $logCrudActivity) {
+        $assertDomainManagementAccess();
+        $before = DB::table('promo_pamflet_categories')
+            ->where('source_id', $id)
+            ->orWhere('id', is_numeric($id) ? (int) $id : 0)
+            ->first();
+        abort_unless($before !== null, 404);
+        $payload = $request->validate([
+            'nama' => ['required', 'string', 'max:255'],
+        ]);
+        DB::table('promo_pamflet_categories')->where('id', $before->id)->update([
+            'nama' => trim($payload['nama']),
+            'updated_at' => now(),
+        ]);
+        $stored = DB::table('promo_pamflet_categories')->where('id', $before->id)->first();
+        $logCrudActivity('promo_pamflet_categories', 'update', (string) $stored->source_id, is_numeric($stored->id ?? null) ? (int) $stored->id : null, (array) $before, (array) $stored);
+
+        return response()->json(['status' => 'success', 'data' => $stored]);
+    };
+
+    Route::put('/api/promo-pamflet-categories/{id}', $updatePromoPamfletCategory);
+    Route::post('/api/promo-pamflet-categories/{id}', $updatePromoPamfletCategory);
+
+    Route::delete('/api/promo-pamflet-categories/{id}', function (string $id) use ($assertDomainManagementAccess, $logCrudActivity) {
+        $assertDomainManagementAccess();
+        $stored = DB::table('promo_pamflet_categories')
+            ->where('source_id', $id)
+            ->orWhere('id', is_numeric($id) ? (int) $id : 0)
+            ->first();
+        abort_unless($stored !== null, 404);
+        DB::table('promo_pamflet_categories')->where('id', $stored->id)->delete();
+        $logCrudActivity('promo_pamflet_categories', 'delete', (string) $stored->source_id, is_numeric($stored->id ?? null) ? (int) $stored->id : null, (array) $stored, null);
+
+        return response()->json(['status' => 'success']);
+    });
+
+    // Promo Pamflets
+    $promoPamfletPayload = static function ($row): array {
+        if ($row === null) {
+            return [];
+        }
+
+        $fileUrl = filled($row->file_path) ? '/api/promo-pamflets/file/'.rawurlencode($row->file_path) : null;
+
+        return [
+            'id' => $row->id ?? null,
+            'source_id' => $row->source_id,
+            'nama' => $row->nama,
+            'kategori' => $row->kategori,
+            'deskripsi' => $row->deskripsi,
+            'file_path' => $row->file_path,
+            'file_url' => $fileUrl,
+            'desain_url' => $fileUrl,
+            'desain' => $fileUrl,
+            'image_url' => $fileUrl,
+            'imported_at' => $row->imported_at ?? null,
+            'created_at' => $row->created_at ?? null,
+            'updated_at' => $row->updated_at ?? null,
+        ];
+    };
+
+    Route::get('/api/promo-pamflets', function () use ($promoPamfletPayload) {
+        return response()->json([
+            'data' => DB::table('promo_pamflets')->orderByDesc('created_at')->get()->map($promoPamfletPayload)
+        ]);
+    });
+
+    Route::post('/api/promo-pamflets', function (Request $request) use ($assertDomainManagementAccess, $logCrudActivity, $makeSourceId, $promoPamfletPayload) {
+        $assertDomainManagementAccess();
+        $payload = $request->validate([
+            'nama' => ['required', 'string', 'max:255'],
+            'kategori' => ['nullable', 'string', 'max:255'],
+            'deskripsi' => ['nullable', 'string'],
+            'desain' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
+        ]);
+
+        $sourceId = $makeSourceId('PAMFLET', null);
+        $extension = strtolower((string) $payload['desain']->getClientOriginalExtension() ?: $payload['desain']->guessExtension() ?: 'png');
+        $filename = 'pamflet-'.$sourceId.'-'.Str::lower(Str::random(12)).'.'.$extension;
+        $directory = storage_path('app/public/promo-pamflets');
+
+        if (! File::isDirectory($directory)) {
+            File::ensureDirectoryExists($directory);
+        }
+
+        $payload['desain']->move($directory, $filename);
+
+        $row = [
+            'source_id' => $sourceId,
+            'nama' => trim($payload['nama']),
+            'kategori' => filled($payload['kategori'] ?? null) ? trim($payload['kategori']) : null,
+            'deskripsi' => $payload['deskripsi'] ?? null,
+            'file_path' => $filename,
+            'imported_at' => now(),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ];
+
+        DB::table('promo_pamflets')->insert($row);
+        $stored = DB::table('promo_pamflets')->where('source_id', $sourceId)->first();
+        $logCrudActivity('promo_pamflets', 'create', (string) $stored->source_id, is_numeric($stored->id ?? null) ? (int) $stored->id : null, null, (array) $stored);
+
+        return response()->json(['status' => 'success', 'data' => $promoPamfletPayload($stored)], 201);
+    });
+
+    $updatePromoPamfletHandler = function (string $id, Request $request) use ($assertDomainManagementAccess, $logCrudActivity, $promoPamfletPayload) {
+        $assertDomainManagementAccess();
+        $before = DB::table('promo_pamflets')
+            ->where('source_id', $id)
+            ->orWhere('id', is_numeric($id) ? (int) $id : 0)
+            ->first();
+        abort_unless($before !== null, 404);
+        $payload = $request->validate([
+            'nama' => ['required', 'string', 'max:255'],
+            'kategori' => ['nullable', 'string', 'max:255'],
+            'deskripsi' => ['nullable', 'string'],
+            'desain' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:10240'],
+        ]);
+
+        $filename = $before->file_path;
+
+        if ($request->hasFile('desain')) {
+            $extension = strtolower((string) $payload['desain']->getClientOriginalExtension() ?: $payload['desain']->guessExtension() ?: 'png');
+            $filename = 'pamflet-'.$before->source_id.'-'.Str::lower(Str::random(12)).'.'.$extension;
+            $directory = storage_path('app/public/promo-pamflets');
+
+            if (! File::isDirectory($directory)) {
+                File::ensureDirectoryExists($directory);
+            }
+
+            $payload['desain']->move($directory, $filename);
+
+            if (filled($before->file_path)) {
+                $oldPath = $directory.DIRECTORY_SEPARATOR.$before->file_path;
+                if (File::exists($oldPath)) {
+                    File::delete($oldPath);
+                }
+            }
+        }
+
+        DB::table('promo_pamflets')->where('id', $before->id)->update([
+            'nama' => trim($payload['nama']),
+            'kategori' => filled($payload['kategori'] ?? null) ? trim($payload['kategori']) : null,
+            'deskripsi' => $payload['deskripsi'] ?? null,
+            'file_path' => $filename,
+            'updated_at' => now(),
+        ]);
+
+        $stored = DB::table('promo_pamflets')->where('id', $before->id)->first();
+        $logCrudActivity('promo_pamflets', 'update', (string) $stored->source_id, is_numeric($stored->id ?? null) ? (int) $stored->id : null, (array) $before, (array) $stored);
+
+        return response()->json(['status' => 'success', 'data' => $promoPamfletPayload($stored)]);
+    };
+
+    Route::post('/api/promo-pamflets/{id}', $updatePromoPamfletHandler);
+    Route::put('/api/promo-pamflets/{id}', $updatePromoPamfletHandler);
+
+    Route::delete('/api/promo-pamflets/{id}', function (string $id) use ($assertDomainManagementAccess, $logCrudActivity) {
+        $assertDomainManagementAccess();
+        $stored = DB::table('promo_pamflets')
+            ->where('source_id', $id)
+            ->orWhere('id', is_numeric($id) ? (int) $id : 0)
+            ->first();
+        abort_unless($stored !== null, 404);
+
+        if (filled($stored->file_path)) {
+            $path = storage_path('app/public/promo-pamflets/'.$stored->file_path);
+            if (File::exists($path)) {
+                File::delete($path);
+            }
+        }
+
+        DB::table('promo_pamflets')->where('id', $stored->id)->delete();
+        $logCrudActivity('promo_pamflets', 'delete', (string) $stored->source_id, is_numeric($stored->id ?? null) ? (int) $stored->id : null, (array) $stored, null);
+
+        return response()->json(['status' => 'success']);
+    });
 
     Route::get('/api/sell-out-targets', function () use ($fromDb) {
         return response()->json(['data' => DB::table('sell_out_targets')->orderByDesc('periode_start')->get()->map(fn ($r) => $fromDb($r, [
@@ -2716,6 +3271,113 @@ Route::middleware('dashboard.auth')->group(function () use (
 
     // Customer service tables
 
+    Route::get('/api/service', $genericList('services', fn ($row) => [
+        'ID' => $row->source_id,
+        'NO_SERVICE' => $row->no_service,
+        'TANGGAL' => $row->tanggal,
+        'NAMA_CUSTOMER' => $row->nama_customer,
+        'WA_CUSTOMER' => $row->wa_customer,
+        'TYPE_UNIT' => $row->type_unit,
+        'IMEI_SN' => $row->imei_sn,
+        'KERUSAKAN' => $row->kerusakan,
+        'STATUS' => $row->status,
+        'KETERANGAN' => $row->keterangan,
+        'TOTAL' => $row->total,
+        'HANDLE_BY' => $row->handle_by,
+    ]));
+    Route::post('/api/service', $genericUpsert('services', function (array $p) use ($encodePayload, $makeSourceId, $nullableDate) {
+        return ['source_id' => $makeSourceId('SVC', $p['ID'] ?? null), 'no_service' => $p['NO_SERVICE'] ?? null, 'tanggal' => $nullableDate($p['TANGGAL'] ?? null), 'nama_customer' => $p['NAMA_CUSTOMER'] ?? null, 'wa_customer' => $p['WA_CUSTOMER'] ?? null, 'type_unit' => $p['TYPE_UNIT'] ?? null, 'imei_sn' => $p['IMEI_SN'] ?? null, 'kerusakan' => $p['KERUSAKAN'] ?? null, 'status' => $p['STATUS'] ?? null, 'keterangan' => $p['KETERANGAN'] ?? null, 'total' => $p['TOTAL'] ?? null, 'handle_by' => $p['HANDLE_BY'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'updated_at' => now()];
+    }));
+    Route::put('/api/service/{sourceId}', $genericUpdate('services', function (array $p) use ($encodePayload, $nullableDate) {
+        return ['no_service' => $p['NO_SERVICE'] ?? null, 'tanggal' => $nullableDate($p['TANGGAL'] ?? null), 'nama_customer' => $p['NAMA_CUSTOMER'] ?? null, 'wa_customer' => $p['WA_CUSTOMER'] ?? null, 'type_unit' => $p['TYPE_UNIT'] ?? null, 'imei_sn' => $p['IMEI_SN'] ?? null, 'kerusakan' => $p['KERUSAKAN'] ?? null, 'status' => $p['STATUS'] ?? null, 'keterangan' => $p['KETERANGAN'] ?? null, 'total' => $p['TOTAL'] ?? null, 'handle_by' => $p['HANDLE_BY'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now()];
+    }));
+    Route::delete('/api/service/{sourceId}', $genericDelete('services'));
+
+    $serviceClaimPayload = function (array $payload) use ($encodePayload, $nullableDate): array {
+        return [
+            'no_transaksi' => $payload['NO_TRANSAKSI'] ?? null,
+            'seri' => $payload['SERI'] ?? null,
+            'model' => $payload['MODEL'] ?? null,
+            'lokasi_klaim' => $payload['LOKASI_KLAIM'] ?? null,
+            'tanggal_estimasi' => $nullableDate($payload['TANGGAL_ESTIMASI'] ?? null),
+            'tanggal_diambil' => $nullableDate($payload['TANGGAL_DIAMBIL'] ?? null),
+            'garansi' => $payload['GARANSI'] ?? null,
+            'keterangan_tambahan' => $payload['KETERANGAN'] ?? null,
+            'raw_payload' => $encodePayload($payload),
+            'updated_at' => now(),
+        ];
+    };
+    $serviceClaimValidationRules = [
+        'service_source_id' => ['nullable', 'string', 'max:255'],
+        'NO_TRANSAKSI' => ['nullable', 'string', 'max:255'],
+        'SERI' => ['nullable', 'string', 'max:255'],
+        'MODEL' => ['nullable', 'string', 'max:255'],
+        'LOKASI_KLAIM' => ['nullable', 'string', 'max:255'],
+        'TANGGAL_ESTIMASI' => ['nullable', 'date_format:Y-m-d'],
+        'TANGGAL_DIAMBIL' => ['nullable', 'date_format:Y-m-d'],
+        'GARANSI' => ['nullable', 'string', 'max:255'],
+        'KETERANGAN' => ['nullable', 'string', 'max:5000'],
+    ];
+    Route::get('/api/service-claims', function () {
+        return response()->json(['data' => DB::table('service_claims')
+            ->join('services', 'services.source_id', '=', 'service_claims.service_source_id')
+            ->orderByDesc('service_claims.updated_at')
+            ->get([
+                'service_claims.source_id as ID',
+                'service_claims.service_source_id',
+                'service_claims.no_transaksi as NO_TRANSAKSI',
+                'service_claims.seri as SERI',
+                'service_claims.model as MODEL',
+                'services.imei_sn as IMEI_SN',
+                'service_claims.lokasi_klaim as LOKASI_KLAIM',
+                'service_claims.tanggal_estimasi as TANGGAL_ESTIMASI',
+                'service_claims.tanggal_diambil as TANGGAL_DIAMBIL',
+                'service_claims.garansi as GARANSI',
+                'service_claims.keterangan_tambahan as KETERANGAN',
+                'services.no_service as NO_SERVICE',
+                'services.tanggal as TANGGAL_MASUK',
+                'services.nama_customer as NAMA_CUSTOMER',
+                'services.wa_customer as WA_CUSTOMER',
+                'services.type_unit as TIPE',
+                'services.imei_sn as SERVICE_IMEI_SN',
+                'services.kerusakan as KERUSAKAN',
+                'services.status as STATUS',
+            ])]);
+    });
+    Route::post('/api/service-claims/transfer', function (Request $request) use ($assertDomainManagementAccess, $makeSourceId, $serviceClaimPayload, $serviceClaimValidationRules) {
+        $assertDomainManagementAccess();
+        $payload = $request->validate($serviceClaimValidationRules);
+        $serviceSourceId = $payload['service_source_id'] ?? null;
+        abort_if(blank($serviceSourceId), 422, 'service_source_id wajib diisi.');
+        $service = DB::table('services')->where('source_id', $serviceSourceId)->first();
+        abort_unless($service, 404);
+        $stored = DB::table('service_claims')->where('service_source_id', $serviceSourceId)->first();
+        if ($stored !== null) {
+            return response()->json(['status' => 'success', 'transferred' => false, 'data' => $stored]);
+        }
+
+        $claim = array_merge($serviceClaimPayload($payload), ['source_id' => $makeSourceId('PSC', null), 'service_source_id' => $serviceSourceId, 'imported_at' => now(), 'created_at' => now()]);
+        DB::table('service_claims')->insert($claim);
+        $stored = DB::table('service_claims')->where('service_source_id', $serviceSourceId)->first();
+
+        return response()->json(['status' => 'success', 'transferred' => true, 'data' => $stored], 201);
+    });
+    Route::put('/api/service-claims/{sourceId}', function (string $sourceId, Request $request) use ($assertDomainManagementAccess, $serviceClaimPayload, $serviceClaimValidationRules) {
+        $assertDomainManagementAccess();
+        $payload = $request->validate($serviceClaimValidationRules);
+        abort_unless(DB::table('service_claims')->where('source_id', $sourceId)->exists(), 404);
+        DB::table('service_claims')->where('source_id', $sourceId)->update($serviceClaimPayload($payload));
+
+        return response()->json(['status' => 'success', 'data' => DB::table('service_claims')->where('source_id', $sourceId)->first()]);
+    });
+    Route::delete('/api/service-claims/{sourceId}', function (string $sourceId) use ($assertDomainManagementAccess) {
+        $assertDomainManagementAccess();
+        abort_unless(DB::table('service_claims')->where('source_id', $sourceId)->exists(), 404);
+        DB::table('service_claims')->where('source_id', $sourceId)->delete();
+
+        return response()->json(['status' => 'success']);
+    });
+
     Route::get('/api/orderan-online', function () use ($fromDb) {
         return response()->json(['data' => DB::table('orderan_online')->orderByDesc('tanggal')->get()->map(function ($r) use ($fromDb) {
             $p = json_decode($r->raw_payload ?? '{}', true) ?: [];
@@ -2828,8 +3490,9 @@ Route::middleware('dashboard.auth')->group(function () use (
             'Keterangan' => $r->keterangan,
         ]))]);
     });
-    Route::post('/api/lpjk', function () use ($actorUserId, $logCrudActivity, $makeSourceId, $encodePayload, $nullableDate) {
-        $p = request()->all();
+    Route::post('/api/lpjk', function (Request $request) use ($assertDomainManagementAccess, $actorUserId, $logCrudActivity, $makeSourceId, $encodePayload, $nullableDate, $lpjkValidationRules) {
+        $assertDomainManagementAccess();
+        $p = $request->validate($lpjkValidationRules);
         $row = ['source_id' => $makeSourceId('LPJK', $p['ID'] ?? null), 'nama_event' => $p['Nama_Event'] ?? null, 'tanggal' => $nullableDate($p['Tanggal'] ?? null), 'budget_rencana' => (int) ($p['Budget_Rencana'] ?? 0), 'realisasi_biaya' => (int) ($p['Realisasi_Biaya'] ?? 0), 'status' => $p['Status'] ?? null, 'keterangan' => $p['Keterangan'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'created_at' => now(), 'updated_at' => now(), 'created_by_user_id' => $actorUserId(), 'updated_by_user_id' => $actorUserId()];
         DB::table('lpjk')->insert($row);
         $stored = DB::table('lpjk')->where('source_id', $row['source_id'])->first();
@@ -2837,17 +3500,19 @@ Route::middleware('dashboard.auth')->group(function () use (
 
         return response()->json(['status' => 'success', 'data' => $stored], 201);
     });
-    Route::put('/api/lpjk/{sourceId}', function (string $sourceId) use ($actorUserId, $encodePayload, $logCrudActivity, $nullableDate) {
+    Route::put('/api/lpjk/{sourceId}', function (string $sourceId, Request $request) use ($assertDomainManagementAccess, $actorUserId, $encodePayload, $logCrudActivity, $nullableDate, $lpjkValidationRules) {
+        $assertDomainManagementAccess();
         abort_unless(DB::table('lpjk')->where('source_id', $sourceId)->exists(), 404);
         $before = DB::table('lpjk')->where('source_id', $sourceId)->first();
-        $p = request()->all();
+        $p = $request->validate($lpjkValidationRules);
         DB::table('lpjk')->where('source_id', $sourceId)->update(['nama_event' => $p['Nama_Event'] ?? null, 'tanggal' => $nullableDate($p['Tanggal'] ?? null), 'budget_rencana' => (int) ($p['Budget_Rencana'] ?? 0), 'realisasi_biaya' => (int) ($p['Realisasi_Biaya'] ?? 0), 'status' => $p['Status'] ?? null, 'keterangan' => $p['Keterangan'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now(), 'updated_by_user_id' => $actorUserId()]);
         $stored = DB::table('lpjk')->where('source_id', $sourceId)->first();
         $logCrudActivity('lpjk', 'update', $stored->source_id, (int) $stored->id, $before ? (array) $before : null, (array) $stored);
 
         return response()->json(['status' => 'success', 'data' => $stored]);
     });
-    Route::delete('/api/lpjk/{sourceId}', function (string $sourceId) use ($logCrudActivity) {
+    Route::delete('/api/lpjk/{sourceId}', function (string $sourceId) use ($assertDomainManagementAccess, $logCrudActivity) {
+        $assertDomainManagementAccess();
         abort_unless(DB::table('lpjk')->where('source_id', $sourceId)->exists(), 404);
         $stored = DB::table('lpjk')->where('source_id', $sourceId)->first();
         DB::table('lpjk_detail')->where(function ($query) use ($sourceId) {
@@ -2884,8 +3549,9 @@ Route::middleware('dashboard.auth')->group(function () use (
             'Bukti' => $r->bukti,
         ]))]);
     });
-    Route::post('/api/lpjk-detail', function () use ($actorUserId, $logCrudActivity, $requireLpjkIdBySourceId, $makeSourceId, $encodePayload) {
-        $p = request()->all();
+    Route::post('/api/lpjk-detail', function (Request $request) use ($assertDomainManagementAccess, $actorUserId, $logCrudActivity, $requireLpjkIdBySourceId, $makeSourceId, $encodePayload, $lpjkDetailValidationRules) {
+        $assertDomainManagementAccess();
+        $p = $request->validate($lpjkDetailValidationRules);
         $masterId = trim((string) ($p['Master_ID'] ?? ''));
         abort_if($masterId === '', 422, 'Master_ID wajib diisi.');
         $row = ['source_id' => $makeSourceId('LPJKD', $p['ID'] ?? null), 'master_id' => $masterId, 'lpjk_id' => $requireLpjkIdBySourceId($masterId), 'kategori' => $p['Kategori'] ?? null, 'nama_pengeluaran' => $p['Nama_Pengeluaran'] ?? null, 'satuan' => $p['Satuan'] ?? null, 'jumlah' => (int) ($p['Jumlah'] ?? 1), 'total' => (int) ($p['Total'] ?? 0), 'bukti' => $p['Bukti'] ?? null, 'raw_payload' => $encodePayload($p), 'imported_at' => now(), 'created_at' => now(), 'updated_at' => now(), 'created_by_user_id' => $actorUserId(), 'updated_by_user_id' => $actorUserId()];
@@ -2895,10 +3561,11 @@ Route::middleware('dashboard.auth')->group(function () use (
 
         return response()->json(['status' => 'success', 'data' => $stored], 201);
     });
-    Route::put('/api/lpjk-detail/{sourceId}', function (string $sourceId) use ($actorUserId, $encodePayload, $logCrudActivity, $requireLpjkIdBySourceId) {
+    Route::put('/api/lpjk-detail/{sourceId}', function (string $sourceId, Request $request) use ($assertDomainManagementAccess, $actorUserId, $encodePayload, $logCrudActivity, $requireLpjkIdBySourceId, $lpjkDetailValidationRules) {
+        $assertDomainManagementAccess();
         abort_unless(DB::table('lpjk_detail')->where('source_id', $sourceId)->exists(), 404);
         $before = DB::table('lpjk_detail')->where('source_id', $sourceId)->first();
-        $p = request()->all();
+        $p = $request->validate($lpjkDetailValidationRules);
         $masterId = trim((string) ($p['Master_ID'] ?? ''));
         abort_if($masterId === '', 422, 'Master_ID wajib diisi.');
         DB::table('lpjk_detail')->where('source_id', $sourceId)->update(['master_id' => $masterId, 'lpjk_id' => $requireLpjkIdBySourceId($masterId), 'kategori' => $p['Kategori'] ?? null, 'nama_pengeluaran' => $p['Nama_Pengeluaran'] ?? null, 'satuan' => $p['Satuan'] ?? null, 'jumlah' => (int) ($p['Jumlah'] ?? 1), 'total' => (int) ($p['Total'] ?? 0), 'bukti' => $p['Bukti'] ?? null, 'raw_payload' => $encodePayload($p), 'updated_at' => now(), 'updated_by_user_id' => $actorUserId()]);
@@ -2907,7 +3574,8 @@ Route::middleware('dashboard.auth')->group(function () use (
 
         return response()->json(['status' => 'success', 'data' => $stored]);
     });
-    Route::delete('/api/lpjk-detail/{sourceId}', function (string $sourceId) use ($logCrudActivity) {
+    Route::delete('/api/lpjk-detail/{sourceId}', function (string $sourceId) use ($assertDomainManagementAccess, $logCrudActivity) {
+        $assertDomainManagementAccess();
         abort_unless(DB::table('lpjk_detail')->where('source_id', $sourceId)->exists(), 404);
         $stored = DB::table('lpjk_detail')->where('source_id', $sourceId)->first();
         DB::table('lpjk_detail')->where('source_id', $sourceId)->delete();
@@ -2973,7 +3641,8 @@ Route::middleware('dashboard.auth')->group(function () use (
         return response()->json(['data' => $query->get()->map(fn ($row) => $pricelistProductPayload($row))->values()]);
     });
 
-    Route::post('/api/pricelist-products/sync', function (PricelistSheetImporter $importer) use ($logCrudActivity) {
+    Route::post('/api/pricelist-products/sync', function (PricelistSheetImporter $importer) use ($logCrudActivity, $assertSettingsManagementAccess) {
+        $assertSettingsManagementAccess();
         $beforeCount = DB::table('pricelist_products')->count();
         $summary = $importer->import();
         $afterCount = DB::table('pricelist_products')->count();
@@ -2988,7 +3657,8 @@ Route::middleware('dashboard.auth')->group(function () use (
         return response()->json($summary);
     });
 
-    Route::put('/api/pricelist-products/{sourceId}', function (string $sourceId) use ($logCrudActivity) {
+    Route::put('/api/pricelist-products/{sourceId}', function (string $sourceId) use ($logCrudActivity, $assertSettingsManagementAccess) {
+        $assertSettingsManagementAccess();
         $payload = request()->validate([
             'is_active' => ['nullable', 'boolean'],
             'harga_nasional' => ['nullable', 'integer'],
@@ -3012,13 +3682,24 @@ Route::middleware('dashboard.auth')->group(function () use (
     });
 
     Route::get('/api/catalog-templates', function () use ($catalogTemplatePayload) {
-        return response()->json(['data' => DB::table('catalog_templates')->orderBy('format')->orderBy('name')->get()->map(fn ($row) => $catalogTemplatePayload($row))->values()]);
+        $templates = DB::table('catalog_templates')
+            ->get()
+            ->sortBy([
+                ['format', 'asc'],
+                ['name', 'asc'],
+            ])
+            ->values()
+            ->map(fn ($row) => $catalogTemplatePayload($row));
+
+        return response()->json(['data' => $templates]);
     });
 
-    Route::post('/api/catalog-templates', function () use ($catalogTemplatePayload, $logCrudActivity, $makeSourceId) {
+    Route::post('/api/catalog-templates', function () use ($catalogTemplatePayload, $logCrudActivity, $makeSourceId, $assertSettingsManagementAccess) {
+        $assertSettingsManagementAccess();
         $payload = request()->validate([
             'name' => ['required', 'string', 'max:120'],
             'format' => ['required', Rule::in(['story', 'feed', 'a4'])],
+            'output_mode' => ['nullable', Rule::in(['list', 'katalog'])],
             'layout_config' => ['nullable', 'array'],
         ]);
         $width = $payload['format'] === 'a4' ? 1240 : 1080;
@@ -3027,6 +3708,7 @@ Route::middleware('dashboard.auth')->group(function () use (
             'source_id' => $makeSourceId('CT', null),
             'name' => $payload['name'],
             'format' => $payload['format'],
+            'output_mode' => $payload['output_mode'] ?? 'list',
             'canvas_width' => $width,
             'canvas_height' => $height,
             'layout_config' => json_encode($payload['layout_config'] ?? [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
@@ -3041,10 +3723,12 @@ Route::middleware('dashboard.auth')->group(function () use (
         return response()->json(['status' => 'success', 'data' => $catalogTemplatePayload($stored)], 201);
     });
 
-    Route::put('/api/catalog-templates/{sourceId}', function (string $sourceId) use ($catalogTemplatePayload, $logCrudActivity) {
+    Route::put('/api/catalog-templates/{sourceId}', function (string $sourceId) use ($catalogTemplatePayload, $logCrudActivity, $assertSettingsManagementAccess) {
+        $assertSettingsManagementAccess();
         $payload = request()->validate([
             'name' => ['required', 'string', 'max:120'],
             'format' => ['required', Rule::in(['story', 'feed', 'a4'])],
+            'output_mode' => ['nullable', Rule::in(['list', 'katalog'])],
             'layout_config' => ['nullable', 'array'],
             'is_active' => ['nullable', 'boolean'],
         ]);
@@ -3055,6 +3739,7 @@ Route::middleware('dashboard.auth')->group(function () use (
         DB::table('catalog_templates')->where('source_id', $sourceId)->update([
             'name' => $payload['name'],
             'format' => $payload['format'],
+            'output_mode' => $payload['output_mode'] ?? $before->output_mode,
             'canvas_width' => $width,
             'canvas_height' => $height,
             'layout_config' => json_encode($payload['layout_config'] ?? [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
@@ -3067,9 +3752,36 @@ Route::middleware('dashboard.auth')->group(function () use (
         return response()->json(['status' => 'success', 'data' => $catalogTemplatePayload($stored)]);
     });
 
-    Route::delete('/api/catalog-templates/{sourceId}', $genericDelete('catalog_templates'));
+    Route::delete('/api/catalog-templates/{sourceId}', function (string $sourceId) use ($logCrudActivity, $assertSettingsManagementAccess) {
+        $assertSettingsManagementAccess();
+        $record = DB::table('catalog_templates')->where('source_id', $sourceId)->first();
+        if ($record === null && is_numeric($sourceId)) {
+            $record = DB::table('catalog_templates')->where('id', (int) $sourceId)->first();
+        }
+        abort_unless($record !== null, 404);
 
-    Route::post('/api/catalog-templates/{sourceId}/background', function (string $sourceId, Request $request) use ($catalogTemplatePayload, $logCrudActivity) {
+        $directory = storage_path('app/public/catalog-templates');
+        if (filled($record->background_path)) {
+            $bgPath = $directory.DIRECTORY_SEPARATOR.$record->background_path;
+            if (File::exists($bgPath)) {
+                File::delete($bgPath);
+            }
+        }
+        if (filled($record->thumbnail_path)) {
+            $thumbPath = $directory.DIRECTORY_SEPARATOR.$record->thumbnail_path;
+            if (File::exists($thumbPath)) {
+                File::delete($thumbPath);
+            }
+        }
+
+        DB::table('catalog_templates')->where('id', $record->id)->delete();
+        $logCrudActivity('catalog_templates', 'delete', (string) ($record->source_id ?? $sourceId), is_numeric($record->id ?? null) ? (int) $record->id : null, (array) $record, null);
+
+        return response()->json(['status' => 'success']);
+    });
+
+    Route::post('/api/catalog-templates/{sourceId}/background', function (string $sourceId, Request $request) use ($catalogTemplatePayload, $logCrudActivity, $assertSettingsManagementAccess) {
+        $assertSettingsManagementAccess();
         $payload = $request->validate([
             'background' => ['required', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192'],
         ]);
@@ -3102,7 +3814,61 @@ Route::middleware('dashboard.auth')->group(function () use (
         return response()->json(['status' => 'success', 'data' => $catalogTemplatePayload($stored)]);
     });
 
+    Route::post('/api/catalog-templates/{sourceId}/thumbnail', function (string $sourceId, Request $request) use ($catalogTemplatePayload, $logCrudActivity, $assertSettingsManagementAccess) {
+        $assertSettingsManagementAccess();
+        $payload = $request->validate([
+            'thumbnail_data' => ['required', 'string'],
+        ]);
+        $before = DB::table('catalog_templates')->where('source_id', $sourceId)->first();
+        abort_unless($before !== null, 404);
+
+        $data = (string) $payload['thumbnail_data'];
+        $extension = 'png';
+        if (preg_match('/^data:image\/(\w+);base64,/', $data, $type)) {
+            $data = substr($data, strpos($data, ',') + 1);
+            $extension = strtolower($type[1]);
+            if ($extension === 'jpeg') {
+                $extension = 'jpg';
+            }
+        }
+        $binary = base64_decode($data);
+        abort_if($binary === false, 422, 'Invalid base64 thumbnail');
+
+        $filename = 'catalog-thumb-'.$sourceId.'-'.Str::lower(Str::random(12)).'.'.$extension;
+        $directory = storage_path('app/public/catalog-templates');
+
+        if (! File::isDirectory($directory)) {
+            File::ensureDirectoryExists($directory);
+        }
+
+        File::put($directory.DIRECTORY_SEPARATOR.$filename, $binary);
+
+        if (filled($before->thumbnail_path)) {
+            $oldPath = $directory.DIRECTORY_SEPARATOR.$before->thumbnail_path;
+            if (File::exists($oldPath)) {
+                File::delete($oldPath);
+            }
+        }
+
+        DB::table('catalog_templates')->where('source_id', $sourceId)->update([
+            'thumbnail_path' => $filename,
+            'updated_at' => now(),
+        ]);
+        $stored = DB::table('catalog_templates')->where('source_id', $sourceId)->first();
+        $logCrudActivity('catalog_templates', 'upload_thumbnail', $sourceId, is_numeric($stored->id ?? null) ? (int) $stored->id : null, (array) $before, (array) $stored);
+
+        return response()->json(['status' => 'success', 'data' => $catalogTemplatePayload($stored)]);
+    });
+
     Route::get('/api/catalog-templates/background/{filename}', function (string $filename) {
+        abort_unless(preg_match('/^[A-Za-z0-9._-]+$/', $filename) === 1, 404);
+        $path = storage_path('app/public/catalog-templates/'.$filename);
+        abort_unless(File::exists($path), 404);
+
+        return response()->file($path, ['Cache-Control' => 'public, max-age=86400']);
+    });
+
+    Route::get('/api/catalog-templates/thumbnail/{filename}', function (string $filename) {
         abort_unless(preg_match('/^[A-Za-z0-9._-]+$/', $filename) === 1, 404);
         $path = storage_path('app/public/catalog-templates/'.$filename);
         abort_unless(File::exists($path), 404);
@@ -3144,7 +3910,8 @@ Route::middleware('dashboard.auth')->group(function () use (
         return response()->json(['data' => $query->get()->map(fn ($r) => $appleProductPayload($r))->values()]);
     });
 
-    Route::post('/api/apple-products/sync', function (AppleSheetImporter $importer) use ($logCrudActivity) {
+    Route::post('/api/apple-products/sync', function (AppleSheetImporter $importer) use ($logCrudActivity, $assertSettingsManagementAccess) {
+        $assertSettingsManagementAccess();
         $before = DB::table('apple_products')->count();
         $summary = $importer->import();
         $after = DB::table('apple_products')->count();
@@ -3289,7 +4056,8 @@ Route::middleware('dashboard.auth')->group(function () use (
         if ($imgBase === false) {
             abort(500, 'Image base directory not found');
         }
-        $rel = ltrim(str_replace(['..', '//'], ['', '/'], $rel), '/');
+        abort_if(str_contains(rawurldecode($rel), '..'), 403, 'Path tidak diizinkan');
+        $rel = ltrim($rel, '/');
         $full = $rel === '' ? $imgBase : $imgBase.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $rel);
         $resolved = realpath($full) ?: $full;
         if (! str_starts_with(realpath($resolved) ?: $resolved, $imgBase)) {
@@ -3347,6 +4115,8 @@ Route::middleware('dashboard.auth')->group(function () use (
         $imgRepoGuard();
         $parent = (string) request()->input('path', '');
         $name = trim((string) request()->input('name', ''));
+        abort_if(str_contains(rawurldecode($parent), '..'), 403, 'Path tidak diizinkan');
+        abort_if(str_contains(rawurldecode($name), '..'), 403, 'Path tidak diizinkan');
         if ($name === '' || preg_match('/[\/\\\\]/', $name)) {
             abort(422, 'Nama folder tidak valid');
         }
@@ -3363,6 +4133,8 @@ Route::middleware('dashboard.auth')->group(function () use (
         $imgRepoGuard();
         $oldPath = (string) request()->input('path', '');
         $newName = trim((string) request()->input('name', ''));
+        abort_if(str_contains(rawurldecode($oldPath), '..'), 403, 'Path tidak diizinkan');
+        abort_if(str_contains(rawurldecode($newName), '..'), 403, 'Path tidak diizinkan');
         if ($newName === '' || preg_match('/[\/\\\\]/', $newName)) {
             abort(422, 'Nama tidak valid');
         }
@@ -3383,6 +4155,7 @@ Route::middleware('dashboard.auth')->group(function () use (
     Route::delete('/api/img-repo/delete', function () use ($imgRepoGuard, $imgRepoResolvePath) {
         $imgRepoGuard();
         $rel = (string) request()->input('path', '');
+        abort_if(str_contains(rawurldecode($rel), '..'), 403, 'Path tidak diizinkan');
         $target = $imgRepoResolvePath($rel);
         abort_unless(file_exists($target), 404, 'Item tidak ditemukan');
         if (is_dir($target)) {
@@ -3413,14 +4186,12 @@ Route::middleware('dashboard.auth')->group(function () use (
         $saved = [];
         foreach ($files as $file) {
             abort_unless($file->isValid(), 422, 'File tidak valid');
-            $ext = strtolower($file->getClientOriginalExtension());
+            $imageInfo = @getimagesize($file->getRealPath());
+            abort_unless($imageInfo !== false, 422, 'File harus berupa gambar valid');
+            $ext = strtolower($file->guessExtension() ?: $file->getClientOriginalExtension());
             $allowed = ['png', 'jpg', 'jpeg', 'webp', 'gif'];
             abort_unless(in_array($ext, $allowed, true), 422, 'Ekstensi tidak diizinkan: '.$ext);
-            $name = $file->getClientOriginalName();
-            if (file_exists($dir.DIRECTORY_SEPARATOR.$name)) {
-                $base = pathinfo($name, PATHINFO_FILENAME);
-                $name = $base.'_'.time().'.'.$ext;
-            }
+            $name = (string) Str::uuid().'.'.$ext;
             $file->move($dir, $name);
             $rel = $parent === '' ? $name : $parent.'/'.$name;
             $saved[] = $rel;
@@ -3430,15 +4201,81 @@ Route::middleware('dashboard.auth')->group(function () use (
     })->withoutMiddleware([VerifyCsrfToken::class]);
     // -------------------------------------------------------------------------------
 
-    Route::get('/api/bonus-config', function () {
+    // -- TikTok batch edit template --------------------------------------------------
+    $tiktokTemplateUpload = function (Request $request): string {
+        $user = auth()->user();
+        abort_unless($user && app(DashboardAuth::class)->canManageSettings($user), 403, 'Forbidden');
+
+        $file = $request->file('file');
+        abort_unless($file && $file->isValid(), 422, 'File XLSX wajib diupload.');
+        abort_unless(strtolower($file->getClientOriginalExtension()) === 'xlsx', 422, 'File harus berformat .xlsx.');
+        abort_if($file->getSize() > 15 * 1024 * 1024, 422, 'Ukuran file maksimal 15MB.');
+
+        return $file->getRealPath();
+    };
+
+    Route::post('/api/tiktok-template/parse', function (Request $request) use ($tiktokTemplateUpload) {
+        $path = $tiktokTemplateUpload($request);
+
+        try {
+            $parsed = app(\App\Support\TiktokBatchTemplate::class)->parse($path);
+        } catch (\InvalidArgumentException|\RuntimeException $e) {
+            abort(422, $e->getMessage());
+        }
+
+        // Stock comes from db_analis; a lookup failure must not block loading the file.
+        $stock = null;
+        $keys = array_column($parsed['columns'], 'index', 'key');
+        $fields = $parsed['fields'];
+        if (isset($keys[$fields['stock']], $keys[$fields['name']], $keys[$fields['variation']])) {
+            try {
+                $stock = app(\App\Support\TiktokStockLookup::class)->lookup(array_map(
+                    fn ($row) => ['product_name' => $row[$keys[$fields['name']]] ?? '', 'variation_value' => $row[$keys[$fields['variation']]] ?? ''],
+                    $parsed['rows']
+                ));
+            } catch (\Throwable $e) {
+                report($e);
+            }
+        }
+
+        return response()->json(['status' => 'success', 'stock' => $stock] + $parsed);
+    });
+
+    Route::post('/api/tiktok-template/export', function (Request $request) use ($tiktokTemplateUpload, $logCrudActivity) {
+        $path = $tiktokTemplateUpload($request);
+        $rows = json_decode((string) $request->input('rows', ''), true);
+        abort_unless(is_array($rows) && array_is_list($rows), 422, 'Data baris tidak valid.');
+
+        $output = tempnam(sys_get_temp_dir(), 'tiktok-batch-');
+        try {
+            app(\App\Support\TiktokBatchTemplate::class)->build($path, $rows, $output);
+        } catch (\InvalidArgumentException|\RuntimeException $e) {
+            @unlink($output);
+            abort(422, $e->getMessage());
+        }
+
+        $logCrudActivity('tiktok_template', 'export', now()->format('YmdHis'), null, null, ['rows' => count($rows)]);
+        $name = 'Tiktoksellercenter_batchedit_'.now()->format('Ymd').'_all_information_edited.xlsx';
+
+        return response()->download($output, $name, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        ])->deleteFileAfterSend(true);
+    });
+    // -------------------------------------------------------------------------------
+
+    Route::get('/api/bonus-config', function () use ($assertSettingsManagementAccess) {
+        $assertSettingsManagementAccess();
+
         $row = DB::table('marketing_settings')->where('key', 'BONUS_CONFIG')->first(['values']);
         $data = $row ? json_decode($row->values, true) : null;
 
         return response()->json(['data' => (is_array($data) && ! array_is_list($data)) ? $data : null]);
     });
 
-    Route::put('/api/bonus-config', function () use ($logCrudActivity) {
-        $cfg = request()->all();
+    Route::put('/api/bonus-config', function (Request $request) use ($assertSettingsManagementAccess, $configPayload, $logCrudActivity) {
+        $assertSettingsManagementAccess();
+
+        $cfg = $configPayload($request);
         $before = DB::table('marketing_settings')->where('key', 'BONUS_CONFIG')->first(['values']);
         $val = json_encode($cfg, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         DB::table('marketing_settings')->updateOrInsert(['key' => 'BONUS_CONFIG'], ['values' => $val, 'imported_at' => now(), 'created_at' => now(), 'updated_at' => now()]);
@@ -3447,15 +4284,19 @@ Route::middleware('dashboard.auth')->group(function () use (
         return response()->json(['status' => 'success', 'data' => $cfg]);
     });
 
-    Route::get('/api/budgeting-config', function () {
+    Route::get('/api/budgeting-config', function () use ($assertSettingsManagementAccess) {
+        $assertSettingsManagementAccess();
+
         $row = DB::table('marketing_settings')->where('key', 'BUDGET_CONFIG')->first(['values']);
         $data = $row ? json_decode($row->values, true) : null;
 
         return response()->json(['data' => (is_array($data) && ! array_is_list($data)) ? $data : null]);
     });
 
-    Route::put('/api/budgeting-config', function () use ($logCrudActivity) {
-        $cfg = request()->all();
+    Route::put('/api/budgeting-config', function (Request $request) use ($assertSettingsManagementAccess, $configPayload, $logCrudActivity) {
+        $assertSettingsManagementAccess();
+
+        $cfg = $configPayload($request);
         $before = DB::table('marketing_settings')->where('key', 'BUDGET_CONFIG')->first(['values']);
         $val = json_encode($cfg, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         DB::table('marketing_settings')->updateOrInsert(['key' => 'BUDGET_CONFIG'], ['values' => $val, 'imported_at' => now(), 'created_at' => now(), 'updated_at' => now()]);

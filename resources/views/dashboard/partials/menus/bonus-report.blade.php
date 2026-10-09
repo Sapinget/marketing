@@ -139,12 +139,12 @@
                                         </div>
                                         <div class="toolbar-actions">
                                             <button @click="exportBonusToExcel"
-                                                class="primary-cta-button primary-cta-button--success active:scale-95">
-                                                <i class="fa-solid fa-file-excel"></i> Excel
+                                                class="primary-cta-button primary-cta-button--success primary-cta-button--icon-only active:scale-95" aria-label="Export Excel">
+                                                <i class="fa-solid fa-file-excel"></i>
                                             </button>
                                             <button @click="exportBonusToPDF"
-                                                class="primary-cta-button primary-cta-button--danger active:scale-95">
-                                                <i class="fa-solid fa-file-pdf"></i> PDF
+                                                class="primary-cta-button primary-cta-button--danger primary-cta-button--icon-only active:scale-95" aria-label="Export PDF">
+                                                <i class="fa-solid fa-file-pdf"></i>
                                             </button>
                                             <button @click="showBonusSettings = !showBonusSettings"
                                                 :class="['primary-cta-button active:scale-95', showBonusSettings ? 'bg-slate-900 text-white border-slate-900 hover:bg-black' : 'primary-cta-button--neutral']">

@@ -1,5 +1,5 @@
 @verbatim
-                const CACHE_KEY = 'ppp_allData_v5_clean';
+                const CACHE_KEY = 'ppp_allData_v7_service_claims';
 
                 const applyAllData = (d) => {
                     if (!d) return;
@@ -15,6 +15,8 @@
                     if (d.unboxing) { unboxingData.value = Array.isArray(d.unboxing) ? d.unboxing : []; _tabUpdates.unboxing = true; }
                     if (d.orderanOnline) { orderanOnlineData.value = Array.isArray(d.orderanOnline) ? d.orderanOnline : []; _tabUpdates.orderanOnline = true; }
                     if (d.unitDitanya) { unitDitanyaData.value = Array.isArray(d.unitDitanya) ? d.unitDitanya : []; _tabUpdates.unitDitanya = true; }
+                    if (d.service) { serviceData.value = Array.isArray(d.service) ? d.service : []; _tabUpdates.service = true; }
+                    if (d.serviceClaims) { serviceClaimsData.value = Array.isArray(d.serviceClaims) ? d.serviceClaims : []; _tabUpdates.serviceClaims = true; }
                     if (d.claimGaransi) { claimGaransiData.value = Array.isArray(d.claimGaransi) ? d.claimGaransi : []; _tabUpdates.claimGaransi = true; }
                     if (d.namaStock) { initNamaStockRows(Array.isArray(d.namaStock) ? d.namaStock : []); namaStockLoaded.value = true; }
                     if (d.keepBarang) { keepBarangData.value = Array.isArray(d.keepBarang) ? d.keepBarang : []; keepBarangLoaded.value = true; }
@@ -146,6 +148,8 @@
                                     if (Array.isArray(d.unboxing)) unboxingData.value = d.unboxing;
                                     if (Array.isArray(d.orderanOnline)) orderanOnlineData.value = d.orderanOnline;
                                     if (Array.isArray(d.unitDitanya)) unitDitanyaData.value = d.unitDitanya;
+                                    if (Array.isArray(d.service)) serviceData.value = d.service;
+                                    if (Array.isArray(d.serviceClaims)) serviceClaimsData.value = d.serviceClaims;
                                     if (Array.isArray(d.claimGaransi)) claimGaransiData.value = d.claimGaransi;
                                     if (Array.isArray(d.promo)) promoData.value = d.promo;
                                     if (Array.isArray(d.sellOut)) sellOutData.value = d.sellOut;

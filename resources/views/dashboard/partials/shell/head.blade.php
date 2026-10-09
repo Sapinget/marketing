@@ -3,6 +3,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Marketing Dashboard | Pura Pura Ponsel</title>
     <link rel="icon" type="image/x-icon" href="{{ asset('asset/images/favicon.ico') }}">
+    <link rel="preload" as="font" type="font/woff2" href="{{ asset('asset/fonts/lexend/lexend-400.woff2') }}" crossorigin>
+    <link rel="preload" as="font" type="font/woff2" href="{{ asset('asset/fonts/lexend/lexend-700.woff2') }}" crossorigin>
 
     @php($fontAwesomeCssPath = public_path('vendor/dashboard/fontawesome/css/all.min.css'))
     <link rel="stylesheet" href="{{ asset('vendor/dashboard/fontawesome/css/all.min.css') }}?v={{ file_exists($fontAwesomeCssPath) ? filemtime($fontAwesomeCssPath) : time() }}" />

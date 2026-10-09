@@ -70,7 +70,7 @@
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <button @click="appleSelectAll" class="primary-cta-button primary-cta-button--accent w-full whitespace-nowrap">Select All</button>
-                    <button @click="appleResetSelection" class="primary-cta-button primary-cta-button--danger w-full whitespace-nowrap">Reset</button>
+                    <button @click="appleResetSelection" class="primary-cta-button primary-cta-button--danger primary-cta-button--icon-only" aria-label="Reset pilihan"><i class="fa-solid fa-rotate-left"></i></button>
                 </div>
             </div>
 
@@ -187,7 +187,7 @@
                                 <div class="max-h-56 overflow-y-auto custom-scrollbar p-1">
                                     <div v-for="template in catalogTemplates.filter(template => !searchSelectQuery || String(template.name || template.format || '').toLowerCase().includes(searchSelectQuery.toLowerCase()))" :key="template.ID" @click="appleSelectedTemplateId = template.ID; searchSelectOpen = null" :class="['popover-option', appleSelectedTemplateId === template.ID ? 'popover-option-active' : '']">
                                         <div class="font-bold">{{ template.name || template.format }}</div>
-                                        <div class="text-overline text-slate-400 uppercase">{{ template.format }} · {{ template.canvas_width }}x{{ template.canvas_height }}</div>
+                                        <div class="text-overline text-slate-400 uppercase">{{ template.format }} · {{ template.output_mode === 'list' ? 'List' : 'Katalog' }} · {{ template.canvas_width }}x{{ template.canvas_height }}</div>
                                     </div>
                                     <div v-if="!catalogTemplates.length" class="px-3 py-2 text-body-sm text-slate-400">Belum ada template upload</div>
                                 </div>
@@ -259,6 +259,18 @@
                         <div>
                             <label class="type-micro text-slate-400 block mb-1">Font harga</label>
                             <input v-model.number="appleCfg.priceFontSize" class="form-input-compact w-full" placeholder="13" />
+                        </div>
+                        <div>
+                            <label class="type-micro text-slate-400 block mb-1">Shape harga</label>
+                            <div class="catalog-segment-group w-full">
+                                <button type="button" v-for="shape in ['plain', 'pill', 'rounded', 'tag']" :key="shape" @click="appleCfg.priceShape = shape" :class="['catalog-segment-button flex-1 text-[10px] capitalize', (appleCfg.priceShape || 'plain') === shape ? 'catalog-segment-button--active' : '']">{{ shape }}</button>
+                            </div>
+                        </div>
+                        <div class="flex items-end">
+                            <button type="button" @click="appleCfg.showHematBadge = !appleCfg.showHematBadge" :class="['select-trigger-button select-trigger-button-compact select-trigger-button-form toolbar-trigger-field-form w-full justify-center', appleCfg.showHematBadge ? 'text-emerald-700 bg-emerald-50' : 'text-slate-400']">
+                                <i class="fa-solid fa-tag text-[10px] mr-1.5"></i>
+                                <span>{{ appleCfg.showHematBadge ? 'Badge Hemat Aktif' : 'Badge Hemat Mati' }}</span>
+                            </button>
                         </div>
                     </div>
                 </details>
@@ -368,7 +380,7 @@
             <div v-if="applePreviewImages.length" class="section-card p-4 space-y-3">
                 <div class="flex items-center justify-between">
                     <h3 class="type-label font-semibold text-slate-700">Preview ({{ applePreviewImages.length }} halaman)</h3>
-                    <button @click="applePreviewImages = []" class="icon-utility-button icon-utility-bordered"><i class="fa-solid fa-xmark"></i></button>
+                    <button @click="applePreviewImages = []" class="icon-utility-button icon-utility-bordered" aria-label="Tutup preview" title="Tutup preview"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 <div class="space-y-3">
                     <div v-for="(img, idx) in applePreviewImages" :key="idx"
@@ -396,13 +408,13 @@
                     <p class="text-body-sm text-slate-500 truncate">Halaman {{ applePreviewModalIndex + 1 }} / {{ applePreviewImages.length }} · Zoom {{ Math.round(applePreviewZoom * 100) }}%</p>
                 </div>
                 <div class="flex items-center gap-1.5 flex-wrap">
-                    <button @click="applePreviewNav(-1)" class="icon-utility-button icon-utility-bordered"><i class="fa-solid fa-chevron-left"></i></button>
-                    <button @click="applePreviewZoomBy(0.85)" class="icon-utility-button icon-utility-bordered"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
-                    <button @click="applePreviewZoom = 1" class="toolbar-segment-button border-slate-200 text-slate-500 bg-white">100%</button>
-                    <button @click="applePreviewZoomBy(1.18)" class="icon-utility-button icon-utility-bordered"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
-                    <button @click="applePreviewNav(1)" class="icon-utility-button icon-utility-bordered"><i class="fa-solid fa-chevron-right"></i></button>
-                    <button @click="downloadApplePreview(applePreviewImages[applePreviewModalIndex], applePreviewModalIndex)" class="icon-utility-button icon-utility-bordered"><i class="fa-solid fa-download"></i></button>
-                    <button @click="closeApplePreviewModal" class="icon-utility-button icon-utility-bordered"><i class="fa-solid fa-xmark"></i></button>
+                    <button @click="applePreviewNav(-1)" class="icon-utility-button icon-utility-bordered" aria-label="Previous preview" title="Previous preview"><i class="fa-solid fa-chevron-left"></i></button>
+                    <button @click="applePreviewZoomBy(0.85)" class="icon-utility-button icon-utility-bordered" aria-label="Zoom out preview" title="Zoom out preview"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+                    <button @click="applePreviewZoom = 1" class="icon-utility-button icon-utility-bordered" aria-label="Fit preview" title="Fit preview"><i class="fa-solid fa-expand"></i></button>
+                    <button @click="applePreviewZoomBy(1.18)" class="icon-utility-button icon-utility-bordered" aria-label="Zoom in preview" title="Zoom in preview"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+                    <button @click="applePreviewNav(1)" class="icon-utility-button icon-utility-bordered" aria-label="Next preview" title="Next preview"><i class="fa-solid fa-chevron-right"></i></button>
+                    <button @click="downloadApplePreview(applePreviewImages[applePreviewModalIndex], applePreviewModalIndex)" class="icon-utility-button icon-utility-bordered" aria-label="Download preview" title="Download preview"><i class="fa-solid fa-download"></i></button>
+                    <button @click="closeApplePreviewModal" class="icon-utility-button icon-utility-bordered" aria-label="Close preview" title="Close preview"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
             <div class="flex-1 overflow-auto p-2 md:p-6" @click.stop>

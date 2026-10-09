@@ -116,9 +116,10 @@
                                     class="form-input-search" />
                             </div>
                             <div class="toolbar-actions">
-                                <button @click="openAviModal('create')"
-                                    class="primary-cta-button primary-cta-button--accent active:scale-95"><i
-                                        class="fa-solid fa-plus"></i> Tambah</button>
+<button @click="openAviModal('create')"
+                                     class="primary-cta-button primary-cta-button--accent primary-cta-button--icon-only active:scale-95"
+                                     aria-label="Tambah Asset Vendor"><i
+                                         class="fa-solid fa-plus"></i></button>
                             </div>
                         </div>
                     </div>

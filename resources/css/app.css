@@ -9,7 +9,7 @@
 @source '../../resources/views/**/*.blade.php';
 
 @theme {
-    --font-sans: 'Figtree', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Lexend', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
     --color-ppp-accent: #FFA500;
     --ppp-accent-soft: #fff1e0;
@@ -71,7 +71,7 @@
     --ppp-table-freeze-action-width: 96px;
     --ppp-table-freeze-bg: var(--ppp-card);
     --ppp-table-freeze-header-bg: var(--ppp-card);
-    --ppp-table-row-hover-bg: rgb(255 251 242);
+    --ppp-table-row-hover-bg: #e2e8f0;
     --ppp-table-freeze-hover-bg: var(--ppp-table-row-hover-bg);
     --ppp-text-rgb: 15 23 42;
     --ppp-card-rgb: 255 255 255;
@@ -79,7 +79,7 @@
     --ppp-bg-rgb: 248 250 252;
 
     /* ─── Line / Border ──────────────────────────────────── */
-    --ppp-line-soft: var(--ppp-line-soft);
+    --ppp-line-soft: #f1f5f9;
     --ppp-text-secondary: #334155;
 
     /* ─── Field sizing — ala Meeting tokens ──────────────── */
@@ -510,8 +510,8 @@ button {
 .nav-item:hover,
 .nav-group-toggle:hover,
 .nav-subitem:hover {
-    background: rgba(230, 149, 0, 0.08);
-    color: #E69500;
+    background: #f8fafc;
+    color: var(--ppp-text-secondary);
 }
 
 .nav-item.is-active,
@@ -552,12 +552,12 @@ button {
     color: var(--ppp-muted);
 }
 .nav-idle:hover {
-    background: rgb(var(--ppp-nav-rgb) / 0.08);
+    background: #f8fafc;
 }
 .nav-idle:hover,
 .nav-idle:hover .type-body,
 .nav-idle:hover .type-body-sm {
-    color: var(--ppp-nav-text);
+    color: var(--ppp-text-secondary);
 }
 
 .chevron {

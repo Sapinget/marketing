@@ -33,10 +33,11 @@
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <span class="summary-counter-pill">{{ namaStockRows.length }} baris</span>
-                                    <button @click="openNamaStockFormModal('create')"
-                                        class="primary-cta-button primary-cta-button--link active:scale-95">
-                                        <i class="fa-solid fa-plus text-body-sm"></i> Tambah
-                                    </button>
+<button @click="openNamaStockFormModal('create')"
+                                         class="primary-cta-button primary-cta-button--link primary-cta-button--icon-only active:scale-95"
+                                         aria-label="Tambah Nama Stock">
+                                         <i class="fa-solid fa-plus"></i>
+                                     </button>
                                 </div>
                             </div>
                         </section>

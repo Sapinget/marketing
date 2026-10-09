@@ -1,50 +1,50 @@
 @verbatim
-                <div v-if="!isTeknisi" class="px-6 pb-1 pt-2.5 text-[9px] font-bold uppercase tracking-[0.14em] text-slate-400">Dashboard</div>
-                <div v-if="!isTeknisi" @click="switchTab('dashboard')"
+                <div class="px-6 pb-1 pt-2.5 text-[9px] font-bold uppercase tracking-[0.14em] text-slate-300">Dashboard</div>
+                <div @click="switchTab('dashboard')"
                     :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'dashboard' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
                     <i class="fa-solid fa-gauge text-[11px] lg:text-[12px] w-4"></i>
                     <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Dashboard</span>
                     <span v-if="activeTab === 'dashboard'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
                 </div>
 
-                <div v-if="!isTeknisi" class="px-6 pb-1 pt-2.5 text-[9px] font-bold uppercase tracking-[0.14em] text-slate-400">Konten</div>
-                <div v-if="!isTeknisi" @click="switchTab('master')"
+                <div class="px-6 pb-1 pt-2.5 text-[9px] font-bold uppercase tracking-[0.14em] text-slate-300">Konten</div>
+                <div @click="switchTab('master')"
                     :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'master' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
                     <i class="fa-solid fa-layer-group text-[11px] lg:text-[12px] w-4"></i>
                     <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Master Plan</span>
                     <span v-if="activeTab === 'master'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
                 </div>
-                <div v-if="!isTeknisi" @click="switchTab('unboxing')"
+                <div @click="switchTab('unboxing')"
                     :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'unboxing' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
                     <i class="fa-solid fa-box-open text-[11px] lg:text-[12px] w-4"></i>
                     <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Unboxing</span>
                     <span v-if="activeTab === 'unboxing'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
                 </div>
-                <div v-if="!isTeknisi" @click="switchTab('ideation')"
+                <div @click="switchTab('ideation')"
                     :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'ideation' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
                     <i class="fa-solid fa-lightbulb text-[11px] lg:text-[12px] w-4"></i>
                     <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Ideation</span>
                     <span v-if="activeTab === 'ideation'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
                 </div>
-                <div v-if="!isTeknisi" @click="switchTab('distribution')"
+                <div @click="switchTab('distribution')"
                     :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'distribution' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
                     <i class="fa-solid fa-share-nodes text-[11px] lg:text-[12px] w-4"></i>
                     <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Distribution</span>
                     <span v-if="activeTab === 'distribution'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
                 </div>
-                <div v-if="!isTeknisi" @click="switchTab('analytics')"
+                <div @click="switchTab('analytics')"
                     :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'analytics' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
                     <i class="fa-solid fa-chart-line text-[11px] lg:text-[12px] w-4"></i>
                     <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Analytics</span>
                     <span v-if="activeTab === 'analytics'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
                 </div>
-                <div v-if="!isTeknisi" @click="switchTab('calendar')"
+                <div @click="switchTab('calendar')"
                     :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'calendar' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
                     <i class="fa-solid fa-calendar-days text-[11px] lg:text-[12px] w-4"></i>
                     <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Kalender</span>
                     <span v-if="activeTab === 'calendar'" class="h-1.5 w-1.5 rounded-full bg-white"></span>
                 </div>
-                <div v-if="!isTeknisi" @click="switchTab('story')"
+                <div @click="switchTab('story')"
                     :class="['mx-3 my-px rounded-xl px-4 py-2 flex items-center gap-3 cursor-pointer', activeTab === 'story' ? 'sidebar-nav-item-active bg-[var(--ppp-accent)] !text-white' : 'nav-idle !text-slate-400 hover:bg-slate-50 hover:!text-slate-700']">
                     <i class="fa-solid fa-clapperboard text-[11px] lg:text-[12px] w-4"></i>
                     <span class="text-[10px] lg:text-[11px] font-medium tracking-wide truncate flex-1">Jadwal Story</span>

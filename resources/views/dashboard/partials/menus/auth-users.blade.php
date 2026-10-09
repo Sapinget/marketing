@@ -17,16 +17,14 @@
                                     <span class="status-pill status-pill--neutral justify-center">
                                         {{ authUsersLoaded ? 'sinkron' : 'memuat' }}
                                     </span>
-                                    <button @click="loadAuthUsers"
-                                        class="select-trigger-button select-trigger-button-compact justify-center">
-                                        <span class="text-slate-700 font-medium">Refresh</span>
-                                        <i class="fa-solid fa-rotate-right text-body-sm text-slate-300"></i>
+                                    <button @click="loadAuthUsers" class="icon-utility-button icon-utility-bordered" aria-label="Refresh" title="Refresh">
+                                        <i class="fa-solid fa-rotate-right text-body-sm"></i>
                                     </button>
-                                    <button @click="openAuthUserModal('create')"
-                                        class="primary-cta-button primary-cta-button--accent active:scale-95">
-                                        <i class="fa-solid fa-user-plus"></i>
-                                        <span>Tambah User</span>
-                                    </button>
+<button @click="openAuthUserModal('create')"
+                                         class="primary-cta-button primary-cta-button--accent primary-cta-button--icon-only active:scale-95"
+                                         aria-label="Tambah User">
+                                         <i class="fa-solid fa-user-plus"></i>
+                                     </button>
                                 </div>
                             </div>
 

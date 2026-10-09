@@ -1,3 +1,44 @@
+/* ===== Lexend — self-hosted (CSP-safe) ===== */
+@font-face {
+    font-family: "Lexend";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("/asset/fonts/lexend/lexend-400.woff2") format("woff2"), url("/asset/fonts/lexend/lexend-400.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Lexend";
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: url("/asset/fonts/lexend/lexend-500.woff2") format("woff2"), url("/asset/fonts/lexend/lexend-500.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Lexend";
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: url("/asset/fonts/lexend/lexend-600.woff2") format("woff2"), url("/asset/fonts/lexend/lexend-600.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Lexend";
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url("/asset/fonts/lexend/lexend-700.woff2") format("woff2"), url("/asset/fonts/lexend/lexend-700.woff") format("woff");
+}
+
+@font-face {
+    font-family: "Lexend";
+    font-style: normal;
+    font-weight: 800;
+    font-display: swap;
+    src: url("/asset/fonts/lexend/lexend-800.woff2") format("woff2"), url("/asset/fonts/lexend/lexend-800.woff") format("woff");
+}
+
 .brand-gradient {
     background:
         radial-gradient(120% 140% at 100% 0%, rgba(255, 255, 255, 0.16) 0%, transparent 55%),
@@ -164,60 +205,6 @@
     background: #f8fafc;
 }
 
-@media (max-width: 1079.98px) {
-    .bottom-nav {
-        display: grid !important;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
-        align-items: center;
-        min-height: 60px;
-        padding: 8px 10px max(8px, env(safe-area-inset-bottom));
-        backdrop-filter: blur(40px) saturate(1.55);
-        -webkit-backdrop-filter: blur(40px) saturate(1.55);
-        background: rgb(255 255 255 / 0.48);
-        border-top: 1px solid rgb(255 255 255 / 0.55);
-        gap: 0;
-    }
-
-    .bottom-nav a,
-    .bottom-nav button {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
-        padding: 6px 8px;
-        background: transparent;
-        border: 0;
-        color: var(--ppp-muted);
-        font-size: var(--fs-body-sm);
-        font-weight: 600;
-        text-align: center;
-        cursor: pointer;
-        transition: color 0.18s ease, background-color 0.18s ease;
-    }
-
-    .bottom-nav a:hover,
-    .bottom-nav button:hover {
-        color: var(--ppp-nav-text);
-    }
-}
-
-@media (min-width: 1080px) {
-    .bottom-nav {
-        display: none !important;
-    }
-}
-
-.bottom-nav-sheet-backdrop {
-    background: rgb(15 23 42 / 0.3);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-}
-
-.bottom-nav-sheet {
-    animation: bottom-nav-sheet-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
 body {
     position: relative;
 }
@@ -242,17 +229,6 @@ body::before {
     from {
         opacity: 0;
         transform: translateY(18px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-@keyframes bottom-nav-sheet-in {
-    from {
-        opacity: 0;
-        transform: translateY(100%);
     }
     to {
         opacity: 1;
@@ -409,30 +385,13 @@ body::before {
 
     .field-input:focus,
     .btn:hover,
-    .btn-primary:hover,
-    .bottom-nav a:hover,
-    .bottom-nav button:hover {
+    .btn-primary:hover {
         transition: none;
     }
 }
 
 /* Dark mode support (future) */
 @media (prefers-color-scheme: dark) {
-    .bottom-nav {
-        background: rgba(15, 23, 42, 0.72);
-        border-top-color: rgba(100, 116, 139, 0.3);
-    }
-
-    .bottom-nav a,
-    .bottom-nav button {
-        color: rgba(255, 255, 255, 0.7);
-    }
-
-    .bottom-nav a:hover,
-    .bottom-nav button:hover {
-        color: #fff;
-    }
-
     .mt-topbar-panel {
         border-color: rgba(100, 116, 139, 0.3);
     }

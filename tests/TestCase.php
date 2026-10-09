@@ -3,6 +3,7 @@
 namespace Tests;
 
 use App\Models\User;
+use App\Support\DashboardAuth;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use Illuminate\Support\Facades\Schema;
@@ -42,7 +43,7 @@ abstract class TestCase extends BaseTestCase
         $user->forceFill([
             'is_online' => true,
             'last_seen_at' => $now,
-            'session_expires_at' => $now->copy()->addMinutes(15),
+            'session_expires_at' => $now->copy()->addMinutes(DashboardAuth::sessionIdleTimeoutMinutes()),
             'active_session_id' => 'test-dashboard-session-'.$user->getKey(),
         ])->save();
 

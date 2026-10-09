@@ -11,11 +11,11 @@
                             <div class="table-toolbar-shell">
                                 <div class="table-toolbar-shell__left"></div>
                                 <div class="table-toolbar-shell__right">
-                                    <button type="button" @click="$refs.metaFollowersUpload?.click()" class="primary-cta-button primary-cta-button--accent primary-cta-button--icon-only active:scale-95" :disabled="metaUploading" aria-label="Upload CSV Followers IG" title="Upload CSV">
+                                    <button type="button" @click="$refs.metaFollowersUpload?.click()" class="primary-cta-button primary-cta-button--accent primary-cta-button--icon-only active:scale-95" :disabled="metaUploading" aria-label="Upload CSV Followers IG">
                                         <i :class="metaUploading ? 'fa-solid fa-spinner fa-spin' : 'fa-solid fa-upload'"></i>
                                     </button>
                                     <input ref="metaFollowersUpload" id="meta-followers-upload" name="meta_followers_upload" type="file" accept=".csv" class="hidden" aria-label="Upload CSV followers IG" @change="handleMetaFollowersFileInput" />
-                                    <button @click="deleteAllMetaFollowers" class="primary-cta-button primary-cta-button--danger primary-cta-button--icon-only active:scale-95" :disabled="metaUploading || !metaFollowersData.length" aria-label="Hapus semua data followers" title="Hapus Semua">
+                                    <button @click="deleteAllMetaFollowers" class="primary-cta-button primary-cta-button--danger primary-cta-button--icon-only active:scale-95" :disabled="metaUploading || !metaFollowersData.length" aria-label="Hapus semua data followers">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
                                 </div>

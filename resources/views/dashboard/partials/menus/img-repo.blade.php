@@ -103,7 +103,7 @@
 
             {{-- Refresh --}}
             <button @click="imgRepoBrowse(imgRepoPath)" :disabled="imgRepoLoading"
-                class="icon-toolbar-button rounded-lg text-slate-500 hover:bg-slate-100 transition-colors disabled:opacity-40 shrink-0">
+                class="icon-utility-button icon-utility-bordered" aria-label="Refresh" title="Refresh">
                 <i :class="['fa-solid fa-arrows-rotate text-sm', imgRepoLoading ? 'animate-spin' : '']"></i>
             </button>
         </div>

@@ -4,7 +4,6 @@
                 const searchSelectQuery = ref("");
                 const formatOptions = computed(() => settings.value.Format_Konten || []);
                 const statusOptions = computed(() => settings.value.Status || []);
-                const editorOptions = computed(() => settings.value.Editor || []);
                 const talentOptions = computed(() => settings.value.Talent || []);
                 const platformOptions = computed(() => settings.value.Platforms || []);
 
@@ -288,10 +287,13 @@
                         const naturalHeight = Math.max(popoverEl.scrollHeight, popoverEl.offsetHeight, 0);
                         const placement = naturalHeight > availableBelow && availableAbove > availableBelow ? 'top' : 'bottom';
                         const maxHeight = Math.max(120, placement === 'top' ? availableAbove : availableBelow);
+                        const matchTriggerWidth = triggerEl.dataset.popoverMatchTrigger === 'true';
                         const mobileWidth = viewportWidth < 768
                             ? Math.min(viewportWidth - (margin * 2), Math.max(rect.width, 320))
                             : Math.min(viewportWidth - (margin * 2), Math.max(rect.width, 240));
-                        const measuredWidth = Math.max(180, mobileWidth, popoverEl.offsetWidth || 0);
+                        const measuredWidth = matchTriggerWidth
+                            ? Math.min(viewportWidth - (margin * 2), rect.width)
+                            : Math.max(180, mobileWidth, popoverEl.offsetWidth || 0);
                         const left = Math.min(
                             Math.max(margin, rect.left),
                             Math.max(margin, viewportWidth - measuredWidth - margin)
@@ -304,6 +306,7 @@
                             top,
                             left,
                             width: measuredWidth,
+                            boxSizing: matchTriggerWidth ? 'border-box' : undefined,
                             maxHeight,
                             placement
                         };
@@ -337,17 +340,22 @@
                     return (formatOptions.value || []).filter((opt) => String(opt || '').toLowerCase().includes(q));
                 });
 
-                const filteredEditorOptions = computed(() => {
-                    const q = (searchSelectQuery.value || '').toLowerCase();
-                    return (editorOptions.value || []).filter((opt) => String(opt || '').toLowerCase().includes(q));
-                });
+                const editorOptions = computed(() => mergeOptionValues(
+                    settings.value.Editor || [],
+                    (masterPlanData.value || []).map(row => row.Editor)
+                ));
 
-                const filteredTalentOptions = computed(() => {
-                    const q = (searchSelectQuery.value || '').toLowerCase();
-                    return (talentOptions.value || []).filter((opt) => String(opt || '').toLowerCase().includes(q));
-                });
+                 const filteredTalentOptions = computed(() => {
+                     const q = (searchSelectQuery.value || '').toLowerCase();
+                     return (talentOptions.value || []).filter((opt) => String(opt || '').toLowerCase().includes(q));
+                 });
 
-                const filteredPlatformOptions = computed(() => {
+                 const filteredEditorOptions = computed(() => {
+                     const q = (searchSelectQuery.value || '').toLowerCase();
+                     return (editorOptions.value || []).filter((opt) => String(opt || '').toLowerCase().includes(q));
+                 });
+
+                 const filteredPlatformOptions = computed(() => {
                     const q = (searchSelectQuery.value || '').toLowerCase();
                     return (platformOptions.value || []).filter((opt) => String(opt || '').toLowerCase().includes(q));
                 });

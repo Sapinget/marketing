@@ -198,6 +198,7 @@
                             if (tabName === 'unboxing') return { unboxing: mockState.unboxing };
                             if (tabName === 'orderanOnline') return { orderanOnline: mockState.orderanOnline };
                             if (tabName === 'unitDitanya') return { unitDitanya: mockState.unitDitanya };
+                            if (tabName === 'service') return { service: mockState.service || [] };
                             if (tabName === 'claimGaransi') return { claimGaransi: mockState.claimGaransi };
                             if (tabName === 'promo') return { promo: mockState.promo };
                             if (tabName === 'sellOut') return { sellOut: mockState.sellOut };

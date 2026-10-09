@@ -22,11 +22,11 @@
                                         <template v-else>Semua Tanggal</template>
                                         <i v-if="metaStoryDateFilter.start" @click.stop="metaStoryDateFilter = { start: '', end: '' }" class="fa-solid fa-circle-xmark ml-auto text-slate-300 hover:text-danger"></i>
                                     </button>
-                                    <button type="button" @click="$refs.metaStoryUpload?.click()" class="primary-cta-button primary-cta-button--accent primary-cta-button--icon-only active:scale-95" :disabled="metaUploading" aria-label="Upload CSV Story IG" title="Upload CSV">
+                                    <button type="button" @click="$refs.metaStoryUpload?.click()" class="primary-cta-button primary-cta-button--accent primary-cta-button--icon-only active:scale-95" :disabled="metaUploading" aria-label="Upload CSV Story IG">
                                         <i :class="metaUploading ? 'fa-solid fa-spinner fa-spin' : 'fa-solid fa-upload'"></i>
                                     </button>
                                     <input ref="metaStoryUpload" id="meta-story-upload" name="meta_story_upload" type="file" accept=".csv" class="hidden" aria-label="Upload CSV meta story" @change="handleMetaFileInput($event, 'story')" />
-                                    <button @click="importMetaFolder('story')" class="primary-cta-button primary-cta-button--neutral primary-cta-button--icon-only active:scale-95" :disabled="metaUploading" aria-label="Import Folder Story IG" title="Import Folder">
+                                    <button @click="importMetaFolder('story')" class="primary-cta-button primary-cta-button--neutral primary-cta-button--icon-only active:scale-95" :disabled="metaUploading" aria-label="Import Folder Story IG">
                                         <i :class="metaUploading ? 'fa-solid fa-spinner fa-spin' : 'fa-solid fa-folder-open'"></i>
                                     </button>
                                 </div>

@@ -59,6 +59,33 @@ class CrudApiTest extends TestCase
         $this->assertDatabaseMissing('master_plans', ['source_id' => 'CRUD-MASTER-001']);
     }
 
+    public function test_master_plan_create_and_update_use_laravel_validated_payloads(): void
+    {
+        $response = $this->postJson('/api/master-plans', [
+            'ID' => 'VALIDATED-MASTER-001',
+            'Judul' => 'Validated Master Plan',
+            'Editor' => 'Editor Test',
+            'Tanggal_Rencana' => '2026-06-26',
+            'Unexpected' => 'discarded',
+        ]);
+        $response->assertCreated();
+
+        $this->assertDatabaseMissing('master_plans', [
+            'source_id' => 'VALIDATED-MASTER-001',
+            'raw_payload' => json_encode([
+                'ID' => 'VALIDATED-MASTER-001',
+                'Judul' => 'Validated Master Plan',
+                'Tanggal_Rencana' => '2026-06-26',
+                'Unexpected' => 'discarded',
+            ]),
+        ]);
+
+        $this->putJson('/api/master-plans/VALIDATED-MASTER-001', [
+            'Judul' => ['not a string'],
+        ])->assertUnprocessable()
+            ->assertJsonValidationErrors('Judul');
+    }
+
     public function test_distribution_crud_api_works(): void
     {
         $masterPlanId = DB::table('master_plans')->insertGetId([
@@ -317,6 +344,18 @@ class CrudApiTest extends TestCase
         $this->assertDatabaseHas('marketing_settings', ['key' => 'Old_Key']);
         $this->assertDatabaseHas('marketing_settings', ['key' => 'Format_Konten']);
         $this->assertDatabaseHas('marketing_settings', ['key' => 'Talent']);
+    }
+
+    public function test_settings_api_rejects_non_array_values(): void
+    {
+        $this->putJson('/api/settings', ['data' => ['Format_Konten' => 'REELS']])
+            ->assertUnprocessable();
+    }
+
+    public function test_settings_api_rejects_more_than_one_hundred_keys(): void
+    {
+        $this->putJson('/api/settings', ['data' => array_fill_keys(range(1, 101), [])])
+            ->assertUnprocessable();
     }
 
     public function test_distribution_and_analytics_reads_fall_back_to_foreign_key_parent_source_id(): void

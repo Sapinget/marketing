@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use App\Support\DashboardAuth;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -49,13 +50,13 @@ class DashboardAuthenticationTest extends TestCase
 
         $response->assertOk()
             ->assertJsonPath('user.is_online', true)
-            ->assertJsonPath('user.session_expires_at', '2026-07-22T10:15:00+00:00');
+            ->assertJsonPath('user.session_expires_at', '2026-07-22T11:00:00+00:00');
 
         $this->assertDatabaseHas('users', [
             'username' => 'admin',
             'is_online' => true,
             'last_seen_at' => '2026-07-22 10:00:00',
-            'session_expires_at' => '2026-07-22 10:15:00',
+            'session_expires_at' => '2026-07-22 11:00:00',
         ]);
 
         $this->assertDatabaseHas('activity_logs', [
@@ -67,7 +68,21 @@ class DashboardAuthenticationTest extends TestCase
         Carbon::setTestNow();
     }
 
-    public function test_session_endpoint_expires_idle_user_after_15_minutes(): void
+    public function test_session_endpoint_handles_session_expiry_loaded_from_database(): void
+    {
+        $user = User::factory()->create([
+            'session_expires_at' => now()->subMinute(),
+        ]);
+
+        $this->actingAs($user)
+            ->getJson('/api/auth/session')
+            ->assertOk()
+            ->assertJsonPath('authenticated', false)
+            ->assertJsonPath('expired', true)
+            ->assertJsonPath('user', null);
+    }
+
+    public function test_session_endpoint_expires_idle_user_after_60_minutes(): void
     {
         Carbon::setTestNow('2026-07-22 10:00:00');
         config()->set('app.env', 'local');
@@ -78,7 +93,7 @@ class DashboardAuthenticationTest extends TestCase
             'pin' => 'admin',
         ])->assertOk();
 
-        Carbon::setTestNow('2026-07-22 10:16:00');
+        Carbon::setTestNow('2026-07-22 11:01:00');
 
         $this->getJson('/api/auth/session')
             ->assertOk()
@@ -118,68 +133,13 @@ class DashboardAuthenticationTest extends TestCase
             ->assertOk()
             ->assertJsonPath('status', 'success')
             ->assertJsonPath('user.is_online', true)
-            ->assertJsonPath('user.session_expires_at', '2026-07-22T10:25:00+00:00');
+            ->assertJsonPath('user.session_expires_at', '2026-07-22T11:10:00+00:00');
 
         $this->assertDatabaseHas('users', [
             'username' => 'admin',
             'is_online' => true,
             'last_seen_at' => '2026-07-22 10:10:00',
-            'session_expires_at' => '2026-07-22 10:25:00',
-        ]);
-
-        Carbon::setTestNow();
-    }
-
-    public function test_login_records_active_session_id_for_single_device_guard(): void
-    {
-        Carbon::setTestNow('2026-07-22 10:00:00');
-        config()->set('app.env', 'local');
-        config()->set('session.driver', 'database');
-
-        $this->postJson('/api/auth/login', [
-            'username' => 'admin',
-            'pin' => 'admin',
-        ])->assertOk()
-            ->assertJsonPath('user.is_online', true);
-
-        $sessionId = session('dashboard_active_session_id');
-
-        $this->assertIsString($sessionId);
-        $this->assertNotSame('', $sessionId);
-        $this->assertDatabaseHas('users', [
-            'username' => 'admin',
-            'active_session_id' => $sessionId,
-        ]);
-
-        Carbon::setTestNow();
-    }
-
-    public function test_old_device_session_is_logged_out_when_account_logs_in_elsewhere(): void
-    {
-        Carbon::setTestNow('2026-07-22 10:00:00');
-        config()->set('session.driver', 'database');
-
-        $user = $this->actingAsDashboardUser([
-            'username' => 'single-device-user',
-        ]);
-
-        $user->forceFill([
-            'active_session_id' => 'new-device-session-id',
-            'is_online' => true,
-            'last_seen_at' => now(),
-            'session_expires_at' => now()->addMinutes(15),
-        ])->save();
-
-        $this->getJson('/api/master-plans')
-            ->assertUnauthorized()
-            ->assertJsonPath('superseded', true)
-            ->assertJsonPath('message', 'anda sudah login di perangkat lain');
-
-        $this->assertGuest();
-        $this->assertDatabaseHas('activity_logs', [
-            'table_name' => 'auth_sessions',
-            'action' => 'superseded',
-            'record_key' => 'single-device-user',
+            'session_expires_at' => '2026-07-22 11:10:00',
         ]);
 
         Carbon::setTestNow();
@@ -217,7 +177,7 @@ class DashboardAuthenticationTest extends TestCase
         Carbon::setTestNow();
     }
 
-    public function test_dashboard_api_rejects_idle_session_after_15_minutes(): void
+    public function test_dashboard_api_rejects_idle_session_after_60_minutes(): void
     {
         Carbon::setTestNow('2026-07-22 10:00:00');
         config()->set('session.driver', 'database');
@@ -226,7 +186,7 @@ class DashboardAuthenticationTest extends TestCase
             'username' => 'idle-user',
         ]);
 
-        Carbon::setTestNow('2026-07-22 10:16:00');
+        Carbon::setTestNow('2026-07-22 11:01:00');
 
         $this->getJson('/api/master-plans')
             ->assertUnauthorized()
@@ -239,6 +199,14 @@ class DashboardAuthenticationTest extends TestCase
         ]);
 
         Carbon::setTestNow();
+    }
+
+    public function test_google_sheet_claim_sync_requires_raw_sheet_management_role(): void
+    {
+        $this->actingAsDashboardUser(['role' => DashboardAuth::ROLE_TALENT]);
+
+        $this->postJson('/api/google-sheet-claim/sync')
+            ->assertForbidden();
     }
 
     public function test_session_endpoint_does_not_bootstrap_configured_dashboard_admin_for_web(): void

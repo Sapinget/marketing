@@ -62,10 +62,8 @@
                                             <option value="delete">delete</option>
                                         </select>
                                     </div>
-                                    <button @click="loadActivityLogs"
-                                        class="select-trigger-button select-trigger-button-compact justify-center">
-                                        <span class="text-slate-700 font-medium">{{ activityLogsLoaded ? 'Refresh' : 'Memuat' }}</span>
-                                        <i class="fa-solid fa-rotate-right text-body-sm text-slate-300"></i>
+                                    <button @click="loadActivityLogs" class="icon-utility-button icon-utility-bordered" :aria-label="activityLogsLoaded ? 'Refresh' : 'Memuat'" :title="activityLogsLoaded ? 'Refresh' : 'Memuat'">
+                                        <i class="fa-solid fa-rotate-right text-body-sm"></i>
                                     </button>
                                 </div>
                             </div>

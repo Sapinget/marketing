@@ -25,6 +25,18 @@
                     confirmModal.value.open
                 ));
 
+                const scrollToActiveSidebarItem = () => {
+                    nextTick(() => {
+                        requestAnimationFrame(() => {
+                            const nav = document.querySelector('.dashboard-sidebar-nav');
+                            const activeItem = nav?.querySelector('.sidebar-nav-item-active');
+                            if (!nav || !activeItem) return;
+
+                            const targetTop = activeItem.offsetTop - (nav.clientHeight / 2) + (activeItem.clientHeight / 2);
+                            nav.scrollTo({ top: Math.max(0, targetTop), behavior: 'smooth' });
+                        });
+                    });
+                };
                 let activityLogFilterDebounceId = null;
                 let handleChatVisibilityChange = null;
 
@@ -97,12 +109,13 @@
                         authBootstrapPending.value = false;
                         chatSessionConfirmed.value = !!currentUser.value?.ID;
                         resumeActiveTabAfterBootstrap();
-                        if (window.innerWidth < 768) {
-                            isSidebarOpen.value = false;
+                        if (window.innerWidth < 1024) {
+                            sidebarOpen.value = false;
                         }
                         appLoading.value = false;
                         nextTick(() => {
                             hydrateSortableTableHeaders();
+                            scrollToActiveSidebarItem();
                             requestAnimationFrame(() => stabilizeActivePanelPosition());
                         });
                     }
@@ -149,14 +162,6 @@
 
                 // --- Watchers (Moved to end to ensure all functions/refs are initialized) ---
 
-                // Technician Guard
-                watch([currentUser, activeTab], ([user, tab]) => {
-                    if (isTeknisi.value && !TEKNISI_TABS.has(tab)) {
-                        activeTab.value = 'claim_garansi_asuransi';
-                        localStorage.setItem("ppp_active_tab", 'claim_garansi_asuransi');
-                    }
-                }, { immediate: true });
-
                 watch(hasBlockingOverlayOpen, (locked) => {
                     setDocumentScrollLock(locked);
                 }, { immediate: true });
@@ -178,7 +183,7 @@
                     }
 
                     // Mobile auto-close
-                    if (window.innerWidth < 768) isSidebarOpen.value = false;
+                    if (window.innerWidth < 1024) sidebarOpen.value = false;
 
                     if (authBootstrapPending.value) {
                         nextTick(() => {
@@ -195,11 +200,15 @@
                         });
                         return;
                     }
+                    if (newTab === 'promo_pamflet') {
+                        promoPamflet.fetchData();
+                    }
                     runActiveTabProtectedLoaders(newTab);
-                    nextTick(() => {
-                        hydrateSortableTableHeaders();
-                        requestAnimationFrame(() => stabilizeActivePanelPosition());
-                    });
+                        nextTick(() => {
+                            hydrateSortableTableHeaders();
+                            scrollToActiveSidebarItem();
+                            requestAnimationFrame(() => stabilizeActivePanelPosition());
+                        });
                 }, { immediate: true });
 
                 watch(() => [

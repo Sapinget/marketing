@@ -116,6 +116,18 @@ class RemainingWorkbookImportTest extends TestCase
         $this->assertDatabaseCount('marketing_excel_rows', 0);
     }
 
+    public function test_raw_sheet_api_rejects_non_row_data(): void
+    {
+        $this->putJson('/api/raw-sheets/Nama_Stock', ['data' => ['invalid-row']])
+            ->assertUnprocessable();
+    }
+
+    public function test_raw_sheet_api_rejects_more_than_ten_thousand_rows(): void
+    {
+        $this->putJson('/api/raw-sheets/Nama_Stock', ['data' => array_fill(0, 10001, [])])
+            ->assertUnprocessable();
+    }
+
     private function createWorkbookFixture(): string
     {
         $path = tempnam(sys_get_temp_dir(), 'remaining-workbook-').'.xlsx';

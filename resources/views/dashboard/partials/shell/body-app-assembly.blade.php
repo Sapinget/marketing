@@ -18,6 +18,7 @@
 @include('dashboard.partials.shell.app-script-pricelist-katalog-operations')
 @include('dashboard.partials.shell.app-script-apple-katalog-operations')
 @include('dashboard.partials.shell.app-script-img-repo-operations')
+@include('dashboard.partials.shell.app-script-tiktok-template-operations')
 @include('dashboard.partials.shell.app-script-lpjk-operations')
 @include('dashboard.partials.shell.app-script-asset-vendor-inventory-operations')
 @include('dashboard.partials.shell.app-script-budgeting-operations')
