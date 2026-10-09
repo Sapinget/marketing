@@ -204,8 +204,10 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlContains('return `${String(window.MARKETING_BACKEND_URL).replace(/\\/+$/, \'\')}${url}`;', $html);
         $this->assertHtmlNotContains("fetch('/api/", $html);
         $this->assertHtmlNotContains('fetch(`/api/', $html);
-        $this->assertHtmlContains("fetch(window.MarketingDashboardRuntimeHelpers.resolveAppUrl('/api/img-repo/upload'), { method: 'POST', body: fd })", $html);
-        $this->assertHtmlNotContains("fetch(window.MarketingDashboardRuntimeHelpers.resolveAppUrl('/api/img-repo/upload'), { method: 'POST', headers:", $html);
+        // Script repo gambar terisolasi (hanya dimuat di /repository-gambar), jadi dicek dari sumbernya.
+        $imgRepoScript = (string) file_get_contents(resource_path('views/dashboard/partials/shell/app-script-img-repo-operations.blade.php'));
+        $this->assertHtmlContains("fetch(window.MarketingDashboardRuntimeHelpers.resolveAppUrl('/api/img-repo/upload'), { method: 'POST', body: fd })", $imgRepoScript);
+        $this->assertHtmlNotContains("fetch(window.MarketingDashboardRuntimeHelpers.resolveAppUrl('/api/img-repo/upload'), { method: 'POST', headers:", $imgRepoScript);
     }
 
     public function test_promo_pamflet_watcher_runs_after_current_user_initialization(): void
@@ -1088,7 +1090,7 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertIsString($metaPresentationPartial);
         $this->assertIsString($protectedPartial);
         $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-meta-ig-analytics')", $assemblyPartial);
-        $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-meta-ig-analytics-presentation')", $assemblyPartial);
+        $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-meta-ig-analytics-presentation')", file_get_contents(resource_path('views/dashboard/partials/shell/menu-scripts-meta-ig.blade.php')));
         $this->assertHtmlContains('const loadMetaStory = () => new Promise(resolve => {', $metaPartial);
         $this->assertHtmlContains('const uploadMetaCsv = (file, dataset) => {', $metaPartial);
         $this->assertHtmlContains('const renderMetaCharts = (dataset) => {', $metaPresentationPartial);
@@ -2292,7 +2294,8 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlContains('{{ (metaFeedPage - 1) * 15 + 1 }}-{{ Math.min(metaFeedPage * 15, filteredMetaFeed.length) }} dari {{ filteredMetaFeed.length }} data', $feedHtml);
         $this->assertHtmlContains('const metaFeedTotalPages = computed(() => Math.max(1, Math.ceil(filteredMetaFeed.value.length / PAGE_SIZE)));', $presentationScript);
         $this->assertHtmlContains('const pagedMetaFeed = computed(() => filteredMetaFeed.value.slice((metaFeedPage.value - 1) * PAGE_SIZE, metaFeedPage.value * PAGE_SIZE));', $presentationScript);
-        $this->assertHtmlContains('pagedMetaFeed,', $returnBlock);
+        // Diekspor lewat menuExports di script presentasi (terisolasi), bukan return block bersama.
+        $this->assertHtmlContains('pagedMetaFeed,', $presentationScript);
     }
 
     public function test_dashboard_primary_tables_do_not_use_20_row_pagination(): void

@@ -306,4 +306,42 @@
                     market_ext_devstore:    'devstore',
                     market_ext_rumahgadget: 'rumahgadget',
                 };
+
+                Object.assign(menuExports, {
+                    filteredIntelijenHarga,
+                    filteredPuraPriceChanges,
+                    filteredAuditHarga,
+                    filteredEksternalChanges,
+                    marketIntelijenHargaTotalPages,
+                    pagedIntelijenHarga,
+                    marketIntelijenHargaAuditTotalPages,
+                    pagedIntelijenHargaAudit,
+                    marketAuditHargaTotalPages,
+                    pagedMarketAuditHarga,
+                    marketEksternalRows,
+                    marketEksternalRowsTotalPages,
+                    pagedMarketEksternalRows,
+                    marketEksternalChangesTotalPages,
+                    pagedMarketEksternalChanges,
+                    marketProductLabel,
+                    pasarInsight,
+                    pasarCharts,
+                    eksternalSourceKeyFromName,
+                    loadMarketEksternal,
+                    loadMarketEksternalChanges,
+                });
+
+                // Market Intelligence: direct fetch ke Laravel API (bukan Apps Script)
+                menuLoaders.market_pasar = () => { loadMarketPasar(); };
+                menuLoaders.market_intelijen_harga = () => { loadMarketIntelijenHarga(); loadMarketAuditHarga(); };
+                menuLoaders.market_audit_harga = () => { loadMarketAuditHarga(); };
+                ['market_eksternal', 'market_ext_goodponsel', 'market_ext_devstore', 'market_ext_rumahgadget'].forEach((marketTab) => {
+                    menuLoaders[marketTab] = () => {
+                        const srcKey = _marketEksternalTabSourceMap[marketTab] || '';
+                        eksternalSourceFilter.value = srcKey;
+                        eksternalChangesDirection.value = 'all';
+                        loadMarketEksternal();
+                        loadMarketEksternalChanges();
+                    };
+                });
 @endverbatim

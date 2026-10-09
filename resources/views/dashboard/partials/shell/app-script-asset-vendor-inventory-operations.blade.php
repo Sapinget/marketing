@@ -84,4 +84,18 @@
                         .withFailureHandler(err => handleError(err))
                         .deleteAvi(id);
                 };
+
+                Object.assign(menuExports, {
+                    aviConditionOptions,
+                    filteredAviData,
+                    aviTotalPages,
+                    pagedAviData,
+                    aviUniqueVendors,
+                    aviUniqueBrands,
+                    aviTotalQuantity,
+                    aviTopVendor,
+                    openAviModal,
+                    saveAvi,
+                    deleteAvi,
+                });
 @endverbatim

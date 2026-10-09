@@ -179,4 +179,37 @@
                     imgRepoContextMenu.value = { item, x, y };
                 }
                 // ─────────────────────────────────────────────────────────────────────────
+
+                Object.assign(menuExports, {
+                    imgRepoPath,
+                    imgRepoItems,
+                    imgRepoLoading,
+                    imgRepoError,
+                    imgRepoSelected,
+                    imgRepoRenameItem,
+                    imgRepoRenameName,
+                    imgRepoMkdirOpen,
+                    imgRepoMkdirName,
+                    imgRepoUploading,
+                    imgRepoBusy,
+                    imgRepoViewMode,
+                    imgRepoNewMenuOpen,
+                    imgRepoContextMenu,
+                    imgRepoBreadcrumbs,
+                    imgRepoDirs,
+                    imgRepoFiles,
+                    imgRepoThumbUrl,
+                    imgRepoBrowse,
+                    imgRepoMkdir,
+                    imgRepoRenameSubmit,
+                    imgRepoDelete,
+                    imgRepoUploadFiles,
+                    imgRepoStartRename,
+                    imgRepoCancelRename,
+                    imgRepoNavigate,
+                    imgRepoSelectItem,
+                    imgRepoOpenContext,
+                });
+
+                menuLoaders.img_repo = () => { imgRepoBrowse(imgRepoPath.value || ''); };
 @endverbatim

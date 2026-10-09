@@ -9,17 +9,16 @@
 @include('dashboard.partials.shell.app-script-settings-cluster')
 @include('dashboard.partials.shell.app-script-nama-stock-actions')
 @include('dashboard.partials.shell.app-script-meta-ig-analytics')
-@include('dashboard.partials.shell.app-script-meta-ig-analytics-presentation')
-@include('dashboard.partials.shell.app-script-meta-followers')
 @include('dashboard.partials.shell.app-script-profile-user-mutations')
 @include('dashboard.partials.shell.app-script-reporting-and-budgeting')
 @include('dashboard.partials.shell.app-script-ads-log-operations')
 @include('dashboard.partials.shell.app-script-price-competitor-operations')
-@include('dashboard.partials.shell.app-script-img-repo-operations')
 @include('dashboard.partials.shell.app-script-lpjk-operations')
-@include('dashboard.partials.shell.app-script-asset-vendor-inventory-operations')
 @include('dashboard.partials.shell.app-script-budgeting-operations')
-@include('dashboard.partials.shell.app-script-market-intelligence-operations')
+{{-- Hanya dipakai menu tersembunyi market-* yang dirender di `/`; halaman menu ber-URL tidak memuatnya. --}}
+@unless($dedicatedMenuView ?? null)
+    @include('dashboard.partials.shell.app-script-market-intelligence-operations')
+@endunless
 @include('dashboard.partials.shell.app-script-search-select-and-options')
 @include('dashboard.partials.shell.app-script-calendar-helpers')
 @include('dashboard.partials.shell.app-script-summary-computed-cluster')
@@ -47,6 +46,10 @@
 {{-- Script menu terisolasi: dirender lewat @push('menu-scripts') di halaman menunya. Dashboard lama (`/`) hanya memuatnya bila flag url_routing mati, karena menu itu kembali dirender di `/`. --}}
 @if(! ($dedicatedMenuView ?? null) && ! config('dashboard.url_routing'))
     @include('dashboard.partials.shell.menu-scripts-catalog')
+    @include('dashboard.partials.shell.menu-scripts-meta-ig')
+    @include('dashboard.partials.shell.menu-scripts-meta-followers')
+    @include('dashboard.partials.shell.menu-scripts-img-repo')
+    @include('dashboard.partials.shell.menu-scripts-asset-vendor')
 @endif
 @stack('menu-scripts')
 @include('dashboard.partials.shell.app-script-return-block')

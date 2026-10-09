@@ -251,4 +251,27 @@
                     if (activeTab.value === 'meta_story') renderMetaCharts('story');
                     else if (activeTab.value === 'meta_feed') renderMetaCharts('feed');
                 }, { flush: 'post' });
+
+                Object.assign(menuExports, {
+                    metaFeedAccounts,
+                    filteredMetaFeedAccounts,
+                    filteredMetaStory,
+                    filteredMetaFeed,
+                    metaStorySummary,
+                    metaFeedSummary,
+                    metaStoryInsights,
+                    metaFeedInsights,
+                    metaStoryPage,
+                    metaStoryTotalPages,
+                    pagedMetaStory,
+                    metaFeedPage,
+                    metaFeedTotalPages,
+                    pagedMetaFeed,
+                    metaStoryMonthlySummary,
+                    metaFeedMonthlySummary,
+                    metaFeedAccountLeaderboard,
+                    metaStoryTop,
+                    metaFeedTop,
+                    metaShortDesc,
+                });
 @endverbatim

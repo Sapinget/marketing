@@ -112,9 +112,9 @@ class DashboardPageRoutesTest extends TestCase
 
     public function test_dedicated_pages_stay_within_the_size_budget(): void
     {
-        // Anggaran: shell + script bersama (~0,85 MB) + satu menu. Baseline sebelum isolasi: 2,27 MB.
-        // Turunkan batas ini saat script menu mulai diisolasi (Fase 1.5).
-        $budgetBytes = 1_150_000;
+        // Anggaran: shell + script bersama + satu menu (+ script terisolasi miliknya). Baseline sebelum isolasi: 2,27 MB;
+        // halaman biasa kini ±0,7 MB, halaman katalog ±0,94 MB karena membawa ±225 KB script katalog.
+        $budgetBytes = 1_000_000;
         foreach ($this->dashboardPages() as [$uri]) {
             $size = strlen($this->html($uri));
 
@@ -357,5 +357,52 @@ class DashboardPageRoutesTest extends TestCase
         config(['dashboard.url_routing' => false]);
 
         $this->assertSame([], $this->undeclaredReturnNames());
+    }
+
+    public function test_shared_scripts_never_reference_names_declared_only_in_isolated_scripts(): void
+    {
+        $shellDir = resource_path('views/dashboard/partials/shell/');
+        $isolated = [];
+
+        foreach (glob($shellDir.'menu-scripts-*.blade.php') ?: [] as $wrapper) {
+            preg_match_all("/@include\('dashboard\.partials\.shell\.([\w-]+)'\)/", (string) file_get_contents($wrapper), $m);
+            foreach ($m[1] as $partial) {
+                $isolated[$partial] = true;
+            }
+        }
+        // market-intelligence hanya dimuat di `/` (menu tersembunyi) lewat @unless di body-app-assembly.
+        $isolated['app-script-market-intelligence-operations'] = true;
+        $this->assertNotEmpty($isolated);
+
+        // Nama method pada objek API runner (`saveAvi(data) {}`) bukan referensi ke variabel setup().
+        $apiMethodKeys = ['deleteCatalogTemplate', 'saveCatalogTemplate', 'syncPricelistProducts', 'deleteAvi', 'saveAvi'];
+
+        $shared = [];
+        foreach (glob($shellDir.'app-script-*.blade.php') ?: [] as $path) {
+            $name = basename($path, '.blade.php');
+            if (! isset($isolated[$name]) && $name !== 'app-script-return-block') {
+                $shared[$name] = (string) file_get_contents($path);
+            }
+        }
+
+        $leaks = [];
+        foreach (array_keys($isolated) as $partial) {
+            $source = (string) file_get_contents($shellDir.$partial.'.blade.php');
+            preg_match_all('/^ {16,17}(?:const|let|var|async function|function)\s+([A-Za-z_$][\w$]*)/m', $source, $d);
+
+            foreach (array_unique($d[1]) as $name) {
+                if (strlen($name) < 3 || in_array($name, $apiMethodKeys, true)) {
+                    continue;
+                }
+
+                foreach ($shared as $sharedName => $sharedSource) {
+                    if (preg_match('/(?<![\w$.])'.preg_quote($name, '/').'(?![\w$])/', $sharedSource) === 1) {
+                        $leaks[] = "{$sharedName} uses {$name} (declared in {$partial})";
+                    }
+                }
+            }
+        }
+
+        $this->assertSame([], $leaks);
     }
 }

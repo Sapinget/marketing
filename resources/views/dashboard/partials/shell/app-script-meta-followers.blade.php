@@ -137,4 +137,15 @@
                         'danger'
                     );
                 };
+
+                Object.assign(menuExports, {
+                    metaFollowersData,
+                    metaFollowersLoaded,
+                    metaFollowersSummary,
+                    handleMetaFollowersFileInput,
+                    deleteAllMetaFollowers,
+                    loadMetaFollowers,
+                });
+
+                menuLoaders.meta_followers = () => { if (!metaFollowersLoaded.value) loadMetaFollowers(); };
 @endverbatim

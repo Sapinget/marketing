@@ -245,9 +245,6 @@
                     if (tab === 'meta_feed' && !metaFeedLoaded.value) {
                         loadMetaFeed();
                     }
-                    if (tab === 'meta_followers' && !metaFollowersLoaded.value) {
-                        loadMetaFollowers();
-                    }
                     if (tab === 'budgeting' && !budgetConfigLoaded.value) {
                         loadBudgetingConfig();
                     }
@@ -298,9 +295,6 @@
                     if (tab === 'activity_logs') {
                         loadActivityLogs();
                     }
-                    if (tab === 'img_repo') {
-                        imgRepoBrowse(imgRepoPath.value || '');
-                    }
                     if (tab === 'distribution') {
                         loadDistributionData();
                     }
@@ -323,18 +317,6 @@
                     };
                     const dataKey = TAB_DATA_MAP[tab];
                     if (dataKey) loadTabData(dataKey);
-
-                    // Market Intelligence — direct fetch to Laravel API (not Apps Script)
-                    if (tab === 'market_pasar') loadMarketPasar();
-                    if (tab === 'market_intelijen_harga') { loadMarketIntelijenHarga(); loadMarketAuditHarga(); }
-                    if (tab === 'market_audit_harga') loadMarketAuditHarga();
-                    if (['market_eksternal', 'market_ext_goodponsel', 'market_ext_devstore', 'market_ext_rumahgadget'].includes(tab)) {
-                        const srcKey = _marketEksternalTabSourceMap[tab] || '';
-                        eksternalSourceFilter.value = srcKey;
-                        eksternalChangesDirection.value = 'all';
-                        loadMarketEksternal();
-                        loadMarketEksternalChanges();
-                    }
                 };
                 const resumeActiveTabAfterBootstrap = () => {
                     if (!currentUser.value) {
