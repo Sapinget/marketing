@@ -101,11 +101,11 @@ class DashboardPageRoutesTest extends TestCase
         $this->assertPageHas($page, "activeTab === 'tiktok_template'");
         $this->assertPageHas($page, 'const ttFile');
         // Penanda khusus markup menu lain (sidebar/header memuat `activeTab === ...` umum, jadi tidak dipakai).
-        $this->assertPageLacks($page, '<!-- Budgeting tab -->');
+        $this->assertPageLacks($page, '<!-- Profile Setting View -->');
         $this->assertPageLacks($page, "activeTab === 'budgeting' && !budgetConfigLoaded");
 
         $legacy = $this->html('/');
-        $this->assertPageHas($legacy, '<!-- Budgeting tab -->');
+        $this->assertPageHas($legacy, '<!-- Profile Setting View -->');
         $this->assertPageLacks($legacy, 'const ttFile');
         $this->assertPageLacks($legacy, 'ttDownloadAudit');
     }

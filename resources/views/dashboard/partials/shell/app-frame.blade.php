@@ -224,19 +224,15 @@
                     'dashboard.partials.menus.garansi-cermati',
                     'dashboard.partials.menus.garansi-resmi',
                     'dashboard.partials.menus.profile',
-                    'dashboard.partials.menus.program-promo',
                     'dashboard.partials.menus.promo-pamflet',
                     'dashboard.partials.menus.bonus-report',
                     'dashboard.partials.menus.talent-bonus',
                     'dashboard.partials.menus.editor-performance',
-                    'dashboard.partials.menus.sell-out',
                     'dashboard.partials.menus.pricelist-katalog',
                     'dashboard.partials.menus.template-background',
                     'dashboard.partials.menus.apple-katalog',
                     'dashboard.partials.menus.img-repo',
                     'dashboard.partials.menus.asset-vendor-inventory',
-                    'dashboard.partials.menus.ads-log',
-                    'dashboard.partials.menus.budgeting',
                     'dashboard.partials.menus.content-modal',
                     'dashboard.partials.menus.market-pasar',
                     'dashboard.partials.menus.market-intelijen-harga',
@@ -265,6 +261,10 @@
                         // Batch C
 
                         // Batch D
+                        'dashboard.partials.menus.program-promo',
+                        'dashboard.partials.menus.sell-out',
+                        'dashboard.partials.menus.ads-log',
+                        'dashboard.partials.menus.budgeting',
 
                         // Batch E
 
