@@ -324,6 +324,7 @@
                     }
 
                     runActiveTabProtectedLoaders(activeTab.value);
+                    showFlashNotice();
                     // Satu kunjungan per muat halaman (buka URL langsung / refresh). Klik sidebar dicatat di switchTab.
                     trackMenuVisit(activeTab.value);
                 };

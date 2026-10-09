@@ -258,8 +258,28 @@
                     const prefix = window.location.pathname === '/8090' || window.location.pathname.startsWith('/8090/') ? '/8090' : '';
                     if (window.location.pathname.replace(/\/$/, '') !== prefix + url) {
                         window.location.assign(prefix + url);
+                        return true;
                     }
-                    return true;
+                    return 'same';
+                };
+                // Pesan yang harus bertahan melewati reload halaman (mis. akses ditolak lalu dialihkan ke URL lain).
+                const FLASH_NOTICE_KEY = 'ppp_flash_notice';
+                const redirectWithNotice = (tab, message, type = 'warning') => {
+                    try { sessionStorage.setItem(FLASH_NOTICE_KEY, JSON.stringify({ message, type })); } catch (e) {}
+                    const result = goToMigratedTab(tab);
+                    if (result === true) return true;
+                    try { sessionStorage.removeItem(FLASH_NOTICE_KEY); } catch (e) {}
+                    showNotification(message, type);
+                    return result === 'same';
+                };
+                const showFlashNotice = () => {
+                    try {
+                        const raw = sessionStorage.getItem(FLASH_NOTICE_KEY);
+                        if (!raw) return;
+                        sessionStorage.removeItem(FLASH_NOTICE_KEY);
+                        const notice = JSON.parse(raw);
+                        if (notice && notice.message) showNotification(notice.message, notice.type || 'warning');
+                    } catch (e) {}
                 };
                 // Klik sidebar berupa <a href>: biarkan browser membuka URL; bila flag mati, pakai navigasi hash.
                 const navigateTab = (event, tab) => {
@@ -273,8 +293,7 @@
 
                 const switchTab = (tab) => {
                     if (tab === 'auth_users' && !canManageUsers.value) {
-                        showNotification("Akses manajemen user hanya untuk Super Admin", "warning");
-                        if (goToMigratedTab('settings')) return;
+                        if (redirectWithNotice('settings', "Akses manajemen user hanya untuk Super Admin")) return;
                         activeTab.value = 'settings';
                         localStorage.setItem("ppp_active_tab", 'settings');
                         history.replaceState(null, '', '#settings');

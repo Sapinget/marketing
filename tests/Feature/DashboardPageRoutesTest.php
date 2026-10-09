@@ -405,4 +405,28 @@ class DashboardPageRoutesTest extends TestCase
 
         $this->assertSame([], $leaks);
     }
+
+    public function test_menu_templates_have_no_inline_style_or_script_tags(): void
+    {
+        // Vue mengabaikan <style>/<script> di dalam template ("Tags with side effect ... are ignored"); CSS harus di resources/css.
+        foreach (glob(resource_path('views/dashboard/partials/menus/*.blade.php')) ?: [] as $path) {
+            $source = (string) file_get_contents($path);
+
+            $this->assertSame(0, preg_match('/<(style|script)\b/i', $source), basename($path).' contains an inline <style>/<script> tag.');
+        }
+    }
+
+    public function test_denied_user_management_redirect_keeps_its_notice_across_the_reload(): void
+    {
+        $dir = resource_path('views/dashboard/partials/shell/');
+        $settings = (string) file_get_contents($dir.'app-script-protected-user-settings.blade.php');
+        $watchers = (string) file_get_contents($dir.'app-script-lifecycle-watchers.blade.php');
+        $tail = (string) file_get_contents($dir.'app-script-runner-session-tail.blade.php');
+
+        $this->assertStringContainsString("sessionStorage.setItem(FLASH_NOTICE_KEY", $settings);
+        $this->assertStringContainsString("redirectWithNotice('settings'", $settings);
+        $this->assertStringContainsString("redirectWithNotice('settings'", $watchers);
+        $this->assertStringContainsString('showFlashNotice();', $tail);
+        $this->assertSame(2, substr_count($settings.$watchers, 'Akses manajemen user hanya untuk Super Admin'), 'one message per guard (switchTab + watcher)');
+    }
 }

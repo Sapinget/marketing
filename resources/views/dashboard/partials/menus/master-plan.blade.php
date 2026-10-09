@@ -1,16 +1,4 @@
 @verbatim
-<style>
-    .table-action-button.table-action-link:hover {
-        color: var(--ppp-table-action-link-hover) !important;
-        border-color: var(--ppp-table-action-link-hover) !important;
-    }
-
-    .table-action-button.table-action-static:hover {
-        color: rgb(100 116 139) !important;
-        border-color: var(--ppp-line) !important;
-        cursor: default;
-    }
-</style>
 <!-- Master Plan View -->
                     <div v-if="activeTab === 'master'" class="space-y-4 animate-fadeIn">
                         <!-- Summary cards -->
