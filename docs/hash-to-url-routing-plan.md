@@ -1,6 +1,6 @@
 # Plan: Migrasi Menu Hash (`#tab`) ke URL Sendiri
 
-Status: direvisi 2026-10-09; Fase -1, Fase 0, dan Batch A (URL + isolasi markup) selesai di kode; fondasi Fase 1.5 sebagian; Fase 2 sebagian. **Belum ada verifikasi browser** untuk Batch A dan percontohan (ekstensi Chrome tidak terhubung). Dibuat 2026-10-08.
+Status: direvisi 2026-10-09; Fase -1, Fase 0, Batch A dan Batch B (URL + isolasi markup) selesai di kode; fondasi Fase 1.5 sebagian; Fase 2 sebagian. **Belum ada verifikasi browser** untuk Batch A, Batch B dan percontohan (ekstensi Chrome tidak terhubung). Dibuat 2026-10-08.
 Melengkapi `docs/one-menu-one-blade-roadmap.md` (target arsitektur penuh). Dokumen ini mengatur **urutan batch dan resep per menu** untuk:
 
 1. menghapus routing berbasis `#` (satu menu = satu URL), dan
@@ -100,7 +100,7 @@ Fase -1 → Fase 0 → Fase 1.5 fondasi → Batch A (URL + isolasi sekaligus, pe
 ### Fase 1: Migrasi per batch (satu PR per batch, urutan A → F)
 Urutan dari risiko terendah ke tertinggi.
 - [x] **Batch A** Tools & Settings (6 menu) selesai 2026-10-09 (URL, sidebar, markup terisolasi; script **tidak** diisolasi, lihat catatan di bawah; belum diuji browser). Mayoritas CRUD sederhana, `activity_logs`/`auth_users`/`settings` punya guard role sendiri.
-- [ ] **Batch B** Customer Service (5). `unit_ditanya` hanya perlu link sidebar di batch ini; rename URL ke `/cs/unit-ditanya` (+ redirect dari `/unit_ditanya`) dikerjakan sebagai langkah terpisah di akhir batch.
+- [x] **Batch B** Customer Service (5) selesai 2026-10-09 (URL `/cs/*`, sidebar `<a href>`, markup terisolasi, modal order online / unit ditanya / claim garansi / keep barang dipindah dari budgeting ke menunya; service sudah punya modal sendiri; `/unit_ditanya` → 301 ke `/cs/unit-ditanya`; belum diuji browser). `unit_ditanya` hanya perlu link sidebar di batch ini; rename URL ke `/cs/unit-ditanya` (+ redirect dari `/unit_ditanya`) dikerjakan sebagai langkah terpisah di akhir batch.
 - [ ] **Batch C** Complain Tracker (3).
 - [ ] **Batch D** Marketing (4). `program_promo` terkait route publik `/promo`, jangan bentrok.
 - [ ] **Batch E** Analisa Konten (3). Bergantung pada importer Meta (`meta_story`, `meta_feed`, `meta_followers`).
@@ -135,6 +135,8 @@ Catatan Batch A (2026-10-09):
 - **Script Batch A tidak diisolasi**: `price-competitor`/`lpjk` dipakai `summary-computed-cluster`, `export-*-pdf`, dan markup budgeting; `nama-stock-actions` dipakai `meta-ig-analytics`; `settings-cluster` (`settings`, `jsonApi`, `loadSettings`) dipakai hampir semua script dan dropdown. Dengan begitu flag rollback juga tetap berlaku (flag mati → `$migratedMenus` dirender lagi di `/`). Isolasi script menunggu Batch D (budgeting) / modul bersama.
 - Fase 2 (sebagian): `config('dashboard.tab_urls')` = satu sumber kebenaran (dicocokkan dengan route oleh `test_tab_url_map_matches_routes_exactly`); `/#tab` lama, tab tersimpan, dan `switchTab()` untuk tab yang punya URL dialihkan ke URL-nya (`goToMigratedTab`, `_migratedUrl` di bootstrap); sidebar Batch A memakai `<a href>` + `navigateTab()` (flag mati → hash lama). Belum: pemeliharaan `ppp_active_tab` untuk hidden tabs, dan pesan "Akses manajemen user hanya untuk Super Admin" hilang saat redirect ke `/settings` (reload).
 - Ukuran (server-side, `php` kernel lokal): `/` 2,27 → 2,05 MB; `/settings` 0,98 MB; `/settings/users` 0,97; `/tools/harga-kompetitor` 0,98; `/tools/laporan-event` 0,98 (gzip ±152 KB vs 286 KB di baseline). Semua halaman Batch A ±52% lebih kecil dari baseline `/`.
+
+Catatan Batch B (2026-10-09): `/` turun ke 1,83 MB (gzip 241 KB); tiap halaman `/cs/*` 0,96–1,00 MB (gzip ±153 KB). Script `customer-service-crud` dan `claim-menus` tetap bersama (dipakai export PDF dan budgeting). `proses_claim` (tab tersembunyi, memakai data service) tetap di `$legacyMenus`.
 
 Pemetaan script ke menu (isi saat mengerjakan, contoh awal dari `one-menu-one-blade-roadmap.md`):
 

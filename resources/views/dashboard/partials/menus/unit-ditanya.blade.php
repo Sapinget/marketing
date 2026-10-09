@@ -281,4 +281,350 @@
                             </div>
                         </div>
                     </div>
+
+    <!-- Unit Ditanya Modal -->
+    <teleport to="body">
+        <transition name="fade">
+            <div v-if="unitDitanyaModalOpen"
+                class="fixed inset-0 z-[2000] flex items-end md:items-center justify-center md:p-4 overlay-motion-sheet">
+                <div @click="unitDitanyaModalOpen = false" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm overlay-backdrop">
+                </div>
+                <div
+                    class="mobile-sheet modal-width-form radius-sheet modal-sheet-surface">
+                    <div
+                        class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
+                        <div class="modal-header-copy">
+                            <div
+                                class="modal-header-icon bg-amber text-light border border-amber">
+                                <i class="fa-solid fa-circle-question"></i>
+                            </div>
+                            <div>
+                                <div class="type-heading-sm text-slate-900">{{ csModalType === 'create' ? 'Tambah' : 'Edit' }} Unit Ditanya</div>
+                                <div class="type-body-sm text-slate-400 uppercase mt-0.5">Customer
+                                    Service</div>
+                            </div>
+                        </div>
+                        <button @click="unitDitanyaModalOpen = false" aria-label="Tutup modal"
+                            class="icon-utility-button icon-utility-round"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div class="p-6 overflow-y-auto space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Tanggal</label>
+                                <button type="button" @click="openCalendar($event, 'form', '', 'unitDitanya1')"
+                                    class="select-trigger-button-form toolbar-trigger-field-form">
+                                    <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
+                                    <span
+                                        :class="unitDitanyaForm['TANGGAL'] ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ unitDitanyaForm['TANGGAL'] ? formatFullDate(unitDitanyaForm['TANGGAL']) : 'Pilih Tanggal' }}</span>
+                                </button>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Kategori</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'unit_kategori')"
+                                    :aria-expanded="searchSelectOpen === 'unit_kategori' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="unitDitanyaForm['KATEGORI'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ unitDitanyaForm['KATEGORI'] || 'Pilih Kategori' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'unit_kategori'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari kategori unit ditanya"
+                                                placeholder="Cari kategori..." class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in unitKategoriOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))"
+                                                :key="opt"
+                                                @click="unitDitanyaForm['KATEGORI'] = opt; unitDitanyaForm['BRAND'] = ''; unitDitanyaForm['SERI'] = ''; searchSelectOpen = null"
+                                                :class="['popover-option', unitDitanyaForm['KATEGORI'] === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                            <div v-if="unitKategoriOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
+                                                Tidak ditemukan
+                                            </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Brand</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'unit_brand')"
+                                    :aria-expanded="searchSelectOpen === 'unit_brand' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="unitDitanyaForm['BRAND'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ unitDitanyaForm['BRAND'] || 'Pilih Brand' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'unit_brand'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari brand unit ditanya" placeholder="Cari brand..."
+                                                class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in unitBrandOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))"
+                                                :key="opt"
+                                                @click="unitDitanyaForm['BRAND'] = opt; unitDitanyaForm['SERI'] = ''; searchSelectOpen = null"
+                                                :class="['popover-option', unitDitanyaForm['BRAND'] === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                            <div v-if="unitBrandOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
+                                                Tidak ditemukan
+                                            </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Seri</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'unit_seri')"
+                                    :aria-expanded="searchSelectOpen === 'unit_seri' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="unitDitanyaForm['SERI'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ unitDitanyaForm['SERI'] || 'Pilih Seri' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'unit_seri'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari seri unit ditanya" placeholder="Cari seri..."
+                                                class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-if="nsSeriOptions.length === 0"
+                                                class="px-3 py-2 text-body text-slate-400 italic">Pilih Kategori &
+                                                Brand dulu</div>
+                                            <div v-for="opt in nsSeriOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))"
+                                                :key="opt"
+                                                @click="unitDitanyaForm['SERI'] = opt; searchSelectOpen = null"
+                                                :class="['popover-option', unitDitanyaForm['SERI'] === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                            <div v-if="nsSeriOptions.length > 0 && nsSeriOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
+                                                Tidak ditemukan
+                                            </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">RAM</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'unit_ram')"
+                                    :aria-expanded="searchSelectOpen === 'unit_ram' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="unitDitanyaForm['RAM'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ unitDitanyaForm['RAM'] || 'Pilih RAM' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'unit_ram'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari RAM unit ditanya" placeholder="Cari RAM..."
+                                                class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in unitRAMOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))"
+                                                :key="opt"
+                                                @click="unitDitanyaForm['RAM'] = opt; searchSelectOpen = null"
+                                                :class="['popover-option', unitDitanyaForm['RAM'] === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                            <div v-if="unitRAMOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
+                                                Tidak ditemukan
+                                            </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Internal</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'unit_internal')"
+                                    :aria-expanded="searchSelectOpen === 'unit_internal' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="unitDitanyaForm['INTERNAL'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ unitDitanyaForm['INTERNAL'] || 'Pilih Internal' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'unit_internal'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari internal unit ditanya"
+                                                placeholder="Cari internal..." class="form-input-popover"
+                                                @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in unitInternalOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))"
+                                                :key="opt"
+                                                @click="unitDitanyaForm['INTERNAL'] = opt; searchSelectOpen = null"
+                                                :class="['popover-option', unitDitanyaForm['INTERNAL'] === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                            <div v-if="unitInternalOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
+                                                Tidak ditemukan
+                                            </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Size</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'unit_size')"
+                                    :aria-expanded="searchSelectOpen === 'unit_size' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="unitDitanyaForm['SIZE'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ unitDitanyaForm['SIZE'] || 'Pilih Size' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'unit_size'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari size unit ditanya"
+                                                placeholder="Cari size..." class="form-input-popover"
+                                                @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in unitSizeOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))"
+                                                :key="opt"
+                                                @click="unitDitanyaForm['SIZE'] = opt; searchSelectOpen = null"
+                                                :class="['popover-option', unitDitanyaForm['SIZE'] === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                            <div v-if="unitSizeOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
+                                                Tidak ditemukan
+                                            </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div>
+                                <label for="unit-ditanya-warna"
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Warna</label>
+                                <input id="unit-ditanya-warna" name="unit_ditanya_warna" v-model="unitDitanyaForm['WARNA']" type="text" class="form-input" />
+                            </div>
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Kondisi</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'kondisi')"
+                                    :aria-expanded="searchSelectOpen === 'kondisi' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="unitDitanyaForm['KONDISI'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ unitDitanyaForm['KONDISI'] || 'Pilih Kondisi' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'kondisi'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in unitKondisiOptions" :key="opt"
+                                                @click="unitDitanyaForm['KONDISI'] = opt; searchSelectOpen = null"
+                                                :class="['popover-option', unitDitanyaForm['KONDISI'] === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Tipe</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'unit_tipe')"
+                                    :aria-expanded="searchSelectOpen === 'unit_tipe' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="unitDitanyaForm['TIPE'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ unitDitanyaForm['TIPE'] || 'Pilih Tipe' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'unit_tipe'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari tipe unit ditanya" placeholder="Cari tipe..."
+                                                class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in sharedUnitTypeOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))"
+                                                :key="opt"
+                                                @click="unitDitanyaForm['TIPE'] = opt; searchSelectOpen = null"
+                                                :class="['popover-option', unitDitanyaForm['TIPE'] === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                            <div v-if="sharedUnitTypeOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
+                                                Tidak ditemukan
+                                            </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div>
+                                <label for="unit-ditanya-ditanya" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Jumlah
+                                    Ditanya</label>
+                                <input id="unit-ditanya-ditanya" name="unit_ditanya_jumlah" v-model.number="unitDitanyaForm['DITANYA']" type="number" min="1"
+                                    class="form-input" />
+                            </div>
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Available</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'available')"
+                                    :aria-expanded="searchSelectOpen === 'available' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="unitDitanyaForm['AVAILABLE'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ unitDitanyaForm['AVAILABLE'] || 'Pilih Available' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'available'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in unitAvailableOptions" :key="opt"
+                                                @click="unitDitanyaForm['AVAILABLE'] = opt; searchSelectOpen = null"
+                                                :class="['popover-option', unitDitanyaForm['AVAILABLE'] === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer-bar modal-footer-actions">
+                        <button @click="unitDitanyaModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
+                        <button @click="saveUnitDitanya" :disabled="submitting" class="primary-cta-button">{{ submitting ? 'Menyimpan...' : 'Simpan' }}</button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+    </teleport>
 @endverbatim

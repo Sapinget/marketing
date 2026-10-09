@@ -220,14 +220,9 @@
                     'dashboard.partials.menus.unboxing',
                     'dashboard.partials.menus.top-content',
                     'dashboard.partials.menus.low-content',
-                    'dashboard.partials.menus.order-online',
-                    'dashboard.partials.menus.unit-ditanya',
-                    'dashboard.partials.menus.service',
-                    'dashboard.partials.menus.claim-garansi',
                     'dashboard.partials.menus.input-claim',
                     'dashboard.partials.menus.garansi-cermati',
                     'dashboard.partials.menus.garansi-resmi',
-                    'dashboard.partials.menus.keep-barang',
                     'dashboard.partials.menus.profile',
                     'dashboard.partials.menus.program-promo',
                     'dashboard.partials.menus.promo-pamflet',
@@ -260,6 +255,11 @@
                         'dashboard.partials.menus.nama-stock',
                         'dashboard.partials.menus.auth-users',
                         'dashboard.partials.menus.activity-logs',
+                        'dashboard.partials.menus.order-online',
+                        'dashboard.partials.menus.unit-ditanya',
+                        'dashboard.partials.menus.service',
+                        'dashboard.partials.menus.claim-garansi',
+                        'dashboard.partials.menus.keep-barang',
                     ];
                 @endphp
                 @if($dedicatedMenuView ?? null)

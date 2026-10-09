@@ -315,4 +315,272 @@
                             </div>
                         </div>
                     </div>
+
+    <!-- Keep Barang Modal -->
+    <teleport to="body">
+        <transition name="fade">
+            <div v-if="keepBarangModalOpen"
+                class="fixed inset-0 z-[2000] flex items-end md:items-center justify-center md:p-4 overlay-motion-sheet">
+                <div @click="keepBarangModalOpen = false" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm overlay-backdrop">
+                </div>
+                <div
+                    class="mobile-sheet modal-width-form radius-sheet modal-sheet-surface">
+                    <div
+                        class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
+                        <div class="modal-header-copy">
+                            <div
+                                class="modal-header-icon bg-amber text-light border border-amber">
+                                <i class="fa-solid fa-box-archive"></i>
+                            </div>
+                            <div>
+                                <div class="type-heading-sm text-slate-900">{{ keepBarangModalType === 'create' ? 'Tambah' : 'Edit' }} Barang Ditahan</div>
+                                <div class="type-body-sm text-slate-400 uppercase mt-0.5">Customer
+                                    Service</div>
+                            </div>
+                        </div>
+                        <button @click="keepBarangModalOpen = false" aria-label="Tutup modal"
+                            class="icon-utility-button icon-utility-round"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div class="p-6 overflow-y-auto space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Tanggal
+                                    Keep</label>
+                                <button type="button" @click="openCalendar($event, 'form', '', 'keepBarangTanggalKeep')"
+                                    class="select-trigger-button-form toolbar-trigger-field-form">
+                                    <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
+                                    <span
+                                        :class="keepBarangForm['TANGGAL_KEEP'] ? 'text-slate-700 font-medium' : 'text-slate-400'">
+                                        {{ keepBarangForm['TANGGAL_KEEP'] ? formatShortDate(keepBarangForm['TANGGAL_KEEP']) : 'Pilih tanggal keep' }}
+                                    </span>
+                                </button>
+                            </div>
+                            <div>
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Rencana
+                                    Pengambilan</label>
+                                <button type="button"
+                                    @click="openCalendar($event, 'form', '', 'keepBarangRencanaAmbil')"
+                                    class="select-trigger-button-form toolbar-trigger-field-form">
+                                    <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
+                                    <span
+                                        :class="keepBarangForm['RENCANA_PENGAMBILAN'] ? 'text-slate-700 font-medium' : 'text-slate-400'">
+                                        {{ keepBarangForm['RENCANA_PENGAMBILAN'] ? formatShortDate(keepBarangForm['RENCANA_PENGAMBILAN']) : 'Pilih rencana pengambilan' }}
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="col-span-2">
+                                <label for="keep-nama-customer" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Nama
+                                    Customer</label>
+                                <input id="keep-nama-customer" name="keep_nama_customer" v-model="keepBarangForm['NAMA']" type="text" class="form-input" />
+                            </div>
+                            <div>
+                                <label for="keep-nomor-hp" class="type-body-sm font-bold text-slate-400 uppercase mb-2">No
+                                    HP</label>
+                                <input id="keep-nomor-hp" name="keep_nomor_hp" v-model="keepBarangForm['NOMOR_HP']" type="text" placeholder="08xxx"
+                                    class="form-input" />
+                            </div>
+                            <div>
+                                <label for="keep-nomor-hp-2" class="type-body-sm font-bold text-slate-400 uppercase mb-2">No
+                                    HP 2</label>
+                                <input id="keep-nomor-hp-2" name="keep_nomor_hp_2" v-model="keepBarangForm['NOMOR_HP_2']" type="text" placeholder="08xxx (opsional)"
+                                    class="form-input" />
+                            </div>
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Type
+                                    HP</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'keep_type_hp')"
+                                    :aria-expanded="searchSelectOpen === 'keep_type_hp' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="keepBarangForm['TYPE_HP'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ keepBarangForm['TYPE_HP'] || 'Pilih Type HP' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'keep_type_hp'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari type HP keep barang" placeholder="Cari type HP..."
+                                                class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in keepBarangTypeHpOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))"
+                                                :key="opt"
+                                                @click="keepBarangForm['TYPE_HP'] = opt; searchSelectOpen = null"
+                                                :class="['popover-option', keepBarangForm['TYPE_HP'] === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                            <div v-if="keepBarangTypeHpOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
+                                                Belum ada opsi Type HP
+                                            </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div>
+                                <label for="keep-imei-full"
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">IMEI</label>
+                                <input id="keep-imei-full" name="keep_imei_full" v-model="keepBarangForm['IMEI_FULL']" type="text" class="form-input" />
+                            </div>
+                            <div>
+                                <label for="keep-dp-uang-muka" class="type-body-sm font-bold text-slate-400 uppercase mb-2">DP
+                                    (Uang Muka)</label>
+                                <input id="keep-dp-uang-muka" name="keep_dp_uang_muka" v-model.number="keepBarangForm['DP_UANG_MUKA']" type="number" min="0"
+                                    class="form-input" />
+                            </div>
+                            <div>
+                                <label for="keep-harga-jual" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Harga
+                                    Jual</label>
+                                <input id="keep-harga-jual" name="keep_harga_jual" v-model.number="keepBarangForm['HARGA_JUAL']" type="number" min="0"
+                                    class="form-input" />
+                            </div>
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Handle
+                                    By</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'keep_handle_by')"
+                                    :aria-expanded="searchSelectOpen === 'keep_handle_by' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="keepBarangForm['HANDLE_BY'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ keepBarangForm['HANDLE_BY'] || 'Pilih Handle By' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'keep_handle_by'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari handle by keep barang"
+                                                placeholder="Cari handle by..." class="form-input-popover"
+                                                @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in keepBarangHandleByOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))"
+                                                :key="opt"
+                                                @click="keepBarangForm['HANDLE_BY'] = opt; searchSelectOpen = null"
+                                                :class="['popover-option', keepBarangForm['HANDLE_BY'] === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                            <div v-if="keepBarangHandleByOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
+                                                Tidak ditemukan
+                                            </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Kasir
+                                    By</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'keep_kasir_by')"
+                                    :aria-expanded="searchSelectOpen === 'keep_kasir_by' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="keepBarangForm['KASIR_BY'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ keepBarangForm['KASIR_BY'] || 'Pilih Kasir By' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'keep_kasir_by'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari kasir by keep barang"
+                                                placeholder="Cari kasir by..." class="form-input-popover"
+                                                @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in keepBarangKasirByOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))"
+                                                :key="opt"
+                                                @click="keepBarangForm['KASIR_BY'] = opt; searchSelectOpen = null"
+                                                :class="['popover-option', keepBarangForm['KASIR_BY'] === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                            <div v-if="keepBarangKasirByOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
+                                                Tidak ditemukan
+                                            </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Team
+                                    Gudang</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'keep_team_gudang')"
+                                    :aria-expanded="searchSelectOpen === 'keep_team_gudang' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="keepBarangForm['TEAM_GUDANG'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ keepBarangForm['TEAM_GUDANG'] || 'Pilih Team Gudang' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'keep_team_gudang'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari team gudang keep barang"
+                                                placeholder="Cari team gudang..." class="form-input-popover"
+                                                @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in keepBarangTeamGudangOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))"
+                                                :key="opt"
+                                                @click="keepBarangForm['TEAM_GUDANG'] = opt; searchSelectOpen = null"
+                                                :class="['popover-option', keepBarangForm['TEAM_GUDANG'] === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                            <div v-if="keepBarangTeamGudangOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
+                                                Tidak ditemukan
+                                            </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div>
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Deadline
+                                    Gudang</label>
+                                <button type="button"
+                                    @click="openCalendar($event, 'form', '', 'keepBarangDeadlineGudang')"
+                                    class="select-trigger-button-form toolbar-trigger-field-form">
+                                    <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
+                                    <span
+                                        :class="keepBarangForm['DEADLINE_TEAM_GUDANG'] ? 'text-slate-700 font-medium' : 'text-slate-400'">
+                                        {{ keepBarangForm['DEADLINE_TEAM_GUDANG'] ? formatShortDate(keepBarangForm['DEADLINE_TEAM_GUDANG']) : 'Pilih deadline gudang' }}
+                                    </span>
+                                </button>
+                            </div>
+                            <div class="col-span-2">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Status</label>
+                                <div class="relative search-select-container">
+                                    <button type="button" @click="toggleSearchSelect($event, 'keep_form_status')"
+                                        class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                        <span class="truncate">{{ keepBarangForm['STATUS'] || 'Pilih Status' }}</span>
+                                        <i class="fa-solid fa-chevron-down text-overline text-slate-400"></i>
+                                    </button>
+                                    <div v-if="searchSelectOpen === 'keep_form_status'" :style="popoverStyle"
+                                        class="search-select-popover search-select-popover--compact max-h-60 overflow-y-auto">
+                                        <div v-for="status in keepBarangStatusOptions" :key="status"
+                                            @click="keepBarangForm['STATUS'] = status; searchSelectOpen = null"
+                                            class="popover-option">
+                                            {{ status }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer-bar modal-footer-actions">
+                        <button @click="keepBarangModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
+                        <button @click="saveKeepBarang" :disabled="submitting" class="primary-cta-button">{{ submitting ? 'Menyimpan...' : 'Simpan' }}</button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+    </teleport>
 @endverbatim

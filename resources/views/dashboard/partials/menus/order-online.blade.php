@@ -269,4 +269,267 @@
                             </div>
                         </div>
                     </div>
+
+    <!-- Order Online Modal -->
+    <teleport to="body">
+        <transition name="fade">
+            <div v-if="orderanOnlineModalOpen"
+                class="fixed inset-0 z-[2000] flex items-end md:items-center justify-center md:p-4 overlay-motion-sheet">
+                <div @click="orderanOnlineModalOpen = false" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm overlay-backdrop">
+                </div>
+                <div
+                    class="mobile-sheet modal-width-detail radius-sheet modal-sheet-surface">
+                    <div
+                        class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
+                        <div class="modal-header-copy">
+                            <div
+                                class="modal-header-icon bg-info text-light border border-info">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                            </div>
+                            <div>
+                                <div class="type-heading-sm text-slate-900">{{ csModalType === 'create' ? 'Tambah' : 'Edit' }} Order Online</div>
+                                <div class="type-body-sm text-slate-400 uppercase mt-0.5">Customer
+                                    Service</div>
+                            </div>
+                        </div>
+                        <button @click="orderanOnlineModalOpen = false" aria-label="Tutup modal"
+                            class="icon-utility-button icon-utility-round"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div class="p-6 overflow-y-auto space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Tanggal</label>
+                                <button type="button" @click="openCalendar($event, 'form', '', 'orderanOnline1')"
+                                    class="select-trigger-button-form toolbar-trigger-field-form">
+                                    <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
+                                    <span
+                                        :class="orderanOnlineForm['TANGGAL'] ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ orderanOnlineForm['TANGGAL'] ? formatFullDate(orderanOnlineForm['TANGGAL']) : 'Pilih Tanggal' }}</span>
+                                </button>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Ecommerce</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'ecommerce')"
+                                    :aria-expanded="searchSelectOpen === 'ecommerce' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="orderanOnlineForm['ECOMMERCE'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ orderanOnlineForm['ECOMMERCE'] || 'Pilih Ecommerce' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'ecommerce'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari ecommerce order online"
+                                                placeholder="Cari ecommerce..." class="form-input-popover"
+                                                @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in orderanEcommerceOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))"
+                                                :key="opt"
+                                                @click="orderanOnlineForm['ECOMMERCE'] = opt; searchSelectOpen = null"
+                                                :class="['popover-option', orderanOnlineForm['ECOMMERCE'] === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                            <div v-if="orderanEcommerceOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
+                                                Tidak ditemukan
+                                            </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Handle</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'orderan_handle')"
+                                    :aria-expanded="searchSelectOpen === 'orderan_handle' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="orderanOnlineForm['HANDLE'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ orderanOnlineForm['HANDLE'] || 'Pilih Handle' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'orderan_handle'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari handle order online"
+                                                placeholder="Cari handle..." class="form-input-popover"
+                                                @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in orderanHandleOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))"
+                                                :key="opt"
+                                                @click="orderanOnlineForm['HANDLE'] = opt; searchSelectOpen = null"
+                                                :class="['popover-option', orderanOnlineForm['HANDLE'] === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                            <div v-if="orderanHandleOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
+                                                Tidak ditemukan
+                                            </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div>
+                                <label for="order-online-nama" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Nama
+                                    Customer</label>
+                                <input id="order-online-nama" name="order_online_nama" v-model="orderanOnlineForm['NAMA']" type="text" class="form-input" />
+                            </div>
+                            <div>
+                                <label for="order-online-hp" class="type-body-sm font-bold text-slate-400 uppercase mb-2">No
+                                    HP</label>
+                                <input id="order-online-hp" name="order_online_hp" v-model="orderanOnlineForm['HP']" type="text" class="form-input" />
+                            </div>
+                            <div>
+                                <label for="order-online-username"
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Username</label>
+                                <input id="order-online-username" name="order_online_username" v-model="orderanOnlineForm['USERNAME']" type="text" class="form-input" />
+                            </div>
+                            <div>
+                                <label for="order-online-no-pesanan" class="type-body-sm font-bold text-slate-400 uppercase mb-2">No
+                                    Pesanan</label>
+                                <input id="order-online-no-pesanan" name="order_online_no_pesanan" v-model="orderanOnlineForm['NO PESANAN']" type="text" class="form-input" />
+                            </div>
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Pengiriman</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'pengiriman')"
+                                    :aria-expanded="searchSelectOpen === 'pengiriman' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="orderanOnlineForm['PENGIRIMAN'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ orderanOnlineForm['PENGIRIMAN'] || 'Pilih Pengiriman' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'pengiriman'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari pengiriman order online"
+                                                placeholder="Cari pengiriman..." class="form-input-popover"
+                                                @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in orderanPengirimanOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))"
+                                                :key="opt"
+                                                @click="orderanOnlineForm['PENGIRIMAN'] = opt; searchSelectOpen = null"
+                                                :class="['popover-option', orderanOnlineForm['PENGIRIMAN'] === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                            <div v-if="orderanPengirimanOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
+                                                Tidak ditemukan
+                                            </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div>
+                                <label for="order-online-no-resi" class="type-body-sm font-bold text-slate-400 uppercase mb-2">No
+                                    Resi</label>
+                                <input id="order-online-no-resi" name="order_online_no_resi" v-model="orderanOnlineForm['NO RESI']" type="text" class="form-input" />
+                            </div>
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Type
+                                    Unit / Produk</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'orderan_type_unit')"
+                                    :aria-expanded="searchSelectOpen === 'orderan_type_unit' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="orderanOnlineForm['TYPE UNIT'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ orderanOnlineForm['TYPE UNIT'] || 'Pilih Type Unit' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'orderan_type_unit'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari type unit order online"
+                                                placeholder="Cari type unit..." class="form-input-popover"
+                                                @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in sharedUnitTypeOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))"
+                                                :key="opt"
+                                                @click="orderanOnlineForm['TYPE UNIT'] = opt; searchSelectOpen = null"
+                                                :class="['popover-option', orderanOnlineForm['TYPE UNIT'] === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                            <div v-if="sharedUnitTypeOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
+                                                Tidak ditemukan
+                                            </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div>
+                                <label for="order-online-imei-sn" class="type-body-sm font-bold text-slate-400 uppercase mb-2">IMEI
+                                    / SN</label>
+                                <input id="order-online-imei-sn" name="order_online_imei_sn" v-model="orderanOnlineForm['IMEI/SN']" type="text" class="form-input" />
+                            </div>
+                            <div>
+                                <label for="order-online-no-nota" class="type-body-sm font-bold text-slate-400 uppercase mb-2">No
+                                    Nota</label>
+                                <input id="order-online-no-nota" name="order_online_no_nota" v-model="orderanOnlineForm['NO NOTA']" type="text" class="form-input" />
+                            </div>
+                            <div>
+                                <label for="order-online-harga-online" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Harga
+                                    Online</label>
+                                <input id="order-online-harga-online" name="order_online_harga_online" v-model.number="orderanOnlineForm['HARGA ONLINE']" type="number"
+                                    class="form-input" />
+                            </div>
+                            <div>
+                                <label for="order-online-nominal-cair" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Nominal
+                                    Cair</label>
+                                <input id="order-online-nominal-cair" name="order_online_nominal_cair" v-model.number="orderanOnlineForm['NOMINAL CAIR']" type="number"
+                                    class="form-input" />
+                            </div>
+                            <div>
+                                <label for="order-online-admin-persentase" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Admin
+                                    %</label>
+                                <input id="order-online-admin-persentase" name="order_online_admin_persentase" v-model="orderanOnlineForm['ADMIN %']" type="text" placeholder="2% / 3%"
+                                    class="form-input" />
+                            </div>
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Status</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'orderan_status')"
+                                    :aria-expanded="searchSelectOpen === 'orderan_status' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="orderanOnlineForm['STATUS'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ orderanOnlineForm['STATUS'] || 'Pilih Status' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'orderan_status'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in orderanStatusOptions" :key="opt"
+                                                @click="orderanOnlineForm['STATUS'] = opt; searchSelectOpen = null"
+                                                :class="['popover-option', orderanOnlineForm['STATUS'] === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer-bar modal-footer-actions">
+                        <button @click="orderanOnlineModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
+                        <button @click="saveOrderanOnline" :disabled="submitting" class="primary-cta-button">{{ submitting ? 'Menyimpan...' : 'Simpan' }}</button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+    </teleport>
 @endverbatim

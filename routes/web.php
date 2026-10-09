@@ -729,12 +729,14 @@ $dashboardPage('/settings/nama-stock', 'dashboard.settings.nama-stock', 'dashboa
 $dashboardPage('/settings/users', 'dashboard.settings.users', 'dashboard.pages.settings.users', 'auth_users', 'dashboard.partials.menus.auth-users', $dashboardBackendUrl);
 $dashboardPage('/settings/activity-logs', 'dashboard.settings.activity-logs', 'dashboard.pages.settings.activity-logs', 'activity_logs', 'dashboard.partials.menus.activity-logs', $dashboardBackendUrl);
 
-Route::get('/unit_ditanya', function (MarketingDashboardShell $dashboardShell) use ($dashboardBackendUrl) {
-    return response()->view('dashboard.index', array_merge(
-        $dashboardShell->build($dashboardBackendUrl()),
-        ['activeTab' => 'unit_ditanya']
-    ))->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
-})->name('dashboard.unit-ditanya');
+// Batch B: Customer Service
+$dashboardPage('/cs/order-online', 'dashboard.cs.order-online', 'dashboard.pages.cs.order-online', 'orderan_online', 'dashboard.partials.menus.order-online', $dashboardBackendUrl);
+$dashboardPage('/cs/unit-ditanya', 'dashboard.cs.unit-ditanya', 'dashboard.pages.cs.unit-ditanya', 'unit_ditanya', 'dashboard.partials.menus.unit-ditanya', $dashboardBackendUrl);
+$dashboardPage('/cs/service', 'dashboard.cs.service', 'dashboard.pages.cs.service', 'service', 'dashboard.partials.menus.service', $dashboardBackendUrl);
+$dashboardPage('/cs/claim-garansi', 'dashboard.cs.claim-garansi', 'dashboard.pages.cs.claim-garansi', 'claim_garansi_asuransi', 'dashboard.partials.menus.claim-garansi', $dashboardBackendUrl);
+$dashboardPage('/cs/keep-barang', 'dashboard.cs.keep-barang', 'dashboard.pages.cs.keep-barang', 'keep_barang', 'dashboard.partials.menus.keep-barang', $dashboardBackendUrl);
+// URL lama /unit_ditanya (sebelum penyeragaman /cs/*) tetap hidup.
+Route::redirect('/unit_ditanya', '/cs/unit-ditanya', 301)->name('dashboard.unit-ditanya');
 
 Route::get('/api/promo-pamflets/file/{filename}', function (string $filename) {
     abort_unless(preg_match('/^[A-Za-z0-9._-]+$/', $filename) === 1, 404);

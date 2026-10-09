@@ -38,6 +38,12 @@ return [
         'nama_stock' => '/settings/nama-stock',
         'auth_users' => '/settings/users',
         'activity_logs' => '/settings/activity-logs',
+        // Batch B
+        'orderan_online' => '/cs/order-online',
+        'unit_ditanya' => '/cs/unit-ditanya',
+        'service' => '/cs/service',
+        'claim_garansi_asuransi' => '/cs/claim-garansi',
+        'keep_barang' => '/cs/keep-barang',
     ],
 
 ];

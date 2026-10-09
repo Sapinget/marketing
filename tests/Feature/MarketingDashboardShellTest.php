@@ -80,7 +80,7 @@ class MarketingDashboardShellTest extends TestCase
 
         return implode("\n", array_map(
             fn (string $menu) => (string) file_get_contents($menus.$menu.'.blade.php'),
-            ['budgeting', 'harga-kompetitor', 'laporan-event', 'nama-stock']
+            ['budgeting', 'harga-kompetitor', 'laporan-event', 'nama-stock', 'order-online', 'unit-ditanya', 'claim-garansi', 'keep-barang']
         ));
     }
 

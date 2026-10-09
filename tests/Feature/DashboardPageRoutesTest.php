@@ -195,6 +195,7 @@ class DashboardPageRoutesTest extends TestCase
         $this->assertPageHas($html, 'const urlRouting = false;');
         $this->assertPageHas($html, 'for="harga-kompetitor-nama-produk"');
         $this->assertPageHas($html, 'v-if="showNamaStockFormModal"');
+        $this->assertPageHas($html, 'v-if="keepBarangModalOpen"');
     }
 
     public function test_sidebar_links_to_batch_a_urls(): void
@@ -202,6 +203,40 @@ class DashboardPageRoutesTest extends TestCase
         $sidebar = (string) file_get_contents(resource_path('views/dashboard/partials/shell/app-frame-sidebar-nav-admin.blade.php'));
 
         foreach (['harga_kompetitor', 'laporan_event', 'settings', 'nama_stock', 'auth_users', 'activity_logs'] as $tab) {
+            $url = config('dashboard.tab_urls')[$tab];
+
+            $this->assertStringContainsString('href="'.$url.'" @click="navigateTab($event, \''.$tab.'\')"', $sidebar);
+            $this->assertStringNotContainsString("switchTab('{$tab}')", $sidebar);
+        }
+    }
+
+    public function test_batch_b_menus_leave_the_legacy_dashboard_and_keep_their_modals(): void
+    {
+        $legacy = $this->html('/');
+        $markers = [
+            '/cs/order-online' => 'v-if="orderanOnlineModalOpen"',
+            '/cs/unit-ditanya' => 'v-if="unitDitanyaModalOpen"',
+            '/cs/claim-garansi' => 'v-if="claimGaransiModalOpen"',
+            '/cs/keep-barang' => 'v-if="keepBarangModalOpen"',
+            '/cs/service' => 'v-if="serviceModalOpen"',
+        ];
+
+        foreach ($markers as $uri => $marker) {
+            $this->assertPageLacks($legacy, $marker, "/ must not render {$uri} markup.");
+            $this->assertPageHas($this->html($uri), $marker, "{$uri} must render its own modal.");
+        }
+    }
+
+    public function test_old_unit_ditanya_url_redirects_permanently(): void
+    {
+        $this->get('/unit_ditanya')->assertStatus(301)->assertRedirect('/cs/unit-ditanya');
+    }
+
+    public function test_sidebar_links_to_batch_b_urls(): void
+    {
+        $sidebar = (string) file_get_contents(resource_path('views/dashboard/partials/shell/app-frame-sidebar-nav-cs.blade.php'));
+
+        foreach (['orderan_online', 'unit_ditanya', 'service', 'claim_garansi_asuransi', 'keep_barang'] as $tab) {
             $url = config('dashboard.tab_urls')[$tab];
 
             $this->assertStringContainsString('href="'.$url.'" @click="navigateTab($event, \''.$tab.'\')"', $sidebar);

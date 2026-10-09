@@ -281,4 +281,314 @@
                             </div>
                         </div>
                     </div>
+
+    <!-- Claim Garansi Modal -->
+    <teleport to="body">
+        <transition name="fade">
+            <div v-if="claimGaransiModalOpen"
+                class="fixed inset-0 z-[2000] flex items-end md:items-center justify-center md:p-4 overlay-motion-sheet">
+                <div @click="claimGaransiModalOpen = false" class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm overlay-backdrop">
+                </div>
+                <div
+                    class="mobile-sheet modal-width-form radius-sheet modal-sheet-surface">
+                    <div
+                        class="modal-header-bar modal-header-bar-sticky radius-sheet-top z-[2010]">
+                        <div class="modal-header-copy">
+                            <div
+                                class="modal-header-icon bg-danger text-light border border-danger">
+                                <i class="fa-solid fa-shield-heart"></i>
+                            </div>
+                            <div>
+                                <div class="type-heading-sm text-slate-900">{{ csModalType === 'create' ? 'Tambah' : 'Edit' }} Claim Garansi</div>
+                                <div class="type-body-sm text-slate-400 uppercase mt-0.5">Customer
+                                    Service</div>
+                            </div>
+                        </div>
+                        <button @click="claimGaransiModalOpen = false" aria-label="Tutup modal"
+                            class="icon-utility-button icon-utility-round"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                    <div class="p-6 overflow-y-auto space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="form-section-card">
+                                <div class="form-section-title">Info Customer</div>
+                                <div class="form-section-copy">Data pelanggan, kontak, dan timeline layanan.</div>
+                            </div>
+                            <div class="col-span-2">
+                                <label for="claim-nama-customer" class="type-body-sm font-bold text-slate-400 uppercase mb-2">Nama
+                                    Customer</label>
+                                <input id="claim-nama-customer" name="claim_nama_customer" v-model="claimGaransiForm['NAMA_CUSTOMER']" type="text" class="form-input" />
+                            </div>
+                            <div>
+                                <label for="claim-no-service" class="type-body-sm font-bold text-slate-400 uppercase mb-2">No
+                                    Service</label>
+                                <input id="claim-no-service" name="claim_no_service" v-model="claimGaransiForm['NO_SERVICE']" type="text" class="form-input" />
+                            </div>
+                            <div>
+                                <label for="claim-no-transaksi" class="type-body-sm font-bold text-slate-400 uppercase mb-2">No
+                                    Transaksi</label>
+                                <input id="claim-no-transaksi" name="claim_no_transaksi" v-model="claimGaransiForm['NO_TRANSAKSI']" type="text" class="form-input" />
+                            </div>
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Tanggal
+                                    Masuk</label>
+                                <button type="button" @click="openCalendar($event, 'form', '', 'claimGaransi1')"
+                                    class="select-trigger-button-form toolbar-trigger-field-form">
+                                    <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
+                                    <span
+                                        :class="claimGaransiForm['TANGGAL_MASUK'] ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ claimGaransiForm['TANGGAL_MASUK'] ? formatFullDate(claimGaransiForm['TANGGAL_MASUK']) : 'Pilih Tanggal' }}</span>
+                                </button>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Tanggal
+                                    Estimasi</label>
+                                <button type="button" @click="openCalendar($event, 'form', '', 'claimGaransi3')"
+                                    class="select-trigger-button-form toolbar-trigger-field-form">
+                                    <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
+                                    <span
+                                        :class="claimGaransiForm['TANGGAL_ESTIMASI'] ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ claimGaransiForm['TANGGAL_ESTIMASI'] ? formatFullDate(claimGaransiForm['TANGGAL_ESTIMASI']) : 'Pilih Tanggal' }}</span>
+                                </button>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Tanggal
+                                    Diambil</label>
+                                <button type="button" @click="openCalendar($event, 'form', '', 'claimGaransi2')"
+                                    class="select-trigger-button-form toolbar-trigger-field-form">
+                                    <i class="fa-solid fa-calendar-days text-body-sm text-slate-400"></i>
+                                    <span
+                                        :class="claimGaransiForm['TANGGAL_DIAMBIL'] ? 'text-slate-700 font-medium' : 'text-slate-400'">{{ claimGaransiForm['TANGGAL_DIAMBIL'] ? formatFullDate(claimGaransiForm['TANGGAL_DIAMBIL']) : 'Pilih Tanggal' }}</span>
+                                </button>
+                            </div>
+                            <div>
+                                <label for="claim-wa-customer" class="type-body-sm font-bold text-slate-400 uppercase mb-2">WA
+                                    Customer</label>
+                                <input id="claim-wa-customer" name="claim_wa_customer" v-model="claimGaransiForm['WA_CUSTOMER']" type="text" placeholder="08xxx"
+                                    class="form-input" />
+                            </div>
+                            <div>
+                                <label for="claim-wa2-customer" class="type-body-sm font-bold text-slate-400 uppercase mb-2">WA
+                                    2 Customer</label>
+                                <input id="claim-wa2-customer" name="claim_wa2_customer" v-model="claimGaransiForm['WA2_CUSTOMER']" type="text"
+                                    placeholder="08xxx (opsional)" class="form-input" />
+                            </div>
+                            <div class="form-section-card">
+                                <div class="form-section-title">Info Unit & Service</div>
+                                <div class="form-section-copy">Identitas unit, status klaim, dan detail kerusakan.</div>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Tipe
+                                    Unit</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'claim_tipe')"
+                                    :aria-expanded="searchSelectOpen === 'claim_tipe' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="claimGaransiForm['TIPE'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ claimGaransiForm['TIPE'] || 'Pilih Tipe Unit' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'claim_tipe'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari tipe claim garansi" placeholder="Cari tipe..."
+                                                class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in sharedUnitTypeOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))"
+                                                :key="opt"
+                                                @click="claimGaransiForm['TIPE'] = opt; searchSelectOpen = null"
+                                                :class="['popover-option', claimGaransiForm['TIPE'] === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                            <div v-if="sharedUnitTypeOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
+                                                Tidak ditemukan
+                                            </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div>
+                                <label for="claim-imei"
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">IMEI</label>
+                                <input id="claim-imei" name="claim_imei" v-model="claimGaransiForm['IMEI']" type="text" class="form-input" />
+                            </div>
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Seri</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'claim_seri')"
+                                    :aria-expanded="searchSelectOpen === 'claim_seri' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="claimGaransiForm['SERI'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ claimGaransiForm['SERI'] || 'Pilih Seri' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'claim_seri'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari seri claim garansi" placeholder="Cari seri..."
+                                                class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in claimSeriOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))"
+                                                :key="opt"
+                                                @click="claimGaransiForm['SERI'] = opt; searchSelectOpen = null"
+                                                :class="['popover-option', claimGaransiForm['SERI'] === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                            <div v-if="claimSeriOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
+                                                Tidak ditemukan
+                                            </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Model</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'claim_model')"
+                                    :aria-expanded="searchSelectOpen === 'claim_model' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="claimGaransiForm['MODEL'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ claimGaransiForm['MODEL'] || 'Pilih Model' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'claim_model'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari model claim garansi" placeholder="Cari model..."
+                                                class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in sharedUnitTypeOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))"
+                                                :key="opt"
+                                                @click="claimGaransiForm['MODEL'] = opt; searchSelectOpen = null"
+                                                :class="['popover-option', claimGaransiForm['MODEL'] === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                            <div v-if="sharedUnitTypeOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
+                                                Tidak ditemukan
+                                            </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div>
+                                <label for="claim-hp-pinjaman" class="type-body-sm font-bold text-slate-400 uppercase mb-2">HP
+                                    Pinjaman</label>
+                                <input id="claim-hp-pinjaman" name="claim_hp_pinjaman" v-model="claimGaransiForm['HP_PINJAMAN']" type="text" class="form-input" />
+                            </div>
+                            <div>
+                                <label for="claim-imei-pinjaman" class="type-body-sm font-bold text-slate-400 uppercase mb-2">IMEI
+                                    Pinjaman</label>
+                                <input id="claim-imei-pinjaman" name="claim_imei_pinjaman" v-model="claimGaransiForm['IMEI_PINJAMAN']" type="text" class="form-input" />
+                            </div>
+                            <div class="relative search-select-container">
+                                <label class="type-body-sm font-bold text-slate-400 uppercase mb-2">Lokasi
+                                    Klaim</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'lokasi_klaim')"
+                                    :aria-expanded="searchSelectOpen === 'lokasi_klaim' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="claimGaransiForm['LOKASI_KLAIM'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ claimGaransiForm['LOKASI_KLAIM'] || 'Pilih Lokasi' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'lokasi_klaim'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="relative mb-2">
+                                            <i
+                                                class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-300 text-body-sm"></i>
+                                            <input v-model="searchSelectQuery" type="text" name="search_select_query"
+                                                autocomplete="off" aria-label="Cari lokasi claim garansi" placeholder="Cari lokasi..."
+                                                class="form-input-popover" @click.stop />
+                                        </div>
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in claimLokasiOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase()))"
+                                                :key="opt"
+                                                @click="claimGaransiForm['LOKASI_KLAIM'] = opt; searchSelectOpen = null"
+                                                :class="['popover-option', claimGaransiForm['LOKASI_KLAIM'] === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                            <div v-if="claimLokasiOptions.filter(o => !searchSelectQuery || o.toLowerCase().includes(searchSelectQuery.toLowerCase())).length === 0"
+                                                class="px-3 py-4 text-center text-body-sm text-slate-400 uppercase">
+                                                Tidak ditemukan
+                                            </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-1.5">Status</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'claim_status')"
+                                    :aria-expanded="searchSelectOpen === 'claim_status' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="claimGaransiForm['STATUS'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ claimGaransiForm['STATUS'] || 'Pilih Status' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'claim_status'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in claimStatusOptions" :key="opt"
+                                                @click="claimGaransiForm['STATUS'] = opt; searchSelectOpen = null"
+                                                :class="['popover-option', claimGaransiForm['STATUS'] === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div class="relative search-select-container">
+                                <label
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Garansi</label>
+                                <button type="button" @click="toggleSearchSelect($event, 'claim_garansi')"
+                                    :aria-expanded="searchSelectOpen === 'claim_garansi' ? 'true' : 'false'"
+                                    class="select-trigger-button select-trigger-button-form toolbar-trigger-field-form">
+                                    <span
+                                        :class="claimGaransiForm['GARANSI'] ? 'text-slate-800 font-medium' : 'text-slate-400'">{{ claimGaransiForm['GARANSI'] || 'Pilih Garansi' }}</span>
+                                    <i class="fa-solid fa-chevron-down text-body-sm text-slate-300"></i>
+                                </button>
+                                <transition name="fade">
+                                    <div v-if="searchSelectOpen === 'claim_garansi'" :style="popoverStyle"
+                                        class="search-select-popover">
+                                        <div class="max-h-48 overflow-y-auto custom-scrollbar">
+                                            <div v-for="opt in claimGaransiOptions" :key="opt"
+                                                @click="claimGaransiForm['GARANSI'] = opt; searchSelectOpen = null"
+                                                :class="['popover-option', claimGaransiForm['GARANSI'] === opt ? 'popover-option-active' : '']">
+                                                {{ opt }} </div>
+                                        </div>
+                                    </div>
+                                </transition>
+                            </div>
+                            <div class="col-span-2">
+                                <label for="claim-kerusakan"
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Kerusakan</label>
+                                <textarea id="claim-kerusakan" name="claim_kerusakan" v-model="claimGaransiForm['KERUSAKAN']" rows="3"
+                                    class="form-input resize-none"></textarea>
+                            </div>
+                            <div class="col-span-2">
+                                <label for="claim-keterangan"
+                                    class="type-body-sm font-bold text-slate-400 uppercase mb-2">Keterangan</label>
+                                <textarea id="claim-keterangan" name="claim_keterangan" v-model="claimGaransiForm['KETERANGAN']" rows="2"
+                                    placeholder="Catatan tambahan..." class="form-input resize-none"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer-bar modal-footer-actions">
+                        <button @click="claimGaransiModalOpen = false" class="primary-cta-button primary-cta-button--neutral">Batal</button>
+                        <button @click="saveClaimGaransi" :disabled="submitting" class="primary-cta-button">{{ submitting ? 'Menyimpan...' : 'Simpan' }}</button>
+                    </div>
+                </div>
+            </div>
+        </transition>
+    </teleport>
 @endverbatim
