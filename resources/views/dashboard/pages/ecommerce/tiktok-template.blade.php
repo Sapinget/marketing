@@ -3,7 +3,7 @@
 @section('title', 'Template TikTok')
 
 @push('menu-scripts')
-    @include('dashboard.partials.shell.app-script-tiktok-template-operations')
+    @include('dashboard.partials.shell.menu-scripts-tiktok')
 @endpush
 
 @section('dashboard-menu')

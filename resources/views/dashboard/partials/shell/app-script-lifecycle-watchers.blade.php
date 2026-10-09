@@ -65,8 +65,6 @@
                     window.addEventListener("hashchange", handleHashChange);
                     window.addEventListener("pageshow", handleBrowserPageShow);
                     window.addEventListener("focus", handleBrowserFocus, true);
-                    window.addEventListener("pointermove", catalogLayoutDragMove, true);
-                    window.addEventListener("pointerup", catalogLayoutDragEnd, true);
                     handleChatVisibilityChange = () => {
                         if (document.hidden) {
                             chatStopPolling();
@@ -146,8 +144,6 @@
                     window.removeEventListener("hashchange", handleHashChange);
                     window.removeEventListener("pageshow", handleBrowserPageShow);
                     window.removeEventListener("focus", handleBrowserFocus, true);
-                    window.removeEventListener("pointermove", catalogLayoutDragMove, true);
-                    window.removeEventListener("pointerup", catalogLayoutDragEnd, true);
                     document.removeEventListener("visibilitychange", handleChatVisibilityChange);
                     tableSortObserver?.disconnect();
                     if (sessionHeartbeatTimerId) {

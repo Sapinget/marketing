@@ -115,13 +115,10 @@ class DashboardPageRoutesTest extends TestCase
         // Anggaran: shell + script bersama (~0,85 MB) + satu menu. Baseline sebelum isolasi: 2,27 MB.
         // Turunkan batas ini saat script menu mulai diisolasi (Fase 1.5).
         $budgetBytes = 1_150_000;
-        $legacySize = strlen($this->html('/'));
-
         foreach ($this->dashboardPages() as [$uri]) {
             $size = strlen($this->html($uri));
 
             $this->assertLessThan($budgetBytes, $size, "{$uri} exceeds the dedicated page size budget.");
-            $this->assertLessThan($legacySize, $size, "{$uri} should be lighter than the legacy dashboard.");
         }
     }
 
@@ -301,5 +298,64 @@ class DashboardPageRoutesTest extends TestCase
         foreach ($this->preExistingUrlMenus() as $uri => $marker) {
             $this->assertPageHas($legacy, $marker, "flag off: / should render {$uri} markup again.");
         }
+    }
+
+    /**
+     * Penjaga isolasi script: setiap nama di `return { ... }` setup() harus dideklarasikan di script halaman itu.
+     * Kalau tidak, setup() melempar ReferenceError dan seluruh halaman kosong (pernah terjadi saat memindahkan script katalog).
+     *
+     * @return array<string, list<string>> uri => nama yang di-return tapi tidak dideklarasikan
+     */
+    private function undeclaredReturnNames(): array
+    {
+        $uris = array_merge(['/'], array_map(fn (array $p) => $p[0], array_values($this->dashboardPages())));
+        $missing = [];
+
+        foreach ($uris as $uri) {
+            $html = $this->html($uri);
+            $this->assertSame(1, preg_match('#<script type="module">(.*?)</script>#s', $html, $m), "{$uri} has no module script");
+            $js = $m[1];
+
+            $declared = [];
+            preg_match_all('/\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)/', $js, $a);
+            $declared += array_flip($a[1]);
+            preg_match_all('/\bfunction\s+([A-Za-z_$][\w$]*)/', $js, $a);
+            $declared += array_flip($a[1]);
+            preg_match_all('/\b(?:const|let|var)\s*[\{\[]([^\}\]]*)[\}\]]/', $js, $a);
+            foreach ($a[1] as $group) {
+                foreach (explode(',', $group) as $part) {
+                    $segments = explode(':', $part);
+                    $name = trim(preg_replace('/=.*/s', '', end($segments)));
+                    if ($name !== '') {
+                        $declared[$name] = 1;
+                    }
+                }
+            }
+
+            $returnAt = strrpos($js, 'return {');
+            $this->assertNotFalse($returnAt, "{$uri} has no setup return");
+            $body = substr($js, $returnAt + 8);
+            $body = substr($body, 0, (int) strpos($body, "\n                };"));
+
+            foreach (explode("\n", $body) as $line) {
+                if (preg_match('/^\s*([A-Za-z_$][\w$]*),\s*$/', $line, $mm) && ! isset($declared[$mm[1]])) {
+                    $missing[$uri][] = $mm[1];
+                }
+            }
+        }
+
+        return $missing;
+    }
+
+    public function test_every_page_declares_everything_its_setup_returns(): void
+    {
+        $this->assertSame([], $this->undeclaredReturnNames());
+    }
+
+    public function test_every_page_declares_everything_its_setup_returns_with_the_flag_off(): void
+    {
+        config(['dashboard.url_routing' => false]);
+
+        $this->assertSame([], $this->undeclaredReturnNames());
     }
 }

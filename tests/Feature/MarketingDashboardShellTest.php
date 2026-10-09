@@ -115,6 +115,11 @@ class MarketingDashboardShellTest extends TestCase
             }
         }
 
+        // Script menu terisolasi (@push('menu-scripts')) tidak ada di `/`; tambahkan sekali agar kontrak sumbernya tetap teruji.
+        foreach (glob(resource_path('views/dashboard/partials/shell/menu-scripts-*.blade.php')) ?: [] as $path) {
+            $html .= "\n".view('dashboard.partials.shell.'.basename($path, '.blade.php'))->render();
+        }
+
         return self::$dashboardUiCache = $html;
     }
 
@@ -4492,7 +4497,8 @@ HTML, $html);
         $this->assertHtmlContains("switchTab('pricelist_katalog')", $sidebarNavAdminPartial);
         $this->assertHtmlContains("activeTab === 'pricelist_katalog'", $html);
         $this->assertHtmlContains("pricelist_katalog: { label: 'Katalog Android', category: null }", $html);
-        $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-pricelist-katalog-operations')", $assemblyPartial);
+        $this->assertHtmlContains("@include('dashboard.partials.shell.menu-scripts-catalog')", $assemblyPartial);
+        $this->assertHtmlContains("@include('dashboard.partials.shell.app-script-pricelist-katalog-operations')", file_get_contents(resource_path('views/dashboard/partials/shell/menu-scripts-catalog.blade.php')));
         $this->assertHtmlContains('getPricelistProducts()', $html);
         $this->assertHtmlContains('syncPricelistProducts()', $html);
         $this->assertHtmlContains('uploadCatalogBackground(file, id)', $html);
@@ -4556,9 +4562,11 @@ HTML, $html);
         $this->assertHtmlContains('max-h-[calc(100vh-7rem)] w-auto h-auto object-contain', $pricelistPartial);
         $this->assertHtmlContains('origin-center', $pricelistPartial);
 
-        $this->assertHtmlContains('pricelistView,', $html);
-        $this->assertHtmlContains('pricelistCardGroups,', $html);
-        $this->assertHtmlContains('pricelistCardVariantLabel,', $html);
+        // Diekspor lewat menuExports (script terisolasi), bukan return block bersama.
+        $this->assertHtmlContains('Object.assign(menuExports, {', $operationsPartial);
+        $this->assertHtmlContains('pricelistView,', $operationsPartial);
+        $this->assertHtmlContains('pricelistCardGroups,', $operationsPartial);
+        $this->assertHtmlContains('pricelistCardVariantLabel,', $operationsPartial);
     }
 
     public function test_pricelist_catalog_output_controls_use_consistent_primitives(): void

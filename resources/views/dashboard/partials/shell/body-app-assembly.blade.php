@@ -15,8 +15,6 @@
 @include('dashboard.partials.shell.app-script-reporting-and-budgeting')
 @include('dashboard.partials.shell.app-script-ads-log-operations')
 @include('dashboard.partials.shell.app-script-price-competitor-operations')
-@include('dashboard.partials.shell.app-script-pricelist-katalog-operations')
-@include('dashboard.partials.shell.app-script-apple-katalog-operations')
 @include('dashboard.partials.shell.app-script-img-repo-operations')
 @include('dashboard.partials.shell.app-script-lpjk-operations')
 @include('dashboard.partials.shell.app-script-asset-vendor-inventory-operations')
@@ -46,6 +44,10 @@
 @include('dashboard.partials.scripts.export-price-comparison-pdf')
 @include('dashboard.partials.scripts.export-lpjk-detail-pdf')
 @include('dashboard.partials.scripts.export-budget-pdf')
+{{-- Script menu terisolasi: dirender lewat @push('menu-scripts') di halaman menunya. Dashboard lama (`/`) hanya memuatnya bila flag url_routing mati, karena menu itu kembali dirender di `/`. --}}
+@if(! ($dedicatedMenuView ?? null) && ! config('dashboard.url_routing'))
+    @include('dashboard.partials.shell.menu-scripts-catalog')
+@endif
 @stack('menu-scripts')
 @include('dashboard.partials.shell.app-script-return-block')
 @include('dashboard.partials.shell.app-script-close')

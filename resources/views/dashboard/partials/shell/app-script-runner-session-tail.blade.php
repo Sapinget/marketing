@@ -223,6 +223,10 @@
                         return;
                     }
 
+                    if (menuLoaders[tab]) {
+                        menuLoaders[tab]();
+                    }
+
                     if (tab === 'nama_stock' && !namaStockLoaded.value) {
                         loadNamaStockData();
                     }
@@ -293,15 +297,6 @@
                     }
                     if (tab === 'activity_logs') {
                         loadActivityLogs();
-                    }
-                    if (tab === 'pricelist_katalog') {
-                        loadPricelistCatalogData();
-                    }
-                    if (tab === 'template_background') {
-                        if (!catalogTemplatesLoaded.value) loadCatalogTemplates();
-                    }
-                    if (tab === 'apple_katalog') {
-                        loadAppleData();
                     }
                     if (tab === 'img_repo') {
                         imgRepoBrowse(imgRepoPath.value || '');
