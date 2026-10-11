@@ -45,9 +45,34 @@ class GasProxySecurityTest extends TestCase
             ->assertNotFound();
     }
 
+    public function test_db_preview_is_off_unless_explicitly_enabled(): void
+    {
+        config()->set('app.env', 'local');
+        config()->set('dashboard.db_preview', false);
+
+        $this->get('/__db/tables')->assertNotFound();
+    }
+
+    public function test_db_preview_never_runs_in_production_even_when_enabled(): void
+    {
+        config()->set('app.env', 'production');
+        config()->set('dashboard.db_preview', true);
+
+        $this->get('/__db/tables')->assertNotFound();
+    }
+
+    public function test_db_preview_rejects_non_loopback_clients_even_when_enabled(): void
+    {
+        config()->set('app.env', 'local');
+        config()->set('dashboard.db_preview', true);
+
+        $this->withServerVariables(['REMOTE_ADDR' => '203.0.113.9'])->get('/__db/tables')->assertForbidden();
+    }
+
     public function test_db_preview_blocks_sensitive_tables_in_local(): void
     {
         config()->set('app.env', 'local');
+        config()->set('dashboard.db_preview', true);
 
         $this->get('/__db/tables/users')
             ->assertForbidden()
@@ -57,6 +82,7 @@ class GasProxySecurityTest extends TestCase
     public function test_db_preview_access_is_logged_in_local(): void
     {
         config()->set('app.env', 'local');
+        config()->set('dashboard.db_preview', true);
 
         $this->get('/__db/tables')
             ->assertOk();

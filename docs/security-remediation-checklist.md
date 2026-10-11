@@ -63,7 +63,12 @@ Diperbaiki:
 
 Belum (dari audit yang sama), urut prioritas:
 
-- [ ] `APP_ENV=local` pada instance yang di-tunnel (membuka `/__db/*`; guard hanya mengandalkan IP loopback + `X-Forwarded-For`). Pakai `production`.
+- [x] **`APP_ENV=local` pada instance yang di-tunnel** (2026-10-11). Dampaknya ternyata dua, bukan satu:
+  1. membuka browser DB `/__db/*` (dijaga hanya IP loopback + `X-Forwarded-For`), dan
+  2. menyalakan bootstrap akun admin dari `.env` (`TEST_ADMIN_USERNAME`/`TEST_ADMIN_PIN`): tiap percobaan login membuat ulang akun super_admin itu dan **mengembalikan password-nya ke PIN di `.env`**, jadi akun tidak bisa dihapus atau diganti password-nya lewat aplikasi selama env `local`.
+  Perbaikan: `APP_ENV=production` di `.env` instance yang di-tunnel (akun yang sudah ada tetap bisa login karena hash-nya ada di database; hanya pembuatan/penimpaan otomatis yang mati), dan `/__db/*` kini hanya hidup bila `DASHBOARD_DB_PREVIEW=true` (default mati), tidak pernah di `production`, dan tetap hanya untuk klien loopback. Dijaga `GasProxySecurityTest` (mati secara default, mati di production walau flag nyala, menolak klien non-loopback).
+- [ ] **Rotasi kredensial akun test-admin.** Akun super_admin dari `TEST_ADMIN_*` ada di database dan PIN-nya (5 karakter, bukan angka murni) tersimpan di `.env`. Dengan `production`, mengubah `.env` tidak lagi mengubah password akun itu: ganti lewat menu Manajemen User (atau nonaktifkan akunnya bila tidak dipakai), lalu hapus `TEST_ADMIN_*` dari `.env`. Ada 3 akun super_admin dari 17 pengguna; periksa mana yang memang dipakai.
+
 - [ ] Layar login mengirim seluruh aplikasi (±650 KB HTML + semua path API); pisahkan halaman login yang ringan.
 - [ ] Dependensi: Laravel 10.50.2 sudah EOL (4 advisory, 1 tinggi), `league/commonmark` (2), `league/flysystem` (1); `npm audit` melaporkan `vue`/`@vue/server-renderer` dan `source-map-js` (dev tooling).
 - [ ] `/design-system*` dan `/marketing-dashboard.html` masih publik; `logo.png` 960×960 (96 KB).

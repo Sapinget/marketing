@@ -16,6 +16,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Browser database lokal (/__db)
+    |--------------------------------------------------------------------------
+    |
+    | Mati secara default. Sebelumnya cukup APP_ENV=local, padahal instance yang sama bisa
+    | ikut diteruskan ke internet lewat tunnel. Sekarang harus diaktifkan eksplisit
+    | (DASHBOARD_DB_PREVIEW=true), hanya di APP_ENV selain production, dan tetap hanya
+    | untuk klien loopback (127.0.0.1/::1 setelah X-Forwarded-For diperhitungkan).
+    |
+    */
+    'db_preview' => (bool) env('DASHBOARD_DB_PREVIEW', false),
+
+    /*
+    |--------------------------------------------------------------------------
     | Peta tab -> URL (satu sumber kebenaran)
     |--------------------------------------------------------------------------
     |

@@ -483,7 +483,7 @@ Route::post('/api/auth/logout', function (DashboardAuth $dashboardAuth) {
 Route::prefix('__db')->group(function (): void {
     $schema = Schema::connection(DB::getDefaultConnection());
     $assertLocalRequest = static function (): void {
-        abort_unless((string) config('app.env') === 'local', 404);
+        abort_unless(config('dashboard.db_preview') === true && (string) config('app.env') !== 'production', 404);
         abort_unless(in_array(request()->ip(), ['127.0.0.1', '::1'], true), 403);
     };
     $sensitivePreviewTables = [
