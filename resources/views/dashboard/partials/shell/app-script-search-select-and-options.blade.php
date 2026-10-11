@@ -67,10 +67,6 @@
                 };
 
                 const unitKategoriOptions = computed(() => getKategoriOptions());
-                const namaStockBrandOptions = computed(() => resolveNamaStockSettingOptions(
-                    ['Nama_Stock_Brand', 'Brand_Produk', 'Brand'],
-                    filteredUniqueFrom(namaStockRows.value, 'BRAND', { KATEGORI: namaStockForm.value.KATEGORI })
-                ));
                 const namaStockSeriOptions = computed(() => resolveNamaStockSettingOptions(
                     ['Nama_Stock_Seri', 'Seri_Produk', 'Seri'],
                     filteredUniqueFrom(namaStockRows.value, 'SERI', { KATEGORI: namaStockForm.value.KATEGORI, BRAND: namaStockForm.value.BRAND })
@@ -107,12 +103,6 @@
                     uniqueMultiKeyFrom(claimGaransiData.value, ['TIPE', 'MODEL']),
                     uniqueMultiKeyFrom(keepBarangData.value, ['TYPE_HP'])
                 );
-                });
-
-                watch(() => namaStockForm.value.KATEGORI, () => {
-                    if (!namaStockBrandOptions.value.includes(namaStockForm.value.BRAND)) {
-                        namaStockForm.value.BRAND = '';
-                    }
                 });
 
                 const claimLokasiOptions = computed(() => settings.value.Lokasi_Klaim || []);

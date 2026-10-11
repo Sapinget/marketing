@@ -1,4 +1,23 @@
 @verbatim
+                const ideationViewMode = ref("board");
+
+                const ideationBoardMobileTab = ref('');
+
+                watch(() => ideationDraftLabel.value, (label) => {
+                    if (!ideationBoardMobileTab.value || !(label in kanbanBuckets.value)) {
+                        ideationBoardMobileTab.value = label;
+                    }
+                    boardPages.value = createBoardPages();
+                }, { immediate: true });
+
+                watch(() => ideationViewMode.value, (mode) => {
+                    if (mode === 'board') ideationBoardMobileTab.value = ideationDraftLabel.value;
+                });
+
+                watch(() => activeTab.value, (tab) => {
+                    if (tab === 'ideation') ideationBoardMobileTab.value = ideationDraftLabel.value;
+                });
+
                 const getIdeaAgeLabel = (item) => {
                     const rawDate = String(item?.Tanggal_Rencana || '').trim();
                     if (!rawDate) return 'Umur -';
@@ -43,5 +62,8 @@
                     getIdeaAgeLabel,
                     getIdeationTypeTone,
                     pagedKanbanBuckets,
-                });
+                
+                    ideationViewMode,
+                    ideationBoardMobileTab,
+});
 @endverbatim

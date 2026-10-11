@@ -123,8 +123,6 @@
                 // Extended calendar state for multiple date fields
                 const calendarFormContext = ref(''); // 'master', 'story', 'orderanOnline1', 'unitDitanya1', 'claimGaransi1', 'claimGaransi2', 'claimGaransi3', 'distribution', 'analytics'
 
-                const ideationViewMode = ref("board");
-                const ideationBoardMobileTab = ref('');
                 const contentTableSearch = ref("");
                 const commonDateFilter = ref({ start: '', end: '' });
                 const insightDateFilter = ref(getDefaultDateRange());

@@ -104,6 +104,13 @@ def declared_names(chunk_text):
     first=''
     for l in chunk_text.split('\n'):
         if l.strip() and not l.strip().startswith('//'): first=l; break
+    ml=re.match(r'\s*(?:export\s+)?(?:const|let|var)\s*[\{\[](.*?)[\}\]]\s*=',re.sub(r'(?m)^\s*//.*$','',chunk_text),re.S)
+    if ml:
+        names=[]
+        for p in ml.group(1).split(','):
+            p=p.split(':')[-1].split('=')[0].strip()
+            if p and re.match(r'^[A-Za-z_$][\w$]*$',p): names.append(p)
+        if names: return names
     m=DECL.match(first)
     if not m: return []
     if m.group(1): return [m.group(1)]
@@ -171,25 +178,53 @@ def main():
     consumers=[set() for _ in chunks]
     for i,c in enumerate(chunks):
         for j in c['refs']: consumers[j].add(i)
-    # unnamed chunks always run -> ALL for their references
-    changed=True
-    for i,c in enumerate(chunks):
-        if not c['named']:
-            for j in c['refs']: own[j].add(ALL)
-    while changed:
+    def propagate():
+        ch=True
+        while ch:
+            ch=False
+            for i in range(len(chunks)):
+                new=set(own[i])
+                for d in consumers[i]:
+                    if chunks[d]['named']:
+                        # a named chunk nobody consumes stays where it is (could be called dynamically): whatever it references must stay visible everywhere
+                        new|=own[d] if own[d] else {ALL}
+                if new!=own[i]: own[i]=new; ch=True
+    propagate()
+    # Unnamed statements (watch/onMounted/listeners) always run where they live. A statement that touches
+    # exactly one menu's chunks (plus shared infrastructure) can live in that menu's script; otherwise it pins what it references.
+    stmt=[i for i,c in enumerate(chunks) if not c['named']]
+    stmt_owner={}
+    for _ in range(50):
         changed=False
-        for i in range(len(chunks)):
-            new=set(own[i])
-            for d in consumers[i]:
-                if chunks[d]['named']:
-                    # a named chunk nobody consumes stays where it is (could be called dynamically): whatever it references must stay visible everywhere
-                    new|=own[d] if own[d] else {ALL}
-            if new!=own[i]: own[i]=new; changed=True
+        for d in stmt:
+            refs=chunks[d]['refs']
+            units=set()
+            for r in refs:
+                if len(own[r])==1 and ALL not in own[r]: units|=own[r]
+            new_owner=next(iter(units)) if len(units)==1 else None
+            # Statement besar atau yang mendaftarkan helper global/siklus hidup aplikasi adalah infrastruktur, bukan milik menu.
+            t=chunks[d]['text']
+            if new_owner and (chunks[d]['bytes']>1200 or 'MarketingDashboardRuntimeHelpers' in t or re.search(r'\bon(?:Mounted|BeforeUnmount|Unmounted)\s*\(',t)):
+                new_owner=None
+            if stmt_owner.get(d)!=new_owner: stmt_owner[d]=new_owner; changed=True
+            if new_owner:
+                # references with no other consumer travel with the statement
+                for r in refs:
+                    if not own[r]: own[r]={new_owner}; changed=True
+            else:
+                for r in refs:
+                    if ALL not in own[r]: own[r].add(ALL); changed=True
+        propagate()
+        if not changed: break
+    for d,u in stmt_owner.items():
+        if u and len(own[d])==0: own[d]={u}
     result={}
     movable=0;shared=0;unused=0
     for i,c in enumerate(chunks):
         o=own[i]
-        if not c['named']: kind='unnamed'
+        if not c['named']:
+            kind='menu:'+stmt_owner[i] if stmt_owner.get(i) else 'unnamed'
+            if kind.startswith('menu:'): movable+=c['bytes']
         elif not o: kind='unused'; unused+=c['bytes']
         elif ALL in o or len(o)>1: kind='shared'; shared+=c['bytes']
         else: kind='menu:'+next(iter(o)); movable+=c['bytes']

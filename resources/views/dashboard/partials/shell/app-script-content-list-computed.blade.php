@@ -206,18 +206,6 @@
 
                 watch(() => [masterSearch.value, masterFilterRange.value.start, masterFilterRange.value.end], () => { masterPage.value = 1; boardPages.value = createBoardPages(); });
                 watch(() => [contentTableSearch.value, commonDateFilter.value.start, commonDateFilter.value.end], () => { distributionPage.value = 1; analyticsPage.value = 1; });
-                watch(() => ideationDraftLabel.value, (label) => {
-                    if (!ideationBoardMobileTab.value || !(label in kanbanBuckets.value)) {
-                        ideationBoardMobileTab.value = label;
-                    }
-                    boardPages.value = createBoardPages();
-                }, { immediate: true });
-                watch(() => ideationViewMode.value, (mode) => {
-                    if (mode === 'board') ideationBoardMobileTab.value = ideationDraftLabel.value;
-                });
-                watch(() => activeTab.value, (tab) => {
-                    if (tab === 'ideation') ideationBoardMobileTab.value = ideationDraftLabel.value;
-                });
 
                 // Story pagination
                 const storyPage = ref(1);

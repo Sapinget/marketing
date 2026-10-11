@@ -1,4 +1,15 @@
 @verbatim
+                const bonusTotalPages = computed(() => Math.max(1, Math.ceil(filteredBonusRows.value.length / PAGE_SIZE)));
+
+                watch([() => filteredBonusRows.value.length, bonusTotalPages], ([rowCount, totalPages]) => {
+                    if (rowCount === 0) {
+                        bonusPage.value = 1;
+                        return;
+                    }
+                    if (bonusPage.value > totalPages) bonusPage.value = totalPages;
+                    if (bonusPage.value < 1) bonusPage.value = 1;
+                }, { immediate: true });
+
                 const pagedBonusRows = computed(() => filteredBonusRows.value.slice((bonusPage.value - 1) * PAGE_SIZE, bonusPage.value * PAGE_SIZE));
 
 const exportBonusToPDF = () => {
@@ -30,5 +41,7 @@ const exportBonusToPDF = () => {
                 Object.assign(menuExports, {
                     pagedBonusRows,
                     exportBonusToPDF,
-                });
+                
+                    bonusTotalPages,
+});
 @endverbatim

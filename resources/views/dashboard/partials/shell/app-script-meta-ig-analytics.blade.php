@@ -27,15 +27,8 @@
                 const budgetConfigLoaded = ref(false);
                 const tabDataLoaded = ref({});
 
-                const namaStockFilterBrandOptions = computed(() => filteredUniqueFrom(namaStockRows.value, 'BRAND', { KATEGORI: namaStockKategoriFilter.value }));
-
                 const namaStockPage = ref(1);
                 watch(() => [namaStockSearchQuery.value, namaStockKategoriFilter.value, namaStockBrandFilter.value], () => { namaStockPage.value = 1; });
-                watch(() => namaStockKategoriFilter.value, () => {
-                    if (!namaStockFilterBrandOptions.value.includes(namaStockBrandFilter.value)) {
-                        namaStockBrandFilter.value = '';
-                    }
-                });
 
                 const initNamaStockRows = (src) => {
                     const rows = (Array.isArray(src) ? src : []).map(row => ({

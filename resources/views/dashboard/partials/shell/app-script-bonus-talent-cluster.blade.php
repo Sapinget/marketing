@@ -99,17 +99,7 @@
                     };
                 });
 
-                const bonusTotalPages = computed(() => Math.max(1, Math.ceil(filteredBonusRows.value.length / PAGE_SIZE)));
-
                 watch([bonusMonth, bonusYear], () => { bonusPage.value = 1; });
-                watch([() => filteredBonusRows.value.length, bonusTotalPages], ([rowCount, totalPages]) => {
-                    if (rowCount === 0) {
-                        bonusPage.value = 1;
-                        return;
-                    }
-                    if (bonusPage.value > totalPages) bonusPage.value = totalPages;
-                    if (bonusPage.value < 1) bonusPage.value = 1;
-                }, { immediate: true });
 
                 const TALENT_DAILY_BONUS = 150000;
 

@@ -1,4 +1,23 @@
 @verbatim
+                const namaStockFilterBrandOptions = computed(() => filteredUniqueFrom(namaStockRows.value, 'BRAND', { KATEGORI: namaStockKategoriFilter.value }));
+
+                watch(() => namaStockKategoriFilter.value, () => {
+                    if (!namaStockFilterBrandOptions.value.includes(namaStockBrandFilter.value)) {
+                        namaStockBrandFilter.value = '';
+                    }
+                });
+
+                const namaStockBrandOptions = computed(() => resolveNamaStockSettingOptions(
+                    ['Nama_Stock_Brand', 'Brand_Produk', 'Brand'],
+                    filteredUniqueFrom(namaStockRows.value, 'BRAND', { KATEGORI: namaStockForm.value.KATEGORI })
+                ));
+
+                watch(() => namaStockForm.value.KATEGORI, () => {
+                    if (!namaStockBrandOptions.value.includes(namaStockForm.value.BRAND)) {
+                        namaStockForm.value.BRAND = '';
+                    }
+                });
+
                 // Nama Stock Helpers & Methods (already destructured in nama-stock-actions, reuse here)
                 const namaStockFilterKategoriOptions = computed(() => filteredUniqueFrom(namaStockRows.value, 'KATEGORI'));
 
@@ -28,5 +47,8 @@
                     namaStockTotalPages,
                     pagedNamaStockRows,
                     namaStockKategoriOptions,
-                });
+                
+                    namaStockFilterBrandOptions,
+                    namaStockBrandOptions,
+});
 @endverbatim

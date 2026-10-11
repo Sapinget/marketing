@@ -196,9 +196,6 @@
                         });
                         return;
                     }
-                    if (newTab === 'promo_pamflet') {
-                        promoPamflet.fetchData();
-                    }
                     runActiveTabProtectedLoaders(newTab);
                         nextTick(() => {
                             hydrateSortableTableHeaders();

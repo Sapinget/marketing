@@ -221,13 +221,15 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_promo_pamflet_watcher_runs_after_current_user_initialization(): void
     {
-        $response = $this->get('/');
+        $response = $this->get('/promo-pamflet');
         $html = $response->getContent();
 
         $response->assertOk();
         $this->assertIsString($html);
         $this->assertHtmlNotContains("watch(activeTab, (newTab) => {\n                    if (newTab === 'promo_pamflet' && currentUser.value)", $html);
-        $this->assertHtmlContains("if (newTab === 'promo_pamflet') {\n                        promoPamflet.fetchData();", $html);
+        // Pemuat data milik menu promo pamflet (dipanggil watcher tab lewat runActiveTabProtectedLoaders dan saat halaman dibuka langsung).
+        $this->assertHtmlContains('menuLoaders.promo_pamflet = () => { promoPamflet.fetchData(); };', $html);
+        $this->assertHtmlNotContains("if (newTab === 'promo_pamflet')", $html);
         $this->assertLessThan(
             strpos($html, "watch(() => activeTab.value, (newTab) => {"),
             strpos($html, 'const currentUser = ref(loadStoredUser());')
@@ -1035,7 +1037,7 @@ class MarketingDashboardShellTest extends TestCase
     public function test_analytics_id_post_input_queues_meta_metric_sync_while_typing(): void
     {
         $budgetingPartial = $this->modalHostSource();
-        $analyticsOperationsPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-distribution-analytics-operations.blade.php'));
+        $analyticsOperationsPartial = file_get_contents(resource_path('views/dashboard/partials/shell/app-script-distribution-analytics-operations.blade.php')).$this->shellSource('menu-script-analytics');
 
         $this->assertIsString($budgetingPartial);
         $this->assertIsString($analyticsOperationsPartial);
@@ -1043,14 +1045,15 @@ class MarketingDashboardShellTest extends TestCase
         $this->assertHtmlContains('const normalizeMetaPostId = (value) => String(value || \'\').trim();', $analyticsOperationsPartial);
         $this->assertHtmlContains("const isInstagramAnalyticsPlatform = () => String(analyticsForm.value.Platform || '').trim().toLowerCase() === 'instagram';", $analyticsOperationsPartial);
         $this->assertHtmlContains('const getMetaFeedPostId = (row) => normalizeMetaPostId(row?.post_id || row?.ID || row?.Post_ID || row?.ID_Post || row?.id_post || row?.[\'Post ID\'] || row?.[\'post id\'] || row?.media_id);', $analyticsOperationsPartial);
-        $this->assertHtmlContains('const queueAnalyticsIdPostSync = (value, options = {}) => {', $analyticsOperationsPartial);
+        $this->assertHtmlContains('const queueAnalyticsIdPostSync = (value, options = {}) => {', $analyticsOperationsPartial.$this->shellSource('menu-script-analytics'));
         $this->assertHtmlContains('if (!isInstagramAnalyticsPlatform()) return;', $analyticsOperationsPartial);
         $this->assertHtmlContains('const bindAnalyticsIdPostDomSync = () => {', $analyticsOperationsPartial.$this->shellSource('menu-script-analytics'));
         $this->assertHtmlContains('const updateAnalyticsMetricInputs = () => {', $analyticsOperationsPartial);
         $this->assertHtmlContains("fetch(resolveAppUrl('/api/meta-posts/feed'),", $analyticsOperationsPartial.$this->shellSource('menu-script-analytics'));
         $this->assertHtmlContains("input.addEventListener('input', syncFromDomInput);", $analyticsOperationsPartial.$this->shellSource('menu-script-analytics'));
         $this->assertHtmlContains('queueAnalyticsIdPostSync(value);', $analyticsOperationsPartial);
-        $this->assertHtmlContains('queueAnalyticsIdPostSync,', file_get_contents(resource_path('views/dashboard/partials/shell/app-script-return-block.blade.php')));
+        // Diekspor lewat menuExports di script menu analytics, bukan return block bersama.
+        $this->assertHtmlContains('queueAnalyticsIdPostSync,', $this->shellSource('menu-script-analytics'));
     }
 
     public function test_dashboard_shell_uses_blade_settings_cluster_partial_for_settings_loader_cluster(): void
@@ -1327,6 +1330,8 @@ class MarketingDashboardShellTest extends TestCase
 
     public function test_root_declares_operational_state_before_watchers_and_computed_consumers(): void
     {
+        // Dengan flag mati `/` memuat semua script menu; urutan deklarasi -> watcher tetap harus benar di dalam tiap script.
+        config(['dashboard.url_routing' => false]);
         $response = $this->get('/');
         $html = $response->getContent();
 

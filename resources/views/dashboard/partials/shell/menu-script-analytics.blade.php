@@ -1,4 +1,46 @@
 @verbatim
+                const syncAnalyticsFormFromIdPost = async (postId) => {
+                    const normalizedPostId = normalizeMetaPostId(postId);
+                    const lookupToken = ++analyticsIdPostLookupToken;
+                    if (!normalizedPostId) return;
+                    analyticsSyncingMetaPost.value = true;
+                    try {
+                        const post = await findMetaFeedPost(normalizedPostId);
+                        if (lookupToken !== analyticsIdPostLookupToken || normalizeMetaPostId(analyticsForm.value.ID_Post) !== normalizedPostId) return;
+                        if (!post) {
+                            showNotification('ID Post tidak ditemukan di Feed Konten.');
+                            return;
+                        }
+                        applyAnalyticsMetaPost(post);
+                        showNotification('Metric otomatis diambil dari Feed Konten.');
+                    } catch (error) {
+                        if (lookupToken !== analyticsIdPostLookupToken) return;
+                        handleError(error);
+                    } finally {
+                        if (lookupToken === analyticsIdPostLookupToken) analyticsSyncingMetaPost.value = false;
+                    }
+                };
+
+                const queueAnalyticsIdPostSync = (value, options = {}) => {
+                    if (!analyticsModalOpen.value || (!options.force && suppressAnalyticsIdPostWatcher.value)) return;
+                    if (!isInstagramAnalyticsPlatform()) return;
+                    if (analyticsIdPostDebounce) clearTimeout(analyticsIdPostDebounce);
+                    const normalizedValue = normalizeMetaPostId(value);
+                    if (!normalizedValue) {
+                        analyticsIdPostLookupToken++;
+                        restoreAnalyticsOriginalMetrics();
+                        analyticsSyncingMetaPost.value = false;
+                        return;
+                    }
+                    const localMatch = (Array.isArray(metaFeedData.value) ? metaFeedData.value : []).some((row) => getMetaFeedPostId(row) === normalizedValue);
+                    const delay = localMatch ? 0 : 250;
+                    analyticsIdPostDebounce = setTimeout(() => syncAnalyticsFormFromIdPost(normalizedValue), delay);
+                };
+
+                watch(() => analyticsForm.value.ID_Post, (value) => {
+                    queueAnalyticsIdPostSync(value);
+                });
+
                 const analyticsTotalPages = computed(() => Math.max(1, Math.ceil(filteredAnalyticsData.value.length / PAGE_SIZE)));
 
                 const pagedAnalyticsData = computed(() => filteredAnalyticsData.value.slice((analyticsPage.value - 1) * PAGE_SIZE, analyticsPage.value * PAGE_SIZE));
@@ -104,5 +146,7 @@
                     pagedAnalyticsData,
                     openAnalyticsModal,
                     analyticsSummary,
-                });
+                
+                    queueAnalyticsIdPostSync,
+});
 @endverbatim
